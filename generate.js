@@ -231,6 +231,7 @@ function template(
             </div>`
                 : '<div class="code"><center><img src="/ferris_lofi.png" alt="Mascot Ferris" width="300" height="236"></center></div>'
             }
+            <div class="sitefooter">Unofficial fork of <a href="https://github.com/richardanaya/tour_of_rust">Tour of Rust</a> (&copy; Richard Anaya, MIT License) &mdash; <a href="https://github.com/Abebe123000/tour_of_rust">Source</a> / <a href="https://github.com/Abebe123000/tour_of_rust/blob/master/LICENSE">License</a></div>
         </div>
     </body>
 </html>`;
