@@ -2,6 +2,17 @@
 
 Welcome to the source repo of [Tour of Rust](https://tourofrust.com/).
 
+## このリポジトリについて
+
+このリポジトリは [tour_of_rust](https://github.com/richardanaya/tour_of_rust)
+(© Richard Anaya, MIT License) の非公式ミラー/翻訳版です。
+
+本家の更新が止まっており、日本語を含む一部言語の翻訳が未完了のため、
+翻訳を進めた版を公開する目的でフォークしています。
+本家との関係はなく、公式のサポートは受けられません。
+
+本プロジェクトは本家と同じ [MIT License](./LICENSE) の下で公開されています。
+
 # Goals
 
 This project is meant to give an experienced programmer a swift introduction to Rust as an alternative to reading lengthy book style documentation.
