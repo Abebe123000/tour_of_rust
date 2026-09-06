@@ -74,11 +74,10 @@ Lastly, there is a file for common words you should fill out your localized tran
 To run the site locally you need to install `yq`. There are several projects with the name `yq`, this
 project uses [this one](https://kislyuk.github.io/yq/).
 
-Run `yarn` to install javascript dependencies.
+Run `npm install` to install javascript dependencies.
 
-After installing the dependencies use `make` to launch the site. You will need to restart the server every time
+After installing the dependencies use `npm run serve` to launch the site. You will need to restart the server every time
 to see the changes you've made.
-Windows users should use `make.bat` instead.
 
 # Releases
 
