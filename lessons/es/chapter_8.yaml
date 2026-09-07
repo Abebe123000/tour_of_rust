@@ -180,7 +180,7 @@
 
     ```rust
 
-    fn main() -> Result<(), Box<dyn std::error:Error>>
+    fn main() -> Result<(), Box<dyn std::error::Error>>
 
     ```
 - title: Rc (Referencing Counting)

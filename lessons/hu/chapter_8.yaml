@@ -161,7 +161,7 @@
     reprezentálására, ha a hiba típusa megvalósítja a Rust közös `Error` traitjét.
 
     ```rust
-    fn main() -> Result<(), Box<dyn std::error:Error>>
+    fn main() -> Result<(), Box<dyn std::error::Error>>
     ```
 - title: Referenciaszámlálás
   code: >-
