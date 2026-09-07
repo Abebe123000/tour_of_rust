@@ -232,7 +232,7 @@
     le trait `Error` de Rust.
 
     ```rust
-    fn main() -> Result<(), Box<dyn std::error:Error>>
+    fn main() -> Result<(), Box<dyn std::error::Error>>
     ```
 - title: Multi-propriétaire
   code: >-
