@@ -121,7 +121,7 @@
     Tour of Rust の序盤で、`main` はエラーを返せることを学びました。エラーのデータ構造が Rust の共通トレイト `Error` を実装している限り、発生しうるほとんどあらゆる種類のエラーを記述できる型を、今では返せるようになりました。
 
     ```rust
-    fn main() -> Result<(), Box<dyn std::error:Error>>
+    fn main() -> Result<(), Box<dyn std::error::Error>>
     ```
 - title: 参照カウント
   code: >-
