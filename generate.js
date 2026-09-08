@@ -143,6 +143,8 @@ const getHead = (words, lang) => {
         <link rel="manifest" href="./site.webmanifest">
 
         <script src="./tour.js" defer></script>
+
+        <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "56817104fa0b48d0acee5eb3cc2574b6"}'></script><!-- End Cloudflare Web Analytics -->
     </head>`;
 };
 
