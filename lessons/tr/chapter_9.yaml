@@ -21,8 +21,16 @@
   content_markdown: |
     Her kütüphane `lib.rs` adlı dosyadan oluşan bir kök modüle sahiptir.
 - title: Başka Modül ve Sandıklara Referans Vermek
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=d8492f3cd0f1a16c2a01278de8c10537
+  code: |
+    use std::f64::consts::PI;
+
+    fn main() {
+        println!("Oyun alanına hoş geldiniz!");
+        println!(
+            "Bu sabit std::f64::consts::PI sandığından elde edilmektedir: {}!",
+            PI
+        );
+    }
   content_markdown: >
     Modül öğelerine `std::f64::consts::PI` şeklinde, modül içi tam yolun gösterilmesi ile başvuru yapılabilir.
 
@@ -111,8 +119,17 @@
 - title: Yapısal Görünürlük
   content_markdown: >
     İşlevlerde olduğu gibi yapı alanlarının dışarıya açılabilmesi için `pub` anahtar kelimesiyle belirtilmeleri gerekir.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=5ea5dd58c287602ceb4a1e4b7d7c018a
+  code: |
+    // DenizCanlisi yapısı, modülün
+    // dışında kullanılabilir olacak
+    pub struct DenizCanlisi {
+        pub canli_turu: String,
+        pub isim: String,
+        pub kol_sayisi: i32,
+        pub bacak_sayisi: i32,
+        // Savunma organını gizli tutalım
+        savunma_org: String,
+    }
 - title: Ön Yükleme Modülü
   content_markdown: |
     Şu ana kadar `Vec` ve `Box` türlerine `use` anahtar kelimesi kullanmak zorunda kalmadan nasıl eriştiğimizi merak ediyor olabilirsiniz. 

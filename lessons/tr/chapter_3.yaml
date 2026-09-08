@@ -14,8 +14,15 @@
 
 
     Derleyiciye açısından yapı tanımı ise, bellekteki alanların birbirine ne kadar yakın yerleştirileceğini belirten bir şemaya benzetilebilir.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=222882553c5c99a43dec043ae2d747f9
+  code: |
+    struct DenizCanlisi {
+        // String türü de bir yapıdır
+        canli_turu: String,
+        isim: String,
+        kol_sayisi: i32,
+        bacak_sayisi: i32,
+        savunma_org: String,
+    }
 - title: Çağrı Yöntemleri
   content_markdown: >
     Belirli bir veri türüyle ilişkilendirdiğimiz işlevlere yöntem adı veririz. Rust yöntemleri çağrılma şekillerine göre iki şekilde adlandırılır: 
@@ -28,8 +35,13 @@
 
 
     Kendi yöntemlerinizi nasıl oluşturacağımızı ilerleyen bölümlerde öğreneceğiz.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=82c61f429f697097fc65c28f42d53f03
+  code: |
+    fn main() {
+        // Statik yöntem kulanarak bir dizgi örneği oluşturmak
+        let s = String::from("Merhaba Dunya!");
+        // Oluşturulan örnek üzerinde başka bir yöntem kullanmak
+        println!("{} {} karakter uzunlugundadir.", s, s.len());
+    }
 - title: Bellek
   content_markdown: >
     Rust programlarında veriler belleğin üç ayrı bölgesinde depolanırlar:
@@ -77,13 +89,55 @@
 
     * Nihayetinde, *Ferris* ve *Sarah* adlı bu arkadaşlarımız, bellekte daima sabit biçimde konumlandırılacaklarından, *stack memory* 
       yani **yığın bölümüne** yerleştirilecek veri yapılarına sahip olacaklardır.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=706295cdac14dbc8beaf8fc4967c1efe
+  code: |
+    struct DenizCanlisi {
+        turu: String,
+        adi: String,
+        kolu: i32,
+        ayagi: i32,
+        organi: String,
+    }
+
+    fn main() {
+        // DenizCanlisi'nın stack bölgesindeki verileri
+        let ferris = DenizCanlisi {
+            // String yapısı da stack bölgesindedir ancak
+            // heap üzerindeki verilere bir referans sağlar,
+            turu: String::from("yengeç"),
+            adi: String::from("Ferris"),
+            kolu: 2,
+            ayagi: 4,
+            organi: String::from("kıskaç"),
+        };
+
+        let sarah = DenizCanlisi {
+            turu: String::from("ahtapot"),
+            adi: String::from("Sarah"),
+            kolu: 8,
+            ayagi: 0,
+            organi: String::from("diş"),
+        };
+
+        println!(
+            "{}, {} kollu, {} bacaklı, {} ile yemek yiyen bir {}",
+            ferris.adi, ferris.kolu, ferris.ayagi, ferris.organi, ferris.turu,
+        );
+        println!(
+            "{}, {} kollu, {} bacaklı, {} ile yemek yiyen bir {}",
+            sarah.adi, sarah.kolu, sarah.ayagi, sarah.organi, sarah.turu,
+        );
+    }
 - title: Çokuzlu Benzeri Yapılar
   content_markdown: |
     Daha kısa ve pratik olmak isterseniz çokuzlu benzeri yapılar kullanabilirsiniz.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=2787ca42bcd61218745843b1adeeb3bf
+  code: |
+    struct Konum(i32, i32);
+
+    fn main() {
+        // Bu yapı da stack bölgesindedir
+        let yer = Konum(42, 32);
+        println!("{}, {}", yer.0, yer.1);
+    }
 - title: Birim Benzeri Yapılar
   content_markdown: >
     Herhangi bir üyeye sahip olmayan bu yapı türü boş bir çokuzluya benzer.
@@ -95,8 +149,12 @@
 
     Bu tür yapılar nadiren kullanılmakla beraber, içlerinde veri tutmadıklarından, 
     uygulamalara özellik eklerken faydalıdırlar.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=e5f9c04919adb415abaf802dde54671a
+  code: |
+    struct Nokta;
+
+    fn main() {
+        let _n = Nokta;
+    }
 - title: Numaralandırmalar
   content_markdown: >
     `enum` anahtar sözcüğüyle tanımlanan ve kapsamındaki olası değerler listesinden, değerleri belirgin yeni bir tür oluşumuna izin veren yapılardır.
@@ -104,8 +162,40 @@
 
     Örüntü eşlemede kullandığımız `match` sözcüğü, tüm olası enum değerlerini etraflıca işlemeye yardımcı olduğundan, numaralandırmalar 
     kaliteli kod üretiminde güçlü birer araçtır.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=373c6a6604cd9ddd4de6f16d380a70e5
+  code: |
+    #![allow(dead_code)] // Bu satır derleyici uyarılarını bastırır
+
+    enum Tur {
+        Yengec,
+        Ahtapot,
+        Balik,
+        Midye,
+    }
+
+    struct DenizCanlisi {
+        turu: Tur,
+        adi: String,
+        kolu: i32,
+        ayagi: i32,
+        organi: String,
+    }
+
+    fn main() {
+        let maskot = DenizCanlisi {
+            turu: Tur::Yengec,
+            adi: String::from("Ferris"),
+            kolu: 2,
+            ayagi: 4,
+            organi: String::from("kıskaç"),
+        };
+
+        match maskot.turu {
+            Tur::Yengec => println!("{} bir yengeçtir", maskot.adi),
+            Tur::Ahtapot => println!("{} bir ahtapottur", maskot.adi),
+            Tur::Balik => println!("{} bir balıktır", maskot.adi),
+            Tur::Midye => println!("{} bir midyedir", maskot.adi),
+        }
+    }
 - title: Veriler ve Numaralandırmalar
   content_markdown: >
     `enum` öğeleri C'deki *birlik*ler gibi davranmalarına izin veren bir veya daha fazla veri türüne sahip olabilir.
@@ -126,8 +216,67 @@
     * Rust'ın `enum`ları, *tagged union* olarak bilinen etiketli birliklerdir.
 
     * Rust *cebirsel türler*e sahiptir denildiğinde anlatılmak istenen; türlerin, yeni bir tür oluşturmak amacıyla birleştirilmesinden başka bir şey değildir.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=377f65f1c68fd2e2375ec30513a17080
+  code: |
+    #![allow(dead_code)] // Bu satır derleyici uyarılarını bastırır
+
+    enum Tur {
+        Yengec,
+        Ahtapot,
+        Balik,
+        Midye,
+    }
+    enum ZehirTuru {
+        Asidik,
+        Acili,
+        Olumcul,
+    }
+    enum Boy {
+        Buyuk,
+        Kucuk,
+    }
+    enum Organ {
+        Yengec(i32, Boy),
+        Zehir(ZehirTuru),
+        None,
+    }
+
+    struct DenizCanlisi {
+        tur: Tur,
+        isim: String,
+        kol: i32,
+        ayak: i32,
+        organ: Organ,
+    }
+
+    fn main() {
+        // DenizCanlisi verileri stack üzerinde
+        let maskot = DenizCanlisi {
+            // Dizge yapısı da stack üzerinde olmasına rağmen
+            // heap üzerindeki veriler için referanstır
+            tur: Tur::Yengec,
+            isim: String::from("Ferris"),
+            kol: 2,
+            ayak: 4,
+            organ: Organ::Yengec(2, Boy::Kucuk),
+        };
+
+        match maskot.tur {
+            Tur::Yengec => match maskot.organ {
+                Organ::Yengec(kiskac_boyu, boy) => {
+                    let aciklamasi = match boy {
+                        Boy::Buyuk => "kocaman",
+                        Boy::Kucuk => "minnak",
+                    };
+                    println!(
+                        "Ferris {} {} kıskaçlı bir yengeçtir.",
+                        kiskac_boyu, aciklamasi
+                    )
+                }
+                _ => println!("Ferris değişik kıskaç yapsına sahip bir yengeçtir"),
+            },
+            _ => println!("Ferris başka bir deniz canlısı türüdür"),
+        }
+    }
 - title: Bölüm 3 - Sonuç
   content_markdown: >
     Artık fikirlerimizi kodlarla ifade edebileceğimiz temel araçlara kavuşmamız harika! Umuyorum bu bölümde Rust'un temel işlemlerinin, 

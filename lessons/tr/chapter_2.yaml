@@ -11,8 +11,17 @@
 
     daha rahat okunabilir olmasını sağlar. Parantezlerin yokluğu mantıksal işleçlerin çalışmasını engellemeyeceğinden, 
     bu işleçlerin her birini: `!`, `!=`, `||`, `&&`, `<`, `>`, `<=`, `>=` yandaki örnek kod üzerinde kolaylıkla deneyip değerlendirebilirsiniz.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=cbfce3343b7aec9e6e1751ed59aca1cd
+  code: |
+    fn main() {
+        let x = 42;
+        if x < 42 {
+            println!("42'den küçük");
+        } else if x == 42 {
+            println!("42");
+        } else {
+            println!("42'den büyük");
+        }
+    }
 - title: loop
   content_markdown: |
     Bir sonsuz döngüye ihtiyaç duyduğunuzda, Rust bu işi sizin için kolaylaştırır.
@@ -22,16 +31,32 @@
 
 
     `loop` anahtar kelimesininin sırlarını keşfetmeye ilerleyen bölümlerde devam edeceğiz.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=aada356c9d6b188558e28d342c1bf99f
+  code: |
+    fn main() {
+        let mut x = 0; // değişkenin mutable seçildiğine dikkat edin!
+        loop {
+            x += 1;
+            if x == 42 {
+                break;
+            }
+        }
+        println!("{}'ye kadar saydım", x);
+    }
 - title: while
   content_markdown: |
     `while` Anahtar kelimesi bir döngüye kolayca koşul eklemenizi sağlar.
 
 
     Koşul `true` olduğu sürece işletilen bu döngüden, koşul `false` olduğunda çıkılır.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=8d051861c1d797a49e3085f50c93869b
+  code: |
+    fn main() {
+        let mut x = 0;
+        while x != 42 {
+            // Koşul doğru olduğu sürece işletilir.
+            x += 1;
+        }
+        println!("Koşul {}'de tamamlandı.", x);
+    }
 - title: for
   content_markdown: >
     Rust'un `for` döngüsü, yineleyici olarak değerlendirilen bir ifadenin, elemanları üzerinde yineleme yapılmasına izin veren güçlü bir yükseltmedir.
@@ -47,8 +72,20 @@
 
 
     `..=` işleci ise, verilen aralığın hem başlangıç, hem bitiş sınırını kapsayan elemanlarının üretildiği bir yineleyici oluşturur.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=65a8e9a66cd8caa0388358089b4da408
+  code: |
+    fn main() {
+        // aralığın başı dahil sonu hariç
+        for i in 0..5 {
+            print!("{} ", i);
+        }
+
+        println!();
+
+        // aralığın başı ve sonu dahil
+        for i in 5..=10 {
+            print!("{} ", i);
+        }
+    }
 - title: match
   content_markdown: >
     Aramızda "switch" ifadesini ne zaman değineceğimizi merak edenleriniz mutlaka vardır. 
@@ -63,13 +100,48 @@
 
 
     Rust'ta göreceğiniz en yaygın eşleme modellerinden biri ise yıkım ile birleştirilen eşleme modelidir.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=433d6db81762c5c4df175ed356edb27d
+  code: |
+    fn main() {
+        let x = 42;
+
+        match x {
+            0 => {
+                println!("Değer 0");
+            }
+            // Farklı sayıda değerle eşleştirebiliriz
+            1 | 2 => {
+                println!("Değer 1 ya da 2!");
+            }
+            // Yineleyicilerle eşleştirebiliriz
+            3..=9 => {
+                println!("Değer 3 ile 9 arasında");
+            }
+            // @ kullanarak eşleşen değeri bir değişkene bağlayabiliriz
+            eslesen_sayi @ 10..=100 => {
+                println!("({}) 10 ile 100 arasında bir sayıdır!", eslesen_sayi);
+            }
+            // Olası tüm eşleşmelerin değerlendirilmediği
+            // durumlarda varsayılan eşleştirmedir.
+            _ => {
+                println!("Bir takım değerler buldum!");
+            }
+        }
+    }
 - title: loop İçinden Değer Döndürmek
   content_markdown: |
     `loop` içinden değer döndürebilmek için, break anahtar kelimesinden yararlanabilirsiniz.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=cafe5810ccfdeb9be074666b4d4f8789
+  code: |
+    fn main() {
+        let mut x = 0;
+
+        let lidd = loop {
+            x += 1;
+            if x == 13 {
+                break "değer 13"; // sayısal değerlerle deneyin
+            }
+        };
+        println!("Loop içinden  dönen: {}", lidd);
+    }
 - title: Blok İfadelerinden Değer Döndürmek
   content_markdown: >
     `if`, `match`, işlevler veya kapsam bloklarının her biri, Rust'ta değer döndürmenin benzersiz bir yoludur.
@@ -81,8 +153,40 @@
 
 
     Bu kestirme yöntemine dikkat ettiğinizde, `if` deyiminin tıpkı bir üçlü ifadeymişcesine kullanılabilir hale geldiğini görüyorsunuz değil mi?
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=2f973c9f4d6227c272b374ce66a57617
+  code: |
+    fn ornek() -> i32 {
+        let x = 42;
+
+        // Rust'ın üçlü ifadesi
+        let v = if x < 42 { -1 } else { 1 };
+        println!("if deyiminden dönen değer: {}", v);
+
+        let yemek = "yengen";
+        let sonuc = match yemek {
+            "lahmacun" => "bu bir lahmacun",
+            // Yalnızca tek bir dönüş ifadesi olduğunda
+            // küme parantezlerinin isteğe bağlı olduğuna dikkat edin
+            _ => "bu bir lahmacun değil",
+        };
+        println!("Yemek tanısı: {}", sonuc);
+
+        let kd = {
+            // Bu kapsam bloğu, işlev kapsamı kirletilmeden
+            // sonuç döndürülmesini sağlar
+            let a = 1;
+            let b = 2;
+            a + b
+        };
+        println!("Kapsamdan dönen değer: {}", kd);
+
+        // Son olarak Rust'ta bir işlevden
+        // değer döndürmenin deyimsel yolu
+        v + 4
+    }
+
+    fn main() {
+        println!("İşlevden dönen değer: {}", ornek());
+    }
 - title: Bölüm 2 - Sonuç
   content_markdown: >
     En temel özelliklerine şöyle bir göz atmakla bile, Rust'ın ne kadar güçlü ve yetenekli olduğunu fark ettiğinizi umuyorum. 

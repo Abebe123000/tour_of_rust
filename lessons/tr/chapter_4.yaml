@@ -13,8 +13,35 @@
     Türlerin genellenerek tektipleştirildiği programlarda nihai tür, kod bağlamımının derleyici tarafından değerlendirimesiyle elde edilmektedir. 
     Bununla birlikte bazı durumlarda, tür çıkarsama işlemi karmaşaya neden olabileceğinden, türün açıkça bildirilmesi gerekebilir. 
     Bu gibi durumlarda bir yengecin en iyi arkadaşı olan ve benim de çok sevdiğim, `turbofish` adıyla bilinen `::<T>` işlecini kullanabilirsiniz.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=34b3b80e42200b1b8ac78fd48953e4b0
+  code: |
+    // Kısmen tanımlanmış bir yapı
+    struct Canta<T> {
+        esya: T,
+    }
+
+    fn main() {
+        // Genel türleri kullanmamamız, derleme zamanında
+        // somutlaştırılacak türler oluşturmamızı sağlar.
+        // Turbofish kullanımı türü açıkça bildirmemize izin verir
+        let i32_canta = Canta::<i32> { esya: 42 };
+        let bool_canta = Canta::<bool> { esya: true };
+
+        // Rust genelleştirilmiş türleri çıkarsayabilir
+        let float_canta = Canta { esya: 3.14 };
+
+        // Uyarı: Gerçek hayatta hiç bir zaman bir
+        // çantayı başka bir çanta içine koymayın!
+        let canta_icinde_canta = Canta {
+            esya: Canta {
+                esya: "Güüüüm!"
+            },
+        };
+
+        println!(
+            "{} {} {} {}",
+            i32_canta.esya, bool_canta.esya, float_canta.esya, canta_icinde_canta.esya.esya
+        );
+    }
 - title: Boş Değer Gösterimi
   content_markdown: >
     Pek çok programlama dilinde `null` anahtar sözcüğü, değer yokluğunun temsilinde kullanılır. Bu değerin varlık ya da yokluğunun denetlenmememesi, 
@@ -27,8 +54,16 @@
 
     Rust'ta `null` değerlerin yokluğu, olmayan değerlerin olası tüm hallerini temsil eden ve **hiç biri** anlamına gelen `None` ifadesinin, 
     genelleştirilen türler aracılığıyla kullanılmasına neden olur.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=ec66249d0fff94707bdda579060a80ca
+  code: |
+    enum Esya {
+        EsyaListesi(String),
+        // None, bir eşyanın yoklugunu temsil eder
+        None,
+    }
+
+    struct Canta {
+        esya: Esya,
+    }
 - title: Option
   content_markdown: >
     Rust'ta yerleşik olarak gelen ve boş değerlerin `null` kullanılmadan temsil edilmesine izin veren, `Option` adında genelleştirilmiş bir `enum` türü bulunur.
@@ -43,8 +78,40 @@
 
 
     Yaygın olarak kullanılan bu türün örnekleri, `Some` ve `None` varyantlarının bir araya getirilmesiyle oluşturulur.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=9f2adf5110ed3c07cee885b23ae43ac4
+  code: |
+    // Kısmen tanımlanmış bir yapı türü
+    struct Canta<T> {
+        // Parametre türümüz T başka türler ile de kullanılabilir.
+        esya: Option<T>,
+    }
+
+    fn main() {
+        // Rust'ın hiçbir şey tutmayan i32 türündeki çantanın
+        // türünü anlayabilmesi için tür açıkça bildirilmelidir.
+
+        let i32_canta = Canta::<i32> { esya: None };
+
+        if i32_canta.esya.is_none() {
+            println!("İlk çantada hiçbir şey yok!")
+        } else {
+            println!("İlk çantada bir şeyler var!")
+        }
+
+        let i32_canta = Canta::<i32> { esya: Some(42) };
+
+        if i32_canta.esya.is_some() {
+            println!("Sonraki çantada bir şeyler var!")
+        } else {
+            println!("Sonraki çantada hiçbir şey yok!")
+        }
+
+        // match  Option'u zarif bir şekilde çözümlememize
+        // ve olası tüm durumları ele almamızı sağlıyor!
+        match i32_canta.esya {
+            Some(d) => println!("Çantada bir {} değeri var!", d),
+            None => println!("Çantamız boş!"),
+        }
+    }
 - title: Result
   content_markdown: >
     Rust, yerleşik olarak gelen ve kodun başarısız olması durumunda değer döndürmemize izin veren, `Result` adında genellenmiş 
@@ -63,13 +130,56 @@
 
 
     Sıklıkla kullanılan `Result` türü örneklerini, dilediğiniz yer ve zamanda `Ok` ve `Err` varyantlarını belirterek oluşturulabilirsiniz.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=bd84e6a7e499eeed58b552fa6a01c46a
+  code: |
+    fn basarisiz_durum_olustur(i: i32) -> Result<f32, String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("Bu doğru bir sayı değil!"))
+        }
+    }
+
+    fn main() {
+        let sonuc = basarisiz_durum_olustur(12);
+
+        // match, sonucu zarif bir şekilde yeniden yapılandırmamıza
+        // ve olası tüm durumları ele almamıza izin verir!
+        match sonuc {
+            Ok(d) => println!("Bulunan sayı: {}", d),
+            Err(e) => println!("Hata: {}", e),
+        }
+    }
 - title: Main İşlevinden Hata Döndürmek
   content_markdown: |
     Programlarımızın giriş noktası olan `main` işlevi, `Result` türü varyantlarına sarılı değerleri elde etme yeteneğine sahiptir!
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=3e94d4f7ce2eb234f26196dc2a319192
+  code: |
+    fn basarisiz_durum_olustur(i: i32) -> Result<f32, String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("Bu doğru bir sayı değil!"))
+        }
+    }
+
+    // Main işlevi değer değil sadece bir hata döndürebilir.
+    fn main() -> Result<(), String> {
+        let sonuc = basarisiz_durum_olustur(12);
+
+        match sonuc {
+            Ok(d) => println!("Bulunan sayı: {}", d),
+            Err(_e) => {
+                // bu hatayı zarif biçimde değerlendirin
+
+                // Main işlevinde sorun olduğunu bildiren yeni bir hata döndür!
+                return Err(String::from("main işlevinde ters giden bir şeyler var!"));
+            }
+        }
+
+        // Her şeyin doğru düzgün işlediğini bildirmek için
+        // Result Ok içinde bir değer kullandığımıza dikkat edin.
+
+        Ok(())
+    }
 - title: Hataları Zarif Şekilde İşlemek
   content_markdown: >
     `Result` türü o kadar yaygın kullanılmaktadır ki, Rust kendisiyle çalışabilmek için güçlü bir `?` işleci sunar. 
@@ -86,8 +196,21 @@
         Err(e) => return Err(e),
     }
     ```
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=fd595fdb472487112b142315a5c5872e
+  code: |
+    fn basarisiz_durum_olustur(i: i32) -> Result<f32, String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("Bu doğru bir sayı değil!"))
+        }
+    }
+
+    fn main() -> Result<(), String> {
+        // Azalttığımız kod satırlarına bakın!
+        let d = basarisiz_durum_olustur(42)?;
+        println!("Bulunan sayı: {}", d);
+        Ok(())
+    }
 - title: Option/Result Türlerini Üstünkörü İşlemek
   content_markdown: >
     Bir programı hızlıca yazıp bitirmek gerektiğinde, `Option`/`Result` türlerini ayrı ayrı işlemek size yorucu gelebilir. Bu tür durumlarla karşılaştığınızda,
@@ -141,8 +264,27 @@
 
 
     Ferris'in kıskaçlarını görür gibiyim: "İyi bir **rustacean** olun ve gerektiği hallerde `match` ifadesini doğru şekilde kullanın!"
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=c6cbfcbf896a9a9570a769078db7d6c7
+  code: |
+    fn basarisiz_durum_olustur(i: i32) -> Result<f32, String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("Bu doğru bir sayı değil!"))
+        }
+    }
+
+    fn main() -> Result<(), String> {
+        // Hızlı ama bir değerin mevcut olduğunu varsaydığından
+        // kod gittikçe çirkinleşmeye başar.
+        let v = basarisiz_durum_olustur(42).unwrap();
+        println!("Bulunan sayı: {}", v);
+
+        // Burada panik üretilecektir.
+        let v = basarisiz_durum_olustur(1).unwrap();
+        println!("Bulunan sayı: {}", v);
+
+        Ok(())
+    }
 - title: Vektörler
   content_markdown: >
     Koleksiyonlar kullanışlı şekilde genelleştirilebilen veri yapılarıdır. Bir koleksiyon türü olan `Vec` ise, içeriği dinamik olarak 
@@ -160,8 +302,30 @@
     * `Vec` aslında bir yapı olmasına rağmen, öbek üzerinde konumlandırılan elemanlarının sabit uzunluktaki listesine atıf yapan bir referans içermektedir.
 
     * Belleğin öbek kısmında tutulduklarından, varsayılan kapasiteleri aşıldığı hallerde, daha büyük bir kapasiteyle yeniden konumlandırılırlar.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=3dcf1f039ab999e485d2c6e562024479
+  code: |
+    fn main() {
+        // Vektör türünü açıkça bildirebiliriz.
+        let mut vec_i32 = Vec::<i32>::new(); // turbofish <3
+        vec_i32.push(1);
+        vec_i32.push(2);
+        vec_i32.push(3);
+        println!("{:?}", vec_i32);
+
+        // Rust'un otomatik tür çıkarımı yeteneğine bakın!
+        let mut vec_kesirli = Vec::new();
+        vec_kesirli.push(1.3);
+        vec_kesirli.push(2.3);
+        vec_kesirli.push(3.4);
+
+        println!("{:?}", vec_kesirli);
+
+        //  Çok güzel bir makro!
+        let vec_dizge = vec![String::from("Merhaba"), String::from("Dünya")];
+
+        for kelime in vec_dizge.iter() {
+            println!("{}", kelime);
+        }
+    }
 - title: Bölüm 4 - Sonuç
   content_markdown: >
     Türleri genelleyerek kullanmanın kodlarımızı ne kadar güçlü ve esnek hale getirebildiğini fark ettiniz değil mi? Bu bölümde anlattığım konuların

@@ -9,6 +9,12 @@
  *   3. every Playground URL pair decodes to the exact same Rust source
  *      (this is the actual regression we care about).
  *
+ * A URL pair that changes from a `gist=<id>` reference to an inline `code=`
+ * source (the migration in issue #13) is a special case of (3): since the
+ * gist URL carries no source itself, it's checked by fetching the id's code
+ * from Playground's public gist API and comparing that against the new
+ * inline source, instead of comparing the two URLs directly.
+ *
  * Usage: node scripts/verify-build-equivalence.js <old-dir> <new-dir>
  */
 const fs = require('fs');
@@ -17,6 +23,27 @@ const { parsePlaygroundUrl, decodePlaygroundCode } = require('./lib/playground')
 
 const PLAYGROUND_URL_RE = /https:\/\/play\.rust-lang\.org\/\?[^"]*/g;
 const PLACEHOLDER = '__PLAYGROUND_URL__';
+const GIST_API_ORIGIN = 'https://play.rust-lang.org/meta/gist/';
+
+const gistCodeCache = new Map();
+
+/**
+ * @param {string} gistId
+ * @returns {Promise<string>} the gist's raw Rust source
+ */
+async function fetchGistCode(gistId) {
+  if (gistCodeCache.has(gistId)) return gistCodeCache.get(gistId);
+  const res = await fetch(`${GIST_API_ORIGIN}${gistId}`);
+  if (!res.ok) {
+    throw new Error(`gist ${gistId}: request failed with HTTP ${res.status}`);
+  }
+  const body = await res.json();
+  if (typeof body.code !== 'string') {
+    throw new Error(`gist ${gistId}: response had no 'code' field`);
+  }
+  gistCodeCache.set(gistId, body.code);
+  return body.code;
+}
 
 function listHtmlFiles(dir) {
   return fs
@@ -30,11 +57,22 @@ function normalize(content) {
   return content.replace(PLAYGROUND_URL_RE, PLACEHOLDER);
 }
 
-function comparePlaygroundUrls(oldUrl, newUrl) {
+async function comparePlaygroundUrls(oldUrl, newUrl) {
   const oldParsed = parsePlaygroundUrl(oldUrl);
   const newParsed = parsePlaygroundUrl(newUrl);
   if (!oldParsed || !newParsed) {
     return oldUrl === newUrl ? null : `unparsable URL changed: ${oldUrl} -> ${newUrl}`;
+  }
+  if (oldParsed.gist && !newParsed.gist && newParsed.code != null) {
+    // Migrated from a gist= reference to an inline code= source (#13): the
+    // URL is expected to change, so verify against the gist's actual
+    // content instead of comparing the two URLs.
+    const gistCode = await fetchGistCode(oldParsed.gist);
+    const newCode = decodePlaygroundCode(newParsed.code);
+    if (gistCode !== newCode) {
+      return `gist ${oldParsed.gist} migrated to different code:\n--- gist ---\n${gistCode}\n--- new ---\n${newCode}`;
+    }
+    return null;
   }
   if (oldParsed.gist || newParsed.gist) {
     if (oldUrl !== newUrl) {
@@ -60,7 +98,7 @@ function comparePlaygroundUrls(oldUrl, newUrl) {
   return null;
 }
 
-function main() {
+async function main() {
   const [, , oldDir, newDir] = process.argv;
   if (!oldDir || !newDir) {
     console.error('Usage: node scripts/verify-build-equivalence.js <old-dir> <new-dir>');
@@ -78,33 +116,38 @@ function main() {
 
   let totalUrlsCompared = 0;
 
-  [...oldFiles]
-    .filter((f) => newFiles.has(f))
-    .forEach((file) => {
-      const oldContent = fs.readFileSync(path.join(oldDir, file), 'utf8');
-      const newContent = fs.readFileSync(path.join(newDir, file), 'utf8');
+  const sharedFiles = [...oldFiles].filter((f) => newFiles.has(f));
+  // eslint-disable-next-line no-restricted-syntax
+  for (const file of sharedFiles) {
+    const oldContent = fs.readFileSync(path.join(oldDir, file), 'utf8');
+    const newContent = fs.readFileSync(path.join(newDir, file), 'utf8');
 
-      const oldUrls = oldContent.match(PLAYGROUND_URL_RE) || [];
-      const newUrls = newContent.match(PLAYGROUND_URL_RE) || [];
+    const oldUrls = oldContent.match(PLAYGROUND_URL_RE) || [];
+    const newUrls = newContent.match(PLAYGROUND_URL_RE) || [];
 
-      if (normalize(oldContent) !== normalize(newContent)) {
-        problems.push(`${file}: non-Playground-URL content differs`);
-        return;
+    if (normalize(oldContent) !== normalize(newContent)) {
+      problems.push(`${file}: non-Playground-URL content differs`);
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+
+    if (oldUrls.length !== newUrls.length) {
+      problems.push(`${file}: Playground URL count differs (${oldUrls.length} -> ${newUrls.length})`);
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+
+    // eslint-disable-next-line no-await-in-loop
+    const urlProblems = await Promise.all(
+      oldUrls.map((oldUrl, i) => comparePlaygroundUrls(oldUrl, newUrls[i])),
+    );
+    totalUrlsCompared += oldUrls.length;
+    urlProblems.forEach((problem, i) => {
+      if (problem) {
+        problems.push(`${file} (playground url #${i}): ${problem}`);
       }
-
-      if (oldUrls.length !== newUrls.length) {
-        problems.push(`${file}: Playground URL count differs (${oldUrls.length} -> ${newUrls.length})`);
-        return;
-      }
-
-      oldUrls.forEach((oldUrl, i) => {
-        totalUrlsCompared += 1;
-        const problem = comparePlaygroundUrls(oldUrl, newUrls[i]);
-        if (problem) {
-          problems.push(`${file} (playground url #${i}): ${problem}`);
-        }
-      });
     });
+  }
 
   console.log(
     `Compared ${oldFiles.size} old / ${newFiles.size} new files, ${totalUrlsCompared} playground URLs.`,

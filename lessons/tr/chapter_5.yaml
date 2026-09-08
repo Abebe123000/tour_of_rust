@@ -8,8 +8,17 @@
   content_markdown: >
     Bir türü örnekleyerek onu bir değişken adıyla **bağlamak**, Rust derleyicisinin, **değişken var olduğu sürece** doğrulamak 
     zorunda kalacağı bellek kaynağı oluşturulmasına neden olur. Bu kaynak ile bağlanmış değişkenimiz ise kaynağın **sahibi** olarak adlandırılır.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=5f41134bac29b9c4080ec00904b86538
+  code: |
+    struct Yapi {
+        x: i32,
+    }
+
+    fn main() {
+        // Bellekte kaynak oluşturabilmek için
+        // yapı örneğini bir değişkene bağlarız.
+        let ornek = Yapi { x: 42 };
+        // verinin sahibi örnek değişkenidir
+    }
 - title: Kapsam Tabanlı Kaynak Yönetimi
   content_markdown: |
     Rust, bir kaynağın sonlandırılarak belleğe iade edilebilmesi için kapsamın bitiş noktasını baz alır.
@@ -22,7 +31,23 @@
     * Rust'ta çöp toplama özelliği bulunmaz.
         
     * C++'tan aşina olduğumuz bu yaklaşım, *Resource Acquisition Is Initialization* (RAII) olarak da bilinir.
-  code: https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=861c81bf9e474e5ecc35f9805d15eb83
+  code: |
+    struct Yapi {
+        x: i32,
+    }
+
+    fn main() {
+        let ornek_a = Yapi { x: 42 };
+        let ornek_b = Yapi { x: 13 };
+
+        println!("{}", ornek_a.x);
+        // ornek_a bu noktadan itibaren artık
+        // kullanılmadığından dolayı düşürülür.
+
+        println!("{}", ornek_b.x);
+        // ornek_b ise işlev kapsamının sonuna
+        // gelindiğinden ötürü bu noktada düşürülür.
+    }
 - title: Düşürmek Hiyerarşiktir
   content_markdown: >
     Bir yapı düşürüldüğünde başta yapının kendisi, ardından alt yapısını oluşturan tüm parçaları peşi sıra düşürülür.
@@ -33,8 +58,20 @@
     * Rust, kaynakları otomatik olarak serbest bırakarak bellek sızıntılarının azaltılmasına yardımcı olur.
 
     * Bellek kaynakları yalnızca bir kez serbest bırakılabilir.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=4289af6f547bdf86e374f16f8bde1fca
+  code: |
+    struct Bar {
+        x: i32,
+    }
+
+    struct Foo {
+        bar: Bar,
+    }
+
+    fn main() {
+        let foo = Foo { bar: Bar { x: 42 } };
+        println!("{}", foo.bar.x);
+        // Önce foo, daha sonra foo.bar serbest bırakılır
+    }
 - title: Mülkiyetin Taşınması
   content_markdown: >
     Kaynağın sahibi değişken, herhangi bir işleve argüman olarak iletildiğinde, o kaynağın mülkiyeti işlev parametresine taşınır. 
@@ -45,20 +82,57 @@
     Bellek ayrıntıları:
 
     * Mülkiyetin taşınması sırasında taşınanan değişkenle ilgili yığın öğeleri, çağrılan işlevin parametre yığınınına kopyalanır.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=2ef2fa06e1722653cfd7b89704c41eaf
+  code: |
+    struct Yapi {
+        x: i32,
+    }
+
+    fn bir_sey_yap(y: Yapi) {
+        println!("{}", y.x);
+        // y bu noktada düşürülür.
+    }
+
+    fn main() {
+        let ornek = Yapi { x: 42 };
+        // ornek bir_sey_yap işlevine taşındı
+        bir_sey_yap(ornek);
+        // ornek bu noktadan itibaren artık kullanılamaz.
+    }
 - title: Mülkiyetin İade Edilmesi
   content_markdown: |
     Bir değişkenin mülkiyeti, bir işlevin dönüş değeri olarak kullanılabilir.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=766aed828ee34a645e4bcf56adfcc86a
+  code: |
+    struct Yapi {
+        x: i32,
+    }
+
+    fn bir_sey_yap() -> Yapi {
+        Yapi { x: 42 }
+        // Mülkiyeti dışarıya aktarılır.
+    }
+
+    fn main() {
+        let yapi = bir_sey_yap();
+        // yapi kendi kaynağına yeniden sahip olur. Ancak
+        // bu defa da kapsam sonuna gelindiğinden düşürülür
+    }
 - title: Referanslar Yardımıyla Mülkiyeti Ödünç Almak
   content_markdown: |
     Referanslar bir kaynağın mülkiyetini `&` işleci yardımıyla ödünç almamızı sağlar.
 
     Tıpkı diğer kaynaklar gibi referanslar da sonlandırılarak serbest bırakılırlar.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=8072834cc36b79036959a34b8b72cbdc
+  code: |
+    struct Yapi {
+        x: i32,
+    }
+
+    fn main() {
+        let ornek = Yapi { x: 42 };
+        let o = &ornek;
+        println!("{}", o.x);
+        // önce o değişkeni, daha sonra
+        // ornek değişkeni düşürülür.
+    }
 - title: Referanslar Yardımıyla Değişebilen Mülkiyeti Ödünç Almak
   content_markdown: >
     Yine bir referans olanağı olan `&mut` işleci yardımıyla, değişebilen bir kaynağın mülkiyetini ödünç alabiliriz.
@@ -68,15 +142,59 @@
     Bellek ayrıntıları:
 
     * Rust, bir kaynağın birden fazla yerden değiştirilme ihtimalini, veri yarışlarına sebep olabileceğinden dolayı engeller.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=ebcab426b85e6c2031c54f18894689bc
+  code: |
+    struct Yapi {
+        x: i32,
+    }
+
+    fn bir_sey_yap(y: Yapi) {
+        println!("{}", y.x);
+        // y bu noktada düşürülür.
+    }
+
+    fn main() {
+        let mut ornek = Yapi { x: 42 };
+        let y = &mut ornek;
+
+        // BAŞARISIZ: bir_sey_yap(ornek);
+        // ornek, değişebilir referansla ödünç
+        // alındığından dolayı borç denetçisi
+        // tarafından taşınmasını engellenir.
+        // ve bir_sey_yap(ornek) başarısız olur.
+
+        // BAŞARISIZ: ornek.x = 13;
+        // ornek, y değişkenine değişebilir
+        // referansla borç olarak verildiğinden
+        // değiştilemesi `borç denetçisi` tarafından
+        // engellenir ve ifade başarısız olur.
+
+        y.x = 13;
+        // y bu noktadan sonra artık kullanılmadığından düşürülür.
+
+        println!("{}", ornek.x);
+
+        // Artık değişebilir referansların tamamı ortadan
+        // kalktığı için aşağıdaki ifade artık çalışır.
+        ornek.x = 7;
+
+        // ornek'in sahibi bir kez daha degistiğinden
+        // mülkiyeti bir_sey_yap işlev parametresine taşınır.
+        bir_sey_yap(ornek);
+    }
 - title: Referansı Kaldırmak
   content_markdown: >
     Bir kaynağa `&mut` ile değişebilir başvuru yapıldığında, o kaynağa ait değer `*` işleci kullanılarak yeniden ayarlanabilir.
 
     Akıllı işaretçiler bölümünde daha yakından inceleyeceğimiz bu işleç yardımıyla, kopyalama özelliği uygulayan bir türün kopyasına da erişmemiz mümkündür.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=045dd6870e253ec70b42c3832f88740a
+  code: |
+    fn main() {
+        let mut foo = 42;
+        let f = &mut foo;
+        let bar = *f; // sahibin tuttuğu değerin kopyasını alın
+        *f = 13; // Ve o değeri yeniden ayarlayın.
+        println!("{}", bar);
+        println!("{}", foo);
+    }
 - title: Ödünç Alınan Verinin Taşınması
   content_markdown: >
     Rust'un referans kuralları aşağıdaki şekilde özetlenebilir:
@@ -98,14 +216,50 @@
 
     * İkinci kuralımız ise, "C programlama dilinde sarkan işaretçiler olarak bilinen", **var olmayan verilere atıfta bulunan** referansların 
       kötüye kullanılmalarının önüne geçer.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=7daf3d8bea8cea0f0379f99e53014c5d
+  code: |
+    struct Yapi {
+        x: i32,
+    }
+
+    fn bir_sey_yap(y: &mut Yapi) {
+        y.x += 1;
+        // Değişebilir referans olan y burada düşürülür
+    }
+
+    fn main() {
+        let mut ornek = Yapi { x: 42 };
+        bir_sey_yap(&mut ornek);
+        // Tüm değişebilir referanslar varlıklarını bir_sey_yap
+        // işlevi kapsamında sürdürebileceklerinden yeni bir
+        // tane oluşturmamızda hiçbir sakınca olmaz
+
+        bir_sey_yap(&mut ornek);
+        // örnek ise bu noktada düşürülür.
+    }
 - title: Referansların Referansları
   content_markdown: |
     Bir referans, başka referans parçaları üzerinde bile kullanılabilir. 
     Başka bir ifadeyle, bir referans diğer bir referansa atıfta bulunabilir.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=2a8e8895d15c6c999f7420a2bf47b1cd
+  code: |
+    struct Yapi {
+        x: i32,
+    }
+
+    fn bir_sey_yap(a: &Yapi) -> &i32 {
+        return &a.x;
+    }
+
+    fn main() {
+        let mut ornek = Yapi { x: 42 };
+        let x = &mut ornek.x;
+        *x = 13;
+        // x'in burada düşürülmesiyle değiştirilemeyen
+        // bir referans oluşturmamıza izin verilir.
+        let y = bir_sey_yap(&ornek);
+        println!("{}", y);
+        // y bu noktada düşürülür, ardından
+        // ornek de bu noktada düşürülür.
+    }
 - title: Yaşam Sürelerini Açık Şekilde Belirtmek
   content_markdown: >
     Her ne kadar bu durum açıkça gösterilmiyor olsa da, derleyici her değişkenin yaşam süresine denetleyerek, bir referansın kaynağın asıl sahibinden 
@@ -117,15 +271,57 @@
 
 
     Yaşam süresi belirteçleri daima `'` ile başlar ve geleneksel olarak `'a` şeklinde belirtilir.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=9950081a6cc782eb1a5cb981cbf059b9
+  code: |
+    struct Yapi {
+        x: i32,
+    }
+
+    // İşlevin y parametresi ve dönüş değeri
+    // aynı yaşam süresini paylaşmaktadır.
+    fn bir_sey_yap<'a>(y: &'a Yapi) -> &'a i32 {
+        return &y.x;
+    }
+
+    fn main() {
+        let mut ornek = Yapi { x: 42 };
+        let x = &mut ornek.x;
+        *x = 13;
+        // x'in burada düşürülmesiyle değiştirilemeyen
+        // bir referans oluşturmamıza izin verilir.
+        let y = bir_sey_yap(&ornek);
+        println!("{}", y);
+        // y bu noktada düşürülür, ardından
+        // ornek de bu noktada düşürülür.
+    }
 - title: Çoklu Yaşam Süreleri
   content_markdown: >
     Yaşam süresi belirteçlerinin bir diğer faydası da, derleyicinin değişken ömürlerini anlayamadığı hallerde, 
     işlev parametreleri ve dönüş değeri ömürlerinin açıkça bildirilmelerine izin vermeleridir.
 
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=77d9498c956f35fe8db079d1697735a0
+  code: |
+    struct Yapi {
+        x: i32,
+    }
+
+    // ornek_b ve dönüş değeri aynı yaşam
+    //süresini paylaşmasına rağmen ornek_a
+    // alalakasız bir yaşam süresine sahiptir
+    fn bir_sey_yap<'a, 'b>(ornek_a: &'a Yapi, ornek_b: &'b Yapi) -> &'b i32 {
+        println!("{}", ornek_a.x);
+        println!("{}", ornek_b.x);
+        return &ornek_b.x;
+    }
+
+    fn main() {
+        let ornek_a = Yapi { x: 42 };
+        let ornek_b = Yapi { x: 12 };
+        let x = bir_sey_yap(&ornek_a, &ornek_b);
+        // bu noktadan itibaren sadece ornek_b var
+        // olacağından ornek_a bu noktada düşürülür.
+        println!("{}", x);
+        // x bu noktada düşürülür, ardından
+        // ornek_b'de  bu noktada düşürülür.
+    }
 - title: Statik Yaşam Süreleri
   content_markdown: >
     Açık tür bildirimiyle tanımlanan **static** değişkenler, derleme zamanında oluşturulan ve programın başından sonuna kadar var olan bellek kaynaklarıdır.
@@ -155,8 +351,26 @@
     * Rust, güvenli olmayan bazı bellek içi işlemlerin gerçekleştirilebilmesi için, bu işlemlerin `unsafe {...}` anahtar kelimesiyle işaretlenerek
       derleyicinin denetimi dışında tutulan bir blok içinde değerlendirilmesine izin verir. Ve [<span style="color:red; font-weight: bold;">R̸͉̟͈͔̄͛̾̇͜U̶͓͖͋̅Ṡ̴͉͇̃̉̀T̵̻̻͔̟͉́͆Ơ̷̥̟̳̓͝N̶̨̼̹̲͛Ö̵̝͉̖̏̾̔M̶̡̠̺̠̐͜Î̷̛͓̣̃̐̏C̸̥̤̭̏͛̎͜O̶̧͚͖͔̊͗̇͠N̸͇̰̏̏̽̃</span>](https://doc.rust-lang.org/nomicon/) 
       hakkında konuşulurken dikkatli olunmalıdır.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=f95fff1b1bf26d838b05d10ec9dcef04
+  code: |
+    static PI: f64 = 3.1415;
+
+    fn main() {
+        // statik değişkenler işlev kapsamına alınabilirler.
+        static mut GIZLI: &'static str = "Kılıçbalığı";
+
+        // dizge değişmezleri 'static yaşam sürelerine sahiplerdir
+        let ileti: &'static str = "Merhaba Dünya!";
+        let pi: &'static f64 = &PI;
+        println!("{} {}", ileti, pi);
+
+        // Açık olmak kaydıyla bazı kuralları çiğneyebilirsiniz
+        unsafe {
+            // GIZLI aynı zamanda bir `static olduğundan
+            // onu bir dizge değişmezine ayarlayabiliriz.
+            GIZLI = "abracadabra";
+            println!("{}", GIZLI);
+        }
+    }
 - title: Veri Türlerinin Yaşam Süresi
   content_markdown: >
     Gerektiğinde tıpkı işlevlerde olduğu gibi, veri türlerinin sahip olduğu yapı üyeleri ve alanları da yaşam süresi belirteçleriyle parametrelendirilir.
@@ -166,8 +380,16 @@
 
 
     Bu nedenle Rust derleyicisi, hiçbir şeye işaret etmeyen referansların bulunduğu bir yapıyı kullanmanıza izin vermez.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=24124ef1079ca1f569980202b8354228
+  code: |
+    struct Yapi<'a> {
+        i: &'a i32,
+    }
+
+    fn main() {
+        let x = 42;
+        let ornek = Yapi { i: &x };
+        println!("{}", ornek.i);
+    }
 - title: Bölüm 5 - Sonuç
   content_markdown: >
     Turun bu bölümüne kadar gelebildiğiniz için bir kutlamayı hak ediyorsunuz: Tebrikler:-)
