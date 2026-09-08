@@ -15,8 +15,12 @@
     สิ่งที่ทำให้การอ้างอิงแตกต่างจากตัวเลขปกติก็คือ Rust จะตรวจสอบ lifetime
     ของการอ้างอิงอยู่ตลอด ไม่ให้มันมีอายุยาวนานกว่าสิ่งที่มันชี้ไป (เพราะไม่เช่นนั้นเราจะเจอข้อผิดพลาดตอนที่ใช้มัน)
 - title: Raw Pointers
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20a%20%3D%2042%3B%0A%20%20%20%20let%20memory_location%20%3D%20%26a%20as%20*const%20i32%20as%20usize%3B%0A%20%20%20%20println!(%22Data%20is%20here%20%7B%7D%22%2C%20memory_location)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let a = 42;
+        let memory_location = &a as *const i32 as usize;
+        println!("Data is here {}", memory_location);
+    }
   content_markdown: >
     การอ้างอิงสามารถเปลี่ยนไปเป็น type ตั้งต้นที่เรียกว่า *raw pointer* ได้
     ซึ่งมันมีลักษณะเหมือนเลขปกติที่ คัดลอกได้เคลื่อนที่ได้โดยแทบจะไม่มีข้อจำกัด
@@ -106,8 +110,27 @@
 
     ```
 - title: Smart Pointers
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Aops%3A%3ADeref%3B%0Astruct%20TattleTell%3CT%3E%20%7B%0A%20%20%20%20value%3A%20T%2C%0A%7D%0Aimpl%3CT%3E%20Deref%20for%20TattleTell%3CT%3E%20%7B%0A%20%20%20%20type%20Target%20%3D%20T%3B%0A%20%20%20%20fn%20deref(%26self)%20-%3E%20%26T%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%20was%20used!%22%2C%20std%3A%3Aany%3A%3Atype_name%3A%3A%3CT%3E())%3B%0A%20%20%20%20%20%20%20%20%26self.value%0A%20%20%20%20%7D%0A%7D%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo%20%3D%20TattleTell%20%7B%0A%20%20%20%20%20%20%20%20value%3A%20%22secret%20message%22%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20%2F%2F%20dereference%20occurs%20here%20immediately%20%0A%20%20%20%20%2F%2F%20after%20foo%20is%20auto-referenced%20for%20the%0A%20%20%20%20%2F%2F%20function%20%60len%60%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo.len())%3B%0A%7D%0A
+  code: |
+    use std::ops::Deref;
+    struct TattleTell<T> {
+        value: T,
+    }
+    impl<T> Deref for TattleTell<T> {
+        type Target = T;
+        fn deref(&self) -> &T {
+            println!("{} was used!", std::any::type_name::<T>());
+            &self.value
+        }
+    }
+    fn main() {
+        let foo = TattleTell {
+            value: "secret message",
+        };
+        // dereference occurs here immediately 
+        // after foo is auto-referenced for the
+        // function `len`
+        println!("{}", foo.len());
+    }
   content_markdown: >
     นอกเหนือจากความสามารถในการสร้างตัวอ้างอิงให้กับข้อมูลของ type ที่มีอยู่จริง
     ด้วยการใช้ตัวดำเนินการ `&` แล้ว Rust มีอีกความสามารถหนึ่งนั่นคือการสร้าง
@@ -124,8 +147,25 @@
     โดยทั่วไป smart pointers จะอิมพลีเมนต์ Trait เหล่านี้ `Deref`, `DerefMut`, และ `Drop`
     เพื่อกำหนดทิศทางให้ ตรรกะว่าจะเกิดอะไรขึ้นเมื่อ struct พยายาม dereference ด้วยตัวดำเนินการ `*` และ `.`
 - title: Smart Unsafe Code
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20a%3A%20%5Bu8%3B%204%5D%20%3D%20%5B86%2C%2014%2C%2073%2C%2064%5D%3B%0A%20%20%20%20%2F%2F%20this%20is%20a%20raw%20pointer.%20Getting%20the%20memory%20address%0A%20%20%20%20%2F%2F%20of%20something%20as%20a%20number%20is%20totally%20safe%0A%20%20%20%20let%20pointer_a%20%3D%20%26a%20as%20*const%20u8%20as%20usize%3B%0A%20%20%20%20println!(%22Data%20memory%20location%3A%20%7B%7D%22%2C%20pointer_a)%3B%0A%20%20%20%20%2F%2F%20Turning%20our%20number%20into%20a%20raw%20pointer%20to%20a%20f32%20is%0A%20%20%20%20%2F%2F%20also%20safe%20to%20do.%0A%20%20%20%20let%20pointer_b%20%3D%20pointer_a%20as%20*const%20f32%3B%0A%20%20%20%20let%20b%20%3D%20unsafe%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20This%20is%20unsafe%20because%20we%20are%20telling%20the%20compiler%0A%20%20%20%20%20%20%20%20%2F%2F%20to%20assume%20our%20pointer%20is%20a%20valid%20f32%20and%0A%20%20%20%20%20%20%20%20%2F%2F%20dereference%20it's%20value%20into%20the%20variable%20b.%0A%20%20%20%20%20%20%20%20%2F%2F%20Rust%20has%20no%20way%20to%20verify%20this%20assumption%20is%20true.%0A%20%20%20%20%20%20%20%20*pointer_b%0A%20%20%20%20%7D%3B%0A%20%20%20%20println!(%22I%20swear%20this%20is%20a%20pie!%20%7B%7D%22%2C%20b)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let a: [u8; 4] = [86, 14, 73, 64];
+        // this is a raw pointer. Getting the memory address
+        // of something as a number is totally safe
+        let pointer_a = &a as *const u8 as usize;
+        println!("Data memory location: {}", pointer_a);
+        // Turning our number into a raw pointer to a f32 is
+        // also safe to do.
+        let pointer_b = pointer_a as *const f32;
+        let b = unsafe {
+            // This is unsafe because we are telling the compiler
+            // to assume our pointer is a valid f32 and
+            // dereference it's value into the variable b.
+            // Rust has no way to verify this assumption is true.
+            *pointer_b
+        };
+        println!("I swear this is a pie! {}", b);
+    }
   content_markdown: >
     เรามักจะใช้ Smart pointers คู่กับ *unsafe* ในการเขียนโค้ดอยู่บ่อยครั้ง
     แต่ก็อย่างที่ได้กล่าวมาแล้วก่อนหน้านี้ว่า ของพวกนี้เป็นเครื่องมือพื้นฐานที่ Rust ใช้
@@ -148,8 +188,48 @@
 
     การใช้ Smart pointers *เพื่อ dereference ไปที่ raw pointers* แบบนี้มันชัดเจนดีว่ากำลังต้องการทำอะไร
 - title: เพื่อนที่คุ้นเคย
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Aalloc%3A%3A%7Balloc%2C%20Layout%7D%3B%0Ause%20std%3A%3Aops%3A%3ADeref%3B%0A%0Astruct%20Pie%20%7B%0A%20%20%20%20secret_recipe%3A%20usize%2C%0A%7D%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20new()%20-%3E%20Self%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20let's%20ask%20for%204%20bytes%0A%20%20%20%20%20%20%20%20let%20layout%20%3D%20Layout%3A%3Afrom_size_align(4%2C%201).unwrap()%3B%0A%0A%20%20%20%20%20%20%20%20unsafe%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20allocate%20and%20save%20the%20memory%20location%20as%20a%20number%0A%20%20%20%20%20%20%20%20%20%20%20%20let%20ptr%20%3D%20alloc(layout)%20as%20*mut%20u8%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20use%20pointer%20math%20and%20write%20a%20few%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20u8%20values%20to%20memory%0A%20%20%20%20%20%20%20%20%20%20%20%20ptr.write(86)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20ptr.add(1).write(14)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20ptr.add(2).write(73)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20ptr.add(3).write(64)%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20Pie%20%7B%20secret_recipe%3A%20ptr%20as%20usize%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%7D%0Aimpl%20Deref%20for%20Pie%20%7B%0A%20%20%20%20type%20Target%20%3D%20f32%3B%0A%20%20%20%20fn%20deref(%26self)%20-%3E%20%26f32%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20interpret%20secret_recipe%20pointer%20as%20a%20f32%20raw%20pointer%0A%20%20%20%20%20%20%20%20let%20pointer%20%3D%20self.secret_recipe%20as%20*const%20f32%3B%0A%20%20%20%20%20%20%20%20%2F%2F%20dereference%20it%20into%20a%20return%20value%20%26f32%0A%20%20%20%20%20%20%20%20unsafe%20%7B%20%26*pointer%20%7D%0A%20%20%20%20%7D%0A%7D%0Afn%20main()%20%7B%0A%20%20%20%20let%20p%20%3D%20Pie%3A%3Anew()%3B%0A%20%20%20%20%2F%2F%20%22make%20a%20pie%22%20by%20dereferencing%20our%20%0A%20%20%20%20%2F%2F%20Pie%20struct%20smart%20pointer%0A%20%20%20%20println!(%22%7B%3A%3F%7D%22%2C%20*p)%3B%0A%7D%0A
+  code: |
+    use std::alloc::{alloc, Layout};
+    use std::ops::Deref;
+
+    struct Pie {
+        secret_recipe: usize,
+    }
+
+    impl Pie {
+        fn new() -> Self {
+            // let's ask for 4 bytes
+            let layout = Layout::from_size_align(4, 1).unwrap();
+
+            unsafe {
+                // allocate and save the memory location as a number
+                let ptr = alloc(layout) as *mut u8;
+                // use pointer math and write a few 
+                // u8 values to memory
+                ptr.write(86);
+                ptr.add(1).write(14);
+                ptr.add(2).write(73);
+                ptr.add(3).write(64);
+
+                Pie { secret_recipe: ptr as usize }
+            }
+        }
+    }
+    impl Deref for Pie {
+        type Target = f32;
+        fn deref(&self) -> &f32 {
+            // interpret secret_recipe pointer as a f32 raw pointer
+            let pointer = self.secret_recipe as *const f32;
+            // dereference it into a return value &f32
+            unsafe { &*pointer }
+        }
+    }
+    fn main() {
+        let p = Pie::new();
+        // "make a pie" by dereferencing our 
+        // Pie struct smart pointer
+        println!("{:?}", *p);
+    }
   content_markdown: >
     คราวนี้เรามาพิจารณา smart pointers ที่เราเคยเห็นมาแล้วเช่น `Vec<T>` และ `String`
 
@@ -178,16 +258,53 @@
     [Layout](https://doc.rust-lang.org/std/alloc/struct.Layout.html )
     เพื่อเอาหน่วยความจำของคุณออกมาจัดการ
 - title: การจัดสรรพื้นที่ใน Heap
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Pie%3B%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20eat(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22tastes%20better%20on%20the%20heap!%22)%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20heap_pie%20%3D%20Box%3A%3Anew(Pie)%3B%0A%20%20%20%20heap_pie.eat()%3B%0A%7D%0A
+  code: |
+    struct Pie;
+
+    impl Pie {
+        fn eat(&self) {
+            println!("tastes better on the heap!")
+        }
+    }
+
+    fn main() {
+        let heap_pie = Box::new(Pie);
+        heap_pie.eat();
+    }
   content_markdown: >
     `Box` คือ smart pointer ที่อนุญาตให้เราย้ายข้อมูลจาก stack ไปไว้ใน heap ได้
 
 
     Dereferencing ช่วยให้เราสามารถใช้ heap ที่จัดสรรข้อมูลตามหลักสรีรศาสตร์ราวกับว่าเป็นข้อมูลเดิม
 - title: กลับมาที่ Main ที่ผิดพลาดได้ อีกครั้ง
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20core%3A%3Afmt%3A%3ADisplay%3B%0Ause%20std%3A%3Aerror%3A%3AError%3B%0A%0Astruct%20Pie%3B%0A%0A%23%5Bderive(Debug)%5D%0Astruct%20NotFreshError%3B%0A%0Aimpl%20Display%20for%20NotFreshError%20%7B%0A%20%20%20%20fn%20fmt(%26self%2C%20f%3A%20%26mut%20std%3A%3Afmt%3A%3AFormatter%3C'_%3E)%20-%3E%20std%3A%3Afmt%3A%3AResult%20%7B%0A%20%20%20%20%20%20%20%20write!(f%2C%20%22This%20pie%20is%20not%20fresh!%22)%0A%20%20%20%20%7D%0A%7D%0A%0Aimpl%20Error%20for%20NotFreshError%20%7B%7D%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20eat(%26self)%20-%3E%20Result%3C()%2C%20Box%3Cdyn%20Error%3E%3E%20%7B%0A%20%20%20%20%20%20%20%20Err(Box%3A%3Anew(NotFreshError))%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20-%3E%20Result%3C()%2C%20Box%3Cdyn%20Error%3E%3E%20%7B%0A%20%20%20%20let%20heap_pie%20%3D%20Box%3A%3Anew(Pie)%3B%0A%20%20%20%20heap_pie.eat()%3F%3B%0A%20%20%20%20Ok(())%0A%7D%0A
+  code: |
+    use core::fmt::Display;
+    use std::error::Error;
+
+    struct Pie;
+
+    #[derive(Debug)]
+    struct NotFreshError;
+
+    impl Display for NotFreshError {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "This pie is not fresh!")
+        }
+    }
+
+    impl Error for NotFreshError {}
+
+    impl Pie {
+        fn eat(&self) -> Result<(), Box<dyn Error>> {
+            Err(Box::new(NotFreshError))
+        }
+    }
+
+    fn main() -> Result<(), Box<dyn Error>> {
+        let heap_pie = Box::new(Pie);
+        heap_pie.eat()?;
+        Ok(())
+    }
   content_markdown: >
     โค้ดของ Rust มีวิธีการมากมายในการแสดงค่า error ซึ่งในไลบรารีมาตรฐานก็มี trait กลาง
     ชื่อ `std::error::Error` เพื่อแสดงค่า error อยู่ด้วย
@@ -209,8 +326,29 @@
 
     ```
 - title: Referencing Counting
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Arc%3A%3ARc%3B%0A%0Astruct%20Pie%3B%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20eat(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22tastes%20better%20on%20the%20heap!%22)%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20heap_pie%20%3D%20Rc%3A%3Anew(Pie)%3B%0A%20%20%20%20let%20heap_pie2%20%3D%20heap_pie.clone()%3B%0A%20%20%20%20let%20heap_pie3%20%3D%20heap_pie2.clone()%3B%0A%0A%20%20%20%20heap_pie3.eat()%3B%0A%20%20%20%20heap_pie2.eat()%3B%0A%20%20%20%20heap_pie.eat()%3B%0A%0A%20%20%20%20%2F%2F%20all%20reference%20count%20smart%20pointers%20are%20dropped%20now%0A%20%20%20%20%2F%2F%20the%20heap%20data%20Pie%20finally%20deallocates%0A%7D%0A
+  code: |
+    use std::rc::Rc;
+
+    struct Pie;
+
+    impl Pie {
+        fn eat(&self) {
+            println!("tastes better on the heap!")
+        }
+    }
+
+    fn main() {
+        let heap_pie = Rc::new(Pie);
+        let heap_pie2 = heap_pie.clone();
+        let heap_pie3 = heap_pie2.clone();
+
+        heap_pie3.eat();
+        heap_pie2.eat();
+        heap_pie.eat();
+
+        // all reference count smart pointers are dropped now
+        // the heap data Pie finally deallocates
+    }
   content_markdown: >
     `Rc` เป็น smart pointer ที่ย้ายข้อมูลจาก stack ไปอยู่ใน heap
     มันช่วยให้เราโคลน smart pointer `Rc` ตัวอื่นๆ โดยทุกตัวจะสามารถ
@@ -219,8 +357,38 @@
 
     เมื่อ smart pointer ตัวสุดท้ายถูก drop เท่านั้นจึงจะคืนหน่วยความจำใน heap
 - title: Sharing Access
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Acell%3A%3ARefCell%3B%0A%0Astruct%20Pie%20%7B%0A%20%20%20%20slices%3A%20u8%0A%7D%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20eat(%26mut%20self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22tastes%20better%20on%20the%20heap!%22)%3B%0A%20%20%20%20%20%20%20%20self.slices%20-%3D%201%3B%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20RefCell%20validates%20memory%20safety%20at%20runtime%0A%20%20%20%20%2F%2F%20notice%3A%20pie_cell%20is%20not%20mut!%0A%20%20%20%20let%20pie_cell%20%3D%20RefCell%3A%3Anew(Pie%7Bslices%3A8%7D)%3B%0A%20%20%20%20%0A%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20but%20we%20can%20borrow%20mutable%20references!%0A%20%20%20%20%20%20%20%20let%20mut%20mut_ref_pie%20%3D%20pie_cell.borrow_mut()%3B%0A%20%20%20%20%20%20%20%20mut_ref_pie.eat()%3B%0A%20%20%20%20%20%20%20%20mut_ref_pie.eat()%3B%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%2F%2F%20mut_ref_pie%20is%20dropped%20at%20end%20of%20scope%0A%20%20%20%20%7D%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20now%20we%20can%20borrow%20immutably%20once%20our%20mutable%20reference%20drops%0A%20%20%20%20%20let%20ref_pie%20%3D%20pie_cell.borrow()%3B%0A%20%20%20%20%20println!(%22%7B%7D%20slices%20left%22%2Cref_pie.slices)%3B%0A%7D%0A
+  code: |
+    use std::cell::RefCell;
+
+    struct Pie {
+        slices: u8
+    }
+
+    impl Pie {
+        fn eat(&mut self) {
+            println!("tastes better on the heap!");
+            self.slices -= 1;
+        }
+    }
+
+    fn main() {
+        // RefCell validates memory safety at runtime
+        // notice: pie_cell is not mut!
+        let pie_cell = RefCell::new(Pie{slices:8});
+        
+        {
+            // but we can borrow mutable references!
+            let mut mut_ref_pie = pie_cell.borrow_mut();
+            mut_ref_pie.eat();
+            mut_ref_pie.eat();
+            
+            // mut_ref_pie is dropped at end of scope
+        }
+        
+        // now we can borrow immutably once our mutable reference drops
+         let ref_pie = pie_cell.borrow();
+         println!("{} slices left",ref_pie.slices);
+    }
   content_markdown: >
     `RefCell` เป็นโครงสร้างข้อมูลแบบคอนเทนเนอร์ ที่ถูกถือไว้โดย smart pointer
     โดยมันจะรับข้อมูลเข้ามา และยอมให้เรายืม การอ้างอิง ของที่อยู่ในนั้นไม่ว่าจะเป็นอะไร ทั้งแบบยืมโดยไม่เปลี่ยนแปลงอะไร และยืมโดยยอมให้เปลี่ยนแปลงได้
@@ -234,8 +402,26 @@
 
     หากคุณละเมิดกฎของ `RefCall` จะทำให้เกิด panic
 - title: Sharing Across Threads
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Async%3A%3AMutex%3B%0A%0Astruct%20Pie%3B%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20eat(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22only%20I%20eat%20the%20pie%20right%20now!%22)%3B%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20mutex_pie%20%3D%20Mutex%3A%3Anew(Pie)%3B%0A%20%20%20%20%2F%2F%20let's%20borrow%20a%20locked%20immutable%20reference%20of%20pie%0A%20%20%20%20%2F%2F%20we%20have%20to%20unwrap%20the%20result%20of%20a%20lock%0A%20%20%20%20%2F%2F%20because%20it%20might%20fail%0A%20%20%20%20let%20ref_pie%20%3D%20mutex_pie.lock().unwrap()%3B%0A%20%20%20%20ref_pie.eat()%3B%0A%20%20%20%20%2F%2F%20locked%20reference%20drops%20here%2C%20and%20mutex%20protected%20value%20can%20be%20used%20by%20someone%20else%0A%7D%0A
+  code: |
+    use std::sync::Mutex;
+
+    struct Pie;
+
+    impl Pie {
+        fn eat(&self) {
+            println!("only I eat the pie right now!");
+        }
+    }
+
+    fn main() {
+        let mutex_pie = Mutex::new(Pie);
+        // let's borrow a locked immutable reference of pie
+        // we have to unwrap the result of a lock
+        // because it might fail
+        let ref_pie = mutex_pie.lock().unwrap();
+        ref_pie.eat();
+        // locked reference drops here, and mutex protected value can be used by someone else
+    }
   content_markdown: >
     `Mutex` เป็นโครงสร้างข้อมูลแบบคอนเทนเนอร์ ที่ถูกถือไว้โดย smart pointer
     โดยมันจะรับข้อมูลเข้ามา และยอมให้เรายืม การอ้างอิง ข้อมูลที่อยู่ในนั้น ทั้งแบบยืมโดยไม่เปลี่ยนแปลงอะไร และยืมโดยยอมให้เปลี่ยนแปลงได้
@@ -250,8 +436,52 @@
     มี smart pointer พิเศษอีกตัวที่เหมือนกับ `Rc` แต่ต่างกันที่
     มันใช้เพิ่มจำนวนตัวอ้างอิงแบบ thread-safe ซึ่งจะใช้บ่อยเมื่อมีการอ้างถึงหลายๆตัวไปที่ `Mutex` เดียวกัน
 - title: Combining Smart Pointers
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Acell%3A%3ARefCell%3B%0Ause%20std%3A%3Arc%3A%3ARc%3B%0A%0Astruct%20Pie%20%7B%0A%20%20%20%20slices%3A%20u8%2C%0A%7D%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20eat_slice(%26mut%20self%2C%20name%3A%20%26str)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%20took%20a%20slice!%22%2C%20name)%3B%0A%20%20%20%20%20%20%20%20self.slices%20-%3D%201%3B%0A%20%20%20%20%7D%0A%7D%0A%0Astruct%20SeaCreature%20%7B%0A%20%20%20%20name%3A%20String%2C%0A%20%20%20%20pie%3A%20Rc%3CRefCell%3CPie%3E%3E%2C%0A%7D%0A%0Aimpl%20SeaCreature%20%7B%0A%20%20%20%20fn%20eat(%26self)%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20use%20smart%20pointer%20to%20pie%20for%20a%20mutable%20borrow%0A%20%20%20%20%20%20%20%20let%20mut%20p%20%3D%20self.pie.borrow_mut()%3B%0A%20%20%20%20%20%20%20%20%2F%2F%20take%20a%20bite!%0A%20%20%20%20%20%20%20%20p.eat_slice(%26self.name)%3B%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20pie%20%3D%20Rc%3A%3Anew(RefCell%3A%3Anew(Pie%20%7B%20slices%3A%208%20%7D))%3B%0A%20%20%20%20%2F%2F%20ferris%20and%20sarah%20are%20given%20clones%20of%20smart%20pointer%20to%20pie%0A%20%20%20%20let%20ferris%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20name%3A%20String%3A%3Afrom(%22ferris%22)%2C%0A%20%20%20%20%20%20%20%20pie%3A%20pie.clone()%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20let%20sarah%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20name%3A%20String%3A%3Afrom(%22sarah%22)%2C%0A%20%20%20%20%20%20%20%20pie%3A%20pie.clone()%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20ferris.eat()%3B%0A%20%20%20%20sarah.eat()%3B%0A%0A%20%20%20%20let%20p%20%3D%20pie.borrow()%3B%0A%20%20%20%20println!(%22%7B%7D%20slices%20left%22%2C%20p.slices)%3B%0A%7D%0A
+  code: |
+    use std::cell::RefCell;
+    use std::rc::Rc;
+
+    struct Pie {
+        slices: u8,
+    }
+
+    impl Pie {
+        fn eat_slice(&mut self, name: &str) {
+            println!("{} took a slice!", name);
+            self.slices -= 1;
+        }
+    }
+
+    struct SeaCreature {
+        name: String,
+        pie: Rc<RefCell<Pie>>,
+    }
+
+    impl SeaCreature {
+        fn eat(&self) {
+            // use smart pointer to pie for a mutable borrow
+            let mut p = self.pie.borrow_mut();
+            // take a bite!
+            p.eat_slice(&self.name);
+        }
+    }
+
+    fn main() {
+        let pie = Rc::new(RefCell::new(Pie { slices: 8 }));
+        // ferris and sarah are given clones of smart pointer to pie
+        let ferris = SeaCreature {
+            name: String::from("ferris"),
+            pie: pie.clone(),
+        };
+        let sarah = SeaCreature {
+            name: String::from("sarah"),
+            pie: pie.clone(),
+        };
+        ferris.eat();
+        sarah.eat();
+
+        let p = pie.borrow();
+        println!("{} slices left", p.slices);
+    }
   content_markdown: >
     Smart pointers ดูเหมือนจะมีข้อจำกัด แต่มันสามารถเอามารวมกันเพื่อให้ทำงานให้มีความหลากหลายเพิ่มขึ้นได้
 

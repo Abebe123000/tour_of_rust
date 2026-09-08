@@ -14,8 +14,10 @@
     Odată ce vă veți familiariza cu Rust, puteți să vă declarați un **Rustaceu**. Așa
     se numesc toți oamenii care folosesc, contribuie sau sunt interesați de Rust.
 - title: Rust Playground
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20println!(%22Bun%20venit%20în%20locul%20de%20joacă!%20Puteți%20modifica%20codul%20aici.%22)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        println!("Bun venit în locul de joacă! Puteți modifica codul aici.");
+    }
   content_markdown: >
     În acest curs veți folosi un utilitar interactiv pentru scrierea codului [Rust
     Playground](https://play.rust-lang.org).
@@ -24,8 +26,22 @@
     E o modalitate bună de a vă juca cu Rust și a arăta altora
     creativitatea și provocările dumneavoastră!
 - title: Variabile
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20%2F%2F%20Rust%20intuie%C8%99te%20tipul%20de%20date%20pentru%20x%0A%20%20%20%20let%20x%20%3D%2013%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%0A%20%20%20%20%2F%2F%20Rust%20poate%20fi%20%C8%99i%20explicit%20atunci%20c%C3%A2nd%20stabile%C8%99te%20tipul%20de%20date%0A%20%20%20%20let%20x%3A%20f64%20%3D%203.14159%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%0A%20%20%20%20%2F%2F%20Rust%20poate%20declara%20o%20variabil%C4%83%20%C8%99i%20s%C4%83%20o%20ini%C8%9Bializeze%20mai%20t%C3%A2rziu%2C%0A%20%20%20%20%2F%2F%20dar%20acest%20lucru%20nu%20se%20face%20des%0A%20%20%20%20let%20x%3B%0A%20%20%20%20x%20%3D%200%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        // Rust intuiește tipul de date pentru x
+        let x = 13;
+        println!("{}", x);
+
+        // Rust poate fi și explicit atunci când stabilește tipul de date
+        let x: f64 = 3.14159;
+        println!("{}", x);
+
+        // Rust poate declara o variabilă și să o inițializeze mai târziu,
+        // dar acest lucru nu se face des
+        let x;
+        x = 0;
+        println!("{}", x);
+    }
   content_markdown: >
     Variabilele sunt declarate folosind cuvântul cheie **let**.
 
@@ -45,8 +61,13 @@
 
     Numele de variabile sunt mereu scrise sub formă `snake_case` (ex: `my_first_variable`).
 - title: Modificarea variabilelor
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20mut%20x%20%3D%2042%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%20%20%20%20x%20%3D%2013%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let mut x = 42;
+        println!("{}", x);
+        x = 13;
+        println!("{}", x);
+    }
   content_markdown: >
     Limbajul Rust ține foarte mult la ce variabile pot fi modificate. Variabilele
 
@@ -65,8 +86,22 @@
     O să revenim pentru a vorbi mai multe despre acest concept, dar deocamdată doar fiți
     atenți la acest cuvânt cheie.
 - title: Tipuri de date de bază
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn+main%28%29+%7B%0A++++let+x+%3D+12%3B+%2F%2F+acesta+este+un+i32+%C3%AEn+mod+implicit%0A++++let+a+%3D+12u8%3B%0A++++let+b+%3D+4.3%3B+%2F%2F+acesta+este+un+f64+%C3%AEn+mod+implicit%0A++++let+c+%3D+4.3f32%3B%0A++++let+d+%3D+%27r%27%3B+%2F%2F+caracter+unicode%0A++++let+ferris+%3D+%27%F0%9F%A6%80%27%3B+%2F%2F+tot+un+caracter+unicode%0A++++let+bv+%3D+true%3B%0A++++let+t+%3D+%2813%2C+false%29%3B%0A++++let+sentence+%3D+%22hello+world%21%22%3B%0A++++println%21%28%0A++++++++%22%7B%7D+%7B%7D+%7B%7D+%7B%7D+%7B%7D+%7B%7D+%7B%7D+%7B%7D+%7B%7D+%7B%7D%22%2C%0A++++++++x%2C+a%2C+b%2C+c%2C+d%2C+ferris%2C+bv%2C+t.0%2C+t.1%2C+sentence%0A++++%29%3B%0A%7D%0A
+  code: |
+    fn+main()+{
+    ++++let+x+=+12;+//+acesta+este+un+i32+în+mod+implicit
+    ++++let+a+=+12u8;
+    ++++let+b+=+4.3;+//+acesta+este+un+f64+în+mod+implicit
+    ++++let+c+=+4.3f32;
+    ++++let+d+=+'r';+//+caracter+unicode
+    ++++let+ferris+=+'🦀';+//+tot+un+caracter+unicode
+    ++++let+bv+=+true;
+    ++++let+t+=+(13,+false);
+    ++++let+sentence+=+"hello+world!";
+    ++++println!(
+    ++++++++"{}+{}+{}+{}+{}+{}+{}+{}+{}+{}",
+    ++++++++x,+a,+b,+c,+d,+ferris,+bv,+t.0,+t.1,+sentence
+    ++++);
+    }
   content_markdown: >
     Rust are o varietate de tipuri de date familiare dumneavoastră:
 
@@ -104,8 +139,16 @@
 
     Tipurile numerice pot fi specificate explicit prin adăugarea tipului la finalul numărului (ex: `13u32`, `2u8`).
 - title: Conversia tipurilor de bază
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20a%20%3D%2013u8%3B%0A%20%20%20%20let%20b%20%3D%207u32%3B%0A%20%20%20%20let%20c%20%3D%20a%20as%20u32%20%2B%20b%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20c)%3B%0A%0A%20%20%20%20let%20t%20%3D%20true%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20t%20as%20u8)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let a = 13u8;
+        let b = 7u32;
+        let c = a as u32 + b;
+        println!("{}", c);
+
+        let t = true;
+        println!("{}", t as u8);
+    }
   content_markdown: >
     Rust necesită claritate atunci când vine vorba de tipurile numerice. Nu puteți
 
@@ -117,8 +160,15 @@
     Din fericire, Rust poate face conversia de la un tip numeric la altul, foarte ușor,
     folosind cuvântul cheie **as**.
 - title: Constante
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=const%20PI%3A%20f32%20%3D%203.14159%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22Pentru%20a%20crea%20un%20m%C4%83r%20%7B%7D%2C%20mai%20%C3%AEnt%C3%A2i%20trebuie%20s%C4%83%20creezi%20un%20univers.%22%2C%0A%20%20%20%20%20%20%20%20PI%0A%20%20%20%20)%3B%0A%7D%0A
+  code: |
+    const PI: f32 = 3.14159;
+
+    fn main() {
+        println!(
+            "Pentru a crea un măr {}, mai întâi trebuie să creezi un univers.",
+            PI
+        );
+    }
   content_markdown: >
     Constantele ne permit să specificăm o valoare folosită uzual de-a lungul
 
@@ -132,8 +182,12 @@
 
     Numele constantelor sunt mereu scrise în format `SCREAMING_SNAKE_CASE` (ex: `MY_FIRST_CONSTANT`).
 - title: Tablouri
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20nums%3A%20%5Bi32%3B%203%5D%20%3D%20%5B1%2C%202%2C%203%5D%3B%0A%20%20%20%20println!(%22%7B%3A%3F%7D%22%2C%20nums)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20nums%5B1%5D)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let nums: [i32; 3] = [1, 2, 3];
+        println!("{:?}", nums);
+        println!("{}", nums[1]);
+    }
   content_markdown: >
     Un *tablou* este o **colecție de dimensiune fixă** de elemente care conțin date de același
     tip.
@@ -150,8 +204,19 @@
     Colecțiile cu dimensiune dinamică, deseori numite tablouri dinamice sau variabile, vă
     vor fi prezentate într-un capitol viitor numit **Vectori**.
 - title: Funcții
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20add(x%3A%20i32%2C%20y%3A%20i32)%20-%3E%20i32%20%7B%0A%20%20%20%20return%20x%20%2B%20y%3B%0A%7D%0A%0Afn%20subtract(x%3A%20i32%2C%20y%3A%20i32)%20-%3E%20i32%20%7B%0A%20%20%20%20x%20-%20y%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%2242%20%2B%2013%20%3D%20%7B%7D%22%2C%20add(42%2C%2013))%3B%0A%20%20%20%20println!(%2242%20-%2013%20%3D%20%7B%7D%22%2C%20subtract(42%2C%2013))%3B%0A%7D%0A
+  code: |
+    fn add(x: i32, y: i32) -> i32 {
+        return x + y;
+    }
+
+    fn subtract(x: i32, y: i32) -> i32 {
+        x - y
+    }
+
+    fn main() {
+        println!("42 + 13 = {}", add(42, 13));
+        println!("42 - 13 = {}", subtract(42, 13));
+    }
   content_markdown: >
     O funcție admite zero sau mai mulți parametri.
 
@@ -170,8 +235,20 @@
     Sfat: dacă definiți o funcție, datele pe care le admite se numesc parametrii formali.
     Dacă apelați o funcție și îi transmiteți niște date, atunci ele se numesc parametrii actuali.
 - title: Returnarea mai multor valori
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20swap(x%3A%20i32%2C%20y%3A%20i32)%20-%3E%20(i32%2C%20i32)%20%7B%0A%20%20%20%20return%20(y%2C%20x)%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20returneaz%C4%83%20un%20tuplu%20de%20valori%0A%20%20%20%20let%20result%20%3D%20swap(123%2C%20321)%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20result.0%2C%20result.1)%3B%0A%0A%20%20%20%20%2F%2F%20destructureaz%C4%83%20tuplul%20%C3%AEn%20dou%C4%83%20variabile%0A%20%20%20%20let%20(a%2C%20b)%20%3D%20swap(result.0%2C%20result.1)%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20a%2C%20b)%3B%0A%7D%0A
+  code: |
+    fn swap(x: i32, y: i32) -> (i32, i32) {
+        return (y, x);
+    }
+
+    fn main() {
+        // returnează un tuplu de valori
+        let result = swap(123, 321);
+        println!("{} {}", result.0, result.1);
+
+        // destructurează tuplul în două variabile
+        let (a, b) = swap(result.0, result.1);
+        println!("{} {}", a, b);
+    }
   content_markdown: >
     Funcțiile pot returna mai multe valori prin returnarea unui **tuplu**
 
@@ -196,8 +273,25 @@
 
     Folosirea unui `()` nu este des întâlnită, dar va apărea de suficiente ori, deci este bine să știți
     ce se întâmplă.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20make_nothing()%20-%3E%20()%20%7B%0A%20%20%20%20return%20()%3B%0A%7D%0A%0A%2F%2F%20tipul%20pe%20care%20%C3%AEl%20returneaz%C4%83%20este%20%C3%AEn%20mod%20implicit%20()%0Afn%20make_nothing2()%20%7B%0A%20%20%20%20%2F%2F%20aceast%C4%83%20func%C8%9Bie%20va%20returna%20()%2C%20dac%C4%83%20nu%20este%20specificat%20altceva%20pentru%20returnare%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20a%20%3D%20make_nothing()%3B%0A%20%20%20%20let%20b%20%3D%20make_nothing2()%3B%0A%0A%20%20%20%20%2F%2F%20Afi%C8%99area%20unui%20text%20de%20depanare%20pentru%20a%20%C8%99i%20b%0A%20%20%20%20%2F%2F%20Pentru%20c%C4%83%20e%20greu%20s%C4%83%20print%C4%83m%20nimicul%0A%20%20%20%20println!(%22Valoarea%20lui%20a%3A%20%7B%3A%3F%7D%22%2C%20a)%3B%0A%20%20%20%20println!(%22Valoarea%20lui%20b%3A%20%7B%3A%3F%7D%22%2C%20b)%3B%0A%7D%0A
+  code: |
+    fn make_nothing() -> () {
+        return ();
+    }
+
+    // tipul pe care îl returnează este în mod implicit ()
+    fn make_nothing2() {
+        // această funcție va returna (), dacă nu este specificat altceva pentru returnare
+    }
+
+    fn main() {
+        let a = make_nothing();
+        let b = make_nothing2();
+
+        // Afișarea unui text de depanare pentru a și b
+        // Pentru că e greu să printăm nimicul
+        println!("Valoarea lui a: {:?}", a);
+        println!("Valoarea lui b: {:?}", b);
+    }
 - title: Capitolul 1 - Concluzie
   content_markdown: >
     Până acu', e bine! Bazele Rust-ului nu sunt așa de rele, nu-i așa?  Am

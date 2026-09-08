@@ -6,8 +6,10 @@
     また、あなたに話し掛けているこの愛らしいカニが誰なのか気になるかもしれません。私は Rust プログラミング言語の非公式マスコット **Ferris**
     です。はじめまして。
 - title: Rust Playground
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20println!(%22Playground%20%E3%81%B8%E3%82%88%E3%81%86%E3%81%93%E3%81%9D%E3%80%82%E3%81%93%E3%81%93%E3%81%A7%E3%82%B3%E3%83%BC%E3%83%89%E3%82%92%E4%BF%AE%E6%AD%A3%E3%81%A7%E3%81%8D%E3%81%BE%E3%81%99%E3%80%82%22)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        println!("Playground へようこそ。ここでコードを修正できます。");
+    }
   content_markdown: >
     このツアーでは、[Rust Playground](https://play.rust-lang.org)
     のインタラクティブなコーディングツールを使用します。
@@ -15,8 +17,21 @@
 
     Rust で遊んで、あなたの創造性と挑戦を他の人に見せるのに最適な方法です。
 - title: 変数
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20%2F%2F%20x%20%E3%81%AE%E5%9E%8B%E3%82%92%E6%8E%A8%E8%AB%96%0A%20%20%20%20let%20x%20%3D%2013%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%0A%20%20%20%20%2F%2F%20x%20%E3%81%AE%E5%9E%8B%E3%82%92%E6%8C%87%E5%AE%9A%0A%20%20%20%20let%20x%3A%20f64%20%3D%203.14159%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%0A%20%20%20%20%2F%2F%20%E5%AE%A3%E8%A8%80%E3%81%AE%E5%BE%8C%E3%81%A7%E5%88%9D%E6%9C%9F%E5%8C%96%EF%BC%88%E3%81%82%E3%81%BE%E3%82%8A%E4%BD%BF%E3%82%8F%E3%82%8C%E3%81%BE%E3%81%9B%E3%82%93%EF%BC%89%0A%20%20%20%20let%20x%3B%0A%20%20%20%20x%20%3D%200%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        // x の型を推論
+        let x = 13;
+        println!("{}", x);
+
+        // x の型を指定
+        let x: f64 = 3.14159;
+        println!("{}", x);
+
+        // 宣言の後で初期化（あまり使われません）
+        let x;
+        x = 0;
+        println!("{}", x);
+    }
   content_markdown: |
     変数は **let** キーワードを使用して宣言します。
 
@@ -27,8 +42,13 @@
 
     変数名にはスネークケース `snake_case` を使用します。
 - title: 変数の変更
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20mut%20x%20%3D%2042%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%20%20%20%20x%20%3D%2013%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let mut x = 42;
+        println!("{}", x);
+        x = 13;
+        println!("{}", x);
+    }
   content_markdown: |
     Rustは変数の変更についてとても配慮しています。値は 2 種類に分類されます。
 
@@ -39,8 +59,20 @@
 
     この概念については後で詳しく説明しますが、今のところはこのキーワードに注意してください。
 - title: 基本的な型
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20x%20%3D%2012%3B%20%2F%2F%20%E3%83%87%E3%83%95%E3%82%A9%E3%83%AB%E3%83%88%E3%81%A7%E3%81%AF%20i32%0A%20%20%20%20let%20a%20%3D%2012u8%3B%0A%20%20%20%20let%20b%20%3D%204.3%3B%20%2F%2F%20%E3%83%87%E3%83%95%E3%82%A9%E3%83%AB%E3%83%88%E3%81%A7%E3%81%AF%20f64%0A%20%20%20%20let%20c%20%3D%204.3f32%3B%0A%20%20%20%20let%20bv%20%3D%20true%3B%0A%20%20%20%20let%20t%20%3D%20(13%2C%20false)%3B%0A%20%20%20%20let%20sentence%20%3D%20%22hello%20world!%22%3B%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%22%2C%0A%20%20%20%20%20%20%20%20x%2C%20a%2C%20b%2C%20c%2C%20bv%2C%20t.0%2C%20t.1%2C%20sentence%0A%20%20%20%20)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let x = 12; // デフォルトでは i32
+        let a = 12u8;
+        let b = 4.3; // デフォルトでは f64
+        let c = 4.3f32;
+        let bv = true;
+        let t = (13, false);
+        let sentence = "hello world!";
+        println!(
+            "{} {} {} {} {} {} {} {}",
+            x, a, b, c, bv, t.0, t.1, sentence
+        );
+    }
   content_markdown: |
     Rustにはよく知られた様々な型があります。
 
@@ -59,15 +91,30 @@
 
     数値型は、数値の最後に型を付加することで明示的に指定できます。（例: `13u32`, `2u8`）
 - title: 基本型の変換
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20a%20%3D%2013u8%3B%0A%20%20%20%20let%20b%20%3D%207u32%3B%0A%20%20%20%20let%20c%20%3D%20a%20as%20u32%20%2B%20b%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20c)%3B%0A%0A%20%20%20%20let%20t%20%3D%20true%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20t%20as%20u8)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let a = 13u8;
+        let b = 7u32;
+        let c = a as u32 + b;
+        println!("{}", c);
+
+        let t = true;
+        println!("{}", t as u8);
+    }
   content_markdown: |
     Rust で数値型を扱う際、型を明示する必要があります。`u8` と `u32` を混ぜるとエラーになります。
 
     幸い、Rust は **as** キーワードで数値型を簡単に変換できます。
 - title: 定数
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=const%20PI%3A%20f32%20%3D%203.14159%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22%E3%82%BC%E3%83%AD%E3%81%8B%E3%82%89%E3%82%A2%E3%83%83%E3%83%97%E3%83%AB%20%7B%7D%20%E3%82%92%E4%BD%9C%E3%82%8B%E3%81%AB%E3%81%AF%E3%80%81%E3%81%BE%E3%81%9A%E5%AE%87%E5%AE%99%E3%82%92%E5%89%B5%E9%80%A0%E3%81%99%E3%82%8B%E5%BF%85%E8%A6%81%E3%81%8C%E3%81%82%E3%82%8A%E3%81%BE%E3%81%99%E3%80%82%22%2C%0A%20%20%20%20%20%20%20%20PI%0A%20%20%20%20)%3B%0A%7D%0A
+  code: |
+    const PI: f32 = 3.14159;
+
+    fn main() {
+        println!(
+            "ゼロからアップル {} を作るには、まず宇宙を創造する必要があります。",
+            PI
+        );
+    }
   content_markdown: |
     定数を使用すると、コード全体で何度も使用される共通の値を効率的に指定できます。
     定数は、変数のように値が使われる場所でコピーするのではなく、コンパイル時に値が使われる場所の識別子を直接置き換えます。
@@ -76,8 +123,12 @@
 
     定数名には大文字のスネークケース `SCREAMING_SNAKE_CASE` を使用します。
 - title: 配列
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20nums%3A%20%5Bi32%3B%203%5D%20%3D%20%5B1%2C%202%2C%203%5D%3B%0A%20%20%20%20println!(%22%7B%3A%3F%7D%22%2C%20nums)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20nums%5B1%5D)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let nums: [i32; 3] = [1, 2, 3];
+        println!("{:?}", nums);
+        println!("{}", nums[1]);
+    }
   content_markdown: |
     *配列*は、データ要素がすべて同じ型の固定長コレクションです。
 
@@ -85,8 +136,14 @@
 
     個々の要素は `[x]` 演算子によって取得できます。ここで *x* は取り出そうとする要素の *usize* 型のインデックス（0 始まり）です。
 - title: 関数
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20add(x%3A%20i32%2C%20y%3A%20i32)%20-%3E%20i32%20%7B%0A%20%20%20%20return%20x%20%2B%20y%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20add(42%2C%2013))%3B%0A%7D%0A
+  code: |
+    fn add(x: i32, y: i32) -> i32 {
+        return x + y;
+    }
+
+    fn main() {
+        println!("{}", add(42, 13));
+    }
   content_markdown: |
     関数には 0 個以上の引数があります。
 
@@ -94,8 +151,20 @@
 
     関数名にはスネークケース `snake_case` を使用します。
 - title: 複数の戻り値
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20swap(x%3A%20i32%2C%20y%3A%20i32)%20-%3E%20(i32%2C%20i32)%20%7B%0A%20%20%20%20return%20(y%2C%20x)%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20%E6%88%BB%E3%82%8A%E5%80%A4%E3%82%92%E3%82%BF%E3%83%97%E3%83%AB%E3%81%A7%E8%BF%94%E3%81%99%0A%20%20%20%20let%20result%20%3D%20swap(123%2C%20321)%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20result.0%2C%20result.1)%3B%0A%0A%20%20%20%20%2F%2F%20%E3%82%BF%E3%83%97%E3%83%AB%E3%82%922%E3%81%A4%E3%81%AE%E5%A4%89%E6%95%B0%E3%81%AB%E5%88%86%E8%A7%A3%0A%20%20%20%20let%20(a%2C%20b)%20%3D%20swap(result.0%2C%20result.1)%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20a%2C%20b)%3B%0A%7D%0A
+  code: |
+    fn swap(x: i32, y: i32) -> (i32, i32) {
+        return (y, x);
+    }
+
+    fn main() {
+        // 戻り値をタプルで返す
+        let result = swap(123, 321);
+        println!("{} {}", result.0, result.1);
+
+        // タプルを2つの変数に分解
+        let (a, b) = swap(result.0, result.1);
+        println!("{} {}", a, b);
+    }
   content_markdown: |
     関数は、値を**タプル**で返すことによって、複数の値を返せます。
 
@@ -109,8 +178,25 @@
     空のタプルは `()` と表記します。
 
     `()` はあまり使われませんが、時々出てくるので意味は知っておく必要があります。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20make_nothing()%20-%3E%20()%20%7B%0A%20%20%20%20return%20()%3B%0A%7D%0A%0A%2F%2F%20%E6%88%BB%E3%82%8A%E5%80%A4%E3%81%AF%20()%20%E3%81%A8%E6%8E%A8%E8%AB%96%0Afn%20make_nothing2()%20%7B%0A%20%20%20%20%2F%2F%20%E3%81%93%E3%81%AE%E9%96%A2%E6%95%B0%E3%81%AF%E6%88%BB%E3%82%8A%E5%80%A4%E3%81%8C%E6%8C%87%E5%AE%9A%E3%81%95%E3%82%8C%E3%81%AA%E3%81%84%E3%81%9F%E3%82%81%20()%20%E3%82%92%E8%BF%94%E3%81%99%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20a%20%3D%20make_nothing()%3B%0A%20%20%20%20let%20b%20%3D%20make_nothing2()%3B%0A%0A%20%20%20%20%2F%2F%20%E7%A9%BA%E3%82%92%E8%A1%A8%E7%A4%BA%E3%81%99%E3%82%8B%E3%81%AE%E3%81%AF%E9%9B%A3%E3%81%97%E3%81%84%E3%81%AE%E3%81%A7%E3%80%81%0A%20%20%20%20%2F%2F%20a%20%E3%81%A8%20b%20%E3%81%AE%E3%83%87%E3%83%90%E3%83%83%E3%82%B0%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E8%A1%A8%E7%A4%BA%0A%20%20%20%20println!(%22a%20%E3%81%AE%E5%80%A4%3A%20%7B%3A%3F%7D%22%2C%20a)%3B%0A%20%20%20%20println!(%22b%20%E3%81%AE%E5%80%A4%3A%20%7B%3A%3F%7D%22%2C%20b)%3B%0A%7D%0A
+  code: |
+    fn make_nothing() -> () {
+        return ();
+    }
+
+    // 戻り値は () と推論
+    fn make_nothing2() {
+        // この関数は戻り値が指定されないため () を返す
+    }
+
+    fn main() {
+        let a = make_nothing();
+        let b = make_nothing2();
+
+        // 空を表示するのは難しいので、
+        // a と b のデバッグ文字列を表示
+        println!("a の値: {:?}", a);
+        println!("b の値: {:?}", b);
+    }
 - title: 第 1 章 - まとめ
   content_markdown: >
     ここまでお疲れ様でした。Rust の基本はそれほど難しくなかったですよね？

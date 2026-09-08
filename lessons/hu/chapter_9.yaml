@@ -22,8 +22,13 @@
   content_markdown: |
     Egy könyvtárnak mindig kell egy legfelső szintű modul, melyet a `lib.rs` fájl tartalmaz.
 - title: Hogyan Hivatkozzunk Más Modulokra és Ládákra
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Af64%3A%3Aconsts%3A%3API%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%22Welcome%20to%20the%20playground!%22)%3B%0A%20%20%20%20println!(%22I%20would%20love%20a%20slice%20of%20%7B%7D!%22%2C%20PI)%3B%0A%7D%0A
+  code: |
+    use std::f64::consts::PI;
+
+    fn main() {
+        println!("Welcome to the playground!");
+        println!("I would love a slice of {}!", PI);
+    }
   content_markdown: |
     Modulokban lévő elemekre teljes elérési útjukkal lehet hivatkozni, például:
     `std::f64::consts::PI`.
@@ -109,8 +114,16 @@
   content_markdown: |
     Csakúgy, mint a függvényeknél, a `pub` kulcsszóval a struktúráknál is megmondhatjuk, elérhetőek
     legyenek-e az őket definiáló modulon kívül.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=%2F%2F%20SeaCreature%20struct%20will%20be%20usable%20outside%20of%20our%20module%0Apub%20struct%20SeaCreature%20%7B%0A%20%20%20%20pub%20animal_type%3A%20String%2C%0A%20%20%20%20pub%20name%3A%20String%2C%0A%20%20%20%20pub%20arms%3A%20i32%2C%0A%20%20%20%20pub%20legs%3A%20i32%2C%0A%20%20%20%20%2F%2F%20let's%20keep%20our%20weapon%20private%0A%20%20%20%20weapon%3A%20String%2C%0A%7D%0A
+  code: |
+    // SeaCreature struct will be usable outside of our module
+    pub struct SeaCreature {
+        pub animal_type: String,
+        pub name: String,
+        pub arms: i32,
+        pub legs: i32,
+        // let's keep our weapon private
+        weapon: String,
+    }
 - title: Bevezetés (Prelude)
   content_markdown: |
     Feltűnhetett már, hogy a `Vec` vagy `Box` elérhető bárhonnan anélkül, hogy `use`-zal importálni

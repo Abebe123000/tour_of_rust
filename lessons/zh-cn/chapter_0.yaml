@@ -1,8 +1,10 @@
 - title: >-
     你好，<img src="/favicon-32x32.png" style="display:inline;
     vertical-align:bottom">
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20println!(%22%E4%BD%A0%E5%A5%BD%EF%BC%8C%F0%9F%A6%80%22)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        println!("你好，🦀");
+    }
   content_markdown: >
     欢迎来到 *Rust 语言之旅*。本教程旨在循序渐进地介绍 Rust 编程语言的特性。大家通常认为 Rust 是一门学习曲线陡峭的语言。我希望在此说明，在我们开始学习复杂的部分之前，还有很多东西需要探索。
 

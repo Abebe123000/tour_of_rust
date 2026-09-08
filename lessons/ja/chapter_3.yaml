@@ -9,8 +9,15 @@
     *フィールド* とはデータ構造とキーワードを紐付ける値です。その値はプリミティブ型かデータ構造を指定可能です。
 
     その定義はメモリ上で隣合うデータの配置をコンパイラに伝える設計図の様なものです。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20SeaCreature%20%7B%0A%20%20%20%20%2F%2F%20String%20%E3%81%AF%E6%A7%8B%E9%80%A0%E4%BD%93%E3%81%A7%E3%81%82%E3%82%8B%E3%80%82%0A%20%20%20%20animal_type%3A%20String%2C%0A%20%20%20%20name%3A%20String%2C%0A%20%20%20%20arms%3A%20i32%2C%0A%20%20%20%20legs%3A%20i32%2C%0A%20%20%20%20weapon%3A%20String%2C%0A%7D
+  code: |-
+    struct SeaCreature {
+        // String は構造体である。
+        animal_type: String,
+        name: String,
+        arms: i32,
+        legs: i32,
+        weapon: String,
+    }
 - title: メソッドの定義
   content_markdown: |
     関数(function)と違って、メソッド(method)は特定のデータ型と紐づく関数のことです。
@@ -20,8 +27,13 @@
     **インスタンスメソッド** - ある型のインスタンスに紐付き、演算子 `.` で呼び出せます。
 
     以降の章でまたメソッドの作り方について話します。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20%2F%2F%20%E3%82%B9%E3%82%BF%E3%83%86%E3%82%A3%E3%83%83%E3%82%AF%E3%83%A1%E3%82%BD%E3%83%83%E3%83%89%E3%81%A7String%E3%82%A4%E3%83%B3%E3%82%B9%E3%82%BF%E3%83%B3%E3%82%B9%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B%E3%80%82%0A%20%20%20%20let%20s%20%3D%20String%3A%3Afrom(%22Hello%20world!%22)%3B%0A%20%20%20%20%2F%2F%20%E3%82%A4%E3%83%B3%E3%82%B9%E3%82%BF%E3%83%B3%E3%82%B9%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%83%A1%E3%82%BD%E3%83%83%E3%83%89%E5%91%BC%E3%81%B3%E5%87%BA%E3%81%99%E3%80%82%0A%20%20%20%20println!(%22%7B%7D%20is%20%7B%7D%20characters%20long.%22%2C%20s%2C%20s.len())%3B%0A%7D%0A
+  code: |
+    fn main() {
+        // スタティックメソッドでStringインスタンスを作成する。
+        let s = String::from("Hello world!");
+        // インスタンスを使ってメソッド呼び出す。
+        println!("{} is {} characters long.", s, s.len());
+    }
 - title: メモリ
   content_markdown: |
     Rust のプログラムでは、データを保持するために次の3種類のメモリ空間を持っています。
@@ -58,13 +70,55 @@
       1. *ヒープ* に変更可能なメモリを作り、テキストを入れます。
       2. 1.で作成した参照アドレスを *ヒープ* に保存し、それを `String` に保存します(後の章でまた詳しく紹介します。)。
     * 最後に、我々の友である *Ferris* と *Sarah* はプログラムの中では固定な位置であるため、*スタック* に入ります。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20SeaCreature%20%7B%0A%20%20%20%20animal_type%3A%20String%2C%0A%20%20%20%20name%3A%20String%2C%0A%20%20%20%20arms%3A%20i32%2C%0A%20%20%20%20legs%3A%20i32%2C%0A%20%20%20%20weapon%3A%20String%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20SeaCreature%E3%81%AE%E3%83%87%E3%83%BC%E3%82%BF%E3%81%AF%E3%82%B9%E3%82%BF%E3%83%83%E3%82%AF%E3%81%AB%E5%85%A5%E3%82%8A%E3%81%BE%E3%81%99%E3%80%82%0A%20%20%20%20let%20ferris%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20String%E6%A7%8B%E9%80%A0%E4%BD%93%E3%82%82%E3%82%B9%E3%82%BF%E3%83%83%E3%82%AF%E3%81%AB%E5%85%A5%E3%82%8A%E3%81%BE%E3%81%99%E3%81%8C%E3%80%81%0A%20%20%20%20%20%20%20%20%2F%2F%20%E3%83%92%E3%83%BC%E3%83%97%E3%81%AB%E5%85%A5%E3%82%8B%E3%83%87%E3%83%BC%E3%82%BF%E3%81%AE%E5%8F%82%E7%85%A7%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9%E3%81%8C%E4%B8%80%E3%81%A4%E5%85%A5%E3%82%8A%E3%81%BE%E3%81%99%E3%80%82%0A%20%20%20%20%20%20%20%20animal_type%3A%20String%3A%3Afrom(%22crab%22)%2C%0A%20%20%20%20%20%20%20%20name%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20arms%3A%202%2C%0A%20%20%20%20%20%20%20%20legs%3A%204%2C%0A%20%20%20%20%20%20%20%20weapon%3A%20String%3A%3Afrom(%22claw%22)%2C%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20let%20sarah%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20animal_type%3A%20String%3A%3Afrom(%22octopus%22)%2C%0A%20%20%20%20%20%20%20%20name%3A%20String%3A%3Afrom(%22Sarah%22)%2C%0A%20%20%20%20%20%20%20%20arms%3A%208%2C%0A%20%20%20%20%20%20%20%20legs%3A%200%2C%0A%20%20%20%20%20%20%20%20weapon%3A%20String%3A%3Afrom(%22none%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22%7B%7D%20is%20a%20%7B%7D.%20They%20have%20%7B%7D%20arms%2C%20%7B%7D%20legs%2C%20and%20a%20%7B%7D%20weapon%22%2C%0A%20%20%20%20%20%20%20%20ferris.name%2C%20ferris.animal_type%2C%20ferris.arms%2C%20ferris.legs%2C%20ferris.weapon%0A%20%20%20%20)%3B%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22%7B%7D%20is%20a%20%7B%7D.%20They%20have%20%7B%7D%20arms%2C%20and%20%7B%7D%20legs.%20They%20have%20no%20weapon..%22%2C%0A%20%20%20%20%20%20%20%20sarah.name%2C%20sarah.animal_type%2C%20sarah.arms%2C%20sarah.legs%0A%20%20%20%20)%3B%0A%7D%0A
+  code: |
+    struct SeaCreature {
+        animal_type: String,
+        name: String,
+        arms: i32,
+        legs: i32,
+        weapon: String,
+    }
+
+    fn main() {
+        // SeaCreatureのデータはスタックに入ります。
+        let ferris = SeaCreature {
+            // String構造体もスタックに入りますが、
+            // ヒープに入るデータの参照アドレスが一つ入ります。
+            animal_type: String::from("crab"),
+            name: String::from("Ferris"),
+            arms: 2,
+            legs: 4,
+            weapon: String::from("claw"),
+        };
+
+        let sarah = SeaCreature {
+            animal_type: String::from("octopus"),
+            name: String::from("Sarah"),
+            arms: 8,
+            legs: 0,
+            weapon: String::from("none"),
+        };
+        
+        println!(
+            "{} is a {}. They have {} arms, {} legs, and a {} weapon",
+            ferris.name, ferris.animal_type, ferris.arms, ferris.legs, ferris.weapon
+        );
+        println!(
+            "{} is a {}. They have {} arms, and {} legs. They have no weapon..",
+            sarah.name, sarah.animal_type, sarah.arms, sarah.legs
+        );
+    }
 - title: タプルライクな構造体
   content_markdown: |
     Rust ではタプルの様な構造体を利用できます。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Location(i32%2C%20i32)%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20%E3%81%93%E3%82%8C%E3%82%82%E3%82%B9%E3%82%BF%E3%83%83%E3%82%AF%E3%81%AB%E5%85%A5%E3%82%8C%E3%82%89%E3%82%8C%E3%82%8B%E6%A7%8B%E9%80%A0%E4%BD%93%E3%81%A7%E3%81%99%E3%80%82%0A%20%20%20%20let%20loc%20%3D%20Location(42%2C%2032)%3B%0A%20%20%20%20println!(%22%7B%7D%2C%20%7B%7D%22%2C%20loc.0%2C%20loc.1)%3B%0A%7D%0A
+  code: |
+    struct Location(i32, i32);
+
+    fn main() {
+        // これもスタックに入れられる構造体です。
+        let loc = Location(42, 32);
+        println!("{}, {}", loc.0, loc.1);
+    }
 - title: ユニットライクな構造体
   content_markdown: |
     Rust ではフィールドを持たない構造体を宣言できます。
@@ -72,15 +126,51 @@
     第 1 章で述べた様に、*unit* は空ユニット `()` の別名称です。こういった構造体が `ユニットライク` と言われる理由でもあります。
 
     この構造体はあまり使われません。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Marker%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20_m%20%3D%20Marker%3B%0A%7D%0A
+  code: |
+    struct Marker;
+
+    fn main() {
+        let _m = Marker;
+    }
 - title: 列挙型
   content_markdown: |
     列挙型はキーワード `enum` で新しい型を生成することができ、この型はいくつかのタグ付された値を持つことができます。
 
     `match` は保有する全ての列挙値を処理する手助けすることができ、コードの品質を維持することもできます。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=%23!%5Ballow(dead_code)%5D%20%2F%2F%20%E3%81%93%E3%81%AE%E8%A1%8C%E3%81%A7%E3%82%B3%E3%83%B3%E3%83%91%E3%82%A4%E3%83%A9%E3%81%AEwarings%E3%83%A1%E3%83%83%E3%82%BB%E3%83%BC%E3%82%B8%E3%82%92%E6%AD%A2%E3%82%81%E3%81%BE%E3%81%99%E3%80%82%0A%0Aenum%20Species%20%7B%0A%20%20%20%20Crab%2C%0A%20%20%20%20Octopus%2C%0A%20%20%20%20Fish%2C%0A%20%20%20%20Clam%0A%7D%0A%0Astruct%20SeaCreature%20%7B%0A%20%20%20%20species%3A%20Species%2C%0A%20%20%20%20name%3A%20String%2C%0A%20%20%20%20arms%3A%20i32%2C%0A%20%20%20%20legs%3A%20i32%2C%0A%20%20%20%20weapon%3A%20String%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20ferris%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20species%3A%20Species%3A%3ACrab%2C%0A%20%20%20%20%20%20%20%20name%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20arms%3A%202%2C%0A%20%20%20%20%20%20%20%20legs%3A%204%2C%0A%20%20%20%20%20%20%20%20weapon%3A%20String%3A%3Afrom(%22claw%22)%2C%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20match%20ferris.species%20%7B%0A%20%20%20%20%20%20%20%20Species%3A%3ACrab%20%3D%3E%20println!(%22%7B%7D%20is%20a%20crab%22%2Cferris.name)%2C%0A%20%20%20%20%20%20%20%20Species%3A%3AOctopus%20%3D%3E%20println!(%22%7B%7D%20is%20a%20octopus%22%2Cferris.name)%2C%0A%20%20%20%20%20%20%20%20Species%3A%3AFish%20%3D%3E%20println!(%22%7B%7D%20is%20a%20fish%22%2Cferris.name)%2C%0A%20%20%20%20%20%20%20%20Species%3A%3AClam%20%3D%3E%20println!(%22%7B%7D%20is%20a%20clam%22%2Cferris.name)%2C%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    #![allow(dead_code)] // この行でコンパイラのwaringsメッセージを止めます。
+
+    enum Species {
+        Crab,
+        Octopus,
+        Fish,
+        Clam
+    }
+
+    struct SeaCreature {
+        species: Species,
+        name: String,
+        arms: i32,
+        legs: i32,
+        weapon: String,
+    }
+
+    fn main() {
+        let ferris = SeaCreature {
+            species: Species::Crab,
+            name: String::from("Ferris"),
+            arms: 2,
+            legs: 4,
+            weapon: String::from("claw"),
+        };
+
+        match ferris.species {
+            Species::Crab => println!("{} is a crab",ferris.name),
+            Species::Octopus => println!("{} is a octopus",ferris.name),
+            Species::Fish => println!("{} is a fish",ferris.name),
+            Species::Clam => println!("{} is a clam",ferris.name),
+        }
+    }
 - title: データを持つ列挙型
   content_markdown: |
     `enum` は一個もしくは複数な型のデータを持つことができ、C言語の `union` の様な表現ができます。

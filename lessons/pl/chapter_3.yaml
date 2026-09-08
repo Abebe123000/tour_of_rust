@@ -22,8 +22,15 @@
     Definicja struktur pozwala nam stworzyć pewnego rodzaju plan budowy który 
     zostanie później użyty przez kompilator w celu odpowiedniego ułożenia naszych
     struktur i ich pól w pamięci w wydajny sposób.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20SeaCreature%20%7B%0A%20%20%20%20%2F%2F%20String%20jest%20struktur%C4%85%0A%20%20%20%20animal_type%3A%20String%2C%0A%20%20%20%20name%3A%20String%2C%0A%20%20%20%20arms%3A%20i32%2C%0A%20%20%20%20legs%3A%20i32%2C%0A%20%20%20%20weapon%3A%20String%2C%0A%7D
+  code: |-
+    struct SeaCreature {
+        // String jest strukturą
+        animal_type: String,
+        name: String,
+        arms: i32,
+        legs: i32,
+        weapon: String,
+    }
 - title: Wywoływanie Metod
   content_markdown: >
     Metody to specjalny rodzaj funkcji, mianowicie takich które są przypisane
@@ -39,8 +46,13 @@
 
 
     Więcej na temat tworzenia własnych metod powiemy w przyszłym rozdziale.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20%2F%2F%20korzystamy%20ze%20statycznej%20metody%20do%20stworzenia%20instancji%20typu%20String%0A%20%20%20%20let%20s%20%3D%20String%3A%3Afrom(%22Witaj%20%C5%9Bwiecie!%22)%3B%0A%20%20%20%20%2F%2F%20tu%20korzystamy%20z%20metody%20instancji%0A%20%20%20%20println!(%22%7B%7D%20ma%20d%C5%82ugo%C5%9B%C4%87%20%7B%7D%20znak%C3%B3w.%22%2C%20s%2C%20s.len())%3B%0A%7D%0A
+  code: |
+    fn main() {
+        // korzystamy ze statycznej metody do stworzenia instancji typu String
+        let s = String::from("Witaj świecie!");
+        // tu korzystamy z metody instancji
+        println!("{} ma długość {} znaków.", s, s.len());
+    }
 - title: Pamięć
   content_markdown: >
     Programy pisane w Ruscie mają do dyspozycji 3 rodzaje pamięci:
@@ -87,13 +99,55 @@
         * Stworzony zostaje obszar pamięci na stercie dla przechowania danych 
       reprezentujących modyfikowalny ciąg znaków
         * Przechowuje się na stosie referencję do miejsca na stercie gdzie przechowywane są te dane
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20ZyjatkoMorskie%20%7B%0A%20%20%20%20rodzaj%3A%20String%2C%0A%20%20%20%20imie%3A%20String%2C%0A%20%20%20%20ramiona%3A%20i32%2C%0A%20%20%20%20nogi%3A%20i32%2C%0A%20%20%20%20uzbrojenie%3A%20String%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20ta%20struktura%20jest%20przechowywana%20na%20stosie%0A%20%20%20%20let%20ferris%20%3D%20ZyjatkoMorskie%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20struktura%20String%20jest%20r%C3%B3wnie%C5%BC%20przechowywana%20na%20stosie%2C%0A%20%20%20%20%20%20%20%20%2F%2F%20cho%C4%87%20trzyma%20ona%20te%C5%BC%20referencj%C4%99%20do%20danych%20na%20stercie%0A%20%20%20%20%20%20%20%20rodzaj%3A%20String%3A%3Afrom(%22krab%22)%2C%0A%20%20%20%20%20%20%20%20imie%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20ramiona%3A%202%2C%0A%20%20%20%20%20%20%20%20nogi%3A%204%2C%0A%20%20%20%20%20%20%20%20uzbrojenie%3A%20String%3A%3Afrom(%22szczypce%22)%2C%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20let%20sara%20%3D%20ZyjatkoMorskie%20%7B%0A%20%20%20%20%20%20%20%20rodzaj%3A%20String%3A%3Afrom(%22o%C5%9Bmiornica%22)%2C%0A%20%20%20%20%20%20%20%20imie%3A%20String%3A%3Afrom(%22Sara%22)%2C%0A%20%20%20%20%20%20%20%20ramiona%3A%208%2C%0A%20%20%20%20%20%20%20%20nogi%3A%200%2C%0A%20%20%20%20%20%20%20%20uzbrojenie%3A%20String%3A%3Afrom(%22brak%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22%7B%7D%20to%20%7B%7D.%20Posiada%20%7B%7D%20ramion%2C%20%7B%7D%20n%C3%B3g%2C%20oraz%20jest%20uzbrojony%20w%20%7B%7D%22%2C%0A%20%20%20%20%20%20%20%20ferris.imie%2C%20ferris.rodzaj%2C%20ferris.ramiona%2C%20ferris.nogi%2C%20ferris.uzbrojenie%0A%20%20%20%20)%3B%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22%7B%7D%20to%20%7B%7D.%20Posiada%20%7B%7D%20ramion%20i%20%7B%7D%20n%C3%B3g.%20Nie%20posiada%20%C5%BCadnej%20broni..%22%2C%0A%20%20%20%20%20%20%20%20sarah.imie%2C%20sarah.rodzaj%2C%20sarah.ramiona%2C%20sarah.nogi%0A%20%20%20%20)%3B%0A%7D%0A
+  code: |
+    struct ZyjatkoMorskie {
+        rodzaj: String,
+        imie: String,
+        ramiona: i32,
+        nogi: i32,
+        uzbrojenie: String,
+    }
+
+    fn main() {
+        // ta struktura jest przechowywana na stosie
+        let ferris = ZyjatkoMorskie {
+            // struktura String jest również przechowywana na stosie,
+            // choć trzyma ona też referencję do danych na stercie
+            rodzaj: String::from("krab"),
+            imie: String::from("Ferris"),
+            ramiona: 2,
+            nogi: 4,
+            uzbrojenie: String::from("szczypce"),
+        };
+
+        let sara = ZyjatkoMorskie {
+            rodzaj: String::from("ośmiornica"),
+            imie: String::from("Sara"),
+            ramiona: 8,
+            nogi: 0,
+            uzbrojenie: String::from("brak"),
+        };
+        
+        println!(
+            "{} to {}. Posiada {} ramion, {} nóg, oraz jest uzbrojony w {}",
+            ferris.imie, ferris.rodzaj, ferris.ramiona, ferris.nogi, ferris.uzbrojenie
+        );
+        println!(
+            "{} to {}. Posiada {} ramion i {} nóg. Nie posiada żadnej broni..",
+            sarah.imie, sarah.rodzaj, sarah.ramiona, sarah.nogi
+        );
+    }
 - title: Struktury Krotkowe
   content_markdown: |
     W celu zachowania zwięzłości, możemy tworzyć struktury przypominające w wyglądzie i użytkowaniu krotki.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Location(i32%2C%20i32)%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20ta%20struktura%20r%C3%B3wnie%C5%BC%20trafi%20na%20(pami%C4%99ciowy)%20stos%0A%20%20%20%20let%20loc%20%3D%20Location(42%2C%2032)%3B%0A%20%20%20%20println!(%22%7B%7D%2C%20%7B%7D%22%2C%20loc.0%2C%20loc.1)%3B%0A%7D%0A
+  code: |
+    struct Location(i32, i32);
+
+    fn main() {
+        // ta struktura również trafi na (pamięciowy) stos
+        let loc = Location(42, 32);
+        println!("{}, {}", loc.0, loc.1);
+    }
 - title: Puste Struktury
   content_markdown: >
     Nie ma żadnego powodu dla którego nie moglibyśmy stworzyć pustej struktury.
@@ -104,8 +158,12 @@
 
 
     Puste struktury nie są częstym widokiem w kodzie Rust.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Marker%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20_m%20%3D%20Marker%3B%0A%7D%0A
+  code: |
+    struct Marker;
+
+    fn main() {
+        let _m = Marker;
+    }
 - title: Wyliczenia
   content_markdown: >
     Wyliczenia tworzone z użyciem słowa kluczowego `enum` pozwalają na tworzenie nowych
@@ -115,8 +173,40 @@
     Wyrażenie `match` pozwala nam na wyczerpujące dopasowanie każdego możliwego wariantu wyliczenia.
     Kombinacja wyliczeń i wyrażenia `match` to jedna z kluczowych metod tworzenia wysokiej jakości
     kodu w języku Rust.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=%23!%5Ballow(dead_code)%5D%20%2F%2F%20ta%20linia%20wy%C5%82%C4%85cza%20ostrze%C5%BCenia%20kompilatora%0A%0Aenum%20Rodzaj%20%7B%0A%20%20%20%20Krab%2C%0A%20%20%20%20Osmiornica%2C%0A%20%20%20%20Ryba%2C%0A%20%20%20%20Malz%0A%7D%0A%0Astruct%20ZyjatkoMorskie%20%7B%0A%20%20%20%20rodzaj%3A%20Rodzaj%2C%0A%20%20%20%20imie%3A%20String%2C%0A%20%20%20%20ramiona%3A%20i32%2C%0A%20%20%20%20nogi%3A%20i32%2C%0A%20%20%20%20uzbrojenie%3A%20String%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20ferris%20%3D%20ZyjatkoMorskie%20%7B%0A%20%20%20%20%20%20%20%20rodzaj%3A%20Rodzaj%3A%3AKrab%2C%0A%20%20%20%20%20%20%20%20imie%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20ramiona%3A%202%2C%0A%20%20%20%20%20%20%20%20nogi%3A%204%2C%0A%20%20%20%20%20%20%20%20uzbrojenie%3A%20String%3A%3Afrom(%22szczypce%22)%2C%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20match%20ferris.rodzaj%20%7B%0A%20%20%20%20%20%20%20%20Rodzaj%3A%3AKrab%20%3D%3E%20println!(%22%7B%7D%20to%20krab%22%2C%20ferris.imie)%2C%0A%20%20%20%20%20%20%20%20Rodzaj%3A%3AOsmiornica%20%3D%3E%20println!(%22%7B%7D%20to%20osmiornica%22%2C%20ferris.imie)%2C%0A%20%20%20%20%20%20%20%20Rodzaj%3A%3ARyba%20%3D%3E%20println!(%22%7B%7D%20to%20ryba%22%2C%20ferris.imie)%2C%0A%20%20%20%20%20%20%20%20Rodzaj%3A%3AMalz%20%3D%3E%20println!(%22%7B%7D%20to%20ma%C5%82%C5%BC%22%2C%20ferris.imie)%2C%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    #![allow(dead_code)] // ta linia wyłącza ostrzeżenia kompilatora
+
+    enum Rodzaj {
+        Krab,
+        Osmiornica,
+        Ryba,
+        Malz
+    }
+
+    struct ZyjatkoMorskie {
+        rodzaj: Rodzaj,
+        imie: String,
+        ramiona: i32,
+        nogi: i32,
+        uzbrojenie: String,
+    }
+
+    fn main() {
+        let ferris = ZyjatkoMorskie {
+            rodzaj: Rodzaj::Krab,
+            imie: String::from("Ferris"),
+            ramiona: 2,
+            nogi: 4,
+            uzbrojenie: String::from("szczypce"),
+        };
+
+        match ferris.rodzaj {
+            Rodzaj::Krab => println!("{} to krab", ferris.imie),
+            Rodzaj::Osmiornica => println!("{} to osmiornica", ferris.imie),
+            Rodzaj::Ryba => println!("{} to ryba", ferris.imie),
+            Rodzaj::Malz => println!("{} to małż", ferris.imie),
+        }
+    }
 - title: Wyliczenia Zawierające Dane
   content_markdown: >
     Wyliczenia `enum` mogą w ramach swoich elementów zawierać inne typy danych. 
@@ -145,8 +235,51 @@
 
     * Mówi się, że Rust posiada *typy algebraiczne* (ang. *algebraic types*). Oznacza to mniej więcej tyle, że możliwe jest
     kombinowanie typów w celu stworzenia z nich pewnego nowego typu.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=%23!%5Ballow(dead_code)%5D%20%2F%2F%20ta%20linia%20wy%C5%82%C4%85cza%20ostrze%C5%BCenia%20kompilatora%0A%0Aenum%20Rodzaj%20%7B%20Krab%2C%20Osmiornica%2C%20Ryba%2C%20Malz%20%7D%0Aenum%20TypObrazen%20%7B%20Kwasowe%2C%20Bolesne%2C%20Zabojcze%20%7D%0Aenum%20Rozmiar%20%7B%20Duze%2C%20Male%20%7D%0Aenum%20Uzbrojenie%20%7B%0A%20%20%20%20Szczypce(i32%2C%20Rozmiar)%2C%0A%20%20%20%20Obrazenia(TypObrazen)%2C%0A%20%20%20%20None%0A%7D%0A%0Astruct%20ZyjatkoMorskie%20%7B%0A%20%20%20%20rodzaj%3A%20Rodzaj%2C%0A%20%20%20%20imie%3A%20String%2C%0A%20%20%20%20ramiona%3A%20i32%2C%0A%20%20%20%20nogi%3A%20i32%2C%0A%20%20%20%20uzbrojenie%3A%20Uzbrojenie%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20ferris%20%3D%20ZyjatkoMorskie%20%7B%0A%20%20%20%20%20%20%20%20rodzaj%3A%20Rodzaj%3A%3AKrab%2C%0A%20%20%20%20%20%20%20%20imie%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20ramiona%3A%202%2C%0A%20%20%20%20%20%20%20%20nogi%3A%204%2C%0A%20%20%20%20%20%20%20%20uzbrojenie%3A%20Uzbrojenie%3A%3ASzczypce(2%2C%20Rozmiar%3A%3AMale)%2C%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20match%20ferris.rodzaj%20%7B%0A%20%20%20%20%20%20%20%20Rodzaj%3A%3AKrab%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20match%20ferris.uzbrojenie%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Uzbrojenie%3A%3ASzczypce(ilosc%2C%20rozmiar)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20opis_wielkosci%20%3D%20match%20rozmiar%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Rozmiar%3A%3ADuze%20%3D%3E%20%22du%C5%BCymi%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Rozmiar%3A%3AMale%20%3D%3E%20%22ma%C5%82ymi%22%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20println!(%22ferris%20to%20krab%20z%20%7B%7D%20%7B%7D%20szczypcami%22%2C%20ilosc%2C%20opis_wielkosci)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20_%20%3D%3E%20println!(%22ferris%20to%20krab%20z%20jakim%C5%9B%20innym%20uzbrojeniem%22)%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20_%20%3D%3E%20println!(%22ferris%20jest%20jakim%C5%9B%20innym%20%C5%BCyj%C4%85tkiem%22)%2C%0A%20%20%20%20%7D%0A%7D
+  code: |-
+    #![allow(dead_code)] // ta linia wyłącza ostrzeżenia kompilatora
+
+    enum Rodzaj { Krab, Osmiornica, Ryba, Malz }
+    enum TypObrazen { Kwasowe, Bolesne, Zabojcze }
+    enum Rozmiar { Duze, Male }
+    enum Uzbrojenie {
+        Szczypce(i32, Rozmiar),
+        Obrazenia(TypObrazen),
+        None
+    }
+
+    struct ZyjatkoMorskie {
+        rodzaj: Rodzaj,
+        imie: String,
+        ramiona: i32,
+        nogi: i32,
+        uzbrojenie: Uzbrojenie,
+    }
+
+    fn main() {
+        let ferris = ZyjatkoMorskie {
+            rodzaj: Rodzaj::Krab,
+            imie: String::from("Ferris"),
+            ramiona: 2,
+            nogi: 4,
+            uzbrojenie: Uzbrojenie::Szczypce(2, Rozmiar::Male),
+        };
+
+        match ferris.rodzaj {
+            Rodzaj::Krab => {
+                match ferris.uzbrojenie {
+                    Uzbrojenie::Szczypce(ilosc, rozmiar) => {
+                        let opis_wielkosci = match rozmiar {
+                            Rozmiar::Duze => "dużymi",
+                            Rozmiar::Male => "małymi"
+                        };
+                        println!("ferris to krab z {} {} szczypcami", ilosc, opis_wielkosci)
+                    },
+                    _ => println!("ferris to krab z jakimś innym uzbrojeniem")
+                }
+            },
+            _ => println!("ferris jest jakimś innym żyjątkiem"),
+        }
+    }
 - title: Rozdział 3 - Podsumowanie
   content_markdown: >
     Ale super! Mamy już podstawowe narzędzia do reprezentowania bardziej skomplikowanych

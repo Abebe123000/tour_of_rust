@@ -23,8 +23,23 @@
 
     Dito isto, o Rust implementa muitos recursos da linguagem de programação para que você não se importe com isso.
 - title: Encapsulamento com métodos
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20CriaturaMarinha%20%7B%0A%20%20%20%20barulho%3A%20String%2C%0A%7D%0A%0Aimpl%20CriaturaMarinha%20%7B%0A%20%20%20%20fn%20pega_barulho(%26self)%20-%3E%20%26str%20%7B%0A%20%20%20%20%20%20%20%20%26self.barulho%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20criatura%20%3D%20CriaturaMarinha%20%7B%0A%20%20%20%20%20%20%20%20barulho%3A%20String%3A%3Afrom(%22glub%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20criatura.pega_barulho())%3B%0A%7D%0A
+  code: |
+    struct CriaturaMarinha {
+        barulho: String,
+    }
+
+    impl CriaturaMarinha {
+        fn pega_barulho(&self) -> &str {
+            &self.barulho
+        }
+    }
+
+    fn main() {
+        let criatura = CriaturaMarinha {
+            barulho: String::from("glub"),
+        };
+        println!("{}", criatura.pega_barulho());
+    }
   content_markdown: >
     O Rust suporta o conceito de um *objeto* que é uma estrutura associada a algumas funções (também conhecidas como *métodos*).
 
@@ -49,8 +64,25 @@
 
     ```
 - title: Abstração com exposição seletiva
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20CriaturaMarinha%20%7B%0A%20%20%20%20pub%20nome%3A%20String%2C%0A%20%20%20%20barulho%3A%20String%2C%0A%7D%0A%0Aimpl%20CriaturaMarinha%20%7B%0A%20%20%20%20fn%20pega_barulho(%26self)%20-%3E%20%26str%20%7B%0A%20%20%20%20%20%20%20%20%26self.barulho%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20criatura%20%3D%20CriaturaMarinha%20%7B%0A%20%20%20%20%20%20%20%20nome%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20barulho%3A%20String%3A%3Afrom(%22glub%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20criatura.pega_barulho())%3B%0A%7D%0A
+  code: |
+    struct CriaturaMarinha {
+        pub nome: String,
+        barulho: String,
+    }
+
+    impl CriaturaMarinha {
+        fn pega_barulho(&self) -> &str {
+            &self.barulho
+        }
+    }
+
+    fn main() {
+        let criatura = CriaturaMarinha {
+            nome: String::from("Ferris"),
+            barulho: String::from("glub"),
+        };
+        println!("{}", criatura.pega_barulho());
+    }
   content_markdown: >
     O Rust pode esconder o funcionamento interno dos objetos.
 
@@ -60,8 +92,35 @@
 
     A palavra-chave `pub` expõe os campos e métodos do struct fora do módulo.
 - title: Polimorfismo com traits
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20CriaturaMarinha%20%7B%0A%20%20%20%20pub%20nome%3A%20String%2C%0A%20%20%20%20barulho%3A%20String%2C%0A%7D%0A%0Aimpl%20CriaturaMarinha%20%7B%0A%20%20%20%20fn%20pega_barulho(%26self)%20-%3E%20%26str%20%7B%0A%20%20%20%20%20%20%20%20%26self.barulho%0A%20%20%20%20%7D%0A%7D%0A%0Atrait%20FazedorBarulho%20%7B%0A%20%20%20%20fn%20faz_barulho(%26self)%3B%0A%7D%0A%0Aimpl%20FazedorBarulho%20for%20CriaturaMarinha%20%7B%0A%20%20%20%20fn%20faz_barulho(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20%26self.pega_barulho())%3B%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20criatura%20%3D%20CriaturaMarinha%20%7B%0A%20%20%20%20%20%20%20%20nome%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20barulho%3A%20String%3A%3Afrom(%22glub%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20criatura.pega_barulho())%3B%0A%7D%0A
+  code: |
+    struct CriaturaMarinha {
+        pub nome: String,
+        barulho: String,
+    }
+
+    impl CriaturaMarinha {
+        fn pega_barulho(&self) -> &str {
+            &self.barulho
+        }
+    }
+
+    trait FazedorBarulho {
+        fn faz_barulho(&self);
+    }
+
+    impl FazedorBarulho for CriaturaMarinha {
+        fn faz_barulho(&self) {
+            println!("{}", &self.pega_barulho());
+        }
+    }
+
+    fn main() {
+        let criatura = CriaturaMarinha {
+            nome: String::from("Ferris"),
+            barulho: String::from("glub"),
+        };
+        println!("{}", criatura.pega_barulho());
+    }
   content_markdown: >
     O Rust suporta o polimorfismo com traits. As traits nos permitem associar um conjunto de métodos a um tipo struct.
 
@@ -96,21 +155,129 @@
 
     ```
 - title: Métodos implementados nas traits
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20CriaturaMarinha%20%7B%0A%20%20%20%20pub%20nome%3A%20String%2C%0A%20%20%20%20barulho%3A%20String%2C%0A%7D%0A%0Aimpl%20CriaturaMarinha%20%7B%0A%20%20%20%20fn%20pega_barulho(%26self)%20-%3E%20%26str%20%7B%0A%20%20%20%20%20%20%20%20%26self.barulho%0A%20%20%20%20%7D%0A%7D%0A%0Atrait%20FazedorBarulho%20%7B%0A%20%20%20%20fn%20faz_barulho(%26self)%3B%0A%0A%20%20%20%20fn%20faz_muito_barulho(%26self)%7B%0A%20%20%20%20%20%20%20%20self.faz_barulho()%3B%0A%20%20%20%20%20%20%20%20self.faz_barulho()%3B%0A%20%20%20%20%20%20%20%20self.faz_barulho()%3B%0A%20%20%20%20%7D%0A%7D%0A%0Aimpl%20FazedorBarulho%20for%20CriaturaMarinha%20%7B%0A%20%20%20%20fn%20faz_barulho(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20%26self.pega_barulho())%3B%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20criatura%20%3D%20CriaturaMarinha%20%7B%0A%20%20%20%20%20%20%20%20nome%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20barulho%3A%20String%3A%3Afrom(%22glub%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20criatura.faz_muito_barulho()%3B%0A%7D%0A
+  code: |
+    struct CriaturaMarinha {
+        pub nome: String,
+        barulho: String,
+    }
+
+    impl CriaturaMarinha {
+        fn pega_barulho(&self) -> &str {
+            &self.barulho
+        }
+    }
+
+    trait FazedorBarulho {
+        fn faz_barulho(&self);
+
+        fn faz_muito_barulho(&self){
+            self.faz_barulho();
+            self.faz_barulho();
+            self.faz_barulho();
+        }
+    }
+
+    impl FazedorBarulho for CriaturaMarinha {
+        fn faz_barulho(&self) {
+            println!("{}", &self.pega_barulho());
+        }
+    }
+
+    fn main() {
+        let criatura = CriaturaMarinha {
+            nome: String::from("Ferris"),
+            barulho: String::from("glub"),
+        };
+        criatura.faz_muito_barulho();
+    }
   content_markdown: >
     As traits podem ter métodos implementados.
 
 
     As funções não têm acesso direto aos campos internos de uma struct, mas podem ser úteis para compartilhar comportamentos entre muitos implementadores de traits.
 - title: Herança das traits
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20CriaturaMarinha%20%7B%0A%20%20%20%20pub%20nome%3A%20String%2C%0A%20%20%20%20barulho%3A%20String%2C%0A%7D%0A%0Aimpl%20CriaturaMarinha%20%7B%0A%20%20%20%20pub%20fn%20pega_barulho(%26self)%20-%3E%20%26str%20%7B%0A%20%20%20%20%20%20%20%20%26self.barulho%0A%20%20%20%20%7D%0A%7D%0A%0Atrait%20FazedorBarulho%20%7B%0A%20%20%20%20fn%20faz_barulho(%26self)%3B%0A%7D%0A%0Atrait%20LoudFazedorBarulho%3A%20FazedorBarulho%20%7B%0A%20%20%20%20fn%20faz_muito_barulho(%26self)%20%7B%0A%20%20%20%20%20%20%20%20self.faz_barulho()%3B%0A%20%20%20%20%20%20%20%20self.faz_barulho()%3B%0A%20%20%20%20%20%20%20%20self.faz_barulho()%3B%0A%20%20%20%20%7D%0A%7D%0A%0Aimpl%20FazedorBarulho%20for%20CriaturaMarinha%20%7B%0A%20%20%20%20fn%20faz_barulho(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20%26self.pega_barulho())%3B%0A%20%20%20%20%7D%0A%7D%0A%0Aimpl%20LoudFazedorBarulho%20for%20CriaturaMarinha%20%7B%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20criatura%20%3D%20CriaturaMarinha%20%7B%0A%20%20%20%20%20%20%20%20nome%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20barulho%3A%20String%3A%3Afrom(%22glub%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20criatura.faz_muito_barulho()%3B%0A%7D%0A
+  code: |
+    struct CriaturaMarinha {
+        pub nome: String,
+        barulho: String,
+    }
+
+    impl CriaturaMarinha {
+        pub fn pega_barulho(&self) -> &str {
+            &self.barulho
+        }
+    }
+
+    trait FazedorBarulho {
+        fn faz_barulho(&self);
+    }
+
+    trait LoudFazedorBarulho: FazedorBarulho {
+        fn faz_muito_barulho(&self) {
+            self.faz_barulho();
+            self.faz_barulho();
+            self.faz_barulho();
+        }
+    }
+
+    impl FazedorBarulho for CriaturaMarinha {
+        fn faz_barulho(&self) {
+            println!("{}", &self.pega_barulho());
+        }
+    }
+
+    impl LoudFazedorBarulho for CriaturaMarinha {}
+
+    fn main() {
+        let criatura = CriaturaMarinha {
+            nome: String::from("Ferris"),
+            barulho: String::from("glub"),
+        };
+        criatura.faz_muito_barulho();
+    }
   content_markdown: |
     As traits podem herdar métodos de outras traits.
 - title: Dispatch dinâmico x estático
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20CriaturaMarinha%20%7B%0A%20%20%20%20pub%20nome%3A%20String%2C%0A%20%20%20%20barulho%3A%20String%2C%0A%7D%0A%0Aimpl%20CriaturaMarinha%20%7B%0A%20%20%20%20pub%20fn%20pega_barulho(%26self)%20-%3E%20%26str%20%7B%0A%20%20%20%20%20%20%20%20%26self.barulho%0A%20%20%20%20%7D%0A%7D%0A%0Atrait%20FazedorBarulho%20%7B%0A%20%20%20%20fn%20faz_barulho(%26self)%3B%0A%7D%0A%0Aimpl%20FazedorBarulho%20for%20CriaturaMarinha%20%7B%0A%20%20%20%20fn%20faz_barulho(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20%26self.pega_barulho())%3B%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20static_faz_barulho(criatura%3A%20%26CriaturaMarinha)%20%7B%0A%20%20%20%20%2F%2F%20sabemos%20o%20tipo%20real%0A%20%20%20%20criatura.faz_barulho()%3B%0A%7D%0A%0Afn%20dynamic_faz_barulho(fazedor_barulho%3A%20%26dyn%20FazedorBarulho)%20%7B%0A%20%20%20%20%2F%2F%20n%C3%A3o%20sabemos%20o%20tipo%20real%0A%20%20%20%20fazedor_barulho.faz_barulho()%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20criatura%20%3D%20CriaturaMarinha%20%7B%0A%20%20%20%20%20%20%20%20nome%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20barulho%3A%20String%3A%3Afrom(%22glub%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20static_faz_barulho(%26criatura)%3B%0A%20%20%20%20dynamic_faz_barulho(%26criatura)%3B%0A%7D%0A
+  code: |
+    struct CriaturaMarinha {
+        pub nome: String,
+        barulho: String,
+    }
+
+    impl CriaturaMarinha {
+        pub fn pega_barulho(&self) -> &str {
+            &self.barulho
+        }
+    }
+
+    trait FazedorBarulho {
+        fn faz_barulho(&self);
+    }
+
+    impl FazedorBarulho for CriaturaMarinha {
+        fn faz_barulho(&self) {
+            println!("{}", &self.pega_barulho());
+        }
+    }
+
+    fn static_faz_barulho(criatura: &CriaturaMarinha) {
+        // sabemos o tipo real
+        criatura.faz_barulho();
+    }
+
+    fn dynamic_faz_barulho(fazedor_barulho: &dyn FazedorBarulho) {
+        // não sabemos o tipo real
+        fazedor_barulho.faz_barulho();
+    }
+
+    fn main() {
+        let criatura = CriaturaMarinha {
+            nome: String::from("Ferris"),
+            barulho: String::from("glub"),
+        };
+        static_faz_barulho(&criatura);
+        dynamic_faz_barulho(&criatura);
+    }
   content_markdown: >
     Os métodos são executados de duas maneiras:
 
@@ -151,8 +318,43 @@
 
     Há outras maneiras também!
 - title: Funções genéricas
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20CriaturaMarinha%20%7B%0A%20%20%20%20pub%20nome%3A%20String%2C%0A%20%20%20%20barulho%3A%20String%2C%0A%7D%0A%0Aimpl%20CriaturaMarinha%20%7B%0A%20%20%20%20pub%20fn%20pega_barulho(%26self)%20-%3E%20%26str%20%7B%0A%20%20%20%20%20%20%20%20%26self.barulho%0A%20%20%20%20%7D%0A%7D%0A%0Atrait%20FazedorBarulho%20%7B%0A%20%20%20%20fn%20faz_barulho(%26self)%3B%0A%7D%0A%0Aimpl%20FazedorBarulho%20for%20CriaturaMarinha%20%7B%0A%20%20%20%20fn%20faz_barulho(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20%26self.pega_barulho())%3B%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20generic_faz_barulho%3CT%3E(criatura%3A%20%26T)%0Awhere%0A%20%20%20%20T%3A%20FazedorBarulho%2C%0A%7B%0A%20%20%20%20%2F%2F%20conhecemos%20o%20tipo%20real%20em%20tempo%20de%20compila%C3%A7%C3%A3o%0A%20%20%20%20criatura.faz_barulho()%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20criatura%20%3D%20CriaturaMarinha%20%7B%0A%20%20%20%20%20%20%20%20nome%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20barulho%3A%20String%3A%3Afrom(%22glub%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20generic_faz_barulho(%26criatura)%3B%0A%7D%0A
+  code: |
+    struct CriaturaMarinha {
+        pub nome: String,
+        barulho: String,
+    }
+
+    impl CriaturaMarinha {
+        pub fn pega_barulho(&self) -> &str {
+            &self.barulho
+        }
+    }
+
+    trait FazedorBarulho {
+        fn faz_barulho(&self);
+    }
+
+    impl FazedorBarulho for CriaturaMarinha {
+        fn faz_barulho(&self) {
+            println!("{}", &self.pega_barulho());
+        }
+    }
+
+    fn generic_faz_barulho<T>(criatura: &T)
+    where
+        T: FazedorBarulho,
+    {
+        // conhecemos o tipo real em tempo de compilação
+        criatura.faz_barulho();
+    }
+
+    fn main() {
+        let criatura = CriaturaMarinha {
+            nome: String::from("Ferris"),
+            barulho: String::from("glub"),
+        };
+        generic_faz_barulho(&criatura);
+    }
   content_markdown: >
     Os genéricos no Rust trabalham lado a lado com as traits. Quando descrevemos um tipo parametrizado `T`, podemos restringir quais tipos podem ser usados como argumento listando as traits necessárias que o argumento deve implementar.
 
@@ -174,8 +376,41 @@
 
     Usando genéricos criamos funções tipadas estáticas em tempo de compilação que terão tipos e tamanhos conhecidos, permitindo executar dispatchs estáticos e armazená-lo como um valor dimensionado.
 - title: Função genérica abreviada
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20CriaturaMarinha%20%7B%0A%20%20%20%20pub%20nome%3A%20String%2C%0A%20%20%20%20barulho%3A%20String%2C%0A%7D%0A%0Aimpl%20CriaturaMarinha%20%7B%0A%20%20%20%20pub%20fn%20pega_barulho(%26self)%20-%3E%20%26str%20%7B%0A%20%20%20%20%20%20%20%20%26self.barulho%0A%20%20%20%20%7D%0A%7D%0A%0Atrait%20FazedorBarulho%20%7B%0A%20%20%20%20fn%20faz_barulho(%26self)%3B%0A%7D%0A%0Aimpl%20FazedorBarulho%20for%20CriaturaMarinha%20%7B%0A%20%20%20%20fn%20faz_barulho(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20%26self.pega_barulho())%3B%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20generic_faz_barulho(criatura%3A%20%26impl%20FazedorBarulho)%0A%7B%0A%20%20%20%20%2F%2F%20conhecemos%20o%20tipo%20real%20em%20tempo%20de%20compila%C3%A7%C3%A3o%0A%20%20%20%20criatura.faz_barulho()%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20criatura%20%3D%20CriaturaMarinha%20%7B%0A%20%20%20%20%20%20%20%20nome%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20barulho%3A%20String%3A%3Afrom(%22glub%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20generic_faz_barulho(%26criatura)%3B%0A%7D%0A
+  code: |
+    struct CriaturaMarinha {
+        pub nome: String,
+        barulho: String,
+    }
+
+    impl CriaturaMarinha {
+        pub fn pega_barulho(&self) -> &str {
+            &self.barulho
+        }
+    }
+
+    trait FazedorBarulho {
+        fn faz_barulho(&self);
+    }
+
+    impl FazedorBarulho for CriaturaMarinha {
+        fn faz_barulho(&self) {
+            println!("{}", &self.pega_barulho());
+        }
+    }
+
+    fn generic_faz_barulho(criatura: &impl FazedorBarulho)
+    {
+        // conhecemos o tipo real em tempo de compilação
+        criatura.faz_barulho();
+    }
+
+    fn main() {
+        let criatura = CriaturaMarinha {
+            nome: String::from("Ferris"),
+            barulho: String::from("glub"),
+        };
+        generic_faz_barulho(&criatura);
+    }
   content_markdown: |
     O Rust possui uma abreviação para expressar genéricos restritos por uma trait:
 
@@ -196,8 +431,48 @@
     }
     ```
 - title: Box
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20CriaturaMarinha%20%7B%0A%20%20%20%20pub%20nome%3A%20String%2C%0A%20%20%20%20barulho%3A%20String%2C%0A%7D%0A%0Aimpl%20CriaturaMarinha%20%7B%0A%20%20%20%20pub%20fn%20pega_barulho(%26self)%20-%3E%20%26str%20%7B%0A%20%20%20%20%20%20%20%20%26self.barulho%0A%20%20%20%20%7D%0A%7D%0A%0Atrait%20FazedorBarulho%20%7B%0A%20%20%20%20fn%20faz_barulho(%26self)%3B%0A%7D%0A%0Aimpl%20FazedorBarulho%20for%20CriaturaMarinha%20%7B%0A%20%20%20%20fn%20faz_barulho(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20%26self.pega_barulho())%3B%0A%20%20%20%20%7D%0A%7D%0A%0Astruct%20Oceano%20%7B%0A%20%20%20%20animais%3A%20Vec%3CBox%3Cdyn%20FazedorBarulho%3E%3E%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20ferris%20%3D%20CriaturaMarinha%20%7B%0A%20%20%20%20%20%20%20%20nome%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20barulho%3A%20String%3A%3Afrom(%22glub%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20let%20sarah%20%3D%20CriaturaMarinha%20%7B%0A%20%20%20%20%20%20%20%20nome%3A%20String%3A%3Afrom(%22Sarah%22)%2C%0A%20%20%20%20%20%20%20%20barulho%3A%20String%3A%3Afrom(%22zum%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20let%20oceano%20%3D%20Oceano%20%7B%0A%20%20%20%20%20%20%20%20animais%3A%20vec!%5BBox%3A%3Anew(ferris)%2C%20Box%3A%3Anew(sarah)%5D%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20for%20a%20in%20oceano.animais.iter()%20%7B%0A%20%20%20%20%20%20%20%20a.faz_barulho()%3B%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    struct CriaturaMarinha {
+        pub nome: String,
+        barulho: String,
+    }
+
+    impl CriaturaMarinha {
+        pub fn pega_barulho(&self) -> &str {
+            &self.barulho
+        }
+    }
+
+    trait FazedorBarulho {
+        fn faz_barulho(&self);
+    }
+
+    impl FazedorBarulho for CriaturaMarinha {
+        fn faz_barulho(&self) {
+            println!("{}", &self.pega_barulho());
+        }
+    }
+
+    struct Oceano {
+        animais: Vec<Box<dyn FazedorBarulho>>,
+    }
+
+    fn main() {
+        let ferris = CriaturaMarinha {
+            nome: String::from("Ferris"),
+            barulho: String::from("glub"),
+        };
+        let sarah = CriaturaMarinha {
+            nome: String::from("Sarah"),
+            barulho: String::from("zum"),
+        };
+        let oceano = Oceano {
+            animais: vec![Box::new(ferris), Box::new(sarah)],
+        };
+        for a in oceano.animais.iter() {
+            a.faz_barulho();
+        }
+    }
   content_markdown: >
     `Box` é uma estrutura de dados que nos permite mover nossos dados da stack para a heap.
 

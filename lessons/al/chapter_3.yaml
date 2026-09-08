@@ -18,8 +18,16 @@
 
      Përkufizimi i saj është si një plan për një përpilues se si të vendoset
      fusha në kujtesë pranë njëra-tjetrës.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&code=struct%20SeaCreature%20%7B%0A%20%20%20%20%2F%2F%20String%20%C3%ABsht%C3%AB%20nj%C3%AB%20struktur%C3%AB%0A%20%20%20%20animal_type%3A%20String%2C%0A%20%20%20%20name%3A%20String%2C%0A%20%20%20%20arms%3A%20i32%2C%0A%20%20%20%20legs%3A%20i32%2C%0A%20%20%20%20weapon%3A%20String%2C%0A%7D)
+  code: |-
+    struct SeaCreature {
+        // String është një strukturë
+        animal_type: String,
+        name: String,
+        arms: i32,
+        legs: i32,
+        weapon: String,
+    })
+  edition: 2021
 - title: Metodat e thirrjes
   content_markdown: >
    Ndryshe nga funksionet, metodat janë funksione të lidhura me një të dhënë specifike
@@ -35,8 +43,15 @@
 
 
      Ne do të flasim më shumë për krijimin e metodave tuaja në kapitujt e ardhshëm.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&code=fn%20main()%20%7B%0A%20%20%20%20%2F%2F%20P%C3%ABrdorimi%20i%20nj%C3%AB%20metode%20statike%20p%C3%ABr%20krijimin%20e%20nj%C3%AB%20instance%20t%C3%AB%20String%0A%20%20%20%20let%20s%20%3D%20String%3A%3Afrom(%22P%C3%ABrshej%20bota!%22)%3B%0A%20%20%20%20%2F%2F%20P%C3%ABrdorimi%20i%20nj%C3%AB%20metode%20n%C3%AB%20instanc%C3%AB%0A%20%20%20%20println!(%22%7B%7D%20%C3%ABsht%C3%AB%20%7B%7D%20karaktere%20gjat%C3%AB.%22%2C%20s%2C%20s.len())%3B%0A%7D%0A)
+  code: |-
+    fn main() {
+        // Përdorimi i një metode statike për krijimin e një instance të String
+        let s = String::from("Përshej bota!");
+        // Përdorimi i një metode në instancë
+        println!("{} është {} karaktere gjatë.", s, s.len());
+    }
+    )
+  edition: 2021
 - title: Memorja
   content_markdown: >
    Programet Rust kanë 3 rajone memorie ku ruhen të dhënat:
@@ -88,13 +103,57 @@
      * Më në fund dy miqtë tanë *Ferris* dhe *Sara* kanë struktura të dhënash që
      do të ketë gjithmonë
        vendndodhje fikse në programin tonë, kështu që ato vendosen në *stack*.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&code=struct%20SeaCreature%20%7B%0A%20%20%20%20animal_type%3A%20String%2C%0A%20%20%20%20name%3A%20String%2C%0A%20%20%20%20arms%3A%20i32%2C%0A%20%20%20%20legs%3A%20i32%2C%0A%20%20%20%20weapon%3A%20String%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20T%C3%AB%20dhenat%20e%20SeaCreature%20jan%C3%AB%20n%C3%AB%20stack%0A%20%20%20%20let%20ferris%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20String%20struct%20%C3%ABsht%C3%AB%20gjithashtu%20n%C3%AB%20stack%2C%0A%20%20%20%20%20%20%20%20%2F%2F%20por%20mban%20nj%C3%AB%20referenc%C3%AB%20n%C3%AB%20t%C3%AB%20dh%C3%ABnat%20n%C3%AB%20heap%0A%20%20%20%20%20%20%20%20animal_type%3A%20String%3A%3Afrom(%22karkalec%22)%2C%0A%20%20%20%20%20%20%20%20name%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20arms%3A%202%2C%0A%20%20%20%20%20%20%20%20legs%3A%204%2C%0A%20%20%20%20%20%20%20%20weapon%3A%20String%3A%3Afrom(%22kong%22)%2C%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20let%20sarah%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20animal_type%3A%20String%3A%3Afrom(%22qent%22)%2C%0A%20%20%20%20%20%20%20%20name%3A%20String%3A%3Afrom(%22Sarah%22)%2C%0A%20%20%20%20%20%20%20%20arms%3A%208%2C%0A%20%20%20%20%20%20%20%20legs%3A%200%2C%0A%20%20%20%20%20%20%20%20weapon%3A%20String%3A%3Afrom(%22truri%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22%7B%7D%20%C3%ABsht%C3%AB%20nje%20%7B%7D.%20Ata%20kan%C3%AB%20%7B%7D%20krah%C3%AB%2C%20%7B%7D%20kembe%2C%20dhe%20nje%20%7B%7D%20arm%C3%AB%22%2C%0A%20%20%20%20%20%20%20%20ferris.name%2C%20ferris.animal_type%2C%20ferris.arms%2C%20ferris.legs%2C%20ferris.weapon%0A%20%20%20%20)%3B%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22%7B%7D%20%C3%ABsht%C3%AB%20nje%20%7B%7D.%20Ata%20kan%C3%AB%20%7B%7D%20krah%C3%AB%2C%20dhe%20%7B%7D%20kembe.%20Nuk%20kan%C3%AB%20arme..%22%2C%0A%20%20%20%20%20%20%20%20sarah.name%2C%20sarah.animal_type%2C%20sarah.arms%2C%20sarah.legs%0A%20%20%20%20)%3B%0A%7D)
+  code: |-
+    struct SeaCreature {
+        animal_type: String,
+        name: String,
+        arms: i32,
+        legs: i32,
+        weapon: String,
+    }
+
+    fn main() {
+        // Të dhenat e SeaCreature janë në stack
+        let ferris = SeaCreature {
+            // String struct është gjithashtu në stack,
+            // por mban një referencë në të dhënat në heap
+            animal_type: String::from("karkalec"),
+            name: String::from("Ferris"),
+            arms: 2,
+            legs: 4,
+            weapon: String::from("kong"),
+        };
+
+        let sarah = SeaCreature {
+            animal_type: String::from("qent"),
+            name: String::from("Sarah"),
+            arms: 8,
+            legs: 0,
+            weapon: String::from("truri"),
+        };
+        
+        println!(
+            "{} është nje {}. Ata kanë {} krahë, {} kembe, dhe nje {} armë",
+            ferris.name, ferris.animal_type, ferris.arms, ferris.legs, ferris.weapon
+        );
+        println!(
+            "{} është nje {}. Ata kanë {} krahë, dhe {} kembe. Nuk kanë arme..",
+            sarah.name, sarah.animal_type, sarah.arms, sarah.legs
+        );
+    })
+  edition: 2021
 - title: Struktura të ngjashme me tufë
   content_markdown: |
    Për koncizitet, mund të krijoni struktura që përdoren si një tufë.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&code=struct%20Location(i32%2C%20i32)%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20Kjo%20%C3%ABsht%C3%AB%20ende%20nj%C3%AB%20strukture%20n%C3%AB%20stack%0A%20%20%20%20let%20loc%20%3D%20Location(42%2C%2032)%3B%0A%20%20%20%20println!(%22%7B%7D%2C%20%7B%7D%22%2C%20loc.0%2C%20loc.1)%3B%0A%7D
+  code: |-
+    struct Location(i32, i32);
+
+    fn main() {
+        // Kjo është ende një strukture në stack
+        let loc = Location(42, 32);
+        println!("{}, {}", loc.0, loc.1);
+    }
+  edition: 2021
 - title: Struktura të ngjashme me njësinë
   content_markdown: >
     Strukturat edhe nuk duhet të kenë fare fusha.
@@ -105,8 +164,13 @@
 
 
      Ky lloj strukture përdoret rrallë.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&code=struct%20Marker%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20_m%20%3D%20Marker%3B%0A%7D)
+  code: |-
+    struct Marker;
+
+    fn main() {
+        let _m = Marker;
+    })
+  edition: 2021
 - title: Enumeracionet
   content_markdown: >
     Enumerimet ju lejojnë të krijoni një lloj të ri që mund të ketë një vlerë prej disa
@@ -115,8 +179,41 @@
 
      "match" ndihmon në sigurimin e trajtimit shterues të të gjitha bërjes së vlerave të mundshme të numrit
      është një mjet i fuqishëm për të siguruar kod cilësor.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&code=%23!%5Blejohet(dead_code)%5D%20%2F%2F%20ky%20rresht%20parandalon%20sinjalizimet%20e%20kompiluesit%0A%0Aenum%20Lloji%20%7B%0A%20%20%20%20Karkalec%2C%0A%20%20%20%20Zogu%20i%20detit%2C%0A%20%20%20%20Peshku%2C%0A%20%20%20%20Palura%0A%7D%0A%0Astruct%20KrijesaDeti%20%7B%0A%20%20%20%20lloji%3A%20Lloji%2C%0A%20%20%20%20emri%3A%20String%2C%0A%20%20%20%20krah%C3%ABt%3A%20i32%2C%0A%20%20%20%20kembe%3A%20i32%2C%0A%20%20%20%20arm%C3%ABt%3A%20String%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20ferris%20%3D%20KrijesaDeti%20%7B%0A%20%20%20%20%20%20%20%20lloji%3A%20Lloji%3A%3AKarkalec%2C%0A%20%20%20%20%20%20%20%20emri%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20krah%C3%ABt%3A%202%2C%0A%20%20%20%20%20%20%20%20kembe%3A%204%2C%0A%20%20%20%20%20%20%20%20arm%C3%ABt%3A%20String%3A%3Afrom(%22kam%C3%ABy%22)%2C%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20match%20ferris.lloji%20%7B%0A%20%20%20%20%20%20%20%20Lloji%3A%3AKarkalec%20%3D%3E%20println!(%22%7B%7D%20%C3%ABsht%C3%AB%20nj%C3%AB%20karkalec%22%2Cferris.emri)%2C%0A%20%20%20%20%20%20%20%20Lloji%3A%3AZogu%20i%20detit%20%3D%3E%20println!(%22%7B%7D%20%C3%ABsht%C3%AB%20nj%C3%AB%20zog%20i%20detit%22%2Cferris.emri)%2C%0A%20%20%20%20%20%20%20%20Lloji%3A%3APeshku%20%3D%3E%20println!(%22%7B%7D%20%C3%ABsht%C3%AB%20nj%C3%AB%20peshk%22%2Cferris.emri)%2C%0A%20%20%20%20%20%20%20%20Lloji%3A%3APalura%20%3D%3E%20println!(%22%7B%7D%20%C3%ABsht%C3%AB%20nj%C3%AB%20palur%C3%AB%22%2Cferris.emri)%2C%0A%20%20%20%20%7D%0A%7D)
+  code: |-
+    #![lejohet(dead_code)] // ky rresht parandalon sinjalizimet e kompiluesit
+
+    enum Lloji {
+        Karkalec,
+        Zogu i detit,
+        Peshku,
+        Palura
+    }
+
+    struct KrijesaDeti {
+        lloji: Lloji,
+        emri: String,
+        krahët: i32,
+        kembe: i32,
+        armët: String,
+    }
+
+    fn main() {
+        let ferris = KrijesaDeti {
+            lloji: Lloji::Karkalec,
+            emri: String::from("Ferris"),
+            krahët: 2,
+            kembe: 4,
+            armët: String::from("kamëy"),
+        };
+
+        match ferris.lloji {
+            Lloji::Karkalec => println!("{} është një karkalec",ferris.emri),
+            Lloji::Zogu i detit => println!("{} është një zog i detit",ferris.emri),
+            Lloji::Peshku => println!("{} është një peshk",ferris.emri),
+            Lloji::Palura => println!("{} është një palurë",ferris.emri),
+        }
+    })
+  edition: 2021
 - title: Enumerations With Data
   content_markdown: >
     Elementet "enum" mund të kenë gjithashtu një ose më shumë lloje të dhënash që i lejojnë ata të sillen
@@ -142,8 +239,55 @@
 
      * Kombinimi i llojeve për të krijuar një lloj të ri është ajo që njerëzit nënkuptojnë kur ata
      Ndryshku ka *lloje algjebrike*.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&code=%23!%5Blejohet(dead_code)%5D%20%2F%2F%20ky%20rresht%20parandalon%20sinjalizimet%20e%20kompiluesit%0A%0Aenum%20Lloji%20%7B%20Karkalec%2C%20Zogu%20i%20detit%2C%20Peshku%2C%20Palura%20%7D%0Aenum%20LlojiVeneni%20%7B%20Acid%2C%20Dhimbshme%2C%20Vdekjeprurese%20%7D%0Aenum%20Madhesia%20%7B%20Madhe%2C%20Vogel%20%7D%0Aenum%20Arma%20%7B%0A%20%20%20%20Krah%28i32%2C%20Madhesia%29%2C%0A%20%20%20%20Venin%28LlojiVeneni%29%2C%0A%20%20%20%20Asnje%0A%7D%0A%0Astruct%20KrijesaDeti%20%7B%0A%20%20%20%20lloji%3A%20Lloji%2C%0A%20%20%20%20emri%3A%20String%2C%0A%20%20%20%20krah%C3%ABt%3A%20i32%2C%0A%20%20%20%20kembe%3A%20i32%2C%0A%20%20%20%20arma%3A%20Arma%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20Te%20dhenat%20e%20Krijes%D0%91eDeti%20jane%20ne%20stek%0A%20%20%20%20let%20ferris%20%3D%20KrijesaDeti%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20Struktura%20String%20gjithashtu%20eshte%20ne%20stek%2C%0A%20%20%20%20%20%20%20%20%2F%2F%20por%20mban%20nje%20referenc%20ne%20te%20dhena%20ne%20heap%0A%20%20%20%20%20%20%20%20lloji%3A%20Lloji%3A%3AKarkalec%2C%0A%20%20%20%20%20%20%20%20emri%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20krah%C3%ABt%3A%202%2C%0A%20%20%20%20%20%20%20%20kembe%3A%204%2C%0A%20%20%20%20%20%20%20%20arma%3A%20Arma%3A%3AKrah(2%2C%20Madhesia%3A%3AVogel)%2C%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20match%20ferris.lloji%20%7B%0A%20%20%20%20%20%20%20%20Lloji%3A%3AKarkalec%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20match%20ferris.arma%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Arma%3A%3AKrah(nr_krah%C3%ABve%2Cmadhesia)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20pershkrim_madh%C3%ABsie%20%3D%20match%20madhesia%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Madhesia%3A%3AMadhe%20%3D%3E%20%22madhe%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Madhesia%3A%3AVogel%20%3D%3E%20%22vogel%22%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20println!(%22ferris%20%C3%ABsht%C3%AB%20nj%C3%AB%20karkalec%20me%20%7B%7D%20%7B%7D%20krah%C3%AB%22%2C%20nr_krah%C3%ABve%2C%20pershkrim_madh%C3%ABsie)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20_%20%3D%3E%20println!(%22ferris%20%C3%ABsht%C3%AB%20nj%C3%AB%20karkalec%20me%20nj%C3%AB%20arm%C3%AB%20tjet%C3%ABr%22)%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20_%20%3D%3E%20println!(%22ferris%20%C3%ABsht%C3%AB%20nj%C3%AB%20kafsh%C3%AB%20tjet%C3%ABr%22)%2C%0A%20%20%20%20%7D%0A%7D)
+  code: |-
+    #![lejohet(dead_code)] // ky rresht parandalon sinjalizimet e kompiluesit
+
+    enum Lloji { Karkalec, Zogu i detit, Peshku, Palura }
+    enum LlojiVeneni { Acid, Dhimbshme, Vdekjeprurese }
+    enum Madhesia { Madhe, Vogel }
+    enum Arma {
+        Krah(i32, Madhesia),
+        Venin(LlojiVeneni),
+        Asnje
+    }
+
+    struct KrijesaDeti {
+        lloji: Lloji,
+        emri: String,
+        krahët: i32,
+        kembe: i32,
+        arma: Arma,
+    }
+
+    fn main() {
+        // Te dhenat e KrijesБeDeti jane ne stek
+        let ferris = KrijesaDeti {
+            // Struktura String gjithashtu eshte ne stek,
+            // por mban nje referenc ne te dhena ne heap
+            lloji: Lloji::Karkalec,
+            emri: String::from("Ferris"),
+            krahët: 2,
+            kembe: 4,
+            arma: Arma::Krah(2, Madhesia::Vogel),
+        };
+
+        match ferris.lloji {
+            Lloji::Karkalec => {
+                match ferris.arma {
+                    Arma::Krah(nr_krahëve,madhesia) => {
+                        let pershkrim_madhësie = match madhesia {
+                            Madhesia::Madhe => "madhe",
+                            Madhesia::Vogel => "vogel"
+                        };
+                        println!("ferris është një karkalec me {} {} krahë", nr_krahëve, pershkrim_madhësie)
+                    },
+                    _ => println!("ferris është një karkalec me një armë tjetër")
+                }
+            },
+            _ => println!("ferris është një kafshë tjetër"),
+        }
+    })
+  edition: 2021
 - title: Kapitulli 3 - Konkluzion
   content_markdown: >
     Sa emocionuese! Tani kemi mjetet më themelore për përfaqësimin e formës së

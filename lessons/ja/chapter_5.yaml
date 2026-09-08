@@ -8,8 +8,16 @@
   content_markdown: |
     型のインスタンスを作成して変数に**束縛**するとメモリリソースが作成され、そのすべての**ライフタイム**に渡って Rust コンパイラが検証します。
     束縛された変数はリソースの**所有者**と呼ばれます。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20%E6%A7%8B%E9%80%A0%E4%BD%93%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%82%BF%E3%83%B3%E3%82%B9%E5%8C%96%E3%81%97%E3%80%81%E5%A4%89%E6%95%B0%E3%81%AB%E6%9D%9F%E7%B8%9B%E3%81%97%E3%81%A6%E3%83%A1%E3%83%A2%E3%83%AA%E3%83%AA%E3%82%BD%E3%83%BC%E3%82%B9%E3%82%92%E4%BD%9C%E6%88%90%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20%2F%2F%20foo%20%E3%81%AF%E6%89%80%E6%9C%89%E8%80%85%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        // 構造体をインスタンス化し、変数に束縛してメモリリソースを作成
+        let foo = Foo { x: 42 };
+        // foo は所有者
+    }
 - title: スコープベースのリソース管理
   content_markdown: |
     Rust では、スコープの終わりをリソースのデストラクトと解放の場所として使用します。
@@ -20,8 +28,21 @@
 
     * Rust にはガベージコレクションがありません。
     * C++ では Resource Acquisition Is Initialization (RAII)「リソース取得は初期化である」とも呼ばれています。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo_a%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20foo_b%20%3D%20Foo%20%7B%20x%3A%2013%20%7D%3B%0A%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo_a.x)%3B%0A%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo_b.x)%3B%0A%20%20%20%20%2F%2F%20foo_b%20%E3%81%AF%E3%81%93%E3%81%93%E3%81%A7%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%0A%20%20%20%20%2F%2F%20foo_a%20%E3%81%AF%E3%81%93%E3%81%93%E3%81%A7%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        let foo_a = Foo { x: 42 };
+        let foo_b = Foo { x: 13 };
+
+        println!("{}", foo_a.x);
+
+        println!("{}", foo_b.x);
+        // foo_b はここでドロップ
+        // foo_a はここでドロップ
+    }
 - title: ドロップは階層的
   content_markdown: |
     構造体がドロップされると、まず構造体自体がドロップされ、次にその子要素が個別に削除されます。
@@ -30,8 +51,21 @@
 
     * メモリを自動的に解放することで、メモリリークを軽減できます。
     * メモリリソースのドロップは一度しかできません。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Bar%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Astruct%20Foo%20%7B%0A%20%20%20%20bar%3A%20Bar%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%20bar%3A%20Bar%20%7B%20x%3A%2042%20%7D%20%7D%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo.bar.x)%3B%0A%20%20%20%20%2F%2F%20foo%20%E3%81%8C%E6%9C%80%E5%88%9D%E3%81%AB%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%0A%20%20%20%20%2F%2F%20%E6%AC%A1%E3%81%AB%20foo.bar%20%E3%81%8C%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%0A%7D%0A
+  code: |
+    struct Bar {
+        x: i32,
+    }
+
+    struct Foo {
+        bar: Bar,
+    }
+
+    fn main() {
+        let foo = Foo { bar: Bar { x: 42 } };
+        println!("{}", foo.bar.x);
+        // foo が最初にドロップ
+        // 次に foo.bar がドロップ
+    }
 - title: 所有権の移動
   content_markdown: |
     所有者が関数の実引数として渡されると、所有権は関数の仮引数に移動 (move) します。
@@ -41,20 +75,57 @@
     メモリの詳細:
 
     * **移動**している間、所有者の値のスタックメモリは、関数呼び出しパラメータのスタックメモリにコピーされます。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20do_something(f%3A%20Foo)%20%7B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20f.x)%3B%0A%20%20%20%20%2F%2F%20f%20%E3%81%AF%E3%81%93%E3%81%93%E3%81%A7%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20%2F%2F%20foo%20%E3%81%AE%E6%89%80%E6%9C%89%E6%A8%A9%E3%81%AF%20do_something%20%E3%81%AB%E7%A7%BB%E5%8B%95%0A%20%20%20%20do_something(foo)%3B%0A%20%20%20%20%2F%2F%20foo%20%E3%81%AF%E4%BD%BF%E3%81%88%E3%81%AA%E3%81%8F%E3%81%AA%E3%82%8B%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: Foo) {
+        println!("{}", f.x);
+        // f はここでドロップ
+    }
+
+    fn main() {
+        let foo = Foo { x: 42 };
+        // foo の所有権は do_something に移動
+        do_something(foo);
+        // foo は使えなくなる
+    }
 - title: 所有権を返す
   content_markdown: |
     所有権を関数から返すこともできます。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20do_something()%20-%3E%20Foo%20%7B%0A%20%20%20%20Foo%20%7B%20x%3A%2042%20%7D%0A%20%20%20%20%2F%2F%20%E6%89%80%E6%9C%89%E6%A8%A9%E3%81%AF%E5%A4%96%E3%81%AB%E7%A7%BB%E5%8B%95%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo%20%3D%20do_something()%3B%0A%20%20%20%20%2F%2F%20foo%20%E3%81%AF%E6%89%80%E6%9C%89%E8%80%85%E3%81%AB%E3%81%AA%E3%82%8B%0A%20%20%20%20%2F%2F%20%E9%96%A2%E6%95%B0%E3%81%AE%E3%82%B9%E3%82%B3%E3%83%BC%E3%83%97%E3%81%AE%E7%B5%82%E7%AB%AF%E3%81%AB%E3%82%88%E3%82%8A%E3%80%81foo%20%E3%81%AF%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something() -> Foo {
+        Foo { x: 42 }
+        // 所有権は外に移動
+    }
+
+    fn main() {
+        let foo = do_something();
+        // foo は所有者になる
+        // 関数のスコープの終端により、foo はドロップ
+    }
 - title: 参照による所有権の借用
   content_markdown: |
     参照は、`&` 演算子を使ってリソースへのアクセスを借用できるようにしてくれます。
 
     参照も他のリソースと同様にドロップされます。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20f%20%3D%20%26foo%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20f.x)%3B%0A%20%20%20%20%2F%2F%20f%20%E3%81%AF%E3%81%93%E3%81%93%E3%81%A7%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%0A%20%20%20%20%2F%2F%20foo%20%E3%81%AF%E3%81%93%E3%81%93%E3%81%A7%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        let foo = Foo { x: 42 };
+        let f = &foo;
+        println!("{}", f.x);
+        // f はここでドロップ
+        // foo はここでドロップ
+    }
 - title: 参照による所有権の可変な借用
   content_markdown: |
     `&mut` 演算子を使えば、リソースへの変更可能なアクセスを借用することもできます。
@@ -64,15 +135,51 @@
     メモリの詳細:
 
     * データ競合を防止するため、Rust では同時に 2 つの変数から値を変更することはできません。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20do_something(f%3A%20Foo)%20%7B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20f.x)%3B%0A%20%20%20%20%2F%2F%20f%20%E3%81%AF%E3%81%93%E3%81%93%E3%81%A7%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20mut%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20f%20%3D%20%26mut%20foo%3B%0A%0A%20%20%20%20%2F%2F%20%E5%A4%B1%E6%95%97%3A%20do_something(foo)%20%E3%81%AF%E3%81%93%E3%81%93%E3%81%A7%E3%82%A8%E3%83%A9%E3%83%BC%0A%20%20%20%20%2F%2F%20foo%20%E3%81%AF%E5%8F%AF%E5%A4%89%E3%81%AB%E5%80%9F%E7%94%A8%E3%81%95%E3%82%8C%E3%81%A6%E3%81%8A%E3%82%8A%E7%A7%BB%E5%8B%95%E3%81%A7%E3%81%8D%E3%81%AA%E3%81%84%E3%81%9F%E3%82%81%0A%0A%20%20%20%20%2F%2F%20%E5%A4%B1%E6%95%97%3A%20foo.x%20%3D%2013%3B%20%E3%81%AF%E3%81%93%E3%81%93%E3%81%A7%E3%82%A8%E3%83%A9%E3%83%BC%0A%20%20%20%20%2F%2F%20foo%20%E3%81%AF%E5%8F%AF%E5%A4%89%E3%81%AB%E5%80%9F%E7%94%A8%E3%81%95%E3%82%8C%E3%81%A6%E3%81%84%E3%82%8B%E9%96%93%E3%81%AF%E5%A4%89%E6%9B%B4%E3%81%A7%E3%81%8D%E3%81%AA%E3%81%84%E3%81%9F%E3%82%81%0A%0A%20%20%20%20f.x%20%3D%2013%3B%0A%20%20%20%20%2F%2F%20f%20%E3%81%AF%E3%81%93%E3%81%93%E3%81%8B%E3%82%89%E5%85%88%E3%81%A7%E3%81%AF%E4%BD%BF%E7%94%A8%E3%81%95%E3%82%8C%E3%81%AA%E3%81%84%E3%81%9F%E3%82%81%E3%80%81%E3%81%93%E3%81%93%E3%81%A7%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%0A%20%20%20%20%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo.x)%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20%E5%8F%AF%E5%A4%89%E3%81%AA%E5%80%9F%E7%94%A8%E3%81%AF%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%E3%81%95%E3%82%8C%E3%81%A6%E3%81%84%E3%82%8B%E3%81%9F%E3%82%81%E5%A4%89%E6%9B%B4%E5%8F%AF%E8%83%BD%0A%20%20%20%20foo.x%20%3D%207%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20foo%20%E3%81%AE%E6%89%80%E6%9C%89%E6%A8%A9%E3%82%92%E9%96%A2%E6%95%B0%E3%81%AB%E7%A7%BB%E5%8B%95%0A%20%20%20%20do_something(foo)%3B%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: Foo) {
+        println!("{}", f.x);
+        // f はここでドロップ
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let f = &mut foo;
+
+        // 失敗: do_something(foo) はここでエラー
+        // foo は可変に借用されており移動できないため
+
+        // 失敗: foo.x = 13; はここでエラー
+        // foo は可変に借用されている間は変更できないため
+
+        f.x = 13;
+        // f はここから先では使用されないため、ここでドロップ
+        
+        println!("{}", foo.x);
+        
+        // 可変な借用はドロップされているため変更可能
+        foo.x = 7;
+        
+        // foo の所有権を関数に移動
+        do_something(foo);
+    }
 - title: 参照外し
   content_markdown: |
     `&mut` による参照では、`*` 演算子によって参照を外す (dereference) ことで、所有者の値を設定できます。
 
     `*` 演算子によって所有者の値のコピーを取得することもできます（コピー可能な型については後の章で説明します）。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20mut%20foo%20%3D%2042%3B%0A%20%20%20%20let%20f%20%3D%20%26mut%20foo%3B%0A%20%20%20%20let%20bar%20%3D%20*f%3B%20%2F%2F%20%E6%89%80%E6%9C%89%E8%80%85%E3%81%AE%E5%80%A4%E3%82%92%E5%8F%96%E5%BE%97%0A%20%20%20%20*f%20%3D%2013%3B%20%20%20%20%20%20%2F%2F%20%E5%8F%82%E7%85%A7%E3%81%AE%E6%89%80%E6%9C%89%E8%80%85%E3%81%AE%E5%80%A4%E3%82%92%E8%A8%AD%E5%AE%9A%0A%20%20%20%20println!(%22%7B%7D%22%2C%20bar)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let mut foo = 42;
+        let f = &mut foo;
+        let bar = *f; // 所有者の値を取得
+        *f = 13;      // 参照の所有者の値を設定
+        println!("{}", bar);
+        println!("{}", foo);
+    }
 - title: 借用したデータの受け渡し
   content_markdown: |
     Rust の参照に関するルールは、以下のようにまとめられます。
@@ -88,13 +195,46 @@
       データを読み込む際、データへの書き込みが同時に行われると、同期が取れなくなる可能性があります。
       これはマルチスレッドプログラミングでよく起こります。
     * 参照の 2 番目のルールは、存在しないデータへの参照（C 言語ではダングリングポインタと呼ばれる）による誤動作を防ぐためのものです。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20do_something(f%3A%20%26mut%20Foo)%20%7B%0A%20%20%20%20f.x%20%2B%3D%201%3B%0A%20%20%20%20%2F%2F%20f%20%E3%81%B8%E3%81%AE%E5%8F%AF%E5%A4%89%E3%81%AA%E5%8F%82%E7%85%A7%E3%81%AF%E3%81%93%E3%81%93%E3%81%A7%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20mut%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20do_something(%26mut%20foo)%3B%0A%20%20%20%20%2F%2F%20%E9%96%A2%E6%95%B0%20do_something%20%E3%81%A7%E5%8F%AF%E5%A4%89%E3%81%AA%E5%8F%82%E7%85%A7%E3%81%AF%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%E3%81%95%E3%82%8C%E3%82%8B%E3%81%9F%E3%82%81%E3%80%81%0A%20%20%20%20%2F%2F%20%E5%88%A5%E3%81%AE%E5%8F%82%E7%85%A7%E3%82%92%E4%BD%9C%E3%82%8B%E3%81%93%E3%81%A8%E3%81%8C%E5%8F%AF%E8%83%BD%0A%20%20%20%20do_something(%26mut%20foo)%3B%0A%20%20%20%20%2F%2F%20foo%20%E3%81%AF%E3%81%93%E3%81%93%E3%81%A7%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: &mut Foo) {
+        f.x += 1;
+        // f への可変な参照はここでドロップ
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        do_something(&mut foo);
+        // 関数 do_something で可変な参照はドロップされるため、
+        // 別の参照を作ることが可能
+        do_something(&mut foo);
+        // foo はここでドロップ
+    }
 - title: 参照の参照
   content_markdown: |
     参照の一部を参照することができます。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20do_something(a%3A%20%26Foo)%20-%3E%20%26i32%20%7B%0A%20%20%20%20return%20%26a.x%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20mut%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20x%20%3D%20%26mut%20foo.x%3B%0A%20%20%20%20*x%20%3D%2013%3B%0A%20%20%20%20%2F%2F%20x%20%E3%81%AF%E3%81%93%E3%81%93%E3%81%A7%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%E3%81%95%E3%82%8C%E3%82%8B%E3%81%9F%E3%82%81%E3%80%81%E4%B8%8D%E5%A4%89%E3%81%AA%E5%8F%82%E7%85%A7%E3%81%8C%E4%BD%9C%E6%88%90%E5%8F%AF%E8%83%BD%0A%20%20%20%20let%20y%20%3D%20do_something(%26foo)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20y)%3B%0A%20%20%20%20%2F%2F%20y%20%E3%81%AF%E3%81%93%E3%81%93%E3%81%A7%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%0A%20%20%20%20%2F%2F%20foo%20%E3%81%AF%E3%81%93%E3%81%93%E3%81%A7%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(a: &Foo) -> &i32 {
+        return &a.x;
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let x = &mut foo.x;
+        *x = 13;
+        // x はここでドロップされるため、不変な参照が作成可能
+        let y = do_something(&foo);
+        println!("{}", y);
+        // y はここでドロップ
+        // foo はここでドロップ
+    }
 - title: 明示的なライフタイム
   content_markdown: |
     Rust では、常にコードに表れるわけではありませんが、コンパイラはすべての変数のライフタイムを管理しており、参照がその所有者よりも長く存在しないことを検証しようとします。
@@ -102,13 +242,52 @@
     関数は、どの引数と戻り値とがライフタイムを共有しているかを、識別のための指定子で明示的に指定できます。
 
     ライフタイム指定子は常に `'` で始まります（例: `'a`, `'b`, `'c`）。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0A%2F%2F%20%E5%BC%95%E6%95%B0%20foo%20%E3%81%A8%E6%88%BB%E3%82%8A%E5%80%A4%E3%81%AF%E3%83%A9%E3%82%A4%E3%83%95%E3%82%BF%E3%82%A4%E3%83%A0%E3%82%92%E5%85%B1%E6%9C%89%0Afn%20do_something%3C%27a%3E(foo%3A%20%26%27a%20Foo)%20-%3E%20%26%27a%20i32%20%7B%0A%20%20%20%20return%20%26foo.x%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20mut%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20x%20%3D%20%26mut%20foo.x%3B%0A%20%20%20%20*x%20%3D%2013%3B%0A%20%20%20%20%2F%2F%20x%20%E3%81%AF%E3%81%93%E3%81%93%E3%81%A7%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%E3%81%95%E3%82%8C%E3%82%8B%E3%81%9F%E3%82%81%E3%80%81%E4%B8%8D%E5%A4%89%E3%81%AA%E5%8F%82%E7%85%A7%E3%81%8C%E4%BD%9C%E6%88%90%E5%8F%AF%E8%83%BD%0A%20%20%20%20let%20y%20%3D%20do_something(%26foo)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20y)%3B%0A%20%20%20%20%2F%2F%20y%20%E3%81%AF%E3%81%93%E3%81%93%E3%81%A7%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%0A%20%20%20%20%2F%2F%20foo%20%E3%81%AF%E3%81%93%E3%81%93%E3%81%A7%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    // 引数 foo と戻り値はライフタイムを共有
+    fn do_something<'a>(foo: &'a Foo) -> &'a i32 {
+        return &foo.x;
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let x = &mut foo.x;
+        *x = 13;
+        // x はここでドロップされるため、不変な参照が作成可能
+        let y = do_something(&foo);
+        println!("{}", y);
+        // y はここでドロップ
+        // foo はここでドロップ
+    }
 - title: 複数のライフタイム
   content_markdown: |
     ライフタイム指定子は、関数の引数や戻り値のライフタイムをコンパイラが解決できない場合に、明示的に指定することができます。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0A%2F%2F%20foo_b%20%E3%81%A8%E6%88%BB%E3%82%8A%E5%80%A4%E3%81%AF%E3%83%A9%E3%82%A4%E3%83%95%E3%82%BF%E3%82%A4%E3%83%A0%E3%82%92%E5%85%B1%E6%9C%89%0A%2F%2F%20foo_a%20%E3%81%AE%E3%83%A9%E3%82%A4%E3%83%95%E3%82%BF%E3%82%A4%E3%83%A0%E3%81%AF%E5%88%A5%0Afn%20do_something%3C%27a%2C%20%27b%3E(foo_a%3A%20%26%27a%20Foo%2C%20foo_b%3A%20%26%27b%20Foo)%20-%3E%20%26%27b%20i32%20%7B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo_a.x)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo_b.x)%3B%0A%20%20%20%20return%20%26foo_b.x%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo_a%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20foo_b%20%3D%20Foo%20%7B%20x%3A%2012%20%7D%3B%0A%20%20%20%20let%20x%20%3D%20do_something(%26foo_a%2C%20%26foo_b)%3B%0A%20%20%20%20%2F%2F%20%E3%81%93%E3%81%93%E3%81%8B%E3%82%89%E5%85%88%E3%81%AF%20foo_b%20%E3%81%AE%E3%83%A9%E3%82%A4%E3%83%95%E3%82%BF%E3%82%A4%E3%83%A0%E3%81%97%E3%81%8B%E5%AD%98%E5%9C%A8%E3%81%97%E3%81%AA%E3%81%84%E3%81%9F%E3%82%81%E3%80%81%0A%20%20%20%20%2F%2F%20foo_a%20%E3%81%AF%E3%81%93%E3%81%93%E3%81%A7%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%20%20%20%20%2F%2F%20x%20%E3%81%AF%E3%81%93%E3%81%93%E3%81%A7%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%0A%20%20%20%20%2F%2F%20foo_b%20%E3%81%AF%E3%81%93%E3%81%93%E3%81%A7%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    // foo_b と戻り値はライフタイムを共有
+    // foo_a のライフタイムは別
+    fn do_something<'a, 'b>(foo_a: &'a Foo, foo_b: &'b Foo) -> &'b i32 {
+        println!("{}", foo_a.x);
+        println!("{}", foo_b.x);
+        return &foo_b.x;
+    }
+
+    fn main() {
+        let foo_a = Foo { x: 42 };
+        let foo_b = Foo { x: 12 };
+        let x = do_something(&foo_a, &foo_b);
+        // ここから先は foo_b のライフタイムしか存在しないため、
+        // foo_a はここでドロップ
+        println!("{}", x);
+        // x はここでドロップ
+        // foo_b はここでドロップ
+    }
 - title: スタティックライフタイム
   content_markdown: |
     **スタティック**変数は、コンパイル時に作成され、プログラムの開始から終了まで存在するメモリリソースです。
@@ -129,8 +308,25 @@
       グローバルデータの課題については後ほど説明します。
     * Rust ではコンパイラがメモリを保証できない操作を実行するために、`unsafe { ... }` ブロックを使用することができます。
       [<span style="color:red; font-weight: bold;">R̸͉̟͈͔̄͛̾̇͜U̶͓͖͋̅Ṡ̴͉͇̃̉̀T̵̻̻͔̟͉́͆Ơ̷̥̟̳̓͝N̶̨̼̹̲͛Ö̵̝͉̖̏̾̔M̶̡̠̺̠̐͜Î̷̛͓̣̃̐̏C̸̥̤̭̏͛̎͜O̶̧͚͖͔̊͗̇͠N̸͇̰̏̏̽̃</span>](https://doc.rust-jp.rs/rust-nomicon-ja/) について気軽に話してはいけません。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=static%20PI%3A%20f64%20%3D%203.1415%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20%E3%82%B9%E3%82%BF%E3%83%86%E3%82%A3%E3%83%83%E3%82%AF%E5%A4%89%E6%95%B0%E3%81%AF%E9%96%A2%E6%95%B0%E3%82%B9%E3%82%B3%E3%83%BC%E3%83%97%E3%81%A7%E3%82%82%E5%AE%9A%E7%BE%A9%E5%8F%AF%E8%83%BD%0A%20%20%20%20static%20mut%20SECRET%3A%20%26%27static%20str%20%3D%20%22swordfish%22%3B%0A%0A%20%20%20%20%2F%2F%20%E6%96%87%E5%AD%97%E5%88%97%E3%83%AA%E3%83%86%E3%83%A9%E3%83%AB%E3%81%AF%20%27static%20%E3%83%A9%E3%82%A4%E3%83%95%E3%82%BF%E3%82%A4%E3%83%A0%0A%20%20%20%20let%20msg%3A%20%26%27static%20str%20%3D%20%22Hello%20World!%22%3B%0A%20%20%20%20let%20p%3A%20%26%27static%20f64%20%3D%20%26PI%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20msg%2C%20p)%3B%0A%0A%20%20%20%20%2F%2F%20%E3%83%AB%E3%83%BC%E3%83%AB%E3%82%92%E7%A0%B4%E3%82%8B%E3%81%93%E3%81%A8%E3%81%AF%E3%81%A7%E3%81%8D%E3%81%BE%E3%81%99%E3%81%8C%E3%80%81%E3%81%9D%E3%82%8C%E3%82%92%E6%98%8E%E7%A4%BA%E3%81%99%E3%82%8B%E5%BF%85%E8%A6%81%E3%81%8C%E3%81%82%E3%82%8A%E3%81%BE%E3%81%99%E3%80%82%0A%20%20%20%20unsafe%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20%E6%96%87%E5%AD%97%E5%88%97%E3%83%AA%E3%83%86%E3%83%A9%E3%83%AB%E3%81%AF%20%27static%20%E3%81%AA%E3%81%AE%E3%81%A7%20SECRET%20%E3%81%AB%E4%BB%A3%E5%85%A5%E5%8F%AF%E8%83%BD%0A%20%20%20%20%20%20%20%20SECRET%20%3D%20%22abracadabra%22%3B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20SECRET)%3B%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    static PI: f64 = 3.1415;
+
+    fn main() {
+        // スタティック変数は関数スコープでも定義可能
+        static mut SECRET: &'static str = "swordfish";
+
+        // 文字列リテラルは 'static ライフタイム
+        let msg: &'static str = "Hello World!";
+        let p: &'static f64 = &PI;
+        println!("{} {}", msg, p);
+
+        // ルールを破ることはできますが、それを明示する必要があります。
+        unsafe {
+            // 文字列リテラルは 'static なので SECRET に代入可能
+            SECRET = "abracadabra";
+            println!("{}", SECRET);
+        }
+    }
 - title: データ型のライフタイム
   content_markdown: |
     関数と同様に、データ型はメンバのライフタイムを指定できます。
@@ -138,8 +334,18 @@
     Rust は、参照を含む構造体が、その参照が指す所有者よりも長く存在しないことを検証します。
 
     構造体には、何もないところを指している参照を含めることはできません。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%3C'a%3E%20%7B%0A%20%20%20%20i%3A%26'a%20i32%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20x%20%3D%2042%3B%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%0A%20%20%20%20%20%20%20%20i%3A%20%26x%0A%20%20%20%20%7D%3B%0A%20%20%20%20println!(%22%7B%7D%22%2Cfoo.i)%3B%0A%7D%0A
+  code: |
+    struct Foo<'a> {
+        i:&'a i32
+    }
+
+    fn main() {
+        let x = 42;
+        let foo = Foo {
+            i: &x
+        };
+        println!("{}",foo.i);
+    }
 - title: 第 5 章 - まとめ
   content_markdown: |
     ここまでお疲れ様でした。

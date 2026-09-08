@@ -4,8 +4,17 @@
 - title: Propriedade
   content_markdown: >
     Instanciar um tipo e **vinculá-lo** a um nome de variável cria um recurso de memória que o compilador Rust validará por toda sua a **vida útil**. A variável vinculada é chamada de **proprietária** do recurso.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20Instanciamos%20structs%20e%20vinculamos%20a%20vari%C3%A1veis%0A%20%20%20%20%2F%2F%20para%20criar%20recursos%20de%20mem%C3%B3ria%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20%2F%2F%20foo%20%C3%A9%20o%20propriet%C3%A1rio%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        // Instanciamos structs e vinculamos a variáveis
+        // para criar recursos de memória
+        let foo = Foo { x: 42 };
+        // foo é o proprietário
+    }
 - title: Gerenciamento de Recursos Baseado em Escopo
   content_markdown: >
     O Rust usa o final do escopo como o lugar para desconstruir e desalocar um recurso.
@@ -19,8 +28,23 @@
     * O Rust não tem garbage collection.
 
     * Também conhecido por Aquisição de Recursos é Inicialização (sigla RAII, em inglês) em C++.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo_a%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20foo_b%20%3D%20Foo%20%7B%20x%3A%2013%20%7D%3B%0A%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo_a.x)%3B%0A%20%20%20%20%2F%2F%20foo_a%20%C3%A9%20descartado%20aqui%20porque%20n%C3%A3o%20%C3%A9%20mais%0A%20%20%20%20%2F%2F%20usado%20depois%20deste%20lugar%0A%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo_b.x)%3B%0A%20%20%20%20%2F%2F%20foo_b%20%C3%A9%20descartado%20aqui%20porque%20%C3%A9%20o%20fim%0A%20%20%20%20%2F%2F%20do%20escopo%20da%20fun%C3%A7%C3%A3o%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        let foo_a = Foo { x: 42 };
+        let foo_b = Foo { x: 13 };
+
+        println!("{}", foo_a.x);
+        // foo_a é descartado aqui porque não é mais
+        // usado depois deste lugar
+
+        println!("{}", foo_b.x);
+        // foo_b é descartado aqui porque é o fim
+        // do escopo da função
+    }
 - title: O Descarte é Hierárquico
   content_markdown: >
     Quando uma estrutura é descartada, a estrutura em si é descartada primeiro, depois os filhos são descartados individualmente e assim por diante.
@@ -32,8 +56,21 @@
     * Ao liberar automaticamente a memória, o Rust ajuda a garantir que haja menos vazamentos de memória.
 
     * Os recursos de memória só podem ser descartados uma vez.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Bar%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Astruct%20Foo%20%7B%0A%20%20%20%20bar%3A%20Bar%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%20bar%3A%20Bar%20%7B%20x%3A%2042%20%7D%20%7D%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo.bar.x)%3B%0A%20%20%20%20%2F%2F%20foo%20%C3%A9%20descartado%20primeiro%0A%20%20%20%20%2F%2F%20e%20s%C3%B3%20ent%C3%A3o%20foo.bar%20%C3%A9%20descartado%0A%7D%0A
+  code: |
+    struct Bar {
+        x: i32,
+    }
+
+    struct Foo {
+        bar: Bar,
+    }
+
+    fn main() {
+        let foo = Foo { bar: Bar { x: 42 } };
+        println!("{}", foo.bar.x);
+        // foo é descartado primeiro
+        // e só então foo.bar é descartado
+    }
 - title: Movendo a Propriedade
   content_markdown: >
     Quando um proprietário é passado como argumento para uma função, a propriedade é movida para o parâmetro da função.
@@ -46,21 +83,58 @@
 
 
     * Durante uma **movimentação**, a memória da pilha do proprietário do valor é copiada para a memória da pilha dos parâmetros da função chamada.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20faz_alguma_coisa(f%3A%20Foo)%20%7B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20f.x)%3B%0A%20%20%20%20%2F%2F%20f%20%C3%A9%20descartado%20aqui%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20%2F%2F%20foo%20%C3%A9%20movido%20para%20faz_alguma_coisa%0A%20%20%20%20faz_alguma_coisa(foo)%3B%0A%20%20%20%20%2F%2F%20foo%20n%C3%A3o%20pode%20mais%20ser%20usado%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn faz_alguma_coisa(f: Foo) {
+        println!("{}", f.x);
+        // f é descartado aqui
+    }
+
+    fn main() {
+        let foo = Foo { x: 42 };
+        // foo é movido para faz_alguma_coisa
+        faz_alguma_coisa(foo);
+        // foo não pode mais ser usado
+    }
 - title: Retornando a Propriedade
   content_markdown: |
     A propriedade também pode ser retornada de uma função.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20do_something()%20-%3E%20Foo%20%7B%0A%20%20%20%20Foo%20%7B%20x%3A%2042%20%7D%0A%20%20%20%20%2F%2F%20a%20propriedade%20%C3%A9%20retornada%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo%20%3D%20do_something()%3B%0A%20%20%20%20%2F%2F%20foo%20se%20torna%20o%20propriet%C3%A1rio%0A%20%20%20%20%2F%2F%20foo%20%C3%A9%20descartado%20por%20causa%20do%20fim%20do%20escopo%20da%20fun%C3%A7%C3%A3o%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something() -> Foo {
+        Foo { x: 42 }
+        // a propriedade é retornada
+    }
+
+    fn main() {
+        let foo = do_something();
+        // foo se torna o proprietário
+        // foo é descartado por causa do fim do escopo da função
+    }
 - title: Emprestando Propriedade com Referências
   content_markdown: >
     As referências nos permitem emprestar o acesso a um recurso com o operador `&`.
 
 
     As referências também são descartadas do mesmo jeito que os outros recursos.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20f%20%3D%20%26foo%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20f.x)%3B%0A%20%20%20%20%2F%2F%20f%20%C3%A9%20descartado%20aqui%0A%20%20%20%20%2F%2F%20foo%20%C3%A9%20descartado%20aqui%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        let foo = Foo { x: 42 };
+        let f = &foo;
+        println!("{}", f.x);
+        // f é descartado aqui
+        // foo é descartado aqui
+    }
 - title: Emprestando Propriedades Mutáveis Usando Referências
   content_markdown: >
     Também podemos emprestar um acesso mutável a um recurso usando o operador `& mut`.
@@ -73,16 +147,53 @@
 
 
     * O Rust evita ter duas maneiras de alterar um valor que tenha um dono, pois introduz a possibilidade de uma corrida de dados.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20faz_alguma_coisa(f%3A%20Foo)%20%7B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20f.x)%3B%0A%20%20%20%20%2F%2F%20f%20%C3%A9%20descartado%20aqui%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20mut%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20f%20%3D%20%26mut%20foo%3B%0A%0A%20%20%20%20%2F%2F%20FAILURE%3A%20faz_alguma_coisa(foo)%20ir%C3%A1%20falhar%20porque%0A%20%20%20%20%2F%2F%20foo%20n%C3%A3o%20pode%20ser%20movida%20durante%20um%20empr%C3%A9stimo%20mut%C3%A1vel%0A%0A%20%20%20%20%2F%2F%20FAILURE%3A%20foo.x%20%3D%2013%3B%20ir%C3%A1%20falhar%20porque%0A%20%20%20%20%2F%2F%20foo%20n%C3%A3o%20%C3%A9%20modific%C3%A1vel%20durante%20um%20empr%C3%A9stimo%20mut%C3%A1vel%0A%0A%20%20%20%20f.x%20%3D%2013%3B%0A%20%20%20%20%2F%2F%20f%20%C3%A9%20descartado%20aqui%20por%20n%C3%A3o%20ser%20mais%20usado%20depois%20deste%20ponto%0A%20%20%20%20%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo.x)%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20isto%20aqui%20funciona%20agora%20porque%20todas%20as%20refer%C3%AAncias%20%0A%20%20%20%20%2F%2F%20mut%C3%A1veis%20foram%20descartadas%0A%20%20%20%20foo.x%20%3D%207%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20move%20a%20propriedade%20de%20foo%20para%20uma%20fun%C3%A7%C3%A3o%0A%20%20%20%20faz_alguma_coisa(foo)%3B%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn faz_alguma_coisa(f: Foo) {
+        println!("{}", f.x);
+        // f é descartado aqui
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let f = &mut foo;
+
+        // FAILURE: faz_alguma_coisa(foo) irá falhar porque
+        // foo não pode ser movida durante um empréstimo mutável
+
+        // FAILURE: foo.x = 13; irá falhar porque
+        // foo não é modificável durante um empréstimo mutável
+
+        f.x = 13;
+        // f é descartado aqui por não ser mais usado depois deste ponto
+        
+        println!("{}", foo.x);
+        
+        // isto aqui funciona agora porque todas as referências 
+        // mutáveis foram descartadas
+        foo.x = 7;
+        
+        // move a propriedade de foo para uma função
+        faz_alguma_coisa(foo);
+    }
 - title: Desreferenciando
   content_markdown: >
     Usando referências você pode definir o valor do proprietário usando o operador `*`.
 
 
     Você também pode obter uma cópia do valor de propriedade usando o operador `*` (Se o valor puder ser copiado. Discutiremos tipos copiáveis nos próximos capítulos).
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20mut%20foo%20%3D%2042%3B%0A%20%20%20%20let%20f%20%3D%20%26mut%20foo%3B%0A%20%20%20%20let%20bar%20%3D%20*f%3B%20%2F%2F%20pega%20uma%20c%C3%B3pia%20do%20propriet%C3%A1rio%20do%20valor%0A%20%20%20%20*f%20%3D%2013%3B%20%20%20%20%20%20%2F%2F%20atribue%20%C3%A0%20refer%C3%AAncia%20do%20propriet%C3%A1rio%20do%20valor%0A%20%20%20%20println!(%22%7B%7D%22%2C%20bar)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let mut foo = 42;
+        let f = &mut foo;
+        let bar = *f; // pega uma cópia do proprietário do valor
+        *f = 13;      // atribue à referência do proprietário do valor
+        println!("{}", bar);
+        println!("{}", foo);
+    }
 - title: Passando Dados Emprestados
   content_markdown: >
     As regras do Rust para referências podem ser melhor resumidas assim:
@@ -102,13 +213,46 @@
     * A primeira regra das referências previnem as corridas de dados. O que é uma corrida de dados? Uma corrida de dados acontece quando, na leitura dos dados, temos a possibilidade de conflito com a existência de outras escritas de dados ao mesmo tempo. Isso acontece frequentemente na programação multithread.
 
     * A segunda regra de referências evita o uso indevido de referências que se referem a dados inexistentes (chamados ponteiros pendentes em C).
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20faz_alguma_coisa(f%3A%20%26mut%20Foo)%20%7B%0A%20%20%20%20f.x%20%2B%3D%201%3B%0A%20%20%20%20%2F%2F%20a%20refer%C3%AAncia%20mut%C3%A1vel%20f%20%C3%A9%20descartada%20aqui%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20mut%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20faz_alguma_coisa(%26mut%20foo)%3B%0A%20%20%20%20%2F%2F%20porque%20todas%20as%20refer%C3%AAncias%20mut%C3%A1veis%20s%C3%A3o%20descartadas%20dentro%0A%20%20%20%20%2F%2F%20da%20fun%C3%A7%C3%A3o%20faz_alguma_coisa.%20Ent%C3%A3o%20podemos%20criar%20outra%20refer%C3%AAncia.%0A%20%20%20%20faz_alguma_coisa(%26mut%20foo)%3B%0A%20%20%20%20%2F%2F%20foo%20%C3%A9%20descartado%20aqui%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn faz_alguma_coisa(f: &mut Foo) {
+        f.x += 1;
+        // a referência mutável f é descartada aqui
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        faz_alguma_coisa(&mut foo);
+        // porque todas as referências mutáveis são descartadas dentro
+        // da função faz_alguma_coisa. Então podemos criar outra referência.
+        faz_alguma_coisa(&mut foo);
+        // foo é descartado aqui
+    }
 - title: Referências de Referências
   content_markdown: |
     Referências podem ser usadas até mesmo em pedaços de referências.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20faz_alguma_coisa(a%3A%20%26Foo)%20-%3E%20%26i32%20%7B%0A%20%20%20%20return%20%26a.x%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20mut%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20x%20%3D%20%26mut%20foo.x%3B%0A%20%20%20%20*x%20%3D%2013%3B%0A%20%20%20%20%2F%2F%20x%20%C3%A9%20descartado%20aqui%20permitindo-nos%20criar%20uma%20refer%C3%AAncia%20n%C3%A3o%20mut%C3%A1vel%0A%20%20%20%20let%20y%20%3D%20faz_alguma_coisa(%26foo)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20y)%3B%0A%20%20%20%20%2F%2F%20y%20%C3%A9%20descartado%20aqui%0A%20%20%20%20%2F%2F%20foo%20%C3%A9%20descartado%20aqui%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn faz_alguma_coisa(a: &Foo) -> &i32 {
+        return &a.x;
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let x = &mut foo.x;
+        *x = 13;
+        // x é descartado aqui permitindo-nos criar uma referência não mutável
+        let y = faz_alguma_coisa(&foo);
+        println!("{}", y);
+        // y é descartado aqui
+        // foo é descartado aqui
+    }
 - title: Tempo de Vida Explícito
   content_markdown: >
     Mesmo que o Rust nem sempre nos mostre no código, o compilador conhece o tempo de vida de cada variável e tentará validar uma referência que nunca deve existir por mais tempo que seu proprietário.
@@ -118,13 +262,52 @@
 
 
     Os especificadores de tempo de vida sempre começam com um `'` (por exemplo `'a`, `'b`, `'c`)
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0A%2F%2F%20o%20par%C3%A2metro%20foo%20e%20valor%20de%20retorno%20compartilham%20o%20mesmo%20tempo%20de%20vida%0Afn%20faz_alguma_coisa%3C'a%3E(foo%3A%20%26'a%20Foo)%20-%3E%20%26'a%20i32%20%7B%0A%20%20%20%20return%20%26foo.x%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20mut%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20x%20%3D%20%26mut%20foo.x%3B%0A%20%20%20%20*x%20%3D%2013%3B%0A%20%20%20%20%2F%2F%20x%20%C3%A9%20descartada%20aqui%20permitindo-nos%20criar%20uma%20refr%C3%AAncia%20n%C3%A3o-mut%C3%A1vel%0A%20%20%20%20let%20y%20%3D%20faz_alguma_coisa(%26foo)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20y)%3B%0A%20%20%20%20%2F%2F%20y%20%C3%A9%20descartada%20aqui%0A%20%20%20%20%2F%2F%20foo%20%C3%A9%20descartada%20aqui%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    // o parâmetro foo e valor de retorno compartilham o mesmo tempo de vida
+    fn faz_alguma_coisa<'a>(foo: &'a Foo) -> &'a i32 {
+        return &foo.x;
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let x = &mut foo.x;
+        *x = 13;
+        // x é descartada aqui permitindo-nos criar uma refrência não-mutável
+        let y = faz_alguma_coisa(&foo);
+        println!("{}", y);
+        // y é descartada aqui
+        // foo é descartada aqui
+    }
 - title: Tempos de Vida Múltiplos
   content_markdown: >
     Os especificadores de tempo de vida nos permitem ser explícitos em certos cenários que o compilador não pode resolver sozinho, distinguindo todas os tempo de vida dos componentes na assinatura de uma função.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0A%2F%2F%20foo_b%20e%20o%20valor%20de%20retorno%20compartilham%20do%20mesmo%20tempo%20de%20vida%0A%2F%2F%20foo_a%20tem%20um%20tempo%20de%20vida%20n%C3%A3o%20relacionado%0Afn%20faz_alguma_coisa%3C'a%2C%20'b%3E(foo_a%3A%20%26'a%20Foo%2C%20foo_b%3A%20%26'b%20Foo)%20-%3E%20%26'b%20i32%20%7B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo_a.x)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo_b.x)%3B%0A%20%20%20%20return%20%26foo_b.x%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo_a%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20foo_b%20%3D%20Foo%20%7B%20x%3A%2012%20%7D%3B%0A%20%20%20%20let%20x%20%3D%20faz_alguma_coisa(%26foo_a%2C%20%26foo_b)%3B%0A%20%20%20%20%2F%2F%20foo_a%20%C3%A9%20descartado%20aqui%20porque%20somente%20o%20tempo%20de%20vida%20de%20%0A%20%20%20%20%2F%2F%20foo_b%20existe%20al%C3%A9m%20deste%20ponto%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%20%20%20%20%2F%2F%20x%20%C3%A9%20descartado%20aqui%0A%20%20%20%20%2F%2F%20foo_b%20%C3%A9%20descartado%20aqui%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    // foo_b e o valor de retorno compartilham do mesmo tempo de vida
+    // foo_a tem um tempo de vida não relacionado
+    fn faz_alguma_coisa<'a, 'b>(foo_a: &'a Foo, foo_b: &'b Foo) -> &'b i32 {
+        println!("{}", foo_a.x);
+        println!("{}", foo_b.x);
+        return &foo_b.x;
+    }
+
+    fn main() {
+        let foo_a = Foo { x: 42 };
+        let foo_b = Foo { x: 12 };
+        let x = faz_alguma_coisa(&foo_a, &foo_b);
+        // foo_a é descartado aqui porque somente o tempo de vida de 
+        // foo_b existe além deste ponto
+        println!("{}", x);
+        // x é descartado aqui
+        // foo_b é descartado aqui
+    }
 - title: Tempos de Vida Estáticos
   content_markdown: >
     Uma variável **estática** é um recurso de memória criado em tempo de compilação que existe do início ao fim dentro de um programa. Eles devem ter seus tipos especificados explicitamente.
@@ -151,8 +334,25 @@
     style="color:red; font-weight:
     bold;">R̸͉̟͈͔̄͛̾̇͜U̶͓͖͋̅Ṡ̴͉͇̃̉̀T̵̻̻͔̟͉́͆Ơ̷̥̟̳̓͝N̶̨̼̹̲͛Ö̵̝͉̖̏̾̔M̶̡̠̺̠̐͜Î̷̛͓̣̃̐̏C̸̥̤̭̏͛̎͜O̶̧͚͖͔̊͗̇͠N̸͇̰̏̏̽̃</span>](https://doc.rust-lang.org/nomicon/)
     não deve ser mencionado em vão.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=static%20PI%3A%20f64%20%3D%203.1415%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20vari%C3%A1veis%20est%C3%A1ticas%20tamb%C3%A9m%20podem%20ter%20escopo%20definido%20para%20uma%20fun%C3%A7%C3%A3o%0A%20%20%20%20static%20mut%20SECRETO%3A%20%26'static%20str%20%3D%20%22senha%22%3B%0A%0A%20%20%20%20%2F%2F%20strings%20t%C3%AAm%20o%20mesmo%20tempo%20de%20vida%20que%20as%20vari%C3%A1veis%20est%C3%A1ticas%0A%20%20%20%20let%20msg%3A%20%26'static%20str%20%3D%20%22Ol%C3%A1%20Mundo!%22%3B%0A%20%20%20%20let%20p%3A%20%26'static%20f64%20%3D%20%26PI%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20msg%2C%20p)%3B%0A%0A%20%20%20%20%2F%2F%20voc%C3%AA%20pode%20quebrar%20algumas%20regras%2C%20mas%20deve%20ser%20expl%C3%ADcito%0A%20%20%20%20unsafe%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20podemos%20atribuir%20uma%20string%20a%20SECRETO%20porque%20ela%20tamb%C3%A9m%20%C3%A9%20est%C3%A1tica%0A%20%20%20%20%20%20%20%20SECRETO%20%3D%20%22abracadabra%22%3B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20SECRETO)%3B%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    static PI: f64 = 3.1415;
+
+    fn main() {
+        // variáveis estáticas também podem ter escopo definido para uma função
+        static mut SECRETO: &'static str = "senha";
+
+        // strings têm o mesmo tempo de vida que as variáveis estáticas
+        let msg: &'static str = "Olá Mundo!";
+        let p: &'static f64 = &PI;
+        println!("{} {}", msg, p);
+
+        // você pode quebrar algumas regras, mas deve ser explícito
+        unsafe {
+            // podemos atribuir uma string a SECRETO porque ela também é estática
+            SECRETO = "abracadabra";
+            println!("{}", SECRETO);
+        }
+    }
 - title: Tempos de Vida em Tipos de Dados
   content_markdown: >
     Da mesma forma que as funções, os tipos de dados podem ser parametrizados com os especificadores de tempos de vida.
@@ -162,8 +362,18 @@
 
 
     Não podemos ter estruturas rodando por aí com referências apontando para o nada!
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%3C'a%3E%20%7B%0A%20%20%20%20i%3A%26'a%20i32%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20x%20%3D%2042%3B%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%0A%20%20%20%20%20%20%20%20i%3A%20%26x%0A%20%20%20%20%7D%3B%0A%20%20%20%20println!(%22%7B%7D%22%2Cfoo.i)%3B%0A%7D%0A
+  code: |
+    struct Foo<'a> {
+        i:&'a i32
+    }
+
+    fn main() {
+        let x = 42;
+        let foo = Foo {
+            i: &x
+        };
+        println!("{}",foo.i);
+    }
 - title: Capítulo 5 - Conclusão
   content_markdown: >
     Ufa, parabéns por passar! Eu sei que é muito para absorver, mas você está bem encaminhado para se tornar um Rustáceo. Espero que esteja claro que o Rust como linguagem visa solucionar muitos desses desafios comuns na programação de sistemas:

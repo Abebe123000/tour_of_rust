@@ -7,16 +7,31 @@
     Y por si te estas preguntando quién es el adorable cangrejo parlante, me llamo **Ferris**, 
     y soy la mascota no oficial del lenguaje de programación Rust. Encantado de conocerte.
 - title: Familiarízate con Rust
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20println!(%22%C2%A1Bienvenido%20al%20%C3%A1rea%20de%20pruebas!%20Puedes%20modificar%20tu%20c%C3%B3digo%20aqu%C3%AD.%22)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        println!("¡Bienvenido al área de pruebas! Puedes modificar tu código aquí.");
+    }
   content_markdown: >
     En el tour usaremos la siguiente herramienta de programación interactiva: [https://play.rust-lang.org](https://play.rust-lang.org/)
 
 
     De esta manera podrás empezar a trabajar con Rust y demostrar tu creatividad y aptitudes.
 - title: Variables
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20%2F%2F%20Rust%20deduce%20el%20tipo%20de%20x%0A%20%20%20%20let%20x%20%3D%2013%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%0A%20%20%20%20%2F%2F%20Rust%20tambi%C3%A9n%20puede%20ser%20expl%C3%ADcito%20con%20el%20tipo%0A%20%20%20%20let%20x%3A%20f64%20%3D%203.14159%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%0A%20%20%20%20%2F%2F%20Rust%20tambi%C3%A9n%20puede%20declarar%20primero%20e%20inicializar%20despu%C3%A9s%2C%20pero%20es%20poco%20com%C3%BAn%0A%20%20%20%20let%20x%3B%0A%20%20%20%20x%20%3D%200%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        // Rust deduce el tipo de x
+        let x = 13;
+        println!("{}", x);
+
+        // Rust también puede ser explícito con el tipo
+        let x: f64 = 3.14159;
+        println!("{}", x);
+
+        // Rust también puede declarar primero e inicializar después, pero es poco común
+        let x;
+        x = 0;
+        println!("{}", x);
+    }
   content_markdown: >
     Las variables se declaran usando la palabra reservada **let**.
 
@@ -53,8 +68,20 @@
     Hay mucho más que explicar aún sobre este concepto, pero de momento solo presta
     atención a la palabra reservada.
 - title: Tipos Básicos
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20x%20%3D%2012%3B%20%2F%2F%20Por%20defecto%20es%20i32%0A%20%20%20%20let%20a%20%3D%2012u8%3B%0A%20%20%20%20let%20b%20%3D%204.3%3B%20%2F%2F%20Por%20defecto%20es%20f64%0A%20%20%20%20let%20c%20%3D%204.3f32%3B%0A%20%20%20%20let%20bv%20%3D%20true%3B%0A%20%20%20%20let%20t%20%3D%20(13%2C%20false)%3B%0A%20%20%20%20let%20sentence%20%3D%20%22%C2%A1Hola%2C%20mundo!%22%3B%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%22%2C%0A%20%20%20%20%20%20%20%20x%2C%20a%2C%20b%2C%20c%2C%20bv%2C%20t.0%2C%20t.1%2C%20sentence%0A%20%20%20%20)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let x = 12; // Por defecto es i32
+        let a = 12u8;
+        let b = 4.3; // Por defecto es f64
+        let c = 4.3f32;
+        let bv = true;
+        let t = (13, false);
+        let sentence = "¡Hola, mundo!";
+        println!(
+            "{} {} {} {} {} {} {} {}",
+            x, a, b, c, bv, t.0, t.1, sentence
+        );
+    }
   content_markdown: >
     Rust tiene una variedad de tipos que puede que te resulten familiares:
 
@@ -97,8 +124,15 @@
     Por suerte, Rust hace que las conversiones de tipos numéricos sean muy
     fáciles con la palabra reservada **as**.
 - title: Constantes
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=const%20PI%3A%20f32%20%3D%203.14159%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22Vamos%20de%20paseo%2C%20%7B%7D%20%7B%7D%20%7B%7D%22%2C%0A%20%20%20%20%20%20%20%20PI%2C%20PI%2C%20PI%0A%20%20%20%20)%3B%0A%7D%0A
+  code: |
+    const PI: f32 = 3.14159;
+
+    fn main() {
+        println!(
+            "Vamos de paseo, {} {} {}",
+            PI, PI, PI
+        );
+    }
   content_markdown: >
     Las constantes nos permiten especificar un valor común que se utiliza muchas veces a lo largo de nuestro código de manera eficiente. En vez de copiar valores como variables en el lugar donde se usan, las constantes reemplazan directamente el identificador de texto (donde se haya usado) por su valor en tiempo de compilación.
 
@@ -130,8 +164,20 @@
 
     Los nombres de las funciones se escriben siempre en `snake_case`.
 - title: Múltiples Variables de Retorno
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20intercambiar(x%3A%20i32%2C%20y%3A%20i32)%20-%3E%20(i32%2C%20i32)%20%7B%0A%20%20%20%20return%20(y%2C%20x)%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20Devuelve%20una%20tupla%20de%20valores%0A%20%20%20%20let%20result%20%3D%20intercambiar(123%2C%20321)%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20result.0%2C%20result.1)%3B%0A%0A%20%20%20%20%2F%2F%20Desestructura%20la%20tupla%20en%20dos%20variables%0A%20%20%20%20let%20(a%2C%20b)%20%3D%20intercambiar(result.0%2C%20result.1)%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20a%2C%20b)%3B%0A%7D%0A
+  code: |
+    fn intercambiar(x: i32, y: i32) -> (i32, i32) {
+        return (y, x);
+    }
+
+    fn main() {
+        // Devuelve una tupla de valores
+        let result = intercambiar(123, 321);
+        println!("{} {}", result.0, result.1);
+
+        // Desestructura la tupla en dos variables
+        let (a, b) = intercambiar(result.0, result.1);
+        println!("{} {}", a, b);
+    }
   content_markdown: >
     Las funciones pueden devolver múltiples valores utilizando una **tupla**
     de valores.
@@ -154,8 +200,25 @@
 
     El uso de `()` es poco común, pero es necesario saber su significado ya que
     aparecerá de vez en cuando.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20no_hagas_nada()%20-%3E%20()%20%7B%0A%20%20%20%20return%20()%3B%0A%7D%0A%0A%2F%2F%20El%20valor%20de%20retorno%20es%20impl%C3%ADcitamente%20()%0Afn%20no_hagas_nada2()%20%7B%0A%20%20%20%20%2F%2F%20Esta%20funci%C3%B3n%20devuelve%20()%20si%20no%20se%20especifica%20nada%20que%20devolver%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20a%20%3D%20no_hagas_nada()%3B%0A%20%20%20%20let%20b%20%3D%20no_hagas_nada2()%3B%0A%0A%20%20%20%20%2F%2F%20Mostrando%20una%20sentencia%20de%20depuraci%C3%B3n%20para%20a%20y%20b%0A%20%20%20%20%2F%2F%20porque%20es%20dif%C3%ADcil%20no%20mostrar%20nada%0A%20%20%20%20println!(%22El%20valor%20de%20a%20es%3A%20%7B%3A%3F%7D%22%2C%20a)%3B%0A%20%20%20%20println!(%22El%20valor%20de%20b%20es%3A%20%7B%3A%3F%7D%22%2C%20b)%3B%0A%7D%0A
+  code: |
+    fn no_hagas_nada() -> () {
+        return ();
+    }
+
+    // El valor de retorno es implícitamente ()
+    fn no_hagas_nada2() {
+        // Esta función devuelve () si no se especifica nada que devolver
+    }
+
+    fn main() {
+        let a = no_hagas_nada();
+        let b = no_hagas_nada2();
+
+        // Mostrando una sentencia de depuración para a y b
+        // porque es difícil no mostrar nada
+        println!("El valor de a es: {:?}", a);
+        println!("El valor de b es: {:?}", b);
+    }
 - title: Capítulo 1 - Conclusión
   content_markdown: >
     ¡Buen trabajo! No ha sido tan complicado, ¿verdad? Esta ha sido una visión general de cómo trabaja el compilador de Rust. Como ya has comprobado, hay que tener muy en cuenta el tamaño de los valores en memoria, las cosas que se pueden modificar y las que no, y asegurarse de que tu código dé el resultado que esperas. Estos son pequeños avances de un principio de **seguridad** que prevalece a través de Rust. Este compilador pretende asegurarse de que tu código hace lo que esperas. A continuación echaremos un vistazo a algunos viejos conocidos: `if` y `for`.

@@ -20,8 +20,12 @@
 
     lifetime을 검증한다는 것입니다 (안그러면 그걸 사용했을 때 오류가 날 것입니다!).
 - title: 원시 포인터
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20a%20%3D%2042%3B%0A%20%20%20%20let%20memory_location%20%3D%20%26a%20as%20*const%20i32%20as%20usize%3B%0A%20%20%20%20println!(%22%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%8A%94%20%EC%97%AC%EA%B8%B0%20%EC%9E%88%EC%8A%B5%EB%8B%88%EB%8B%A4%3A%20%7B%7D%22%2C%20memory_location)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let a = 42;
+        let memory_location = &a as *const i32 as usize;
+        println!("데이터는 여기 있습니다: {}", memory_location);
+    }
   content_markdown: >
     참조는 더 원시적인 자료형인 *raw pointer*로 변환될 수 있습니다.
 
@@ -111,8 +115,26 @@
 
     ```
 - title: 스마트 포인터
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Aops%3A%3ADeref%3B%0Astruct%20TattleTell%3CT%3E%20%7B%0A%20%20%20%20value%3A%20T%2C%0A%7D%0Aimpl%3CT%3E%20Deref%20for%20TattleTell%3CT%3E%20%7B%0A%20%20%20%20type%20Target%20%3D%20T%3B%0A%20%20%20%20fn%20deref(%26self)%20-%3E%20%26T%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%20was%20used!%22%2C%20std%3A%3Aany%3A%3Atype_name%3A%3A%3CT%3E())%3B%0A%20%20%20%20%20%20%20%20%26self.value%0A%20%20%20%20%7D%0A%7D%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo%20%3D%20TattleTell%20%7B%0A%20%20%20%20%20%20%20%20value%3A%20%22secret%20message%22%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20%2F%2F%20foo%EA%B0%80%20%60len%60%20%ED%95%A8%EC%88%98%EB%A5%BC%20%EC%9C%84%ED%95%B4%20%EC%9E%90%EB%8F%99%EC%B0%B8%EC%A1%B0%EB%90%9C%20%ED%9B%84%0A%20%20%20%20%2F%2F%20%EC%97%AC%EA%B8%B0%EC%84%9C%20%EC%97%AD%EC%B0%B8%EC%A1%B0%EA%B0%80%20%EC%A6%89%EC%8B%9C%20%EC%9D%BC%EC%96%B4%EB%82%A9%EB%8B%88%EB%8B%A4%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo.len())%3B%0A%7D%0A
+  code: |
+    use std::ops::Deref;
+    struct TattleTell<T> {
+        value: T,
+    }
+    impl<T> Deref for TattleTell<T> {
+        type Target = T;
+        fn deref(&self) -> &T {
+            println!("{} was used!", std::any::type_name::<T>());
+            &self.value
+        }
+    }
+    fn main() {
+        let foo = TattleTell {
+            value: "secret message",
+        };
+        // foo가 `len` 함수를 위해 자동참조된 후
+        // 여기서 역참조가 즉시 일어납니다
+        println!("{}", foo.len());
+    }
   content_markdown: >
     `&` 연산자로 이미 존재하는 데이터의 참조를 생성하는 기능과 더불어,
 
@@ -130,8 +152,25 @@
 
     지정하기 위해 `Deref`, `DerefMut`, 그리고 `Drop` trait을 구현합니다.
 - title: 위험한 스마트 코드
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20a%3A%20%5Bu8%3B%204%5D%20%3D%20%5B86%2C%2014%2C%2073%2C%2064%5D%3B%0A%20%20%20%20%2F%2F%20%EC%9D%B4%EA%B2%8C%20%EC%9B%90%EC%8B%9C%20pointer%EC%9E%85%EB%8B%88%EB%8B%A4.%0A%20%20%20%20%2F%2F%20%EB%AC%B4%EC%96%B8%EA%B0%80%EC%9D%98%20%EB%A9%94%EB%AA%A8%EB%A6%AC%20%EC%A3%BC%EC%86%8C%EB%A5%BC%20%EC%88%AB%EC%9E%90%EB%A1%9C%20%EA%B0%80%EC%A0%B8%EC%98%A4%EB%8A%94%20%EA%B2%83%EC%9D%80%20%EC%99%84%EC%A0%84%ED%9E%88%20%EC%95%88%EC%A0%84%ED%95%9C%20%EC%9D%BC%EC%9E%85%EB%8B%88%EB%8B%A4%0A%20%20%20%20let%20pointer_a%20%3D%20%26a%20as%20*const%20u8%20as%20usize%3B%0A%20%20%20%20println!(%22%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EB%A9%94%EB%AA%A8%EB%A6%AC%20%EC%A3%BC%EC%86%8C%3A%20%7B%7D%22%2C%20pointer_a)%3B%0A%20%20%20%20%2F%2F%20%EC%88%AB%EC%9E%90%EB%A5%BC%20%EC%9B%90%EC%8B%9C%20pointer%EB%A1%9C%2C%20%EB%8B%A4%EC%8B%9C%20f32%EB%A1%9C%20%EB%B3%80%ED%99%98%ED%95%98%EB%8A%94%20%EA%B2%83%20%EC%97%AD%EC%8B%9C%0A%20%20%20%20%2F%2F%20%EC%95%88%EC%A0%84%ED%95%9C%20%EC%9D%BC%EC%9E%85%EB%8B%88%EB%8B%A4.%0A%20%20%20%20let%20pointer_b%20%3D%20pointer_a%20as%20*const%20f32%3B%0A%20%20%20%20let%20b%20%3D%20unsafe%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20%EC%9D%B4%EA%B1%B4%20unsafe%ED%95%9C%EB%8D%B0%2C%0A%20%20%20%20%20%20%20%20%2F%2F%20%EC%BB%B4%ED%8C%8C%EC%9D%BC%EB%9F%AC%EC%97%90%EA%B2%8C%20%EC%9A%B0%EB%A6%AC%EC%9D%98%20pointer%EA%B0%80%20%EC%9C%A0%ED%9A%A8%ED%95%9C%20f32%EB%9D%BC%EA%B3%A0%20%EA%B0%80%EC%A0%95%ED%95%98%EA%B3%A0%0A%20%20%20%20%20%20%20%20%2F%2F%20%EA%B7%B8%20%EA%B0%92%EC%9D%84%20%EB%B3%80%EC%88%98%20b%EB%A1%9C%20%EC%97%AD%EC%B0%B8%EC%A1%B0%20%ED%95%98%EB%9D%BC%EA%B3%A0%20%ED%95%98%EA%B3%A0%20%EC%9E%88%EA%B8%B0%20%EB%95%8C%EB%AC%B8%EC%9E%85%EB%8B%88%EB%8B%A4.%0A%20%20%20%20%20%20%20%20%2F%2F%20Rust%EB%8A%94%20%EC%9D%B4%EB%9F%B0%20%EA%B0%80%EC%A0%95%EC%9D%B4%20%EC%B0%B8%EC%9D%B8%EC%A7%80%20%EA%B2%80%EC%A6%9D%ED%95%A0%20%EB%B0%A9%EB%B2%95%EC%9D%B4%20%EC%97%86%EC%8A%B5%EB%8B%88%EB%8B%A4.%0A%20%20%20%20%20%20%20%20*pointer_b%0A%20%20%20%20%7D%3B%0A%20%20%20%20println!(%22%EB%A7%B9%EC%84%B8%ED%95%98%EA%B1%B4%EB%8C%80%20%EC%9D%B4%EA%B1%B4%20%ED%8C%8C%EC%9D%B4%EB%8B%A4!%20%7B%7D%22%2C%20b)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let a: [u8; 4] = [86, 14, 73, 64];
+        // 이게 원시 pointer입니다.
+        // 무언가의 메모리 주소를 숫자로 가져오는 것은 완전히 안전한 일입니다
+        let pointer_a = &a as *const u8 as usize;
+        println!("데이터 메모리 주소: {}", pointer_a);
+        // 숫자를 원시 pointer로, 다시 f32로 변환하는 것 역시
+        // 안전한 일입니다.
+        let pointer_b = pointer_a as *const f32;
+        let b = unsafe {
+            // 이건 unsafe한데,
+            // 컴파일러에게 우리의 pointer가 유효한 f32라고 가정하고
+            // 그 값을 변수 b로 역참조 하라고 하고 있기 때문입니다.
+            // Rust는 이런 가정이 참인지 검증할 방법이 없습니다.
+            *pointer_b
+        };
+        println!("맹세하건대 이건 파이다! {}", b);
+    }
   content_markdown: >
     smart pointer는 *unsafe*한 코드를 꽤 자주 쓰는 경향이 있습니다.
 
@@ -156,8 +195,49 @@
 
     smart pointer는 *raw pointer를 역참조*하는데 널리 쓰이지만, 그 기능은 잘 입증 되었습니다.
 - title: 익숙한 친구들
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Aalloc%3A%3A%7Balloc%2C%20Layout%7D%3B%0Ause%20std%3A%3Aops%3A%3ADeref%3B%0A%0Astruct%20Pie%20%7B%0A%20%20%20%20secret_recipe%3A%20usize%2C%0A%7D%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20new()%20-%3E%20Self%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%204%20%EB%B0%94%EC%9D%B4%ED%8A%B8%EB%A5%BC%20%EC%9A%94%EC%B2%AD%ED%95%B4%20%EB%B4%85%EC%8B%9C%EB%8B%A4%0A%20%20%20%20%20%20%20%20let%20layout%20%3D%20Layout%3A%3Afrom_size_align(4%2C%201).unwrap()%3B%0A%0A%20%20%20%20%20%20%20%20unsafe%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20%EB%A9%94%EB%AA%A8%EB%A6%AC%20%EC%9C%84%EC%B9%98%EB%A5%BC%20%EC%88%AB%EC%9E%90%EB%A1%9C%20%ED%95%A0%EB%8B%B9%ED%95%98%EA%B3%A0%20%EC%A0%80%EC%9E%A5%ED%95%A9%EB%8B%88%EB%8B%A4%0A%20%20%20%20%20%20%20%20%20%20%20%20let%20ptr%20%3D%20alloc(layout)%20as%20*mut%20u8%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20pointer%20%EC%97%B0%EC%82%B0%EC%9D%84%20%EC%82%AC%EC%9A%A9%ED%95%B4%20u8%20%EA%B0%92%20%EB%AA%87%20%EA%B0%9C%EB%A5%BC%20%EB%A9%94%EB%AA%A8%EB%A6%AC%EC%97%90%20%EC%8D%A8%EB%B4%85%EC%8B%9C%EB%8B%A4%0A%20%20%20%20%20%20%20%20%20%20%20%20ptr.write(86)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20ptr.add(1).write(14)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20ptr.add(2).write(73)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20ptr.add(3).write(64)%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20Pie%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20secret_recipe%3A%20ptr%20as%20usize%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%7D%0Aimpl%20Deref%20for%20Pie%20%7B%0A%20%20%20%20type%20Target%20%3D%20f32%3B%0A%20%20%20%20fn%20deref(%26self)%20-%3E%20%26f32%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20secret_recipe%20pointer%EB%A5%BC%20f32%20raw%20pointer%EB%A1%9C%20%EB%B3%80%ED%99%98%ED%95%A9%EB%8B%88%EB%8B%A4%0A%20%20%20%20%20%20%20%20let%20pointer%20%3D%20self.secret_recipe%20as%20*const%20f32%3B%0A%20%20%20%20%20%20%20%20%2F%2F%20%EC%97%AD%EC%B0%B8%EC%A1%B0%20%ED%95%98%EC%97%AC%20%26f32%20%EA%B0%92%EC%9C%BC%EB%A1%9C%20%EB%A6%AC%ED%84%B4%ED%95%A9%EB%8B%88%EB%8B%A4%0A%20%20%20%20%20%20%20%20unsafe%20%7B%20%26*pointer%20%7D%0A%20%20%20%20%7D%0A%7D%0Afn%20main()%20%7B%0A%20%20%20%20let%20p%20%3D%20Pie%3A%3Anew()%3B%0A%20%20%20%20%2F%2F%20Pie%20struct%EC%9D%98%20smart%20pointer%EB%A5%BC%20%EC%97%AD%EC%B0%B8%EC%A1%B0%20%ED%95%98%EC%97%AC%0A%20%20%20%20%2F%2F%20%22%ED%8C%8C%EC%9D%B4%EB%A5%BC%20%EB%A7%8C%EB%93%AD%EB%8B%88%EB%8B%A4%22%0A%20%20%20%20println!(%22%7B%3A%3F%7D%22%2C%20*p)%3B%0A%7D%0A
+  code: |
+    use std::alloc::{alloc, Layout};
+    use std::ops::Deref;
+
+    struct Pie {
+        secret_recipe: usize,
+    }
+
+    impl Pie {
+        fn new() -> Self {
+            // 4 바이트를 요청해 봅시다
+            let layout = Layout::from_size_align(4, 1).unwrap();
+
+            unsafe {
+                // 메모리 위치를 숫자로 할당하고 저장합니다
+                let ptr = alloc(layout) as *mut u8;
+                // pointer 연산을 사용해 u8 값 몇 개를 메모리에 써봅시다
+                ptr.write(86);
+                ptr.add(1).write(14);
+                ptr.add(2).write(73);
+                ptr.add(3).write(64);
+
+                Pie {
+                    secret_recipe: ptr as usize,
+                }
+            }
+        }
+    }
+    impl Deref for Pie {
+        type Target = f32;
+        fn deref(&self) -> &f32 {
+            // secret_recipe pointer를 f32 raw pointer로 변환합니다
+            let pointer = self.secret_recipe as *const f32;
+            // 역참조 하여 &f32 값으로 리턴합니다
+            unsafe { &*pointer }
+        }
+    }
+    fn main() {
+        let p = Pie::new();
+        // Pie struct의 smart pointer를 역참조 하여
+        // "파이를 만듭니다"
+        println!("{:?}", *p);
+    }
   content_markdown: >
     이미 본 적 있는 `Vec<T>`나 `String` 같은 smart pointer를 생각해 봅시다.
 
@@ -190,16 +270,53 @@
     관리할 메모리 영역을 가져오기 위한
     [Layout](https://doc.rust-lang.org/std/alloc/struct.Layout.html)을 갖고 있습니다.
 - title: 힙에 할당된 메모리
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Pie%3B%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20eat(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22heap%EC%97%90%20%EC%9E%88%EC%9C%BC%EB%8B%88%20%EB%8D%94%20%EB%A7%9B%EC%9E%88%EC%8A%B5%EB%8B%88%EB%8B%A4!%22)%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20heap_pie%20%3D%20Box%3A%3Anew(Pie)%3B%0A%20%20%20%20heap_pie.eat()%3B%0A%7D%0A
+  code: |
+    struct Pie;
+
+    impl Pie {
+        fn eat(&self) {
+            println!("heap에 있으니 더 맛있습니다!")
+        }
+    }
+
+    fn main() {
+        let heap_pie = Box::new(Pie);
+        heap_pie.eat();
+    }
   content_markdown: >
     `Box`는 데이터를 stack에서 heap으로 옮길 수 있게 해주는 smart pointer입니다.
 
 
     이를 역참조하면 마치 원래 자료형이었던 것처럼 heap에 할당된 데이터를 편하게 쓸 수 있습니다.
 - title: 실패할 수 있는 메인 다시 보기
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20core%3A%3Afmt%3A%3ADisplay%3B%0Ause%20std%3A%3Aerror%3A%3AError%3B%0A%0Astruct%20Pie%3B%0A%0A%23%5Bderive(Debug)%5D%0Astruct%20NotFreshError%3B%0A%0Aimpl%20Display%20for%20NotFreshError%20%7B%0A%20%20%20%20fn%20fmt(%26self%2C%20f%3A%20%26mut%20std%3A%3Afmt%3A%3AFormatter%3C'_%3E)%20-%3E%20std%3A%3Afmt%3A%3AResult%20%7B%0A%20%20%20%20%20%20%20%20write!(f%2C%20%22%EC%9D%B4%20%ED%8C%8C%EC%9D%B4%EB%8A%94%20%EC%8B%A0%EC%84%A0%ED%95%98%EC%A7%80%20%EC%95%8A%EA%B5%B0%EC%9A%94!%22)%0A%20%20%20%20%7D%0A%7D%0A%0Aimpl%20Error%20for%20NotFreshError%20%7B%7D%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20eat(%26self)%20-%3E%20Result%3C()%2C%20Box%3Cdyn%20Error%3E%3E%20%7B%0A%20%20%20%20%20%20%20%20Err(Box%3A%3Anew(NotFreshError))%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20-%3E%20Result%3C()%2C%20Box%3Cdyn%20Error%3E%3E%20%7B%0A%20%20%20%20let%20heap_pie%20%3D%20Box%3A%3Anew(Pie)%3B%0A%20%20%20%20heap_pie.eat()%3F%3B%0A%20%20%20%20Ok(())%0A%7D%0A
+  code: |
+    use core::fmt::Display;
+    use std::error::Error;
+
+    struct Pie;
+
+    #[derive(Debug)]
+    struct NotFreshError;
+
+    impl Display for NotFreshError {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "이 파이는 신선하지 않군요!")
+        }
+    }
+
+    impl Error for NotFreshError {}
+
+    impl Pie {
+        fn eat(&self) -> Result<(), Box<dyn Error>> {
+            Err(Box::new(NotFreshError))
+        }
+    }
+
+    fn main() -> Result<(), Box<dyn Error>> {
+        let heap_pie = Box::new(Pie);
+        heap_pie.eat()?;
+        Ok(())
+    }
   content_markdown: >
     Rust 코드에는 많고도 많은 오류 표현 방법이 있지만, 그 중에도 standard library에는
 
@@ -226,8 +343,29 @@
 
     ```
 - title: 참조 카운팅
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Arc%3A%3ARc%3B%0A%0Astruct%20Pie%3B%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20eat(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22heap%EC%97%90%20%EC%9E%88%EC%9C%BC%EB%8B%88%20%EB%8D%94%20%EB%A7%9B%EC%9E%88%EC%8A%B5%EB%8B%88%EB%8B%A4!%22)%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20heap_pie%20%3D%20Rc%3A%3Anew(Pie)%3B%0A%20%20%20%20let%20heap_pie2%20%3D%20heap_pie.clone()%3B%0A%20%20%20%20let%20heap_pie3%20%3D%20heap_pie2.clone()%3B%0A%0A%20%20%20%20heap_pie3.eat()%3B%0A%20%20%20%20heap_pie2.eat()%3B%0A%20%20%20%20heap_pie.eat()%3B%0A%0A%20%20%20%20%2F%2F%20%EB%AA%A8%EB%93%A0%20%EC%B0%B8%EC%A1%B0%20%EC%B9%B4%EC%9A%B4%ED%8A%B8%20smart%20pointer%EA%B0%80%20%EC%97%AC%EA%B8%B0%EC%84%9C%20drop%20%EB%90%A9%EB%8B%88%EB%8B%A4%0A%20%20%20%20%2F%2F%20heap%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EC%9D%B8%20Pie%EA%B0%80%20%EB%93%9C%EB%94%94%EC%96%B4%20%ED%95%A0%EB%8B%B9%20%ED%95%B4%EC%A0%9C%EB%90%A9%EB%8B%88%EB%8B%A4%0A%7D%0A
+  code: |
+    use std::rc::Rc;
+
+    struct Pie;
+
+    impl Pie {
+        fn eat(&self) {
+            println!("heap에 있으니 더 맛있습니다!")
+        }
+    }
+
+    fn main() {
+        let heap_pie = Rc::new(Pie);
+        let heap_pie2 = heap_pie.clone();
+        let heap_pie3 = heap_pie2.clone();
+
+        heap_pie3.eat();
+        heap_pie2.eat();
+        heap_pie.eat();
+
+        // 모든 참조 카운트 smart pointer가 여기서 drop 됩니다
+        // heap 데이터인 Pie가 드디어 할당 해제됩니다
+    }
   content_markdown: >
     `Rc`는 stack에 있는 데이터를 heap으로 옮겨주는 smart pointer입니다.
 
@@ -236,8 +374,38 @@
 
     마지막 smart pointer가 drop 될 때에만 heap에 있는 데이터가 할당 해제됩니다.
 - title: 접근 공유하기
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Acell%3A%3ARefCell%3B%0A%0Astruct%20Pie%20%7B%0A%20%20%20%20slices%3A%20u8%2C%0A%7D%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20eat(%26mut%20self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22heap%EC%97%90%20%EC%9E%88%EC%9C%BC%EB%8B%88%20%EB%8D%94%20%EB%A7%9B%EC%9E%88%EC%8A%B5%EB%8B%88%EB%8B%A4!%22)%3B%0A%20%20%20%20%20%20%20%20self.slices%20-%3D%201%3B%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20RefCell%EC%9D%80%20%EB%9F%B0%ED%83%80%EC%9E%84%EC%97%90%20%EB%A9%94%EB%AA%A8%EB%A6%AC%20%EC%95%88%EC%A0%84%EC%84%B1%EC%9D%84%20%EA%B2%80%EC%A6%9D%ED%95%A9%EB%8B%88%EB%8B%A4%0A%20%20%20%20%2F%2F%20%EC%A3%BC%EC%9D%98%3A%20pie_cell%EC%9D%80%20mut%EA%B0%80%20%EC%95%84%EB%8B%99%EB%8B%88%EB%8B%A4!%0A%20%20%20%20let%20pie_cell%20%3D%20RefCell%3A%3Anew(Pie%20%7B%20slices%3A%208%20%7D)%3B%0A%0A%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20%EA%B7%B8%EB%A0%87%EC%A7%80%EB%A7%8C%20mutable%20%EC%B0%B8%EC%A1%B0%EB%A5%BC%20%EB%8C%80%EC%97%AC%ED%95%A0%20%EC%88%98%20%EC%9E%88%EC%8A%B5%EB%8B%88%EB%8B%A4!%0A%20%20%20%20%20%20%20%20let%20mut%20mut_ref_pie%20%3D%20pie_cell.borrow_mut()%3B%0A%20%20%20%20%20%20%20%20mut_ref_pie.eat()%3B%0A%20%20%20%20%20%20%20%20mut_ref_pie.eat()%3B%0A%0A%20%20%20%20%20%20%20%20%2F%2F%20mut_ref_pie%EB%8A%94%20scope%EC%9D%98%20%EB%A7%88%EC%A7%80%EB%A7%89%EC%97%90%20drop%20%EB%90%A9%EB%8B%88%EB%8B%A4%0A%20%20%20%20%7D%0A%0A%20%20%20%20%2F%2F%20%EC%9D%B4%EC%A0%9C%20mutable%20%EC%B0%B8%EC%A1%B0%EA%B0%80%20drop%20%EB%90%98%EA%B3%A0%20%EB%82%98%EB%A9%B4%20immutable%ED%95%98%EA%B2%8C%20%EB%8C%80%EC%97%AC%ED%95%A0%20%EC%88%98%20%EC%9E%88%EC%8A%B5%EB%8B%88%EB%8B%A4%0A%20%20%20%20let%20ref_pie%20%3D%20pie_cell.borrow()%3B%0A%20%20%20%20println!(%22%7B%7D%20%EC%A1%B0%EA%B0%81%20%EB%82%A8%EC%95%98%EC%8A%B5%EB%8B%88%EB%8B%A4%22%2C%20ref_pie.slices)%3B%0A%7D%0A
+  code: |
+    use std::cell::RefCell;
+
+    struct Pie {
+        slices: u8,
+    }
+
+    impl Pie {
+        fn eat(&mut self) {
+            println!("heap에 있으니 더 맛있습니다!");
+            self.slices -= 1;
+        }
+    }
+
+    fn main() {
+        // RefCell은 런타임에 메모리 안전성을 검증합니다
+        // 주의: pie_cell은 mut가 아닙니다!
+        let pie_cell = RefCell::new(Pie { slices: 8 });
+
+        {
+            // 그렇지만 mutable 참조를 대여할 수 있습니다!
+            let mut mut_ref_pie = pie_cell.borrow_mut();
+            mut_ref_pie.eat();
+            mut_ref_pie.eat();
+
+            // mut_ref_pie는 scope의 마지막에 drop 됩니다
+        }
+
+        // 이제 mutable 참조가 drop 되고 나면 immutable하게 대여할 수 있습니다
+        let ref_pie = pie_cell.borrow();
+        println!("{} 조각 남았습니다", ref_pie.slices);
+    }
   content_markdown: >
     `RefCell`은 보통 smart pointer가 보유하는 컨테이너 데이터 구조로서,
 
@@ -251,8 +419,25 @@
 
     이 규칙을 어기면 `RefCell`은 panic을 일으킵니다.
 - title: 쓰레드 간에 공유하기
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Async%3A%3AMutex%3B%0A%0Astruct%20Pie%3B%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20eat(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%EC%A7%80%EA%B8%88%EC%9D%80%20%EC%98%A4%EC%A7%81%20%EB%82%98%EB%A7%8C%EC%9D%B4%20%ED%8C%8C%EC%9D%B4%EB%A5%BC%20%EB%A8%B9%EB%8A%94%EB%8B%A4!%22)%3B%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20mutex_pie%20%3D%20Mutex%3A%3Anew(Pie)%3B%0A%20%20%20%20%2F%2F%20%ED%8C%8C%EC%9D%B4%EC%97%90%20%EB%8C%80%ED%95%9C%20%EC%9E%A0%EA%B2%A8%EC%9E%88%EB%8A%94%20immutable%ED%95%9C%20%EC%B0%B8%EC%A1%B0%EB%A5%BC%20%EB%B9%8C%EB%A0%A4%EB%B4%85%EC%8B%9C%EB%8B%A4%0A%20%20%20%20%2F%2F%20lock%EC%9D%80%20%EC%8B%A4%ED%8C%A8%ED%95%A0%20%EC%88%98%EB%8F%84%20%EC%9E%88%EA%B8%B0%20%EB%95%8C%EB%AC%B8%EC%97%90%20%EA%B7%B8%20%EA%B2%B0%EA%B3%BC%EB%8A%94%20unwrap%20%ED%95%B4%EC%95%BC%ED%95%A9%EB%8B%88%EB%8B%A4%0A%20%20%20%20let%20ref_pie%20%3D%20mutex_pie.lock().unwrap()%3B%0A%20%20%20%20ref_pie.eat()%3B%0A%20%20%20%20%2F%2F%20%EC%9E%A0%EA%B8%B4%20%EC%B0%B8%EC%A1%B0%EB%8A%94%20%EC%97%AC%EA%B8%B0%EC%84%9C%20drop%20%EB%90%98%EB%A9%B0%2C%20mutex%EB%A1%9C%20%EB%B3%B4%ED%98%B8%EB%90%98%EB%8A%94%20%EA%B0%92%EC%9D%80%20%EB%8B%A4%EB%A5%B8%20%EC%9D%B4%EC%97%90%20%EC%9D%98%ED%95%B4%20%EC%93%B0%EC%9D%BC%20%EC%88%98%20%EC%9E%88%EC%8A%B5%EB%8B%88%EB%8B%A4%0A%7D%0A
+  code: |
+    use std::sync::Mutex;
+
+    struct Pie;
+
+    impl Pie {
+        fn eat(&self) {
+            println!("지금은 오직 나만이 파이를 먹는다!");
+        }
+    }
+
+    fn main() {
+        let mutex_pie = Mutex::new(Pie);
+        // 파이에 대한 잠겨있는 immutable한 참조를 빌려봅시다
+        // lock은 실패할 수도 있기 때문에 그 결과는 unwrap 해야합니다
+        let ref_pie = mutex_pie.lock().unwrap();
+        ref_pie.eat();
+        // 잠긴 참조는 여기서 drop 되며, mutex로 보호되는 값은 다른 이에 의해 쓰일 수 있습니다
+    }
   content_markdown: >
     `Mutex`는 보통 smart pointer가 보유하는 컨테이너 데이터 구조로서,
 
@@ -273,8 +458,52 @@
 
     이는 동일한 `Mutex`에 다수의 참조를 가질 때 종종 사용되곤 합니다.
 - title: 스마트 포인터 조합하기
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Acell%3A%3ARefCell%3B%0Ause%20std%3A%3Arc%3A%3ARc%3B%0A%0Astruct%20Pie%20%7B%0A%20%20%20%20slices%3A%20u8%2C%0A%7D%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20eat_slice(%26mut%20self%2C%20name%3A%20%26str)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%EA%B0%80%20%ED%95%9C%20%EC%A1%B0%EA%B0%81%20%EB%A8%B9%EC%97%88%EC%8A%B5%EB%8B%88%EB%8B%A4!%22%2C%20name)%3B%0A%20%20%20%20%20%20%20%20self.slices%20-%3D%201%3B%0A%20%20%20%20%7D%0A%7D%0A%0Astruct%20SeaCreature%20%7B%0A%20%20%20%20name%3A%20String%2C%0A%20%20%20%20pie%3A%20Rc%3CRefCell%3CPie%3E%3E%2C%0A%7D%0A%0Aimpl%20SeaCreature%20%7B%0A%20%20%20%20fn%20eat(%26self)%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20mutable%20%EB%8C%80%EC%97%AC%EB%A5%BC%20%EC%9C%84%ED%95%B4%20%ED%8C%8C%EC%9D%B4%EC%97%90%20%EB%8C%80%ED%95%9C%20smart%20pointer%EB%A5%BC%20%EC%82%AC%EC%9A%A9%0A%20%20%20%20%20%20%20%20let%20mut%20p%20%3D%20self.pie.borrow_mut()%3B%0A%20%20%20%20%20%20%20%20%2F%2F%20%ED%95%9C%20%EC%9E%85%20%EB%A8%B9%EC%9E%90!%0A%20%20%20%20%20%20%20%20p.eat_slice(%26self.name)%3B%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20pie%20%3D%20Rc%3A%3Anew(RefCell%3A%3Anew(Pie%20%7B%20slices%3A%208%20%7D))%3B%0A%20%20%20%20%2F%2F%20ferris%EC%99%80%20sarah%EC%97%90%EA%B2%90%20%ED%8C%8C%EC%9D%B4%EC%97%90%20%EB%8C%80%ED%95%9C%20smart%20pointer%EC%9D%98%20%EB%B3%B5%EC%A0%9C%EA%B0%80%20%EC%A3%BC%EC%96%B4%EC%A7%91%EB%8B%88%EB%8B%A4%0A%20%20%20%20let%20ferris%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20name%3A%20String%3A%3Afrom(%22ferris%22)%2C%0A%20%20%20%20%20%20%20%20pie%3A%20pie.clone()%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20let%20sarah%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20name%3A%20String%3A%3Afrom(%22sarah%22)%2C%0A%20%20%20%20%20%20%20%20pie%3A%20pie.clone()%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20ferris.eat()%3B%0A%20%20%20%20sarah.eat()%3B%0A%0A%20%20%20%20let%20p%20%3D%20pie.borrow()%3B%0A%20%20%20%20println!(%22%7B%7D%20%EC%A1%B0%EA%B0%81%20%EB%82%A8%EC%95%98%EC%8A%B5%EB%8B%88%EB%8B%A4%22%2C%20p.slices)%3B%0A%7D%0A
+  code: |
+    use std::cell::RefCell;
+    use std::rc::Rc;
+
+    struct Pie {
+        slices: u8,
+    }
+
+    impl Pie {
+        fn eat_slice(&mut self, name: &str) {
+            println!("{}가 한 조각 먹었습니다!", name);
+            self.slices -= 1;
+        }
+    }
+
+    struct SeaCreature {
+        name: String,
+        pie: Rc<RefCell<Pie>>,
+    }
+
+    impl SeaCreature {
+        fn eat(&self) {
+            // mutable 대여를 위해 파이에 대한 smart pointer를 사용
+            let mut p = self.pie.borrow_mut();
+            // 한 입 먹자!
+            p.eat_slice(&self.name);
+        }
+    }
+
+    fn main() {
+        let pie = Rc::new(RefCell::new(Pie { slices: 8 }));
+        // ferris와 sarah에겐 파이에 대한 smart pointer의 복제가 주어집니다
+        let ferris = SeaCreature {
+            name: String::from("ferris"),
+            pie: pie.clone(),
+        };
+        let sarah = SeaCreature {
+            name: String::from("sarah"),
+            pie: pie.clone(),
+        };
+        ferris.eat();
+        sarah.eat();
+
+        let p = pie.borrow();
+        println!("{} 조각 남았습니다", p.slices);
+    }
   content_markdown: >
     smart pointer는 한계가 있는 것처럼 보이지만, 조합해서 사용하면 매우 강력해질 수 있습니다.
 

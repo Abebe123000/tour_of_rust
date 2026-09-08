@@ -20,8 +20,13 @@
   content_markdown: |
     Một thư viện có một mô-đun gốc trong một tệp có tên là `lib.rs`.
 - title: Tham chiếu các mô-đun và crate khác
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Af64%3A%3Aconsts%3A%3API%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%22Ch%C3%A0o%20m%E1%BB%ABng%20t%E1%BB%9Bi%20s%C3%A2n%20ch%C6%A1i%20n%C3%A0y!%22)%3B%0A%20%20%20%20println!(%22T%C3%B4i%20mu%E1%BB%91n%20m%E1%BB%99t%20mi%E1%BA%BFng%20%7B%7D!%22%2C%20PI)%3B%0A%7D%0A
+  code: |
+    use std::f64::consts::PI;
+
+    fn main() {
+        println!("Chào mừng tới sân chơi này!");
+        println!("Tôi muốn một miếng {}!", PI);
+    }
   content_markdown: >
     Các mục trong mô-đun có thể được tham chiếu với đường dẫn mô-đun đầy đủ của chúng
     `std::f64::consts::PI`.
@@ -114,8 +119,16 @@
 - title: Khả năng hiển thị cấu trúc
   content_markdown: >
     Cũng giống như các hàm, các cấu trúc có thể khai báo những gì chúng muốn hiển thị bên ngoài mô-đun của chúng bằng cách sử dụng `pub`.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=%2F%2F%20SeaCreature%20struct%20s%E1%BA%BD%20c%C3%B3%20th%E1%BB%83%20s%E1%BB%AD%20d%E1%BB%A5ng%20%C4%91%C6%B0%E1%BB%A3c%20b%C3%AAn%20ngo%C3%A0i%20m%C3%B4-%C4%91un%20c%E1%BB%A7a%20b%E1%BA%A1n%0Apub%20struct%20SeaCreature%20%7B%0A%20%20%20%20pub%20animal_type%3A%20String%2C%0A%20%20%20%20pub%20name%3A%20String%2C%0A%20%20%20%20pub%20arms%3A%20i32%2C%0A%20%20%20%20pub%20legs%3A%20i32%2C%0A%20%20%20%20%2F%2F%20gi%E1%BB%AF%20weapon%20%E1%BB%9F%20ch%E1%BA%BF%20%C4%91%E1%BB%99%20private%0A%20%20%20%20weapon%3A%20String%2C%0A%7D%0A
+  code: |
+    // SeaCreature struct sẽ có thể sử dụng được bên ngoài mô-đun của bạn
+    pub struct SeaCreature {
+        pub animal_type: String,
+        pub name: String,
+        pub arms: i32,
+        pub legs: i32,
+        // giữ weapon ở chế độ private
+        weapon: String,
+    }
 - title: Phần dạo đầu(Prelude)
   content_markdown: |
     Bạn có thể tự hỏi làm thế nào chúng ta có thể truy cập vào `Vec` hoặc` Box` ở mọi nơi mà không có `use` để nhập chúng. 

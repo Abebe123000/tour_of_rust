@@ -1,8 +1,10 @@
 - title: >-
     Salute, <img src="/favicon-32x32.png" style="display:inline;
     vertical-align:bottom">
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20println!(%22Salute%2C%20%F0%9F%A6%80%22)%3B%0A%7D
+  code: |-
+    fn main() {
+      println!("Salute, 🦀");
+    }
   content_html: >-
     <p>Benevenit al <b>Tur de Rust</b>. Li tur intente esser un guide explicat
     passu a passu al caracteristicas trovat in li lingue de programmation Rust.

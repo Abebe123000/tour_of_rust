@@ -20,8 +20,13 @@
   content_markdown: |
     library는 `lib.rs`라 불리는 파일에 root module을 갖고 있습니다.
 - title: 다른 모듈과 크레이트 참조하기
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Af64%3A%3Aconsts%3A%3API%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%22%EB%86%80%EC%9D%B4%ED%84%B0%EC%97%90%20%EC%98%A4%EC%8B%A0%20%EA%B2%83%EC%9D%84%20%ED%99%98%EC%98%81%ED%95%A9%EB%8B%88%EB%8B%A4!%22)%3B%0A%20%20%20%20println!(%22%7B%7D%20%ED%95%9C%20%EC%A1%B0%EA%B0%81%20%EB%A8%B9%EA%B3%A0%20%EC%8B%B6%EA%B5%B0%EC%9A%94!%22%2C%20PI)%3B%0A%7D%0A
+  code: |
+    use std::f64::consts::PI;
+
+    fn main() {
+        println!("놀이터에 오신 것을 환영합니다!");
+        println!("{} 한 조각 먹고 싶군요!", PI);
+    }
   content_markdown: >
     module 내의 항목은 전체 module 경로인 `std::f64::consts::PI`를 이용해
     참조할 수 있습니다.
@@ -127,8 +132,16 @@
   content_markdown: >
     함수와 마찬가지로, structure도 module 외부로 무엇을 노출할지를
     `pub`을 사용해 선언할 수 있습니다.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=%2F%2F%20SeaCreature%20struct%EB%8A%94%20%EC%9A%B0%EB%A6%AC%20module%20%EC%99%B8%EB%B6%80%EC%97%90%EC%84%9C%EB%8F%84%20%EC%82%AC%EC%9A%A9%20%EA%B0%80%EB%8A%A5%ED%95%A9%EB%8B%88%EB%8B%A4%0Apub%20struct%20SeaCreature%20%7B%0A%20%20%20%20pub%20animal_type%3A%20String%2C%0A%20%20%20%20pub%20name%3A%20String%2C%0A%20%20%20%20pub%20arms%3A%20i32%2C%0A%20%20%20%20pub%20legs%3A%20i32%2C%0A%20%20%20%20%2F%2F%20%EC%9A%B0%EB%A6%AC%EC%9D%98%20%EB%AC%B4%EA%B8%B0%EB%8A%94%20%EB%B9%84%EB%B0%80%EB%A1%9C%20%EB%82%A8%EA%B2%A8%EB%91%A1%EC%8B%9C%EB%8B%A4%0A%20%20%20%20weapon%3A%20String%2C%0A%7D%0A
+  code: |
+    // SeaCreature struct는 우리 module 외부에서도 사용 가능합니다
+    pub struct SeaCreature {
+        pub animal_type: String,
+        pub name: String,
+        pub arms: i32,
+        pub legs: i32,
+        // 우리의 무기는 비밀로 남겨둡시다
+        weapon: String,
+    }
 - title: 전주곡 (Prelude)
   content_markdown: |
     `use`로 가져오지도 않았는데 어떻게 어디서나 `Vec`나 `Box`를 쓸 수 있는지

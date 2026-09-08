@@ -7,8 +7,31 @@
 
 
     Geralmente o Rust pode inferir o tipo final observando a nossa instanciação, mas se ele precisar de ajuda você sempre pode ser explícito usando o operador `::<T>`, também conhecido pelo nome `turbofish` (ele é um bom amigo meu!).
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=%2F%2F%20Um%20tipo%20struct%20definido%20parcialmente%0Astruct%20Sacola%3CT%3E%20%7B%0A%20%20%20%20item%3A%20T%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20Nota%3A%20usando%20tipos%20gen%C3%A9ricos%20aqui%20n%C3%B3s%20criamos%20tipos%20em%20tempo%20de%20compila%C3%A7%C3%A3o%0A%20%20%20%20%2F%2F%20fazendo%20o%20nosso%20c%C3%B3digo%20ficar%20maior.%20O%20turbofish%20nos%20permite%20ser%20expl%C3%ADcitos.%0A%20%20%20%20let%20i32_sacola%20%3D%20Sacola%3A%3A%3Ci32%3E%20%7B%20item%3A%2042%20%7D%3B%0A%20%20%20%20let%20bool_sacola%20%3D%20Sacola%3A%3A%3Cbool%3E%20%7B%20item%3A%20true%20%7D%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20O%20Rust%20pode%20inferir%20os%20tipos%20para%20gen%C3%A9ricos%20tamb%C3%A9m!%0A%20%20%20%20let%20float_sacola%20%3D%20Sacola%20%7B%20item%3A%203.14%20%7D%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20Nota%3A%20nunca%20coloque%20uma%20sacola%20dentro%20da%20outra%20na%20vida%20real%0A%20%20%20%20let%20sacola_na_sacola%20%3D%20Sacola%20%7B%0A%20%20%20%20%20%20%20%20item%3A%20Sacola%20%7B%20item%3A%20%22boom!%22%20%7D%2C%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%22%2C%0A%20%20%20%20%20%20%20%20i32_sacola.item%2C%20bool_sacola.item%2C%20float_sacola.item%2C%20sacola_na_sacola.item.item%0A%20%20%20%20)%3B%0A%7D%0A
+  code: |
+    // Um tipo struct definido parcialmente
+    struct Sacola<T> {
+        item: T,
+    }
+
+    fn main() {
+        // Nota: usando tipos genéricos aqui nós criamos tipos em tempo de compilação
+        // fazendo o nosso código ficar maior. O turbofish nos permite ser explícitos.
+        let i32_sacola = Sacola::<i32> { item: 42 };
+        let bool_sacola = Sacola::<bool> { item: true };
+        
+        // O Rust pode inferir os tipos para genéricos também!
+        let float_sacola = Sacola { item: 3.14 };
+        
+        // Nota: nunca coloque uma sacola dentro da outra na vida real
+        let sacola_na_sacola = Sacola {
+            item: Sacola { item: "boom!" },
+        };
+
+        println!(
+            "{} {} {} {}",
+            i32_sacola.item, bool_sacola.item, float_sacola.item, sacola_na_sacola.item.item
+        );
+    }
 - title: Representando o Nada
   content_markdown: >
     Em outras linguagens, a palavra-chave `null` é usada para representar a ausência de um valor. Isso cria dificuldades nas linguagens de programação, porque possibilita que o nosso programa possa falhar ao interagir com uma variável/campo.
@@ -18,8 +41,16 @@
 
 
     Esse padrão para fornecer uma representação alternativa ao `None` por um ou vários valores alternados é muito comum em Rust devido à falta de um valor `null`. Os tipos genéricos ajudam a resolver esse desafio.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=enum%20Item%20%7B%0A%20%20%20%20Inventario(String)%2C%0A%20%20%20%20%2F%2F%20None%20representa%20a%20aus%C3%AAncia%20de%20um%20item%0A%20%20%20%20None%2C%0A%7D%0A%0Astruct%20Sacola%20%7B%0A%20%20%20%20item%3A%20Item%2C%0A%7D%0A
+  code: |
+    enum Item {
+        Inventario(String),
+        // None representa a ausência de um item
+        None,
+    }
+
+    struct Sacola {
+        item: Item,
+    }
 - title: Option
   content_markdown: >
     O Rust possui uma enumeração genérica embutida chamada `Option` que nos permite representar valores nulos sem precisar usar o `null`.
@@ -36,8 +67,38 @@
 
 
     Essa enumeração é tão comum que as suas instâncias podem ser criadas em qualquer lugar com a palavra-chave `Some` e `None`.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=%2F%2F%20Um%20tipo%20struct%20parcialmente%20definido%0Astruct%20Sacola%3CT%3E%20%7B%0A%20%20%20%20%2F%2F%20Nosso%20par%C3%A2metro%20T%20pode%20ser%20entregue%20a%20outros%0A%20%20%20%20item%3A%20Option%3CT%3E%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20Nota%3A%20Uma%20sacola%20para%20i32%2C%20contendo%20nada!%20Precisamos%20especificar%20o%20tipo%0A%20%20%20%20%2F%2F%20porque%20sen%C3%A3o%20o%20Rust%20n%C3%A3o%20saber%C3%A1%20qual%20o%20tipo%20que%20sacola%20%C3%A9.%0A%20%20%20%20let%20i32_sacola%20%3D%20Sacola%3A%3A%3Ci32%3E%20%7B%20item%3A%20None%20%7D%3B%0A%0A%20%20%20%20if%20i32_sacola.item.is_none()%20%7B%0A%20%20%20%20%20%20%20%20println!(%22n%C3%A3o%20h%C3%A1%20nada%20na%20sacola!%22)%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20println!(%22tem%20alguma%20coisa%20na%20sacola!%22)%0A%20%20%20%20%7D%0A%0A%20%20%20%20let%20i32_sacola%20%3D%20Sacola%3A%3A%3Ci32%3E%20%7B%20item%3A%20Some(42)%20%7D%3B%0A%0A%20%20%20%20if%20i32_sacola.item.is_some()%20%7B%0A%20%20%20%20%20%20%20%20println!(%22tem%20alguma%20coisa%20na%20sacola!%22)%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20println!(%22n%C3%A3o%20h%C3%A1%20nada%20na%20sacola!%22)%0A%20%20%20%20%7D%0A%0A%20%20%20%20%2F%2F%20match%20lets%20us%20deconstruct%20Option%20elegantly%20and%20ensure%20we%20handle%20all%20cases!%0A%20%20%20%20match%20i32_sacola.item%20%7B%0A%20%20%20%20%20%20%20%20Some(v)%20%3D%3E%20println!(%22encontrei%20%7B%7D%20na%20sacola!%22%2C%20v)%2C%0A%20%20%20%20%20%20%20%20None%20%3D%3E%20println!(%22n%C3%A3o%20encontrei%20nada%22)%2C%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    // Um tipo struct parcialmente definido
+    struct Sacola<T> {
+        // Nosso parâmetro T pode ser entregue a outros
+        item: Option<T>,
+    }
+
+    fn main() {
+        // Nota: Uma sacola para i32, contendo nada! Precisamos especificar o tipo
+        // porque senão o Rust não saberá qual o tipo que sacola é.
+        let i32_sacola = Sacola::<i32> { item: None };
+
+        if i32_sacola.item.is_none() {
+            println!("não há nada na sacola!")
+        } else {
+            println!("tem alguma coisa na sacola!")
+        }
+
+        let i32_sacola = Sacola::<i32> { item: Some(42) };
+
+        if i32_sacola.item.is_some() {
+            println!("tem alguma coisa na sacola!")
+        } else {
+            println!("não há nada na sacola!")
+        }
+
+        // match lets us deconstruct Option elegantly and ensure we handle all cases!
+        match i32_sacola.item {
+            Some(v) => println!("encontrei {} na sacola!", v),
+            None => println!("não encontrei nada"),
+        }
+    }
 - title: Result
   content_markdown: >
     O Rust possui uma enumeração genérica chamada `Result` que nos permite retornar um valor que tem a possibilidade de falhar.
@@ -60,13 +121,55 @@
 
 
     Esta enumeração é tão comum que instâncias dela podem ser criadas em qualquer lugar com as palavras-chave `Ok` e `Err`.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20faz_alguma_coisa_que_pode_falhar(i%3Ai32)%20-%3E%20Result%3Cf32%2CString%3E%20%7B%0A%20%20%20%20if%20i%20%3D%3D%2042%20%7B%0A%20%20%20%20%20%20%20%20Ok(13.0)%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20Err(String%3A%3Afrom(%22este%20n%C3%A3o%20%C3%A9%20o%20n%C3%BAmero%20correto%22))%20%20%20%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20result%20%3D%20faz_alguma_coisa_que_pode_falhar(12)%3B%0A%0A%20%20%20%20%2F%2F%20o%20match%20nos%20permite%20desconstruir%20o%20Result%20elegantemente%20%0A%20%20%20%20%2F%2F%20e%20garante%20que%20lidemos%20com%20todos%20os%20casos!%0A%20%20%20%20match%20result%20%7B%0A%20%20%20%20%20%20%20%20Ok(v)%20%3D%3E%20println!(%22encontrei%20%7B%7D%22%2C%20v)%2C%0A%20%20%20%20%20%20%20%20Err(e)%20%3D%3E%20println!(%22Erro%3A%20%7B%7D%22%2C%20e)%2C%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    fn faz_alguma_coisa_que_pode_falhar(i:i32) -> Result<f32,String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("este não é o número correto"))   
+        }
+    }
+
+    fn main() {
+        let result = faz_alguma_coisa_que_pode_falhar(12);
+
+        // o match nos permite desconstruir o Result elegantemente 
+        // e garante que lidemos com todos os casos!
+        match result {
+            Ok(v) => println!("encontrei {}", v),
+            Err(e) => println!("Erro: {}", e),
+        }
+    }
 - title: Main Falível
   content_markdown: |
     O `main` tem a capacidade de retornar um `Result`!
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20faz_alguma_coisa_que_pode_falhar(i%3A%20i32)%20-%3E%20Result%3Cf32%2C%20String%3E%20%7B%0A%20%20%20%20if%20i%20%3D%3D%2042%20%7B%0A%20%20%20%20%20%20%20%20Ok(13.0)%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20Err(String%3A%3Afrom(%22este%20n%C3%A3o%20%C3%A9%20o%20n%C3%BAmero%20correto%22))%0A%20%20%20%20%7D%0A%7D%0A%0A%2F%2F%20o%20Main%20n%C3%A3o%20retorna%20um%20valor%2C%20mas%20pode%20retornar%20um%20erro!%0Afn%20main()%20-%3E%20Result%3C()%2C%20String%3E%20%7B%0A%20%20%20%20let%20result%20%3D%20faz_alguma_coisa_que_pode_falhar(12)%3B%0A%0A%20%20%20%20match%20result%20%7B%0A%20%20%20%20%20%20%20%20Ok(v)%20%3D%3E%20println!(%22encontrei%20%7B%7D%22%2C%20v)%2C%0A%20%20%20%20%20%20%20%20Err(_e)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20lida%20com%20o%20erro%20normalmente%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20retorna%20um%20novo%20erro%20do%20main%20que%20nos%20informa%20o%20que%20houve!%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20Err(String%3A%3Afrom(%22alguma%20coisa%20deu%20errado%20em%20main!%22))%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%0A%20%20%20%20%2F%2F%20Observe%20que%20usamos%20um%20valor%20unit%20dentro%20de%20um%20Result%20Ok%0A%20%20%20%20%2F%2F%20para%20representar%20que%20est%C3%A1%20tudo%20bem%0A%20%20%20%20Ok(())%0A%7D%0A
+  code: |
+    fn faz_alguma_coisa_que_pode_falhar(i: i32) -> Result<f32, String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("este não é o número correto"))
+        }
+    }
+
+    // o Main não retorna um valor, mas pode retornar um erro!
+    fn main() -> Result<(), String> {
+        let result = faz_alguma_coisa_que_pode_falhar(12);
+
+        match result {
+            Ok(v) => println!("encontrei {}", v),
+            Err(_e) => {
+                // lida com o erro normalmente
+                
+                // retorna um novo erro do main que nos informa o que houve!
+                return Err(String::from("alguma coisa deu errado em main!"));
+            }
+        }
+
+        // Observe que usamos um valor unit dentro de um Result Ok
+        // para representar que está tudo bem
+        Ok(())
+    }
 - title: Manipulação de Erros Elegantes
   content_markdown: >
     O `Result` é tão comum que o Rust tem o poderoso operador `?` para trabalhar com ele. Estas duas declarações são equivalentes:
@@ -87,8 +190,21 @@
     }
 
     ```
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20faz_alguma_coisa_que_pode_falhar(i%3A%20i32)%20-%3E%20Result%3Cf32%2C%20String%3E%20%7B%0A%20%20%20%20if%20i%20%3D%3D%2042%20%7B%0A%20%20%20%20%20%20%20%20Ok(13.0)%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20Err(String%3A%3Afrom(%22este%20n%C3%A3o%20%C3%A9%20o%20n%C3%BAmero%20correto%22))%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20-%3E%20Result%3C()%2C%20String%3E%20%7B%0A%20%20%20%20%2F%2F%20Olha%20quanto%20c%C3%B3digo%20n%C3%B3s%20salvamos!%0A%20%20%20%20let%20v%20%3D%20faz_alguma_coisa_que_pode_falhar(42)%3F%3B%0A%20%20%20%20println!(%22encontrei%20%7B%7D%22%2C%20v)%3B%0A%20%20%20%20Ok(())%0A%7D%0A
+  code: |
+    fn faz_alguma_coisa_que_pode_falhar(i: i32) -> Result<f32, String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("este não é o número correto"))
+        }
+    }
+
+    fn main() -> Result<(), String> {
+        // Olha quanto código nós salvamos!
+        let v = faz_alguma_coisa_que_pode_falhar(42)?;
+        println!("encontrei {}", v);
+        Ok(())
+    }
 - title: Manipulação de Option/Erros Deselegante
   content_markdown: >
     Trabalhar com `Option`/`Result` pode ser entediante quando você está apenas tentando escrever um código rápido. Tanto `Option` quanto `Result` têm uma função chamada `unwrap` que pode ser útil para obter um valor de maneira rápida e *feia*. `unwrap` irá:
@@ -140,8 +256,26 @@
 
 
     Seja um bom rustáceo e use `match` apropriadamente quando puder!
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20faz_alguma_coisa_que_pode_falhar(i%3A%20i32)%20-%3E%20Result%3Cf32%2C%20String%3E%20%7B%0A%20%20%20%20if%20i%20%3D%3D%2042%20%7B%0A%20%20%20%20%20%20%20%20Ok(13.0)%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20Err(String%3A%3Afrom(%22este%20n%C3%A3o%20%C3%A9%20o%20n%C3%BAmero%20correto%22))%20%20%20%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20-%3E%20Result%3C()%2C%20String%3E%20%7B%0A%20%20%20%20%2F%2F%20conciso%2C%20mas%20pretencioso%20e%20falha%20r%C3%A1pido%0A%20%20%20%20let%20v%20%3D%20faz_alguma_coisa_que_pode_falhar(42).unwrap()%3B%0A%20%20%20%20println!(%22encontrei%20%7B%7D%22%2C%20v)%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20erro%20de%20panic!%0A%20%20%20%20let%20v%20%3D%20faz_alguma_coisa_que_pode_falhar(1).unwrap()%3B%0A%20%20%20%20println!(%22encontrei%20%7B%7D%22%2C%20v)%3B%0A%20%20%20%20%0A%20%20%20%20Ok(())%0A%7D%0A
+  code: |
+    fn faz_alguma_coisa_que_pode_falhar(i: i32) -> Result<f32, String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("este não é o número correto"))   
+        }
+    }
+
+    fn main() -> Result<(), String> {
+        // conciso, mas pretencioso e falha rápido
+        let v = faz_alguma_coisa_que_pode_falhar(42).unwrap();
+        println!("encontrei {}", v);
+        
+        // erro de panic!
+        let v = faz_alguma_coisa_que_pode_falhar(1).unwrap();
+        println!("encontrei {}", v);
+        
+        Ok(())
+    }
 - title: Vetores
   content_markdown: >
     Alguns dos tipos genéricos mais úteis são os tipos de coleção. Um vetor é uma lista de itens de tamanho variável representada pela estrutura `Vec`.
@@ -159,8 +293,27 @@
     * `Vec` é um struct, mas internamente contém uma referência a uma lista fixa de seus itens no heap.
 
     * Um vetor começa com uma capacidade padrão. Quando são adicionados mais itens do que a capacidade inicial, ele realoca seus dados no heap para ter uma nova lista fixa com capacidade maior.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20%2F%2F%20Podemos%20ser%20expl%C3%ADcitos%20com%20o%20tipo%0A%20%20%20%20let%20mut%20i32_vec%20%3D%20Vec%3A%3A%3Ci32%3E%3A%3Anew()%3B%20%2F%2F%20turbofish%20%3C3%0A%20%20%20%20i32_vec.push(1)%3B%0A%20%20%20%20i32_vec.push(2)%3B%0A%20%20%20%20i32_vec.push(3)%3B%0A%0A%20%20%20%20%2F%2F%20Veja%20qu%C3%A3o%20esperto%20o%20Rust%20%C3%A9%20determinando%20o%20tipo%20automaticamente%0A%20%20%20%20let%20mut%20float_vec%20%3D%20Vec%3A%3Anew()%3B%0A%20%20%20%20float_vec.push(1.3)%3B%0A%20%20%20%20float_vec.push(2.3)%3B%0A%20%20%20%20float_vec.push(3.4)%3B%0A%0A%20%20%20%20%2F%2F%20Olha%20que%20macro%20linda!%0A%20%20%20%20let%20string_vec%20%3D%20vec!%5BString%3A%3Afrom(%22Ol%C3%A1%22)%2C%20String%3A%3Afrom(%22Mundo%22)%5D%3B%0A%0A%20%20%20%20for%20word%20in%20string_vec.iter()%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20word)%3B%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    fn main() {
+        // Podemos ser explícitos com o tipo
+        let mut i32_vec = Vec::<i32>::new(); // turbofish <3
+        i32_vec.push(1);
+        i32_vec.push(2);
+        i32_vec.push(3);
+
+        // Veja quão esperto o Rust é determinando o tipo automaticamente
+        let mut float_vec = Vec::new();
+        float_vec.push(1.3);
+        float_vec.push(2.3);
+        float_vec.push(3.4);
+
+        // Olha que macro linda!
+        let string_vec = vec![String::from("Olá"), String::from("Mundo")];
+
+        for word in string_vec.iter() {
+            println!("{}", word);
+        }
+    }
 - title: Capítulo 4 - Conclusão
   content_markdown: >
     Em um capítulo aprendemos quanta força os tipos genéricos nos dão! Não se preocupe se você não souber como usar tudo, porque agora é bom estar ciente das principais idéias que você verá repetidas vezes no código. Nossas funções estão ficando muito longas! No próximo capítulo, falaremos sobre um conceito importante no Rust: propriedade de dados.

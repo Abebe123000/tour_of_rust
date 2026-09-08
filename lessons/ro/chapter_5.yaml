@@ -15,8 +15,17 @@
 
     pe tot parcursul **duratei sale de viață**. Variabila de care a fost legată resursa este considerată
     **proprietarul** resursei.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20Instan%C8%9Biem%20structuri%20(Foo)%20%C8%99i%20le%20leg%C4%83m%20de%20variabile%20(foo)%0A%20%20%20%20%2F%2F%20pentru%20a%20crea%20resurse%20%C3%AEn%20memorie%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20%2F%2F%20foo%20este%20proprietarul%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        // Instanțiem structuri (Foo) și le legăm de variabile (foo)
+        // pentru a crea resurse în memorie
+        let foo = Foo { x: 42 };
+        // foo este proprietarul
+    }
 - title: Gestionarea resurselor bazată pe domeniul de existență
   content_markdown: |
     Rust folosește finalul unui domeniu de existență ca moment pentru a destructura și a dealoca o resursă.
@@ -26,7 +35,21 @@
     Detalii despre memorie:
     * Rust nu are un colector pentru deșeuri în memorie.
     * Acest aspect este cunoscut în C++ ca Achiziția Resurselor înseamnă Inițializare ( RAII ).
-  code: https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo_a%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20foo_b%20%3D%20Foo%20%7B%20x%3A%2013%20%7D%3B%0A%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo_a.x)%3B%0A%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo_b.x)%3B%0A%20%20%20%20%2F%2F%20se%20renun%C8%9B%C4%83%20la%20foo_b%20aici%0A%20%20%20%20%2F%2F%20se%20renun%C8%9B%C4%83%20la%20foo_a%20aici%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        let foo_a = Foo { x: 42 };
+        let foo_b = Foo { x: 13 };
+
+        println!("{}", foo_a.x);
+
+        println!("{}", foo_b.x);
+        // se renunță la foo_b aici
+        // se renunță la foo_a aici
+    }
 - title: Drop-ul este o acțiune ierarhică
   content_markdown: >
     Atunci când se renunță la o structură (drop), mai întâi se renunță la structura efectivă, apoi la
@@ -39,8 +62,21 @@
     puține pierderi de memorie.
 
     * Se poate renunța la resurse din memorie o singură dată.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Bar%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Astruct%20Foo%20%7B%0A%20%20%20%20bar%3A%20Bar%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%20bar%3A%20Bar%20%7B%20x%3A%2042%20%7D%20%7D%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo.bar.x)%3B%0A%20%20%20%20%2F%2F%20se%20renun%C8%9B%C4%83%20la%20foo%20mai%20%C3%AEnt%C3%A2i%0A%20%20%20%20%2F%2F%20apoi%20se%20renun%C8%9B%C4%83%20la%20foo.bar%0A%7D%0A
+  code: |
+    struct Bar {
+        x: i32,
+    }
+
+    struct Foo {
+        bar: Bar,
+    }
+
+    fn main() {
+        let foo = Foo { bar: Bar { x: 42 } };
+        println!("{}", foo.bar.x);
+        // se renunță la foo mai întâi
+        // apoi se renunță la foo.bar
+    }
 - title: Cedarea proprietății
   content_markdown: >
     Proprietatea unei resurse din memorie (a cărei proprietar este o variabilă) poate fi cedată atunci când folosim
@@ -55,20 +91,57 @@
 
     * În timpul **cedării proprietății**, valoarea din memoria stivei proprietarului este copiată
     în memoria stivei parametrului funcției apelate.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20do_something(f%3A%20Foo)%20%7B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20f.x)%3B%0A%20%20%20%20%2F%2F%20se%20renun%C8%9B%C4%83%20la%20f%20aici%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20%2F%2F%20foo%20este%20cedat%20func%C8%9Biei%20do_something%0A%20%20%20%20do_something(foo)%3B%0A%20%20%20%20%2F%2F%20foo%20nu%20mai%20poate%20fi%20folosit%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: Foo) {
+        println!("{}", f.x);
+        // se renunță la f aici
+    }
+
+    fn main() {
+        let foo = Foo { x: 42 };
+        // foo este cedat funcției do_something
+        do_something(foo);
+        // foo nu mai poate fi folosit
+    }
 - title: Returnarea proprietății
   content_markdown: |
     Proprietatea poate fi de asemenea returnată de o funcție.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20do_something()%20-%3E%20Foo%20%7B%0A%20%20%20%20Foo%20%7B%20x%3A%2042%20%7D%0A%20%20%20%20%2F%2F%20proprietatea%20este%20cedat%C4%83%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo%20%3D%20do_something()%3B%0A%20%20%20%20%2F%2F%20foo%20devine%20proprietar%0A%20%20%20%20%2F%2F%20se%20renun%C8%9B%C4%83%20la%20foo%20din%20cauza%20termin%C4%83rii%20func%C8%9Biei%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something() -> Foo {
+        Foo { x: 42 }
+        // proprietatea este cedată
+    }
+
+    fn main() {
+        let foo = do_something();
+        // foo devine proprietar
+        // se renunță la foo din cauza terminării funcției
+    }
 - title: Împrumutul proprietății prin referințe
   content_markdown: |
     Referințele ne permit să împrumutăm accesul la o resursă din memorie prin operatorul `&`.
 
     Asemănător altor resurse, se poate renunța (drop) și la referințe.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20f%20%3D%20%26foo%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20f.x)%3B%0A%20%20%20%20%2F%2F%20se%20renun%C8%9B%C4%83%20la%20f%20aici%0A%20%20%20%20%2F%2F%20se%20renun%C8%9B%C4%83%20la%20foo%20aici%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        let foo = Foo { x: 42 };
+        let f = &foo;
+        println!("{}", f.x);
+        // se renunță la f aici
+        // se renunță la foo aici
+    }
 - title: Împrumutul proprietății mutabile prin referințe
   content_markdown: >
     Putem de asemenea să împrumutăm accesul mutabil la o resursă cu ajutorul operatorului `&mut`.
@@ -81,8 +154,37 @@
 
     * Rust previne existența a două căi de a modifica o valoare deținută, deoarece acest lucru
     ar introduce posibilitatea intercalării datelor (data race).
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20do_something(f%3A%20Foo)%20%7B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20f.x)%3B%0A%20%20%20%20%2F%2F%20se%20renun%C8%9B%C4%83%20la%20f%20aici%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20mut%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20f%20%3D%20%26mut%20foo%3B%0A%0A%20%20%20%20%2F%2F%20E%C8%98EC%3A%20do_something(foo)%20va%20e%C8%99ua%20pentru%20c%C4%83%0A%20%20%20%20%2F%2F%20foo%20nu%20poate%20fi%20mutat%20%C3%AEn%20timp%20ce%20este%20%C3%AEmprumutat%20%C3%AEn%20mod%20mutabil%0A%0A%20%20%20%20%2F%2F%20E%C8%98EC%3A%20foo.x%20%3D%2013%3B%20va%20e%C8%99ua%20aici%20pentru%20c%C4%83%0A%20%20%20%20%2F%2F%20foo%20nu%20poate%20fi%20modificat%20%C3%AEn%20timp%20ce%20este%20%C3%AEmprumutat%20%C3%AEn%20mod%20mutabil%0A%0A%20%20%20%20f.x%20%3D%2013%3B%0A%20%20%20%20%2F%2F%20se%20renun%C8%9B%C4%83%20la%20f%20aici%20pentru%20c%C4%83%20nu%20mai%20este%20folosit%20dupa%20acest%20moment%0A%20%20%20%20%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo.x)%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20acest%20lucru%20func%C8%9Bioneaz%C4%83%20pentru%20s-a%20renun%C8%9Bat%20la%20toate%20referin%C8%9Bele%20mutabile%0A%20%20%20%20foo.x%20%3D%207%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20ced%C4%83m%20proprietatea%20lui%20foo%20%C3%AEntr-o%20func%C8%9Bie%0A%20%20%20%20do_something(foo)%3B%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: Foo) {
+        println!("{}", f.x);
+        // se renunță la f aici
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let f = &mut foo;
+
+        // EȘEC: do_something(foo) va eșua pentru că
+        // foo nu poate fi mutat în timp ce este împrumutat în mod mutabil
+
+        // EȘEC: foo.x = 13; va eșua aici pentru că
+        // foo nu poate fi modificat în timp ce este împrumutat în mod mutabil
+
+        f.x = 13;
+        // se renunță la f aici pentru că nu mai este folosit dupa acest moment
+        
+        println!("{}", foo.x);
+        
+        // acest lucru funcționează pentru s-a renunțat la toate referințele mutabile
+        foo.x = 7;
+        
+        // cedăm proprietatea lui foo într-o funcție
+        do_something(foo);
+    }
 - title: Dereferențiere
   content_markdown: >
     Folosind referințe prin `&mut`, putem seta valoarea proprietarului inițial prin folosirea operatorului `*`.
@@ -90,8 +192,15 @@
 
     Puteți de asemenea copia valoarea unei resurse deținute folosind operatorul `*` (dacă valoarea
     poate fi copiată - vom discuta despre tipuri care se pot copia în capitole viitoare).
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20mut%20foo%20%3D%2042%3B%0A%20%20%20%20let%20f%20%3D%20%26mut%20foo%3B%0A%20%20%20%20let%20bar%20%3D%20*f%3B%20%2F%2F%20primim%20o%20copie%20a%20valorii%20proprietarului%0A%20%20%20%20*f%20%3D%2013%3B%20%20%20%20%20%20%2F%2F%20set%C4%83m%20valoarea%20proprietarului%20prin%20referin%C8%9B%C4%83%0A%20%20%20%20println!(%22%7B%7D%22%2C%20bar)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let mut foo = 42;
+        let f = &mut foo;
+        let bar = *f; // primim o copie a valorii proprietarului
+        *f = 13;      // setăm valoarea proprietarului prin referință
+        println!("{}", bar);
+        println!("{}", foo);
+    }
 - title: Trimiterea datelor împrumutate
   content_markdown: >
     Regulile din Rust pentru referințe pot fi rezumate foarte bine de:
@@ -114,13 +223,46 @@
 
     * A doua regulă pentru referințe previne folosirea greșită a referințelor legate de
     resurse care nu mai există în memorie (numite și dangling pointers în C).
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20do_something(f%3A%20%26mut%20Foo)%20%7B%0A%20%20%20%20f.x%20%2B%3D%201%3B%0A%20%20%20%20%2F%2F%20se%20renun%C8%9B%C4%83%20la%20referin%C8%9Ba%20mutabil%C4%83%20f%20aici%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20mut%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20do_something(%26mut%20foo)%3B%0A%20%20%20%20%2F%2F%20pentru%20c%C4%83%20se%20renun%C8%9B%C4%83%20la%20toate%20referin%C8%9Bele%20mutabile%0A%20%20%20%20%2F%2F%20%C3%AEn%20cadrul%20func%C8%9Biei%20do_something%2C%20putem%20crea%20alta%0A%20%20%20%20do_something(%26mut%20foo)%3B%0A%20%20%20%20%2F%2F%20se%20renun%C8%9B%C4%83%20la%20foo%20aici%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: &mut Foo) {
+        f.x += 1;
+        // se renunță la referința mutabilă f aici
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        do_something(&mut foo);
+        // pentru că se renunță la toate referințele mutabile
+        // în cadrul funcției do_something, putem crea alta
+        do_something(&mut foo);
+        // se renunță la foo aici
+    }
 - title: Referințele unor referințe
   content_markdown: |
     Referințele pot fi folosite și pentru a referi alte referințe.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20do_something(a%3A%20%26Foo)%20-%3E%20%26i32%20%7B%0A%20%20%20%20return%20%26a.x%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20mut%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20x%20%3D%20%26mut%20foo.x%3B%0A%20%20%20%20*x%20%3D%2013%3B%0A%20%20%20%20%2F%2F%20se%20renun%C8%9B%C4%83%20la%20x%20aici%20%C8%99i%20putem%20crea%20o%20referin%C8%9B%C4%83%20imutabil%C4%83%0A%20%20%20%20let%20y%20%3D%20do_something(%26foo)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20y)%3B%0A%20%20%20%20%2F%2F%20se%20renun%C8%9B%C4%83%20la%20y%20aici%0A%20%20%20%20%2F%2F%20se%20renun%C8%9B%C4%83%20la%20foo%20aici%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(a: &Foo) -> &i32 {
+        return &a.x;
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let x = &mut foo.x;
+        *x = 13;
+        // se renunță la x aici și putem crea o referință imutabilă
+        let y = do_something(&foo);
+        println!("{}", y);
+        // se renunță la y aici
+        // se renunță la foo aici
+    }
 - title: Durate de viață explicite
   content_markdown: >
     Cu toate că Rust nu arată acest lucru în cod, compilatorul înțelege
@@ -136,16 +278,55 @@
 
 
     Specificatorii duratelor de viață mereu încep cu `'` (ex: `'a`, `'b`, `'c`).
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0A%2F%2F%20parametrul%20foo%20%C8%99i%20valoarea%20de%20retur%20au%20aceea%C8%99i%20durat%C4%83%20de%20via%C8%9B%C4%83%0Afn%20do_something%3C%27a%3E(foo%3A%20%26%27a%20Foo)%20-%3E%20%26%27a%20i32%20%7B%0A%20%20%20%20return%20%26foo.x%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20mut%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20x%20%3D%20%26mut%20foo.x%3B%0A%20%20%20%20*x%20%3D%2013%3B%0A%20%20%20%20%2F%2F%20se%20renun%C8%9B%C4%83%20la%20x%20aici%2C%20deci%20putem%20crea%20o%20referin%C8%9B%C4%83%20imutabil%C4%83%0A%20%20%20%20let%20y%20%3D%20do_something(%26foo)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20y)%3B%0A%20%20%20%20%2F%2F%20se%20renun%C8%9B%C4%83%20la%20y%20aici%0A%20%20%20%20%2F%2F%20se%20renun%C8%9B%C4%83%20la%20foo%20aici%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    // parametrul foo și valoarea de retur au aceeași durată de viață
+    fn do_something<'a>(foo: &'a Foo) -> &'a i32 {
+        return &foo.x;
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let x = &mut foo.x;
+        *x = 13;
+        // se renunță la x aici, deci putem crea o referință imutabilă
+        let y = do_something(&foo);
+        println!("{}", y);
+        // se renunță la y aici
+        // se renunță la foo aici
+    }
 - title: Durate de viață multiple
   content_markdown: >
     Specificatorii duratelor de viață ne permit să fim expliciți pentru anumite scenarii
     pe care compilatorul nu le poate rezolva singur
 
     prin distingerea duratelor de viață a tuturor componentelor semnăturii unei funcții.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0A%2F%2F%20foo_b%20%C8%99i%20valoarea%20de%20retur%20au%20aceea%C8%99i%20durat%C4%83%20de%20via%C8%9B%C4%83%0A%2F%2F%20foo_a%20are%20o%20durat%C4%83%20de%20via%C8%9B%C4%83%20f%C4%83r%C4%83%20leg%C4%83tur%C4%83%20cu%20foo_b%0Afn%20do_something%3C'a%2C%20'b%3E(foo_a%3A%20%26'a%20Foo%2C%20foo_b%3A%20%26'b%20Foo)%20-%3E%20%26'b%20i32%20%7B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo_a.x)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo_b.x)%3B%0A%20%20%20%20return%20%26foo_b.x%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo_a%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20foo_b%20%3D%20Foo%20%7B%20x%3A%2012%20%7D%3B%0A%20%20%20%20let%20x%20%3D%20do_something(%26foo_a%2C%20%26foo_b)%3B%0A%20%20%20%20%2F%2F%20se%20renun%C8%9B%C4%83%20la%20foo_a%20aici%20pentru%20c%C4%83%20numai%20durata%20de%20via%C8%9B%C4%83%0A%20%20%20%20%2F%2F%20a%20lui%20foo_b%20%C8%99i%20a%20valorii%20de%20retur%20continu%C4%83%20de%20aici%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%20%20%20%20%2F%2F%20se%20renun%C8%9B%C4%83%20la%20x%20aici%0A%20%20%20%20%2F%2F%20se%20renun%C8%9B%C4%83%20la%20foo_b%20aici%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    // foo_b și valoarea de retur au aceeași durată de viață
+    // foo_a are o durată de viață fără legătură cu foo_b
+    fn do_something<'a, 'b>(foo_a: &'a Foo, foo_b: &'b Foo) -> &'b i32 {
+        println!("{}", foo_a.x);
+        println!("{}", foo_b.x);
+        return &foo_b.x;
+    }
+
+    fn main() {
+        let foo_a = Foo { x: 42 };
+        let foo_b = Foo { x: 12 };
+        let x = do_something(&foo_a, &foo_b);
+        // se renunță la foo_a aici pentru că numai durata de viață
+        // a lui foo_b și a valorii de retur continuă de aici
+        println!("{}", x);
+        // se renunță la x aici
+        // se renunță la foo_b aici
+    }
 - title: Durate de viață statice
   content_markdown: >
     O variabilă **statică** e o resursă în memorie creată la momentul compilării care
@@ -182,8 +363,26 @@
     style="color:red; font-weight:
     bold;">R̸͉̟͈͔̄͛̾̇͜U̶͓͖͋̅Ṡ̴͉͇̃̉̀T̵̻̻͔̟͉́͆Ơ̷̥̟̳̓͝N̶̨̼̹̲͛Ö̵̝͉̖̏̾̔M̶̡̠̺̠̐͜Î̷̛͓̣̃̐̏C̸̥̤̭̏͛̎͜O̶̧͚͖͔̊͗̇͠N̸͇̰̏̏̽̃</span>](https://doc.rust-lang.org/nomicon/)
     nu ar trebui să se vorbească fără grijă.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=static%20PI%3A%20f64%20%3D%203.1415%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20variabilele%20statice%20pot%20fi%20%C3%AEncadrate%20%C3%AEntr-o%20func%C8%9Bie%0A%20%20%20%20static%20mut%20SECRET%3A%20%26%27static%20str%20%3D%20%22swordfish%22%3B%0A%0A%20%20%20%20%2F%2F%20string-urile%20%C3%AEntre%20ghilimele%20au%20durat%C4%83%20de%20via%C8%9B%C4%83%20static%C4%83%0A%20%20%20%20let%20msg%3A%20%26%27static%20str%20%3D%20%22Hello%20World!%22%3B%0A%20%20%20%20let%20p%3A%20%26%27static%20f64%20%3D%20%26PI%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20msg%2C%20p)%3B%0A%0A%20%20%20%20%2F%2F%20Pute%C8%9Bi%20%C3%AEnc%C4%83lca%20unele%20reguli%2C%20dar%20trebuie%20s%C4%83%20fi%C8%9Bi%20explici%C8%9Bi%0A%20%20%20%20unsafe%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20putem%20seta%20SECRET%20cu%20un%20string%20%C3%AEntre%20ghilimele%0A%20%20%20%20%20%20%20%20%2F%2F%20pentru%20c%C4%83%20are%20de%20asemenea%20durat%C4%83%20de%20via%C8%9B%C4%83%20static%C4%83%20(%60static)%0A%20%20%20%20%20%20%20%20SECRET%20%3D%20%22abracadabra%22%3B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20SECRET)%3B%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    static PI: f64 = 3.1415;
+
+    fn main() {
+        // variabilele statice pot fi încadrate într-o funcție
+        static mut SECRET: &'static str = "swordfish";
+
+        // string-urile între ghilimele au durată de viață statică
+        let msg: &'static str = "Hello World!";
+        let p: &'static f64 = &PI;
+        println!("{} {}", msg, p);
+
+        // Puteți încălca unele reguli, dar trebuie să fiți expliciți
+        unsafe {
+            // putem seta SECRET cu un string între ghilimele
+            // pentru că are de asemenea durată de viață statică (`static)
+            SECRET = "abracadabra";
+            println!("{}", SECRET);
+        }
+    }
 - title: Durate de viață în interiorul structurilor de date
   content_markdown: >
     Similar funcțiilor, structurile de date pot fi parametrizate cu specificatorul duratei
@@ -196,8 +395,18 @@
 
     Nu putem avea structuri alergând de colo-colo cu referințe către
     nimic!
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%3C'a%3E%20%7B%0A%20%20%20%20i%3A%26'a%20i32%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20x%20%3D%2042%3B%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%0A%20%20%20%20%20%20%20%20i%3A%20%26x%0A%20%20%20%20%7D%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo.i)%3B%0A%7D%0A
+  code: |
+    struct Foo<'a> {
+        i:&'a i32
+    }
+
+    fn main() {
+        let x = 42;
+        let foo = Foo {
+            i: &x
+        };
+        println!("{}", foo.i);
+    }
 - title: Capitolul 5 - Concluzie
   content_markdown: >
     Pfiu, felicitări că ai ajuns până aici! Știu că este foarte mult de digerat, dar sunteți

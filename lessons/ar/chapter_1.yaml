@@ -10,8 +10,10 @@
     بمجرد أن تصبح متعود على Rust، يمكنك أن تلقب نفسك بـ **Rustacean**. تلك هي العبارة التي يطلق الأشخاص الذين يستخدمون Rust أو يساهمون فيه أو يهتمون به على أنفسهم.
 
 - title: أداة أرضية تشغيل رست (The Rust Playground)
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20println!(%22Welcome%20to%20the%20playground!%20You%20can%20modify%20the%20code%20in%20here.%22)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        println!("Welcome to the playground! You can modify the code in here.");
+    }
   content_markdown: >
     سيتم إستخدام في هذه الدروة أداة تفاعلية من [Rust
     Playground](https://play.rust-lang.org).
@@ -20,8 +22,21 @@
     إنها طريقة رائعة لتشغيل وتطبيق Rust وإظهار إبداعاتك وتحدياتك للآخرين!
     
 - title: المتغيرات
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20%2F%2F%20rust%20infers%20the%20type%20of%20x%0A%20%20%20%20let%20x%20%3D%2013%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%0A%20%20%20%20%2F%2F%20rust%20can%20also%20be%20explicit%20about%20the%20type%0A%20%20%20%20let%20x%3A%20f64%20%3D%203.14159%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%0A%20%20%20%20%2F%2F%20rust%20can%20also%20declare%20and%20initialize%20later%2C%20but%20this%20is%20rarely%20done%0A%20%20%20%20let%20x%3B%0A%20%20%20%20x%20%3D%200%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        // rust infers the type of x
+        let x = 13;
+        println!("{}", x);
+
+        // rust can also be explicit about the type
+        let x: f64 = 3.14159;
+        println!("{}", x);
+
+        // rust can also declare and initialize later, but this is rarely done
+        let x;
+        x = 0;
+        println!("{}", x);
+    }
   content_markdown: >
     يتم التعريف بمتغير جديد بإستعمال الكلمة المفتاحية **let**.
     
@@ -38,8 +53,13 @@
     أسماء معرفات المتغيرات دائما تكون بطريقة الثعبان `snake_case`.
 
 - title: تغيير قيم المتغيرات
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20mut%20x%20%3D%2042%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%20%20%20%20x%20%3D%2013%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let mut x = 42;
+        println!("{}", x);
+        x = 13;
+        println!("{}", x);
+    }
   content_markdown: >
     يهتم رست (Rust) كثيرا بكيفية تعديل قيم المتغيرات. وهنا تنقسم القيم الى صنفين:
     
@@ -55,8 +75,20 @@
 
     سيكون لدينا المزيد لنقوله حول هذا المفهوم لاحقًا، ولكن في الوقت الحالي ألق نظرة فقط على هذه الكلمة المفتاحية.
 - title: الأنواع الأساسية
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20x%20%3D%2012%3B%20%2F%2F%20by%20default%20this%20is%20i32%0A%20%20%20%20let%20a%20%3D%2012u8%3B%0A%20%20%20%20let%20b%20%3D%204.3%3B%20%2F%2F%20by%20default%20this%20is%20f64%0A%20%20%20%20let%20c%20%3D%204.3f32%3B%0A%20%20%20%20let%20bv%20%3D%20true%3B%0A%20%20%20%20let%20t%20%3D%20(13%2C%20false)%3B%0A%20%20%20%20let%20sentence%20%3D%20%22hello%20world!%22%3B%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%22%2C%0A%20%20%20%20%20%20%20%20x%2C%20a%2C%20b%2C%20c%2C%20bv%2C%20t.0%2C%20t.1%2C%20sentence%0A%20%20%20%20)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let x = 12; // by default this is i32
+        let a = 12u8;
+        let b = 4.3; // by default this is f64
+        let c = 4.3f32;
+        let bv = true;
+        let t = (13, false);
+        let sentence = "hello world!";
+        println!(
+            "{} {} {} {} {} {} {} {}",
+            x, a, b, c, bv, t.0, t.1, sentence
+        );
+    }
   content_markdown: >
     رست (Rust) لديها مجموعة متنوعة من الأنواع المألوفة:
 
@@ -92,8 +124,16 @@
     * [ويكيبيديا: المكدس (Stack)](https://ar.wikipedia.org/wiki/%D9%85%D9%83%D8%AF%D8%B3_(%D8%A8%D9%86%D9%8A%D8%A9_%D8%A8%D9%8A%D8%A7%D9%86%D8%A7%D8%AA))
 
 - title: تحويل الأنواع الأساسية
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20a%20%3D%2013u8%3B%0A%20%20%20%20let%20b%20%3D%207u32%3B%0A%20%20%20%20let%20c%20%3D%20a%20as%20u32%20%2B%20b%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20c)%3B%0A%0A%20%20%20%20let%20t%20%3D%20true%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20t%20as%20u8)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let a = 13u8;
+        let b = 7u32;
+        let c = a as u32 + b;
+        println!("{}", c);
+
+        let t = true;
+        println!("{}", t as u8);
+    }
   content_markdown: >
     يطلب رست (Rust) منك أن تكون واضحا عندما تتعامل مع الأنواع الرقمية. بحيث لا يمكنك إستخدام نوع `u8` لمتغير من نوع `u32` بدون ظهور أخطاء.
 
@@ -101,8 +141,15 @@
     طبعا من حسن الحظ، فإن رست (Rust) يبسط جدا تحويل الأنواع الرقمية عن طريق الكلمة المفتاحية **as**.
 
 - title: الثوابت (Constants)
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=const%20PI%3A%20f32%20%3D%203.14159%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22To%20make%20an%20apple%20%7B%7D%20from%20scratch%2C%20you%20must%20first%20create%20a%20universe.%22%2C%0A%20%20%20%20%20%20%20%20PI%0A%20%20%20%20)%3B%0A%7D%0A
+  code: |
+    const PI: f32 = 3.14159;
+
+    fn main() {
+        println!(
+            "To make an apple {} from scratch, you must first create a universe.",
+            PI
+        );
+    }
   content_markdown: >
     تسمح لنا الثوابت بتعيين قيمة مشتركة ثابتة يتم استخدامها في الكود الخاص بنا عدة مرات بكفاءة. وذلك عوض نسخ القيم لما يتم استخدام المتغيرات، بحيث تحدث عملية استبدال للمعرف النصي للثابت بقيمته أثناء الترحمة (compile time) مباشرة. 
     
@@ -113,8 +160,12 @@
     أسماء معرفات الثوابت دائما تكون بطريقة الثعبان كبيرة الأحرف `SCREAMING_SNAKE_CASE`.
 
 - title: المصفوفات (Arrays)
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20nums%3A%20%5Bi32%3B%203%5D%20%3D%20%5B1%2C%202%2C%203%5D%3B%0A%20%20%20%20println!(%22%7B%3A%3F%7D%22%2C%20nums)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20nums%5B1%5D)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let nums: [i32; 3] = [1, 2, 3];
+        println!("{:?}", nums);
+        println!("{}", nums[1]);
+    }
   content_markdown: >
     *المصفوفة (array)* هي **مجموعة ثابتة الطول** من عناصر البيانات كلها لها نفس النوع.
 
@@ -127,8 +178,19 @@
 
     أما بالنسبة للمجموعات ذات الأطوال المتغيرة فتسمى غالبا بالمصفوفات المتغير (variable arrays) أو الديناميكية (dynamic arrays)،  سيتم التطرق إليها لاحقا في فصل يتحدث حول **Vectors**.  
 - title: الدوال (Functions)
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20add(x%3A%20i32%2C%20y%3A%20i32)%20-%3E%20i32%20%7B%0A%20%20%20%20return%20x%20%2B%20y%3B%0A%7D%0A%0Afn%20subtract(x%3A%20i32%2C%20y%3A%20i32)%20-%3E%20i32%20%7B%0A%20%20%20%20x%20-%20y%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%2242%20%2B%2013%20%3D%20%7B%7D%22%2C%20add(42%2C%2013))%3B%0A%20%20%20%20println!(%2242%20-%2013%20%3D%20%7B%7D%22%2C%20subtract(42%2C%2013))%3B%0A%7D%0A
+  code: |
+    fn add(x: i32, y: i32) -> i32 {
+        return x + y;
+    }
+
+    fn subtract(x: i32, y: i32) -> i32 {
+        x - y
+    }
+
+    fn main() {
+        println!("42 + 13 = {}", add(42, 13));
+        println!("42 - 13 = {}", subtract(42, 13));
+    }
   content_markdown: >
     تُعرَّف الدوال باستخدام الكلمة المفتاحية `fn` ويمكن أن تحمل صفر أو عدة معلمات (parameters) وهي التي تكون محاطة بالأقواس.
 
@@ -145,8 +207,20 @@
     تلميح: إذا قمت بتعريف دالة، فإن البيانات التي تقبلها تدعى بـالمعلمات(parameters). وإذا قمت بإستدعاءالدالة ومررت لها بيانات فإنها حينئذ تدعى بالوسيطات (arguments). إذا المعلمة هي المتغير المدرج داخل الأقواس في تعريف الدالة. أما الوسيطة هي القيمة التي يتم إرسالها إلى الدالة عند استدعائها.
 
 - title: إرجاع قيم عديدة
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20swap(x%3A%20i32%2C%20y%3A%20i32)%20-%3E%20(i32%2C%20i32)%20%7B%0A%20%20%20%20return%20(y%2C%20x)%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20return%20a%20tuple%20of%20return%20values%0A%20%20%20%20let%20result%20%3D%20swap(123%2C%20321)%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20result.0%2C%20result.1)%3B%0A%0A%20%20%20%20%2F%2F%20destructure%20the%20tuple%20into%20two%20variables%20names%0A%20%20%20%20let%20(a%2C%20b)%20%3D%20swap(result.0%2C%20result.1)%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20a%2C%20b)%3B%0A%7D%0A
+  code: |
+    fn swap(x: i32, y: i32) -> (i32, i32) {
+        return (y, x);
+    }
+
+    fn main() {
+        // return a tuple of return values
+        let result = swap(123, 321);
+        println!("{} {}", result.0, result.1);
+
+        // destructure the tuple into two variables names
+        let (a, b) = swap(result.0, result.1);
+        println!("{} {}", a, b);
+    }
   content_markdown: >
     يمكن أن ترجع الدوال عدد من القيم على شكل **صف (tuple)** من القيم.
 
@@ -165,8 +239,25 @@
 
     إن إستخدام الرمز `()` غير شائع، ولكنه قد يصادفك أحيانا وهو جيد لتوضيح ما يحدث فعليا في الدالة.
 
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20make_nothing()%20-%3E%20()%20%7B%0A%20%20%20%20return%20()%3B%0A%7D%0A%0A%2F%2F%20the%20return%20type%20is%20implied%20as%20()%0Afn%20make_nothing2()%20%7B%0A%20%20%20%20%2F%2F%20this%20function%20will%20return%20()%20if%20nothing%20is%20specified%20to%20return%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20a%20%3D%20make_nothing()%3B%0A%20%20%20%20let%20b%20%3D%20make_nothing2()%3B%0A%0A%20%20%20%20%2F%2F%20Printing%20a%20debug%20string%20for%20a%20and%20b%0A%20%20%20%20%2F%2F%20Because%20it's%20hard%20to%20print%20nothingness%0A%20%20%20%20println!(%22The%20value%20of%20a%3A%20%7B%3A%3F%7D%22%2C%20a)%3B%0A%20%20%20%20println!(%22The%20value%20of%20b%3A%20%7B%3A%3F%7D%22%2C%20b)%3B%0A%7D%0A
+  code: |
+    fn make_nothing() -> () {
+        return ();
+    }
+
+    // the return type is implied as ()
+    fn make_nothing2() {
+        // this function will return () if nothing is specified to return
+    }
+
+    fn main() {
+        let a = make_nothing();
+        let b = make_nothing2();
+
+        // Printing a debug string for a and b
+        // Because it's hard to print nothingness
+        println!("The value of a: {:?}", a);
+        println!("The value of b: {:?}", b);
+    }
 - title: الفصل 1 - الخلاصة
   content_markdown: >
     عمل جميل حتى الآن! أساسيات رست (Rust) ليست صعبة للغاية، أليس كذلك؟ لقد ألقينا نظرة خاطفة على كيفية تفكير مترجم رست (Rust compiler). باعتبارها لغة برمجة نظام، فرست (Rust) تهتم كثيرًا بحجم القيم في الذاكرة، وما إذا كان يمكن تعديل الأشياء أم لا، والتأكد من أن حساباتك هي ما تريد أن تكون عليه.
