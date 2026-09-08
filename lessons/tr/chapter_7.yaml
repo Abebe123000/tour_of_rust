@@ -31,8 +31,23 @@
 
     Ancak Rust, bu eksiklikleri giderecek pek çok özellik sunduğundan, kalıtımın yokluğunu hissetmeyeceksiniz.
 - title: Metotlarla Kapsülleme
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=900c806a5b91969e8ae862e94aedc94a
+  code: |
+    struct DenizCanlisi {
+        ses: String,
+    }
+
+    impl DenizCanlisi {
+        fn ses_al(&self) -> &str {
+            &self.ses
+        }
+    }
+
+    fn main() {
+        let canli = DenizCanlisi {
+            ses: String::from("gluglu gluglu..."),
+        };
+        println!("{}", canli.ses_al());
+    }
   content_markdown: >
     Rust, **metot** veya **yöntem** olarak adlandırabileceğimiz, belirli işlevlerle ilişkilendirilmiş bir veri yapısı olan **nesne** kavramını destekler.
 
@@ -58,8 +73,25 @@
 
     ```
 - title: Farklı Görünürlük Seviyelerindeki Soyutlamalar
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=403679578ea7c5d804cfc749a80e97ba
+  code: |
+    struct DenizCanlisi {
+        pub isim: String,
+        ses: String,
+    }
+
+    impl DenizCanlisi {
+        pub fn ses_al(&self) -> &str {
+            &self.ses
+        }
+    }
+
+    fn main() {
+        let canli = DenizCanlisi {
+            isim: String::from("Ferris"),
+            ses: String::from("blub!"),
+        };
+        println!("{}", &canli.ses_al());
+    }
   content_markdown: >
     Rust, nesnelerin iç işleyişi ve yapılarını gizleyebilir.
 
@@ -69,8 +101,35 @@
 
     Yapı alan ve metodlarının modül dışından erişilebilir olması için `pub` anahtar sözcüğü kullanılır.
 - title: Özellikler ve Çok Biçimlilik
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=c8159fc427a65f979803374f1c236ea7
+  code: |
+    struct DenizCanlisi {
+        pub isim: String,
+        ses: String,
+    }
+
+    impl DenizCanlisi {
+        pub fn ses_al(&self) -> &str {
+            &self.ses
+        }
+    }
+
+    trait SesUreteci {
+        fn ses_yap(&self);
+    }
+
+    impl SesUreteci for DenizCanlisi {
+        fn ses_yap(&self) {
+            println!("{}", &self.ses_al());
+        }
+    }
+
+    fn main() {
+        let canli = DenizCanlisi {
+            isim: String::from("Ferris"),
+            ses: String::from("blub"),
+        };
+        canli.ses_yap();
+    }
   content_markdown: >
     Rust'ta bir dizi yöntemi **struct** ve **enum** gibi yapılandırılmış türlerle ilişkilendirmemize izin veren yapılara özellik adını veririz. 
     Ve Rust çok biçimlilik özellikler aracılığıyla desteklenir. 
@@ -107,8 +166,41 @@
 
     ```
 - title: Özelliklere Uygulanan Yöntemler
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=71bc8fe19162f8f23f9bf9a09a568ccc
+  code: |
+    struct DenizCanlisi {
+        pub isim: String,
+        ses: String,
+    }
+
+    impl DenizCanlisi {
+        pub fn ses_al(&self) -> &str {
+            &self.ses
+        }
+    }
+
+    trait SesUreteci {
+        fn ses_yap(&self);
+
+        fn daha_cok_ses_yap(&self) {
+            self.ses_yap();
+            self.ses_yap();
+            self.ses_yap();
+        }
+    }
+
+    impl SesUreteci for DenizCanlisi {
+        fn ses_yap(&self) {
+            println!("{}", &self.ses_al());
+        }
+    }
+
+    fn main() {
+        let canli = DenizCanlisi {
+            isim: String::from("Ferris"),
+            ses: String::from("blub"),
+        };
+        canli.daha_cok_ses_yap();
+    }
   content_markdown: >
     Özelliklerin de uyguladıkları kendi yöntemleri olabilir.
 
@@ -116,13 +208,89 @@
     Ancak özelliklerin uyguladığı yöntemler yapı alanlarına erişimediklerinden, çeşitli özellik uygulamaları arasındaki davranışları 
     paylaşırken yararlıdırlar.
 - title: Özellik Kalıtımı
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=91d069f6e1302f4b4a03d6d17e510864
+  code: |
+    struct DenizCanlisi {
+        pub isim: String,
+        ses: String,
+    }
+
+    impl DenizCanlisi {
+        pub fn ses_al(&self) -> &str {
+            &self.ses
+        }
+    }
+
+    trait SesUreteci {
+        fn ses_yap(&self);
+    }
+
+    trait CokSesUreteci: SesUreteci {
+        fn daha_cok_ses_yap(&self) {
+            self.ses_yap();
+            self.ses_yap();
+            self.ses_yap();
+        }
+    }
+
+    impl SesUreteci for DenizCanlisi {
+        fn ses_yap(&self) {
+            println!("{}", &self.ses_al());
+        }
+    }
+
+    impl CokSesUreteci for DenizCanlisi {}
+
+    fn main() {
+        let canli = DenizCanlisi {
+            isim: String::from("Ferris"),
+            ses: String::from("blub"),
+        };
+        canli.daha_cok_ses_yap();
+    }
   content_markdown: |
     Bir özellik kendi yöntemlerini, diğer özelliklerden kalıtım yoluyla edinebilir.
 - title: Ya Dinamik Ya Statik İletim
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=3d868069b4841fb66d567cc6bb4af46d
+  code: |
+    struct DenizCanlisi {
+        pub isim: String,
+        ses: String,
+    }
+
+    impl DenizCanlisi {
+        pub fn ses_al(&self) -> &str {
+            &self.ses
+        }
+    }
+
+    trait SesUreteci {
+        fn ses_yap(&self);
+    }
+
+    impl SesUreteci for DenizCanlisi {
+        fn ses_yap(&self) {
+            println!("{}", &self.ses_al());
+        }
+    }
+
+    fn statik_ses_uret(canli: &DenizCanlisi) {
+        // Gerçek türü net olarak biliyoruz
+        canli.ses_yap();
+    }
+
+    fn dinamik_ses_uret(ses_uret: &dyn SesUreteci) {
+        // Gerçek türü bilmediğimizden
+        // özellik türünden yararlanıyoruz
+        ses_uret.ses_yap();
+    }
+
+    fn main() {
+        let canli = DenizCanlisi {
+            isim: String::from("Ferris"),
+            ses: String::from("blub"),
+        };
+        statik_ses_uret(&canli);
+        dinamik_ses_uret(&canli);
+    }
   content_markdown: >
     Yöntemler iki şekilde işletilir:
 
@@ -164,8 +332,43 @@
     * `Dolaylama` -  Her ne kadar dolaylamanın başka yolları olsa da, örneği öbek üzerine konumlandırmak ve bu örneğe yalnızca bir işaretçi depolamak, 
     tür boyutu hakkında güvenebileceğimiz bir dolaylılık düzeyi sağlar.
 - title: Genel İşlevler
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=745f3d602be54c4a9bc738f15af487ac
+  code: |
+    struct DenizCanlisi {
+        pub isim: String,
+        ses: String,
+    }
+
+    impl DenizCanlisi {
+        pub fn ses_al(&self) -> &str {
+            &self.ses
+        }
+    }
+
+    trait SesUreteci {
+        fn ses_yap(&self);
+    }
+
+    impl SesUreteci for DenizCanlisi {
+        fn ses_yap(&self) {
+            println!("{}", &self.ses_al());
+        }
+    }
+
+    fn turden_bagimsiz_ses_uret<T>(canli: &T)
+    where
+        T: SesUreteci,
+    {
+        // Derleme zamanında bilinen gerçek tür
+        canli.ses_yap();
+    }
+
+    fn main() {
+        let canli = DenizCanlisi {
+            isim: String::from("Ferris"),
+            ses: String::from("blub"),
+        };
+        turden_bagimsiz_ses_uret(&canli);
+    }
   content_markdown: >
     Rust'ta özellikler ve genel türler birbirleriyle uyum içinde çalışırlar. Bir `T` türünü parametrelerle ifade etmeye çalıştığımızda, 
     argüman olarak hangi türlerin kullanılabileceğini ve argümanın uygulaması gereken özellikleri sınırlayabiliriz. Böyle bir durumda, `where` 
@@ -190,8 +393,40 @@
     Genel türler kullanarak hem türü hem de boyutu bilinen ve derleme zamanında statik yazılmış gibi değerlendirilecek işlevler oluşturabilir, 
     bunları statik iletim yoluyla, boyutları belirgin değerler olarak saklayabiliriz.
 - title: Genel İşlev Kısaltmaları
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=b9eb9414f0d4f76d360d04a6066419d6
+  code: |
+    struct DenizCanlisi {
+        pub isim: String,
+        ses: String,
+    }
+
+    impl DenizCanlisi {
+        pub fn ses_al(&self) -> &str {
+            &self.ses
+        }
+    }
+
+    trait SesUreteci {
+        fn ses_yap(&self);
+    }
+
+    impl SesUreteci for DenizCanlisi {
+        fn ses_yap(&self) {
+            println!("{}", &self.ses_al());
+        }
+    }
+
+    fn turden_bagimsiz_ses_uret(canli: &impl SesUreteci) {
+        // Derleme zamanında bilinen gerçek tür.
+        canli.ses_yap();
+    }
+
+    fn main() {
+        let canli = DenizCanlisi {
+            isim: String::from("Ferris"),
+            ses: String::from("blub"),
+        };
+        turden_bagimsiz_ses_uret(&canli);
+    }
   content_markdown: |
     Bir özellik tarafından kısıtlanmış genel türleri kısaltmalar kullanarak bildirebilirsiniz:
 
@@ -212,8 +447,48 @@
     }
     ```
 - title: Box
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=4d7c906f8096fa453978c5eda475ea0e
+  code: |
+    struct DenizCanlisi {
+        pub isim: String,
+        ses: String,
+    }
+
+    impl DenizCanlisi {
+        pub fn ses_al(&self) -> &str {
+            &self.ses
+        }
+    }
+
+    trait SesUreteci {
+        fn ses_yap(&self);
+    }
+
+    impl SesUreteci for DenizCanlisi {
+        fn ses_yap(&self) {
+            println!("{}", &self.ses_al());
+        }
+    }
+
+    struct Deniz {
+        canlilar: Vec<Box<dyn SesUreteci>>,
+    }
+
+    fn main() {
+        let ferris = DenizCanlisi {
+            isim: String::from("Ferris"),
+            ses: String::from("blub"),
+        };
+        let sarah = DenizCanlisi {
+            isim: String::from("Sarah"),
+            ses: String::from("swish"),
+        };
+        let deniz = Deniz {
+            canlilar: vec![Box::new(ferris), Box::new(sarah)],
+        };
+        for d in deniz.canlilar.iter() {
+            d.ses_yap();
+        }
+    }
   content_markdown: >
     Dilimize **Kutu** olarak çevirebileceğimiz `Box`, verilerimizi belleğin yığın bölgesinden öbek bölgesine taşımamıza izin veren bir veri yapısı olup, 
     öbek üzerinde tutulan verileri gösteren bir akıllı işaretçi olarak da bilinir.

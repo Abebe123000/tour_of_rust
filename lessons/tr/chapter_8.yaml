@@ -12,8 +12,12 @@
     belleğin neresinde bulunduğunu belirtmektir. Ancak Rust açısından referanslar, bir sayıdan daha fazla anlam taşırlar. Derleyici olası bir hatanın 
     önüne geçmek için, referansın yaşam süresinin, başvurduğu nesne ömründen daha uzun olup olmadığını daima bilmek ister.
 - title: Ham İşaretçiler
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=f98da87c2fe84aeb3436bb612d0d9d6d
+  code: |
+    fn main() {
+        let a = 42;
+        let bellek_adresi = &a as *const i32 as usize;
+        println!("Verinin bulunduğu yer: {}", bellek_adresi);
+    }
   content_markdown: >
     Referanslar **ham işaretçi** adı verilen daha ilkel bir türe dönüştürülebilirler. Bu onların azıcık kısıtlama ile tıpkı bir sayıymış gibi 
     kopyalanabilecekleri ve taşınabililecekleri anlamına gelmektedir. Bununla birlikte Rust bu dönüşüm işleminde, işaret edilen bellek konumunun 
@@ -100,8 +104,29 @@
 
     ```
 - title: Akıllı İşaretçiler
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=2e831c6b3f6601c23501e4a164bb1fd7
+  code: |
+    use std::ops::Deref;
+
+    struct SohbetEt<T> {
+        deger: T,
+    }
+
+    impl<T> Deref for SohbetEt<T> {
+        type Target = T;
+        fn deref(&self) -> &T {
+            println!("{} kullanıldı!", std::any::type_name::<T>());
+            &self.deger
+        }
+    }
+    fn main() {
+        let tur = SohbetEt {
+            deger: "Gizli sohbet",
+        };
+        // dereference, tur'un `len`işlevi için
+        // otomatik olarak başvurmasından
+        // hemen sonra burada gerçekleşir
+        println!("{}", tur.len());
+    }
   content_markdown: >
     Rust mevcut veri türlerine `&` işleci aracılığıyla başvurabilme yeteneğine ek olarak, *akıllı işaretçiler** olarak bilinen referans yapıları 
     oluşturabilmemize de izin verir. 
@@ -115,8 +140,28 @@
     Bu açıklamadan hareketle akıllı işaretçiler için, "bir yapıya `*` ve `.` işleçleri kullanılarak başvurulduğunda, olacakların mantığını tanımlamak 
     amacıyla `Deref`, `DerefMut` ve `Drop` özelliklerini uygulayan yapılar" diyebiliriz.
 - title: Akıllı Güvensiz Kodlar
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=18313307e42ea7f2bae1b1ea2b817cb9
+  code: |
+    fn main() {
+        let a: [u8; 4] = [86, 14, 73, 64];
+        // Bu ham bir işaretçi.
+        // Bir şeyin hafıza adresini bir sayı
+        // olarak almak tamamen güvenlidir
+        let bir_isaretci = &a as *const u8 as usize;
+        println!("Verinin bellekteki konumu: {}", bir_isaretci);
+        // Sayımızı bir ham işaretçiye f32
+        // olarak dönüştürmek de güvenlidir.
+        let baska_isaretci = bir_isaretci as *const f32;
+        let b = unsafe {
+            // İşte bu güvensizdir. Çünkü derleyiciye
+            // işaretçimizin geçerli bir f32 olduğunu
+            // varsaymasını ve değerini referans olarak
+            // b değişkenine vermesini söylüyoruz.
+            // Ancak derleyicinin bu varsayımı
+            // doğrulamasının olanağı yoktur.
+            *baska_isaretci
+        };
+        println!("Bunun bir sabit olduğuna yemin edebilirim! {}", b);
+    }
   content_markdown: >
     Rust'ta düşük bellek seviyeleriyle etkileşebilmek için çoğunlula güvenli olmayan kod bloklarından yararlanıldığından, akıllı işaretçiler bu kodları 
     sıklıkla kullanırlar.
@@ -134,8 +179,52 @@
 
     Akıllı işaretçiler ham işaretçi referanslarını büyük ölçüde kaldırmalarına rağmen, yaptıkları işleri başarıyla sonuçlandırırlar.
 - title: Yakın Arkadaşlarımız
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=9de516c1300ab3e7f15bd738614e9935
+  code: |
+    use std::alloc::{alloc, Layout};
+    use std::ops::Deref;
+
+    struct Pasta {
+        gizli_tarif: usize,
+    }
+
+    impl Pasta {
+        fn new() -> Self {
+            // 4 bayt isteyelim
+            let ayrilan = Layout::from_size_align(4, 1).unwrap();
+
+            unsafe {
+                // hafıza konumunu bir sayı biçiminde tahsis edip kaydedin
+                let gosterge = alloc(ayrilan) as *mut u8;
+                // işaretçi aritmetiği kullanarak
+                // belleğe birkaç u8 değeri yazın
+                gosterge.write(86);
+                gosterge.add(1).write(14);
+                gosterge.add(2).write(73);
+                gosterge.add(3).write(64);
+
+                Pasta {
+                    gizli_tarif: gosterge as usize,
+                }
+            }
+        }
+    }
+    impl Deref for Pasta {
+        type Target = f32;
+        fn deref(&self) -> &f32 {
+            // gizli_tarif işaretçisini bir f32
+            // ham işaretçisi olarak yorumlamak
+            let isaret = self.gizli_tarif as *const f32;
+            // &f32 şeklinde bir dönüş değerine
+            // dönüştürüp veriye ulaşalım
+            unsafe { &*isaret }
+        }
+    }
+    fn main() {
+        let p = Pasta::new();
+        // Pasta yapısı akıllı işaretçi referansına
+        // erişerek yeni bir "pasta yap"
+        println!("{:?}", *p);
+    }
   content_markdown: >
     Zaten daha önce tanışmış olduğumuz `Vec<T>` ve `String` gibi akıllı işaretçilere bir kez daha bakalım.
 
@@ -158,16 +247,53 @@
     * Rust C'deki `malloc` eş değerinde ve yönetilebilir bellek bölgelerini kullanımımıza sunan, [alloc](https://doc.rust-lang.org/std/alloc/fn.alloc.html) 
     ve [Layout](https://doc.rust-lang.org/std/alloc/struct.Layout.html) özelliklerine sahiptir.
 - title: Öbek Üzerinde Bellek Ayırmak
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=eac030d1b90f587706af4bdf8d7aedbb
+  code: |
+    struct Pasta;
+
+    impl Pasta {
+        fn atistir(&self) {
+            println!("Öbek üzerindeki tadı daha da güzel!")
+        }
+    }
+
+    fn main() {
+        let obekteki_pasta = Box::new(Pasta);
+        obekteki_pasta.atistir();
+    }
   content_markdown: >
     `Box` verilerimizin, yığın bölgesinden öbek bölgesine taşınmasını sağlayan, bir **akıllı işaretçi**dir.
 
 
     Box'a ait referansın kaldırılması, öbek bölgesinde konumlandırılan verilerin, tıpkı orijinal türlermiş gibi ergonomik biçimde kullanılmasını sağlar.
 - title: Main İşlevine Yeniden Bakış
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=d9349e34ecb0733011df67022e33da1f
+  code: |
+    use core::fmt::Display;
+    use std::error::Error;
+
+    struct Pasta;
+
+    #[derive(Debug)]
+    struct BayatlamaBelirtisi;
+
+    impl Display for BayatlamaBelirtisi {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "Bu pasta taze değil!")
+        }
+    }
+
+    impl Error for BayatlamaBelirtisi {}
+
+    impl Pasta {
+        fn atistir(&self) -> Result<(), Box<dyn Error>> {
+            Err(Box::new(BayatlamaBelirtisi))
+        }
+    }
+
+    fn main() -> Result<(), Box<dyn Error>> {
+        let obekteki_pasta = Box::new(Pasta);
+        obekteki_pasta.atistir()?;
+        Ok(())
+    }
   content_markdown: >
     Rust bize hataları işleyebilmemiz için çok sayıda olanak sunar. Standart kitaplık tarafından sağlanan ve hataları evrensel düzeyde ele almamızı 
     sağlayan `std::error::Error` özelliği de bunlardan biridir.
@@ -188,8 +314,30 @@
 
     ```
 - title: Referans Sayımı
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=3e89c3f55853f8846252cdc5238dfe5f
+  code: |
+    use std::rc::Rc;
+
+    struct Pasta;
+
+    impl Pasta {
+        fn atistir(&self) {
+            println!("Öbek üzerindeki pastanın tadı daha güzel!")
+        }
+    }
+
+    fn main() {
+        let obekten = Rc::new(Pasta);
+        let obekten2 = obekten.clone();
+        let obekten3 = obekten2.clone();
+
+        obekten3.atistir();
+        obekten2.atistir();
+        obekten.atistir();
+
+        // Referansları sayılan tüm akıllı işaretçiler
+        // düşürüldüğünden Pasta'ya ait öbek verileri
+        // bu noktada serbest bırakılır.
+    }
   content_markdown: >
     `Rc`, verileri yığından öbeğe taşıyan akıllı bir işaretçidir. Ve bu işaretçi gerektiğinde, öbek üzerinde bulunan verileri ödünç alma yeteneğine 
     sahip, diğer `Rc` akıllı işaretçilerini klonlamamızı sağlar.
@@ -197,8 +345,39 @@
 
     Öbek üzerindeki veriler, yalnızca son akıllı işaretçi düşürüldüğünde serbest bırakılır.
 - title: Erişim Paylaşımı
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=64b154c2416cc74de20144cc8bec4d8e
+  code: |
+    use std::cell::RefCell;
+
+    struct Pasta {
+        dilim: u8,
+    }
+
+    impl Pasta {
+        fn atistir(&mut self) {
+            println!("Öbek üzerindeki tadı daha da güzel!");
+            self.dilim -= 1;
+        }
+    }
+
+    fn main() {
+        // RefCell çalışma zamanında bellek güvenliğini
+        // doğrular. Uyarı: pasta değiştirilemez!
+        let pasta = RefCell::new(Pasta { dilim: 8 });
+
+        {
+            // ancak değişken referanslar ödünç alınabilir!
+            let mut mut_ref_pasta = pasta.borrow_mut();
+            mut_ref_pasta.atistir();
+            mut_ref_pasta.atistir();
+
+            // mut_ref_pasta kapsam sonunda düşürülür
+        }
+
+        // Artık değişken referans düşürüldüğüne göre
+        // değişmez bir referans ödünç alabiliriz
+        let ref_pasta = pasta.borrow();
+        println!("{} slices left", ref_pasta.dilim);
+    }
   content_markdown: >
     `RefCell`, kapsadığı verilere değişmez veya değişken referanslar ödünç almamızı sağlayan ve genellikle akıllı işaretçiler tarafından tutulan 
     kapsayıcı bir veri yapsıdır. Bu veri yapısının biricik özelliği, bellekle ilgili güvenlik kurallarını çalışma zamanında uygulamak ve borçlanma
@@ -210,8 +389,27 @@
 
     Bu kuralın ihlali `RefCell` özelliğinin panik üretmesine ve programın durdurulmasına sebep olur.
 - title: İş Parçacıkları Arasında Paylaşım
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=dec224cf971fbcdce31f2e5274314bad
+  code: |
+    use std::sync::Mutex;
+
+    struct Pasta;
+
+    impl Pasta {
+        fn atistir(&self) {
+            println!("Şu an turtayı sadece ben yerim!");
+        }
+    }
+
+    fn main() {
+        let mutex_pasta = Mutex::new(Pasta);
+        // Değişmez ve kilitli haldeki bir pasta
+        // örneği referansını başarıyla ödünç alabilmemiz için,
+        // kilitten dönen Result türünün açılması gerekir.
+        let ref_pasta = mutex_pasta.lock().unwrap();
+        ref_pasta.atistir();
+        // kilitli referans burada düşürülecedğinden mutex
+        // korumalı değer başkası tarafından kullanılabilir.
+    }
   content_markdown: >
     `Mutex`, kapsadığı verilere değişmez veya değişken referansları ödünç alabilmemizi sağlayan ve genellikle akıllı işaretçiler tarafından 
     tutulan kapsayıcı bir veri yapsıdır. Mutex'in biricik özelliği, veri erişimini tek bir CPU iş parçacığıyla kısıtlayarak, asıl iş parçacığının 
@@ -225,8 +423,54 @@
     Referansların iş parçacığı açısından güvenli şekilde sayılması haricinde, `Rc` ile aynı özelliklere sahip `Arc` adında bir akıllı 
     işaretçimiz daha vardır. Bu işaretçi genellikle aynı Mutex kilidine birden fazla referansla erişirken kullanılır.
 - title: Akıllı İşaretçileri Bir Araya Getirmek
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=c90b8a42b1352703cfa329cad5f857fd
+  code: |
+    use std::cell::RefCell;
+    use std::rc::Rc;
+
+    struct Pasta {
+        dilim: u8,
+    }
+
+    impl Pasta {
+        fn dilim_ye(&mut self, isim: &str) {
+            println!("{} bir dilim aldı!", isim);
+            self.dilim -= 1;
+        }
+    }
+
+    struct DenizCanlisi {
+        isim: String,
+        pasta: Rc<RefCell<Pasta>>,
+    }
+
+    impl DenizCanlisi {
+        fn atistir(&self) {
+            // pastayı değişebilir şekilde ödünç
+            // almak için akıllı işaretçi kullanmak
+            let mut p = self.pasta.borrow_mut();
+            // Bir ısırık al!
+            p.dilim_ye(&self.isim);
+        }
+    }
+
+    fn main() {
+        let pasta = Rc::new(RefCell::new(Pasta { dilim: 8 }));
+        // ferris ve sarah'ya pasta için
+        // akıllı işaretçi klonları verilir
+        let ferris = DenizCanlisi {
+            isim: String::from("Ferris"),
+            pasta: pasta.clone(),
+        };
+        let sarah = DenizCanlisi {
+            isim: String::from("Sarah"),
+            pasta: pasta.clone(),
+        };
+        ferris.atistir();
+        sarah.atistir();
+
+        let p = pasta.borrow();
+        println!("{} dilim kaldı.", p.dilim);
+    }
   content_markdown: >
     Akıllı işaretçiler sınırlıymış gibi görünmelerine rağmen, bazen çok güçlü kombinasyonlar oluşturabilirler.
 

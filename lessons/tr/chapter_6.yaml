@@ -22,8 +22,11 @@
     Bellek ayrıntıları:
 
     * Rust derleyicisi çoğu durumda dizgi verilerini, belleğin veri bölümüne yerleştirecektir.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=c442990b1b1213c80e80612379b48684
+  code: |
+    fn main() {
+        let a: &'static str = "selam 🦀";
+        println!("{} {}", a, a.len());
+    }
 - title: UTF-8 Nedir?
   content_markdown: "Bilgisayarların ortaya çıkışının ilk dönemlerinde, karakterleri kodlamakta kullanılan ve\n1 baytlık bilgi ile sadece 256 karakterin temsil edilebildiği ASCII sistemi, teknoloji gelişip\nbilgiye erişim talebi arttıkça, daha fazla dilin temsil edilmesine ihtiyaç duyulduğundan yetersiz hale geldi. \n\nArdından gelen ve bir unicode standardı olan, 1-4 byte arası değişken karakter uzunluklarını destekleyen\n**utf-8** tanıtılarak, daha fazla karakterin temsil edilmesi sağlandı. \n\nDeğişken boyutlu karakterlerin avantajı, yaygın kullanılan ASCII karakterler tek 1 bayt ile temsil\nedildiklerinden, gereksiz baytların kullanılmasına ihtiyaç duymamalarıdır. \n\nAncak bunların dezavantajı, karakter aramanın, örneğin; `bir_metin[3]` dizgisinin 4. karakterini elde etmenin,\nartık basit bir indekslemeyle, yani **O(1)** sabit zamanda hızlı bir şekilde yapılamıyor olmasıdır.\nBununla birlikte, okunacak karakterden önceki karakterlerin değişken bir boyuta sahip olması ve bayt\ndizisindeki 4. karakterin bulunduğu konumu değiştirmesi de mümkündür. \n\nBu nedenle, Unicode karakterlerinin gerçekte nerede başladığını anlayabilmek için **utf-8** dizgisini,\nbayt dizisi boyunca yani **O(n)** doğrusal zamanda yinelememiz gerekir.\n\nFerris: \"Su altı arkadaşlarımın emojilerini temsil eden **utf-8** kodlamasına sahip olduğum için çok mutluyum!\"\n\n<span class=\"emoji\">\U0001F420\U0001F419\U0001F41F\U0001F42C\U0001F40B</span>\n"
 - title: Kaçış Karakterleri
@@ -47,21 +50,51 @@
 
 
     Desteklenen kaçış karakterleri Listesinin tam hali [burada](https://doc.rust-lang.org/reference/tokens.html) yer almaktadır.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=a4bba073637064c609545c3a234a9822
+  code: |
+    fn main() {
+        let a: &'static str = "Ferris:\nsize\t\"merhaba\" \nder.";
+        println!("{}", a);
+    }
 - title: Çok Satırlı Dizgi Değişmezleri
   content_markdown: |
     Rust'ta dizgilerin çok satırlı olduğu varsayılır. 
 
     Eğer metninize otomatik olarak yeni satırların eklenmesini istemiyorsanız, satır sonlarında `\` kullanmalısınız.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=1fdd1435c912868d9e771231b7b7f304
+  code: |
+    fn main() {
+        let haiku: &'static str = "
+            Gecenin böğrüne taş atıp yıldız düşürme vakti. 
+            \"Ay gitsin de yıldız toplayayım\" yazısına eşlik ediyor çayım. 
+            Mürekkep balıklarından ödünç aldıklarım kelimelere, 
+            kelimeler cümlelere, cümleler geceye, gecelere,
+                -celerimize dönüşüyor mektuplarda. 
+            Herkesin kendi cennetini kurgulayabileceği bir 
+            gezegende yaşam bulmak ne güzel. 
+            Bu arada dedikodu yapmış gibi olmayayım ama,
+            sen içimi ısıttığın için üşümediğimi iddia ediyor balıklar. 
+            Gülümsedim, su yuttum.
+            - Mert Ataol";
+        println!("{}", haiku);
+
+        println!(
+            "Merhaba \
+        dünya"
+        ) // d harfinden önceki boşluğun
+          // yok sayıldığına dikkat edin
+    }
 - title: Ham Dizgi Değişmezleri
   content_markdown: >
     Ham dizgiler, `r#"` ile başlayan ve `"#` ile biten karakter dizileri olduklarından, içlerinde yer alan normal dizgi değerlerine çift tırnak, 
     eğik çizgi gibi karakterleri, değişmez değerler olarak ekleyebilmemize izin verirler.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=9cc3d31412400f5a8527941033cfd887
+  code: |
+    fn main() {
+        let a: &'static str = r#"
+            <div class="tavsiye">
+                Ham dizgeler bazı durumlarda oldukça kullanışlıdır.
+            </div>
+            "#;
+        println!("{}", a);
+    }
 - title: Dosyadan Edinilen Dizgi Değişmezleri
   content_markdown: >
     Yerel dosyanızda bulunan büyükçe bir metni programınıza dahil etmek istediğinizde, `include_str!` makrosundan yararlanmaya çalışın:
@@ -91,8 +124,16 @@
     *  Dizgi uzunluğu sıfır bayta eşitse `is_empty` metodu, **true** değer döndürecektir.
 
     *  `find` metodu kullanıldığında, metnin ilk konumunu gösteren bir `Option<usize>` türü döndürlür.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=0ed5358169cb75d0b9c4c77df0f2f98f
+  code: |
+    fn main() {
+        let a = "selam 🦀";
+        println!("bayt cinsinden uzunluk: {}", a.len());
+        let ilk_kelime = &a[0..5];
+        let son_kelime = &a[6..10];
+        // BAŞARISIZ: let eksik_yengec = &a[6..8];
+        // Rust, geçersiz Unicode karakter dilimlerini kabul etmez
+        println!("{} {}", ilk_kelime, son_kelime);
+    }
 - title: Karakterler
   content_markdown: >
     Rust, Unicode ile çalışmanın getirdiği zorluklardan dolayı, `UTF-8` bayt dizisini `char` türündeki karakterlerden oluşan,
@@ -100,8 +141,15 @@
 
 
     `char` olarak temsil edilen karakterlerin her biri 4 bayt uzunluğunda olduğundan, ait oldukları dizi arandığında belirli bir karaktere ulaşmak kolaylaşır.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=c8474d2b77d63a000934a49a48ec1573
+  code: |
+    fn main() {
+        // karakterleri bir `char` vektörü olarak toplamak
+        let harfler = "selam 🦀".chars().collect::<Vec<char>>();
+        println!("{}", harfler.len()); // 7 bayt olmalı
+                                       // karakterler 4 bayt olduğundan u32
+                                       // türüne kolaylukla dönüştürebiliriz
+        println!("{}", harfler[6] as u32);
+    }
 - title: String
   content_markdown: >
     **String** yani dilimizdeki karşılığı ile dizgi, belleğin öbek bölgesinde tutulan ve utf-8 baytlarından oluşan bir yapıyı temsil eder.
@@ -126,19 +174,40 @@
 
     `String` türü, kendisini `&str` ile genişleterek, yine kendisini döndüren `+` işlecine sahiptir. 
     Ancak bu olanak beklentilerinizi karşılayacak kadar ergonomik olmayabilir.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=ce67ae66a16211717fc0549065f55fee
+  code: |
+    fn main() {
+        let mut merhaba_dunya = String::from("merhaba");
+        merhaba_dunya.push_str(" dünya");
+        merhaba_dunya = merhaba_dunya + "!";
+        println!("{}", merhaba_dunya);
+    }
 - title: İşlev Parametrelerinde Kullanılan Metinler
   content_markdown: >
     Dizgeler ve dizge değişmezleri genellikle işlevlere dizge dilimleri şeklinde iletilirler. Mülkiyetin devredilmesini gerektirmeyen 
     pek çok senaryo için bu kullanım şekli yeterince esnektir.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=debafe7a8927fce2be724bef8e7eccfc
+  code: |
+    fn yuksek_perdeden_soyle(msg: &str) {
+        println!("{}!!!", msg.to_string().to_uppercase());
+    }
+
+    fn main() {
+        // yuksek_perdeden_soyle &'static &str'yi
+        // str olarak ödünç alabilir
+        yuksek_perdeden_soyle("Merhabaaa");
+        // yuksek_perdeden_soyle String'i
+        // &str olarak da ödünç alabilir.
+        yuksek_perdeden_soyle(&String::from("Gülee güleee"));
+    }
 - title: Dizgiyi Oluşturmak
   content_markdown: |
     String, yani dizgi yapılarını oluşturmanın basit fakat etkili iki yolu, `concat` ve `join` metodlarını kullanmaktır.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=2d77e85403d9d5cb780cb9c3356aa188
+  code: |
+    fn main() {
+        let merhaba_dunya = ["merhaba", " ", "dünya", "!"].concat();
+        let abc = ["a", "b", "c"].join(",");
+        println!("{}", merhaba_dunya);
+        println!("{}", abc);
+    }
 - title: Dizgileri Biçimlendirmek
   content_markdown: >
     Karakter dizgelerini `format!` makrosu kullanarak, format!("buraya {} gelecek", deger); örneğindeki gibi biçimlendirebiliriz. 
@@ -149,16 +218,26 @@
 
     Bu makronun sunduğu olanaklar, mütevazı **Rust Turu** notlarına sığdırılamayacak kadar geniş olduğundan, daha fazlasını öğrenebilmek için, 
     [burada bulunan belgeleri](https://doc.rust-lang.org/std/fmt/) inceleyebilirsiniz.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=260edbae6d54a7250270903a87a24030
+  code: |
+    fn main() {
+        let a = 42;
+        let f = format!("Yaşamın gizli sayısı: {}", a);
+        println!("{}", f);
+    }
 - title: Dizgileri Dönüştürmek
   content_markdown: |
     Birçok tür `to_string` metodu kullanılarak dizgelere dönüştürülebilir.
 
     Genellenmiş türlerin ayrıştırılmasında kullanılan `parse` yöntemi, bir dizge yapısını veya bir karakter dizgesini, başka bir türe dönüştürmek 
     için oldukça kullanışlıdır. Bu yöntem başarısız olma ihtimaline karşın `Result` türü döndürür.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=b965cab97a71b98543a9e325397d8798
+  code: |
+    fn main() -> Result<(), std::num::ParseIntError> {
+        let a = 42;
+        let a_dizge = a.to_string();
+        let b = a_dizge.parse::<i32>()?;
+        println!("{} {}", a, b);
+        Ok(())
+    }
 - title: Bölüm 6 - Sonuç
   content_markdown: >
     Artık Rust'un metin işleme yöntemleri konusunda bilmeniz gereken şeylerin çoğunu öğrenmiş bulunuyorsunuz! 

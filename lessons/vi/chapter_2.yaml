@@ -170,8 +170,36 @@
 
       Lưu ý rằng nó cũng cho phép một câu lệnh `if` hoạt động giống như một ternary expression(biểu thức bậc ba, biểu thức ba ngôi) ngắn gọn.
 
-    code: >-
-      https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=1a0c42335f801e92f444a308837eff6f
+    code: |
+      fn example() -> i32 {
+          let x = 42;
+          // Ternary expression của Rust
+          let v = if x < 42 { -1 } else { 1 };
+          println!("from if: {}", v);
+
+          let food = "hamburger";
+          let result = match food {
+              "hotdog" => "is hotdog",
+              //Lưu ý rằng dấu ngoặc nhọn là tùy chọn khi nó chỉ là một biểu thức trả về duy nhất
+              _ => "is not hotdog",
+          };
+          println!("identifying food: {}", result);
+
+          let v = {
+              // Block scope này cho phép chúng ta nhận được kết quả mà không ảnh hưởng tới function scope
+              let a = 1;
+              let b = 2;
+              a + b
+          };
+          println!("from block: {}", v);
+
+          //Trả về một giá trị ở cuối một hàm
+          v + 4
+      }
+
+      fn main() {
+          println!("from function: {}", example());
+      }
   - title: Chapter 2 - Tổng kết
     content_markdown: >
       Hy vọng rằng tớ đã cho bạn thấy một cái nhìn sơ lược về sức mạnh của Rust 

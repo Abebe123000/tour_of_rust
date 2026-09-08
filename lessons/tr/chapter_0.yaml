@@ -1,8 +1,10 @@
 - title: >-
     Merhaba <img src="/favicon-32x32.png" style="display:inline;
     vertical-align:bottom">,
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=6c4b961091ef8e437683a89f3990fe6e
+  code: |
+    fn main() {
+        println!("Merhaba 🦀 !");
+    }
   content_markdown: |
     *Rust Turuna* Hoş Geldiniz. Bu turun Rust programlama dili özelliklerinin adım adım anlatıldığı bir rehber olması amaçlanmıştır. Rust, genellikle dik öğrenme eğrisine sahip bir dil olarak kabul edilir. Ancak ben sizi daha karmaşık bölümlere gelmeden önce Rust'ın keşfedilecek pek çok şeyi olduğuna ikna edebileceğimi umuyorum.
         

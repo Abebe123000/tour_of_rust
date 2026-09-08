@@ -1,7 +1,10 @@
 - title: >-
     Hello World!
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=d2b3cbbda18e1d51eda7cf8246bf5d88
+  code: |
+    fn main() {
+        println!("Xin chào, 🦀");
+    }
+  edition: 2021
   content_markdown: |
     <img src="/intro.png" alt="Welcome to the Tour of Rust" style="width: 100%; margin-bottom: 20px; border-radius: 10px;">
 
