@@ -58,7 +58,7 @@
     }
 - title: Option
   content_markdown: |
-    Rustには `Option` と呼ばれるジェネリックな列挙型が組み込まれており、`null` を使わずに null 許容な値を表現できます。
+    Rust には `Option` と呼ばれるジェネリックな列挙型が組み込まれており、`null` を使わずに null 許容な値を表現できます。
 
     ```
     enum Option<T> {
@@ -103,7 +103,7 @@
     }
 - title: Result
   content_markdown: |
-    Rustには `Result` と呼ばれるジェネリックな列挙型が組み込まれており、失敗する可能性のある値を返せます。
+    Rust には `Result` と呼ばれるジェネリックな列挙型が組み込まれており、失敗する可能性のある値を返せます。
     これは言語がエラーを処理する際の慣用的な方法です。
 
     ```
