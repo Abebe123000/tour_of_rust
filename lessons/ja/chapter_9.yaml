@@ -90,7 +90,7 @@
   content_markdown: |
     関数と同じように、構造体も `pub` を使ってモジュールの外部に何を公開したいかを宣言できます。
   code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=%2F%2F%20SeaCreature%20struct%20will%20be%20usable%20outside%20of%20our%20module%0Apub%20struct%20SeaCreature%20%7B%0A%20%20%20%20pub%20animal_type%3A%20String%2C%0A%20%20%20%20pub%20name%3A%20String%2C%0A%20%20%20%20pub%20arms%3A%20i32%2C%0A%20%20%20%20pub%20legs%3A%20i32%2C%0A%20%20%20%20%2F%2F%20let's%20keep%20our%20weapon%20private%0A%20%20%20%20weapon%3A%20String%2C%0A%7D%0A
+    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=%2F%2F%20SeaCreature%20%E6%A7%8B%E9%80%A0%E4%BD%93%E3%81%AF%E3%83%A2%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB%E3%81%AE%E5%A4%96%E3%81%8B%E3%82%89%E3%82%82%E4%BD%BF%E7%94%A8%E5%8F%AF%E8%83%BD%0Apub%20struct%20SeaCreature%20%7B%0A%20%20%20%20pub%20animal_type%3A%20String%2C%0A%20%20%20%20pub%20name%3A%20String%2C%0A%20%20%20%20pub%20arms%3A%20i32%2C%0A%20%20%20%20pub%20legs%3A%20i32%2C%0A%20%20%20%20%2F%2F%20weapon%20%E3%81%AF%E9%9D%9E%E5%85%AC%E9%96%8B%E3%81%AE%E3%81%BE%E3%81%BE%E3%81%AB%E3%81%97%E3%81%A6%E3%81%8A%E3%81%8F%0A%20%20%20%20weapon%3A%20String%2C%0A%7D%0A
 - title: プレリュード
   content_markdown: |
     `use` でインポートしなくても、なぜ `Vec` や `Box` をどこでも使えるのか不思議に思うかもしれません。それは標準ライブラリの `prelude` というモジュールのおかげです。
