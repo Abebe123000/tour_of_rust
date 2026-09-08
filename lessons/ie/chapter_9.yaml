@@ -75,8 +75,21 @@
 
     * `self` - li modul in quel on nu sta
 - title: Exportation
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=mod%20mi_sub_module%20%7B%0A%20%20fn%20far_alquo()%20%7B%0A%20%20%20%20println!(%22fant%20alquo%22)%0A%20%20%7D%0A%0A%20%20pub%20fn%20far_alquo_in_plu()%20%7B%0A%20%20%20%20println!(%22fant%20alquo%20in%20plu%22)%0A%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20mi_sub_module%3A%3Afar_alquo()%3B%0A%20%20mi_sub_module%3A%3Afar_alquo_in_plu()%3B%0A%7D%0A
+  code: |
+    mod mi_sub_module {
+      fn far_alquo() {
+        println!("fant alquo")
+      }
+
+      pub fn far_alquo_in_plu() {
+        println!("fant alquo in plu")
+      }
+    }
+
+    fn main() {
+      mi_sub_module::far_alquo();
+      mi_sub_module::far_alquo_in_plu();
+    }
   content_html: >-
     <p>In Rust, noi exporta membres de un module usante li clave-parol
     <b>pub</b>.</p><p>Quande on usa un module, sive in su propri code sive in un
@@ -87,5 +100,14 @@
   content_markdown: >
     Just quam functiones, structuras posse usar `pub` por declarar to quo ili
     desira esser exposit éxter su modul.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=%2F%2F%20Li%20struct%20CreaturaMarin%20va%20esser%20usabil%20%C3%A9xter%20nor%20modul%0Apub%20struct%20CreaturaMarin%20%7B%0A%20%20%20%20%2F%2F%20String%20es%20un%20struct%0A%20%20%20%20pub%20tip_de_animale%3A%20String%2C%0A%20%20%20%20pub%20nomine%3A%20String%2C%0A%20%20%20%20pub%20brasses%3A%20i32%2C%0A%20%20%20%20pub%20jambes%3A%20i32%2C%0A%20%20%20%20%2F%2F%20ma%20noi%20vole%20que%20li%20arme%20mey%20esser%20privat%0A%20%20%20%20arme%3A%20String%2C%0A%7D
+  code: |-
+    // Li struct CreaturaMarin va esser usabil éxter nor modul
+    pub struct CreaturaMarin {
+        // String es un struct
+        pub tip_de_animale: String,
+        pub nomine: String,
+        pub brasses: i32,
+        pub jambes: i32,
+        // ma noi vole que li arme mey esser privat
+        arme: String,
+    }

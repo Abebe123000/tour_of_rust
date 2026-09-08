@@ -11,8 +11,10 @@
 
     Jestem nieoficjalną maskotką języka programowania Rust. Miło Cię poznać.
 - title: "Piaskownica Rusta"
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20println!(%22Witaj%20w%20piaskownicy!%20Mo%C5%BCesz%20edytowa%C4%87%20kod%20w%20tym%20oknie.%22)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        println!("Witaj w piaskownicy! Możesz edytować kod w tym oknie.");
+    }
   content_markdown: >
     Niniejszy Przewodnik korzysta z interaktywnego narządzia [Rust
     Playground](https://play.rust-lang.org), zwanego po polsku *Piaskownicą Rusta*.
@@ -22,8 +24,22 @@
     co przyjdzie nam akurat do głowy. Jest ona także dobrym sposobem na dzielenie się
     swoimi problemami i osiągnięciami przy nauce Rusta z innymi.
 - title: Zmienne
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20%2F%2F%20rust%20jest%20w%20stanie%20wywnioskowa%C4%87%20typ%20x%0A%20%20%20%20let%20x%20%3D%2013%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%0A%20%20%20%20%2F%2F%20mo%C5%BCemy%20te%C5%BC%20jasno%20okre%C5%9Bli%C4%87%20typ%20naszej%20zmiennej%0A%20%20%20%20let%20x%3A%20f64%20%3D%203.14159%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%0A%20%20%20%20%2F%2F%20w%20ruscie%20mo%C5%BCemy%20r%C3%B3wnie%C5%BC%20dokona%C4%87%20deklaracji%20i%20inicjalizacji%20osobno%2C%0A%20%20%20%20%2F%2F%20cho%C4%87%20takie%20rozwi%C4%85zanie%20jest%20raczej%20rzadko%20spotykane%0A%20%20%20%20let%20x%3B%0A%20%20%20%20x%20%3D%200%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        // rust jest w stanie wywnioskować typ x
+        let x = 13;
+        println!("{}", x);
+
+        // możemy też jasno określić typ naszej zmiennej
+        let x: f64 = 3.14159;
+        println!("{}", x);
+
+        // w ruscie możemy również dokonać deklaracji i inicjalizacji osobno,
+        // choć takie rozwiązanie jest raczej rzadko spotykane
+        let x;
+        x = 0;
+        println!("{}", x);
+    }
   content_markdown: >
     Zmienne są w Ruscie deklarowane przy użyciu słowa kluczowego **let**.
 
@@ -43,8 +59,13 @@
     Nazwy zmiennych są zawsze zapisywane `małymi_literami_z_podkreślnikami_zamiast_spacji`,
     czyli inaczej mówiąc stylem `snake_case`.
 - title: Zmienianie Zmiennych
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20mut%20x%20%3D%2042%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%20%20%20%20x%20%3D%2013%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let mut x = 42;
+        println!("{}", x);
+        x = 13;
+        println!("{}", x);
+    }
   content_markdown: >
     Rust skupia się mocno na tym jakie zmienne są mutowalne, czyli inaczej mówiąc
     *zmienialne*.
@@ -63,8 +84,20 @@
     Póki co nie będziemy wchodzić głębiej w temat mutowalnych i niemutowalnych zmiennych,
     miej jednak oko na powyższe nowe słowo kluczowe.
 - title: Podstawowe Typy
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20x%20%3D%2012%3B%20%2F%2F%20domy%C5%9Blnie%20b%C4%99dzie%20to%20i32%0A%20%20%20%20let%20a%20%3D%2012u8%3B%0A%20%20%20%20let%20b%20%3D%204.3%3B%20%2F%2F%20domy%C5%9Blnie%20b%C4%99dzie%20to%20f64%0A%20%20%20%20let%20c%20%3D%204.3f32%3B%0A%20%20%20%20let%20bv%20%3D%20true%3B%0A%20%20%20%20let%20t%20%3D%20(13%2C%20false)%3B%0A%20%20%20%20let%20sentence%20%3D%20%22witaj%20%C5%9Bwiecie!%22%3B%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%22%2C%0A%20%20%20%20%20%20%20%20x%2C%20a%2C%20b%2C%20c%2C%20bv%2C%20t.0%2C%20t.1%2C%20sentence%0A%20%20%20%20)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let x = 12; // domyślnie będzie to i32
+        let a = 12u8;
+        let b = 4.3; // domyślnie będzie to f64
+        let c = 4.3f32;
+        let bv = true;
+        let t = (13, false);
+        let sentence = "witaj świecie!";
+        println!(
+            "{} {} {} {} {} {} {} {}",
+            x, a, b, c, bv, t.0, t.1, sentence
+        );
+    }
   content_markdown: >
     W Ruscie mamy do dyspozycji całą gamę popularnych typów:
 
@@ -101,8 +134,16 @@
     Typy liczbowe mogą być wyraźnie zaznaczone poprzez dopisanie odpowiedniego oznaczenia na końcu
     danej liczby (np. `13u32`, `2u8`).
 - title: Podstawowe Konwersje Typów
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20a%20%3D%2013u8%3B%0A%20%20%20%20let%20b%20%3D%207u32%3B%0A%20%20%20%20let%20c%20%3D%20a%20as%20u32%20%2B%20b%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20c)%3B%0A%0A%20%20%20%20let%20t%20%3D%20true%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20t%20as%20u8)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let a = 13u8;
+        let b = 7u32;
+        let c = a as u32 + b;
+        println!("{}", c);
+
+        let t = true;
+        println!("{}", t as u8);
+    }
   content_markdown: >
     Kiedy przychodzi do typów liczbowych, Rust wymaga od nas precyzyjnego wyrażenia co chcemy
     osiągnąć. Nie jest dozwolone przykładowo przypisanie liczby o typie `u8` zmiennej o typie `u32`.
@@ -110,8 +151,15 @@
     Na szczęście Rust umożliwia nam konwersję pomiędzy rozmaitymi typami liczbowymi z użyciem słowa
     kluczowego **as**.
 - title: Stałe
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=const%20PI%3A%20f32%20%3D%203.14159%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22Liczb%C4%99%20%7B%7D%20okre%C5%9Blamy%20jako%20stosunek%20d%C5%82ugo%C5%9Bci%20okr%C4%99gu%20do%20jego%20%C5%9Brednicy.%22%2C%0A%20%20%20%20%20%20%20%20PI%0A%20%20%20%20)%3B%0A%7D%0A
+  code: |
+    const PI: f32 = 3.14159;
+
+    fn main() {
+        println!(
+            "Liczbę {} określamy jako stosunek długości okręgu do jego średnicy.",
+            PI
+        );
+    }
   content_markdown: >
     Stałe (ang. constants) pozwalają nam zdefiniować popularne wartości które mają być
     dostępne z wielu miejsc w naszym kodzie. Zamiast kopiować wartości, tak jakby to zwykle
@@ -125,8 +173,12 @@
 
     Nazwy stałych są zawsze pisane w stylu `SCREAMING_SNAKE_CASE`.
 - title: Tablice
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20nums%3A%20%5Bi32%3B%203%5D%20%3D%20%5B1%2C%202%2C%203%5D%3B%0A%20%20%20%20println!(%22%7B%3A%3F%7D%22%2C%20nums)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20nums%5B1%5D)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let nums: [i32; 3] = [1, 2, 3];
+        println!("{:?}", nums);
+        println!("{}", nums[1]);
+    }
   content_markdown: >
     *Tablica* to kolekcja o stałej długości której wszystkie elementy są tego samego
     typu.
@@ -139,8 +191,14 @@
     Poszczególne elementy mogą pobrane z tablicy z wykorzystaniem operatora `[x]`, gdzie
     *x* to indeks elementu który chcemy odczytać. Typ indeksu *x* to `usize` (zaczyna się od 0).
 - title: Funkcje
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20add(x%3A%20i32%2C%20y%3A%20i32)%20-%3E%20i32%20%7B%0A%20%20%20%20return%20x%20%2B%20y%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20add(42%2C%2013))%3B%0A%7D%0A
+  code: |
+    fn add(x: i32, y: i32) -> i32 {
+        return x + y;
+    }
+
+    fn main() {
+        println!("{}", add(42, 13));
+    }
   content_markdown: >
     Funkcja posiada zero lub więcej parametrów.
 
@@ -151,8 +209,20 @@
 
     Nazwy funkcji są zawsze zapisywane stylem `snake_case`.
 - title: Zwracanie Wielu Wartości
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20swap(x%3A%20i32%2C%20y%3A%20i32)%20-%3E%20(i32%2C%20i32)%20%7B%0A%20%20%20%20return%20(y%2C%20x)%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20zwracamy%20krotk%C4%99%20z%C5%82o%C5%BCon%C4%85%20z%20dw%C3%B3ch%20warto%C5%9Bci%0A%20%20%20%20let%20result%20%3D%20swap(123%2C%20321)%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20result.0%2C%20result.1)%3B%0A%0A%20%20%20%20%2F%2F%20rozk%C5%82adamy%20krotk%C4%99%20na%20czynniki%20pierwsze%0A%20%20%20%20let%20(a%2C%20b)%20%3D%20swap(result.0%2C%20result.1)%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20a%2C%20b)%3B%0A%7D%0A
+  code: |
+    fn swap(x: i32, y: i32) -> (i32, i32) {
+        return (y, x);
+    }
+
+    fn main() {
+        // zwracamy krotkę złożoną z dwóch wartości
+        let result = swap(123, 321);
+        println!("{} {}", result.0, result.1);
+
+        // rozkładamy krotkę na czynniki pierwsze
+        let (a, b) = swap(result.0, result.1);
+        println!("{} {}", a, b);
+    }
   content_markdown: >
     Funkcje mogą zwracać wiele wartości przy użyciu **krotki** (ang. tuple).
 
@@ -173,8 +243,26 @@
 
     Używanie pustej krotki `()` nie jest specjalnie częste, ale nadal dobrze wiedzieć co taki
     zapis oznacza.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20make_nothing()%20-%3E%20()%20%7B%0A%20%20%20%20return%20()%3B%0A%7D%0A%0A%2F%2F%20domy%C5%9Blny%20zwracany%20typ%20to%20pusta%20krotka%20()%0Afn%20make_nothing2()%20%7B%0A%20%20%20%20%2F%2F%20ta%20funkcja%20zwr%C3%B3ci%20()%20nawet%20je%C5%9Bli%20nie%20wskazali%C5%9Bmy%0A%20%20%20%20%2F%2F%20jasno%20co%20powinna%20zwr%C3%B3ci%C4%87%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20a%20%3D%20make_nothing()%3B%0A%20%20%20%20let%20b%20%3D%20make_nothing2()%3B%0A%0A%20%20%20%20%2F%2F%20wypisanie%20%22niczego%22%20w%20normalnym%20trybie%20mo%C5%BCe%20by%C4%87%20problematyczne%2C%0A%20%20%20%20%2F%2F%20wypisujemy%20wi%C4%99c%20a%20i%20b%20jako%20debug%20string%0A%20%20%20%20println!(%22The%20value%20of%20a%3A%20%7B%3A%3F%7D%22%2C%20a)%3B%0A%20%20%20%20println!(%22The%20value%20of%20b%3A%20%7B%3A%3F%7D%22%2C%20b)%3B%0A%7D
+  code: |-
+    fn make_nothing() -> () {
+        return ();
+    }
+
+    // domyślny zwracany typ to pusta krotka ()
+    fn make_nothing2() {
+        // ta funkcja zwróci () nawet jeśli nie wskazaliśmy
+        // jasno co powinna zwrócić
+    }
+
+    fn main() {
+        let a = make_nothing();
+        let b = make_nothing2();
+
+        // wypisanie "niczego" w normalnym trybie może być problematyczne,
+        // wypisujemy więc a i b jako debug string
+        println!("The value of a: {:?}", a);
+        println!("The value of b: {:?}", b);
+    }
 - title: Rozdział 1 - Podsumowanie
   content_markdown: >
     Nieźle Ci idzie! Podstawy Rusta nie są takie trudne jak się mogło wydawać.

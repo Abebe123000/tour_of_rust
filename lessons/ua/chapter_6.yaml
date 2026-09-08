@@ -30,8 +30,11 @@
 
     * Компілятор Rust найімовірніше покладе ваш рядок у сегмент пам'яті, де 
     зберігаються дані вашої  програми
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20a%3A%20%26'static%20str%20%3D%20%22hi%20%F0%9F%A6%80%22%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20a%2C%20a.len())%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let a: &'static str = "hi 🦀";
+        println!("{} {}", a, a.len());
+    }
 - title: Що таке utf-8
   content_markdown: "Чим більше мов використовувалось при роботі з комп'ютером, тим потрібніше світу було мати змогу\nвідображати більше символів ніж дозволяв ASCII( 1 байт міг передавати тільки 256 різних символів)\n\n**utf-8** була представлена зі змінною кількістю у 1-4 байтів. Це сильно збільшило діапазон доступних символів.\n\nПеревага змінного розміру символів це те, що текст не містить зайвих байтів для простих символів з  ASCII( у **utf-8** вони так само потребують 1 байт).\n\nЗворотньою стороною змінного розміру символів є те, що пошук символів більше не може бути швидким\n(**O(1)** константний час) за допомогю простого індексування (наприклад `my_text[3]` для отримання 4 символу). Цілком\nможливо, що попередні символи можуть мати змінну ширину, змінюючи місце фактичного початку 4 символу в послідовності байтів.\n\nНатомість ми повинні пройти через послідовність байтів utf-8, щоб зрозуміти, де насправді починаються символи Unicode (O(n) лінійний час).\n\nФерріс: \"Я просто щасливий, що маю utf-8 для використання емодзі, що зображують моїх підводних друзів.\"\n\n<span class=\"emoji\">\U0001F420\U0001F419\U0001F41F\U0001F42C\U0001F40B</span>\n" 
 - title: Екранування символів
@@ -57,16 +60,30 @@
 
     Повний список знаходиться
     [тут](https://doc.rust-lang.org/reference/tokens.html).
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20a%3A%20%26%27static%20str%20%3D%20%22Ferris%20says%3A%5Ct%5C%22hello%5C%22%22%3B%0A%20%20%20%20println!(%22%7B%7D%22%2Ca)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let a: &'static str = "Ferris says:\t\"hello\"";
+        println!("{}",a);
+    }
 - title: Багаторядкові рядкові літерали
   content_markdown: |
     Текст у Rust є багаторядковим за замовчуванням.
 
     Ви можете використовувати `\` у кінці рядка, якщо ви не хочете
     щоб він був перенесений на інший.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20haiku%3A%20%26'static%20str%20%3D%20%22%0A%20%20%20%20%20%20%20%20I%20write%2C%20erase%2C%20rewrite%0A%20%20%20%20%20%20%20%20Erase%20again%2C%20and%20then%0A%20%20%20%20%20%20%20%20A%20poppy%20blooms.%0A%20%20%20%20%20%20%20%20-%20Katsushika%20Hokusai%22%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20haiku)%3B%0A%20%20%20%20%0A%20%20%20%20%0A%20%20%20%20println!(%22hello%20%5C%0A%20%20%20%20world%22)%20%2F%2F%20notice%20that%20the%20spacing%20before%20w%20is%20ignored%0A%7D%0A
+  code: |
+    fn main() {
+        let haiku: &'static str = "
+            I write, erase, rewrite
+            Erase again, and then
+            A poppy blooms.
+            - Katsushika Hokusai";
+        println!("{}", haiku);
+        
+        
+        println!("hello \
+        world") // notice that the spacing before w is ignored
+    }
 - title: Необроблені рядкові літерали
   content_markdown: >
     Необроблені рядки дозволяють нам записати послідовність символів дослівно, починаючи
@@ -74,8 +91,15 @@
 
     символи, які інакше можуть сплутати звичайний рядок із літералами (наприклад
     подвійні лапки та зворотні слеші).
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20a%3A%20%26'static%20str%20%3D%20r%23%22%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22advice%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20Raw%20strings%20are%20useful%20for%20some%20situations.%0A%20%20%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%22%23%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20a)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let a: &'static str = r#"
+            <div class="advice">
+                Raw strings are useful for some situations.
+            </div>
+            "#;
+        println!("{}", a);
+    }
 - title: Рядкові літерали з файлів
   content_markdown: >
     Якщо у вас є дуже великий текст, спробуйте використати для нього макрос `include_str!`,
@@ -103,8 +127,16 @@
     * `is_empty` повертає true, якщо рядок порожній.
 
     * `find` повертає `Option<usize>` першої позиції певного тексту.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20a%20%3D%20%22hi%20%F0%9F%A6%80%22%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20a.len())%3B%0A%20%20%20%20let%20first_word%20%3D%20%26a%5B0..2%5D%3B%0A%20%20%20%20let%20second_word%20%3D%20%26a%5B3..7%5D%3B%0A%20%20%20%20%2F%2F%20let%20half_crab%20%3D%20%26a%5B3..5%5D%3B%20FAILS%0A%20%20%20%20%2F%2F%20Rust%20does%20not%20accept%20slices%20of%20invalid%20unicode%20characters%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20first_word%2C%20second_word)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let a = "hi 🦀";
+        println!("{}", a.len());
+        let first_word = &a[0..2];
+        let second_word = &a[3..7];
+        // let half_crab = &a[3..5]; FAILS
+        // Rust does not accept slices of invalid unicode characters
+        println!("{} {}", first_word, second_word);
+    }
 - title: Тип Char
   content_markdown: >
     З такими труднощами в роботі з Unicode, Rust пропонує спосіб
@@ -113,8 +145,14 @@
 
     `char` завжди має довжину 4 байти (що дозволяє ефективно шукати окремі
     символи).
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20%2F%2F%20collect%20the%20characters%20as%20a%20vector%20of%20char%0A%20%20%20%20let%20chars%20%3D%20%22hi%20%F0%9F%A6%80%22.chars().collect%3A%3A%3CVec%3Cchar%3E%3E()%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20chars.len())%3B%20%2F%2F%20should%20be%204%0A%20%20%20%20%2F%2F%20since%20chars%20are%204%20bytes%20we%20can%20convert%20to%20u32%0A%20%20%20%20println!(%22%7B%7D%22%2C%20chars%5B3%5D%20as%20u32)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        // collect the characters as a vector of char
+        let chars = "hi 🦀".chars().collect::<Vec<char>>();
+        println!("{}", chars.len()); // should be 4
+        // since chars are 4 bytes we can convert to u32
+        println!("{}", chars[3] as u32);
+    }
 - title: Структура String
   content_markdown: >
     **String**— це структура, яка зберігає у собі послідовність байтів utf-8 
@@ -141,21 +179,40 @@
 
     `String` має `+` оператор, який розширює рядок за дорпомогою `&str` і
     повертає її, але це може бути не настільки зручним, як ви сподіваєтесь.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20mut%20helloworld%20%3D%20String%3A%3Afrom(%22hello%22)%3B%0A%20%20%20%20helloworld.push_str(%22%20world%22)%3B%0A%20%20%20%20helloworld%20%3D%20helloworld%20%2B%20%22!%22%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20helloworld)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let mut helloworld = String::from("hello");
+        helloworld.push_str(" world");
+        helloworld = helloworld + "!";
+        println!("{}", helloworld);
+    }
 - title: Текст,як параметр функції
   content_markdown: >
     Рядкові літерали та рядки зазвичай передаються функціям як рядкові зрізи.
     Це забезпечує велику гнучкість для більшості 
 
     сценаріїв, коли вам фактично не потрібно передавати право володіння.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20say_it_loud(msg%3A%26str)%7B%0A%20%20%20%20println!(%22%7B%7D!!!%22%2Cmsg.to_string().to_uppercase())%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20say_it_loud%20can%20borrow%20%26%27static%20str%20as%20a%20%26str%0A%20%20%20%20say_it_loud(%22hello%22)%3B%0A%20%20%20%20%2F%2F%20say_it_loud%20can%20also%20borrow%20String%20as%20a%20%26str%0A%20%20%20%20say_it_loud(%26String%3A%3Afrom(%22goodbye%22))%3B%0A%7D%0A
+  code: |
+    fn say_it_loud(msg:&str){
+        println!("{}!!!",msg.to_string().to_uppercase());
+    }
+
+    fn main() {
+        // say_it_loud can borrow &'static str as a &str
+        say_it_loud("hello");
+        // say_it_loud can also borrow String as a &str
+        say_it_loud(&String::from("goodbye"));
+    }
 - title: Побудова рядків
   content_markdown: |
     `concat` і `join` - два прості, але потужні способи створення рядків.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20helloworld%20%3D%20%5B%22hello%22%2C%20%22%20%22%2C%20%22world%22%2C%20%22!%22%5D.concat()%3B%0A%20%20%20%20let%20abc%20%3D%20%5B%22a%22%2C%20%22b%22%2C%20%22c%22%5D.join(%22%2C%22)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20helloworld)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2Cabc)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let helloworld = ["hello", " ", "world", "!"].concat();
+        let abc = ["a", "b", "c"].join(",");
+        println!("{}", helloworld);
+        println!("{}",abc);
+    }
 - title: Форматування рядків
   content_markdown: >
     Макрос `format!` дозволяє нам створювати параметризовані рядки з 
@@ -167,8 +224,12 @@
 
     Можливості цієї функції занадто великі для Tour of Rust; перегляньте
     документацію [тут](https://doc.rust-lang.org/std/fmt/).
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20a%20%3D%2042%3B%0A%20%20%20%20let%20f%20%3D%20format!(%22secret%20to%20life%3A%20%7B%7D%22%2Ca)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2Cf)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let a = 42;
+        let f = format!("secret to life: {}",a);
+        println!("{}",f);
+    }
 - title: Конвертація рядків
   content_markdown: |
     Багато типів можна конвертувати у string використовуючи `to_string`.
@@ -176,8 +237,14 @@
     Загальна функція `parse` можна використовувати для конвертування рядків
     або рядкові літерали у введене значення. Ця функція повертає 
     `Result` тому, що воно може не виконатися.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20-%3E%20Result%3C()%2C%20std%3A%3Anum%3A%3AParseIntError%3E%20%7B%0A%20%20%20%20let%20a%20%3D%2042%3B%0A%20%20%20%20let%20a_string%20%3D%20a.to_string()%3B%0A%20%20%20%20let%20b%20%3D%20a_string.parse%3A%3A%3Ci32%3E()%3F%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20a%2C%20b)%3B%0A%20%20%20%20Ok(())%0A%7D%0A
+  code: |
+    fn main() -> Result<(), std::num::ParseIntError> {
+        let a = 42;
+        let a_string = a.to_string();
+        let b = a_string.parse::<i32>()?;
+        println!("{} {}", a, b);
+        Ok(())
+    }
 - title: Розділ 6 - Висновки
   content_markdown: >
     Тепер ви знаєте основи роботи з текстом! Як ви побачили, Unicode робить

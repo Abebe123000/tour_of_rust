@@ -18,8 +18,15 @@
 
     Definiția structurii este ca o matriță pentru compilator pentru a ști cum să aranjeze
     câmpurile în memorie într-un mod compact.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20SeaCreature%20%7B%0A%20%20%20%20%2F%2F%20String%20este%20o%20structur%C4%83%0A%20%20%20%20animal_type%3A%20String%2C%0A%20%20%20%20name%3A%20String%2C%0A%20%20%20%20arms%3A%20i32%2C%0A%20%20%20%20legs%3A%20i32%2C%0A%20%20%20%20weapon%3A%20String%2C%0A%7D
+  code: |-
+    struct SeaCreature {
+        // String este o structură
+        animal_type: String,
+        name: String,
+        arms: i32,
+        legs: i32,
+        weapon: String,
+    }
 - title: Apelarea metodelor
   content_markdown: >
     Spre deosebire de funcții, metodele sunt funcții asociate unui tip specific
@@ -35,8 +42,13 @@
 
 
     Vom dezvolta acest concept, cu implementarea propriilor metode, în capitolele următoare.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20%2F%2F%20Folosim%20o%20metod%C4%83%20static%C4%83%20ca%20s%C4%83%20creem%20o%20instan%C8%9B%C4%83%20String%0A%20%20%20%20let%20s%20%3D%20String%3A%3Afrom(%22Hello%20world!%22)%3B%0A%20%20%20%20%2F%2F%20Folosim%20o%20metod%C4%83%20a%20instan%C8%9Bei%0A%20%20%20%20println!(%22%7B%7D%20are%20%7B%7D%20de%20caractere.%22%2C%20s%2C%20s.len())%3B%0A%7D%0A
+  code: |
+    fn main() {
+        // Folosim o metodă statică ca să creem o instanță String
+        let s = String::from("Hello world!");
+        // Folosim o metodă a instanței
+        println!("{} are {} de caractere.", s, s.len());
+    }
 - title: Memorie
   content_markdown: >
     Aplicațiile scrise în Rust au 3 zone de memorie unde este stocată informație:
@@ -87,13 +99,55 @@
     * Așadar, cei doi prieteni ai noștri, *Ferris* și *Sarah*, sunt structuri de date care
     vor avea mereu
       locații fixe în aplicația noastră, deci vor fi puși în *stivă*.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Creatur%C4%83Marin%C4%83%20%7B%0A%20%20%20%20tip_animal%3A%20String%2C%0A%20%20%20%20nume%3A%20String%2C%0A%20%20%20%20nr_m%C3%A2ini%3A%20i32%2C%0A%20%20%20%20nr_picioare%3A%20i32%2C%0A%20%20%20%20arm%C4%83%3A%20String%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20datele%20din%20Creatur%C4%83Marin%C4%83%20sunt%20pe%20stiv%C4%83%0A%20%20%20%20let%20ferris%20%3D%20Creatur%C4%83Marin%C4%83%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20Struct-ul%20String%20este%20de%20asemenea%20pe%20stiv%C4%83%2C%0A%20%20%20%20%20%20%20%20%2F%2F%20dar%20%C8%9Bine%20o%20referin%C8%9B%C4%83%20a%20informa%C8%9Biei%20pe%20heap%0A%20%20%20%20%20%20%20%20tip_animal%3A%20String%3A%3Afrom(%22crab%22)%2C%0A%20%20%20%20%20%20%20%20nume%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20nr_m%C3%A2ini%3A%202%2C%0A%20%20%20%20%20%20%20%20nr_picioare%3A%204%2C%0A%20%20%20%20%20%20%20%20arm%C4%83%3A%20String%3A%3Afrom(%22ghiar%C4%83%22)%2C%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20let%20sarah%20%3D%20Creatur%C4%83Marin%C4%83%20%7B%0A%20%20%20%20%20%20%20%20tip_animal%3A%20String%3A%3Afrom(%22caracati%C8%9B%C4%83%22)%2C%0A%20%20%20%20%20%20%20%20nume%3A%20String%3A%3Afrom(%22Sarah%22)%2C%0A%20%20%20%20%20%20%20%20nr_m%C3%A2ini%3A%208%2C%0A%20%20%20%20%20%20%20%20nr_picioare%3A%200%2C%0A%20%20%20%20%20%20%20%20arm%C4%83%3A%20String%3A%3Afrom(%22creier%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22%7B%7D%20este%20%7B%7D.%20Are%20%7B%7D%20m%C3%A2ini%2C%20%7B%7D%20picioare%2C%20%C8%99i%20%7B%7D%20pe%20post%20de%20arm%C4%83%22%2C%0A%20%20%20%20%20%20%20%20ferris.nume%2C%20ferris.tip_animal%2C%20ferris.nr_m%C3%A2ini%2C%20ferris.nr_picioare%2C%20ferris.arm%C4%83%0A%20%20%20%20)%3B%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22%7B%7D%20este%20%7B%7D.%20Are%20%7B%7D%20m%C3%A2ini%2C%20%7B%7D%20picioare.%20Nu%20are%20nicio%20arm%C4%83..%22%2C%0A%20%20%20%20%20%20%20%20sarah.nume%2C%20sarah.tip_animal%2C%20sarah.nr_m%C3%A2ini%2C%20sarah.nr_picioare%0A%20%20%20%20)%3B%0A%7D%0A
+  code: |
+    struct CreaturăMarină {
+        tip_animal: String,
+        nume: String,
+        nr_mâini: i32,
+        nr_picioare: i32,
+        armă: String,
+    }
+
+    fn main() {
+        // datele din CreaturăMarină sunt pe stivă
+        let ferris = CreaturăMarină {
+            // Struct-ul String este de asemenea pe stivă,
+            // dar ține o referință a informației pe heap
+            tip_animal: String::from("crab"),
+            nume: String::from("Ferris"),
+            nr_mâini: 2,
+            nr_picioare: 4,
+            armă: String::from("ghiară"),
+        };
+
+        let sarah = CreaturăMarină {
+            tip_animal: String::from("caracatiță"),
+            nume: String::from("Sarah"),
+            nr_mâini: 8,
+            nr_picioare: 0,
+            armă: String::from("creier"),
+        };
+        
+        println!(
+            "{} este {}. Are {} mâini, {} picioare, și {} pe post de armă",
+            ferris.nume, ferris.tip_animal, ferris.nr_mâini, ferris.nr_picioare, ferris.armă
+        );
+        println!(
+            "{} este {}. Are {} mâini, {} picioare. Nu are nicio armă..",
+            sarah.nume, sarah.tip_animal, sarah.nr_mâini, sarah.nr_picioare
+        );
+    }
 - title: Structuri de tip tuplu
   content_markdown: |
     Pentru a fi conciși, puteți crea structuri care sunt folosite ca un tuplu.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Location(i32%2C%20i32)%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20Acesta%20este%20tot%20o%20structur%C4%83%20pe%20stiv%C4%83%0A%20%20%20%20let%20loc%20%3D%20Location(42%2C%2032)%3B%0A%20%20%20%20println!(%22%7B%7D%2C%20%7B%7D%22%2C%20loc.0%2C%20loc.1)%3B%0A%7D%0A
+  code: |
+    struct Location(i32, i32);
+
+    fn main() {
+        // Acesta este tot o structură pe stivă
+        let loc = Location(42, 32);
+        println!("{}, {}", loc.0, loc.1);
+    }
 - title: Structuri de tip unitate
   content_markdown: >
     Structurile nu trebuie neapărat să aibă câmpuri.
@@ -104,8 +158,12 @@
 
 
     Acest tip de structuri este folosit rar.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Marcaj%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20_m%20%3D%20Marcaj%3B%0A%7D%0A
+  code: |
+    struct Marcaj;
+
+    fn main() {
+        let _m = Marcaj;
+    }
 - title: Enumerări
   content_markdown: >
     Enumerările vă permit să creați un tip nou de date care poate avea o valoare dintr-o
@@ -114,8 +172,40 @@
 
     `match` ne ajută să abordăm toate valorile posibile ale unei enumerări, făcând din acest tip
     un instrument puternic pentru asigurarea calității codului.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=%23!%5Ballow(dead_code)%5D%20%2F%2F%20aceast%C4%83%20linie%20opre%C8%99te%20avertiz%C4%83rile%20compilatorului%0A%0Aenum%20Specii%20%7B%0A%20%20%20%20Crab%2C%0A%20%20%20%20Caracati%C8%9B%C4%83%2C%0A%20%20%20%20Pe%C8%99te%2C%0A%20%20%20%20Scoic%C4%83%0A%7D%0A%0Astruct%20Creatur%C4%83Marin%C4%83%20%7B%0A%20%20%20%20Specii%3A%20Specii%2C%0A%20%20%20%20nume%3A%20String%2C%0A%20%20%20%20nr_m%C3%A2ini%3A%20i32%2C%0A%20%20%20%20nr_picioare%3A%20i32%2C%0A%20%20%20%20arm%C4%83%3A%20String%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20ferris%20%3D%20Creatur%C4%83Marin%C4%83%20%7B%0A%20%20%20%20%20%20%20%20Specii%3A%20Specii%3A%3ACrab%2C%0A%20%20%20%20%20%20%20%20nume%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20nr_m%C3%A2ini%3A%202%2C%0A%20%20%20%20%20%20%20%20nr_picioare%3A%204%2C%0A%20%20%20%20%20%20%20%20arm%C4%83%3A%20String%3A%3Afrom(%22ghiar%C4%83%22)%2C%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20match%20ferris.Specii%20%7B%0A%20%20%20%20%20%20%20%20Specii%3A%3ACrab%20%3D%3E%20println!(%22%7B%7D%20este%20crab%22%2Cferris.nume)%2C%0A%20%20%20%20%20%20%20%20Specii%3A%3ACaracati%C8%9B%C4%83%20%3D%3E%20println!(%22%7B%7D%20este%20caracati%C8%9B%C4%83%22%2Cferris.nume)%2C%0A%20%20%20%20%20%20%20%20Specii%3A%3APe%C8%99te%20%3D%3E%20println!(%22%7B%7D%20este%20pe%C8%99te%22%2Cferris.nume)%2C%0A%20%20%20%20%20%20%20%20Specii%3A%3AScoic%C4%83%20%3D%3E%20println!(%22%7B%7D%20este%20scoic%C4%83%22%2Cferris.nume)%2C%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    #![allow(dead_code)] // această linie oprește avertizările compilatorului
+
+    enum Specii {
+        Crab,
+        Caracatiță,
+        Pește,
+        Scoică
+    }
+
+    struct CreaturăMarină {
+        Specii: Specii,
+        nume: String,
+        nr_mâini: i32,
+        nr_picioare: i32,
+        armă: String,
+    }
+
+    fn main() {
+        let ferris = CreaturăMarină {
+            Specii: Specii::Crab,
+            nume: String::from("Ferris"),
+            nr_mâini: 2,
+            nr_picioare: 4,
+            armă: String::from("ghiară"),
+        };
+
+        match ferris.Specii {
+            Specii::Crab => println!("{} este crab",ferris.nume),
+            Specii::Caracatiță => println!("{} este caracatiță",ferris.nume),
+            Specii::Pește => println!("{} este pește",ferris.nume),
+            Specii::Scoică => println!("{} este scoică",ferris.nume),
+        }
+    }
 - title: Enumerările care conțin tipuri de date
   content_markdown: >
     Elementele unui `enum` pot avea de asemenea unul sau mai multe tipuri de date, permițându-i acestuia să se comporte
@@ -141,8 +231,54 @@
 
     * Combinarea mai multor tipuri de date pentru a crea unul nou este ceea ce îi face pe oameni
     să afirme faptul că Rust are *tipuri algebrice*.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=%23!%5Ballow(dead_code)%5D%20%2F%2F%20aceast%C4%83%20linie%20opre%C8%99te%20avertiz%C4%83rile%20compilatorului%0A%0Aenum%20Specii%20%7B%20Crab%2C%20Caracati%C8%9B%C4%83%2C%20Pe%C8%99te%2C%20Scoic%C4%83%20%7D%0Aenum%20TipOtrav%C4%83%20%7B%20Acid%2C%20Dureros%2C%20Letal%20%7D%0Aenum%20M%C4%83rime%20%7B%20Mare%2C%20Mic%20%7D%0Aenum%20Arm%C4%83%20%7B%0A%20%20%20%20Ghiar%C4%83(i32%2C%20M%C4%83rime)%2C%0A%20%20%20%20Otrav%C4%83(TipOtrav%C4%83)%2C%0A%20%20%20%20None%0A%7D%0A%0Astruct%20Creatur%C4%83Marin%C4%83%20%7B%0A%20%20%20%20Specii%3A%20Specii%2C%0A%20%20%20%20nume%3A%20String%2C%0A%20%20%20%20nr_m%C3%A2ini%3A%20i32%2C%0A%20%20%20%20nr_picioare%3A%20i32%2C%0A%20%20%20%20Arm%C4%83%3A%20Arm%C4%83%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20datele%20din%20Creatur%C4%83Marin%C4%83%20sunt%20pe%20stiv%C4%83%0A%20%20%20%20let%20ferris%20%3D%20Creatur%C4%83Marin%C4%83%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20Struct-ul%20String%20este%20de%20asemenea%20pe%20stiv%C4%83%2C%0A%20%20%20%20%20%20%20%20%2F%2F%20dar%20%C8%9Bine%20o%20referin%C8%9B%C4%83%20a%20informa%C8%9Biei%20pe%20heap%0A%20%20%20%20%20%20%20%20Specii%3A%20Specii%3A%3ACrab%2C%0A%20%20%20%20%20%20%20%20nume%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20nr_m%C3%A2ini%3A%202%2C%0A%20%20%20%20%20%20%20%20nr_picioare%3A%204%2C%0A%20%20%20%20%20%20%20%20Arm%C4%83%3A%20Arm%C4%83%3A%3AGhiar%C4%83(2%2C%20M%C4%83rime%3A%3AMic)%2C%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20match%20ferris.Specii%20%7B%0A%20%20%20%20%20%20%20%20Specii%3A%3ACrab%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20match%20ferris.Arm%C4%83%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Arm%C4%83%3A%3AGhiar%C4%83(nr_ghiare%2C%20M%C4%83rime)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20m%C4%83rime_descriere%20%3D%20match%20M%C4%83rime%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20M%C4%83rime%3A%3AMare%20%3D%3E%20%22mari%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20M%C4%83rime%3A%3AMic%20%3D%3E%20%22mici%22%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20println!(%22ferris%20este%20un%20crab%20cu%20%7B%7D%20ghiare%20%7B%7D%22%2C%20nr_ghiare%2C%20m%C4%83rime_descriere)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20_%20%3D%3E%20println!(%22ferris%20este%20un%20crab%20cu%20alte%20arme%22)%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20_%20%3D%3E%20println!(%22ferris%20este%20alt%20animal%22)%2C%0A%20%20%20%20%7D%0A%7D
+  code: |-
+    #![allow(dead_code)] // această linie oprește avertizările compilatorului
+
+    enum Specii { Crab, Caracatiță, Pește, Scoică }
+    enum TipOtravă { Acid, Dureros, Letal }
+    enum Mărime { Mare, Mic }
+    enum Armă {
+        Ghiară(i32, Mărime),
+        Otravă(TipOtravă),
+        None
+    }
+
+    struct CreaturăMarină {
+        Specii: Specii,
+        nume: String,
+        nr_mâini: i32,
+        nr_picioare: i32,
+        Armă: Armă,
+    }
+
+    fn main() {
+        // datele din CreaturăMarină sunt pe stivă
+        let ferris = CreaturăMarină {
+            // Struct-ul String este de asemenea pe stivă,
+            // dar ține o referință a informației pe heap
+            Specii: Specii::Crab,
+            nume: String::from("Ferris"),
+            nr_mâini: 2,
+            nr_picioare: 4,
+            Armă: Armă::Ghiară(2, Mărime::Mic),
+        };
+
+        match ferris.Specii {
+            Specii::Crab => {
+                match ferris.Armă {
+                    Armă::Ghiară(nr_ghiare, Mărime) => {
+                        let mărime_descriere = match Mărime {
+                            Mărime::Mare => "mari",
+                            Mărime::Mic => "mici"
+                        };
+                        println!("ferris este un crab cu {} ghiare {}", nr_ghiare, mărime_descriere)
+                    },
+                    _ => println!("ferris este un crab cu alte arme")
+                }
+            },
+            _ => println!("ferris este alt animal"),
+        }
+    }
 - title: Capitolul 3 - Concluzie
   content_markdown: >
     Ce palpitant! Acum avem în sfârșit toate uneltele de bază pentru a reprezenta

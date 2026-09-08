@@ -13,8 +13,17 @@
 
     所有你常用的關係式及邏輯運算符號仍然正常運作：`==`、`!=`、`<`、
     `>`、`<=`、`>=`、`!`、`||`、`&&`。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20x%20%3D%2042%3B%0A%20%20%20%20if%20x%20%3C%2042%20%7B%0A%20%20%20%20%20%20%20%20println!(%22less%20than%2042%22)%3B%0A%20%20%20%20%7D%20else%20if%20x%20%3D%3D%2042%20%7B%0A%20%20%20%20%20%20%20%20println!(%22is%2042%22)%3B%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20println!(%22greater%20than%2042%22)%3B%0A%20%20%20%20%7D%0A%7D
+  code: |-
+    fn main() {
+        let x = 42;
+        if x < 42 {
+            println!("less than 42");
+        } else if x == 42 {
+            println!("is 42");
+        } else {
+            println!("greater than 42");
+        }
+    }
 - title: loop
   content_markdown: |
     需要一個無窮迴圈嗎？
@@ -24,15 +33,29 @@
     當你準備好時，`break` 會離開一個迴圈。
 
     `loop` 有個秘密，我們很快就會談到它。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20mut%20x%20%3D%200%3B%0A%20%20%20%20loop%20%7B%0A%20%20%20%20%20%20%20%20x%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20if%20x%20%3D%3D%2042%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20break%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let mut x = 0;
+        loop {
+            x += 1;
+            if x == 42 {
+                break;
+            }
+        }
+        println!("{}", x);
+    }
 - title: while
   content_markdown: |
     `while` 讓你輕鬆的加入一個條件到迴圈裡。
 
     如果該條件的結果是 `false`，那迴圈將會中止。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20mut%20x%20%3D%200%3B%0A%20%20%20%20while%20x%20!%3D%2042%20%7B%0A%20%20%20%20%20%20%20%20x%20%2B%3D%201%3B%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    fn main() {
+        let mut x = 0;
+        while x != 42 {
+            x += 1;
+        }
+    }
 - title: for
   content_markdown: >
     Rust 的 `for` 迴圈是個強大升級版。
@@ -47,8 +70,16 @@
 
 
     `..=` 運算子產生一個迭代器，而這個迭代器產生一連串的數字，從起始數字開始直到最後一個數字。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20for%20x%20in%200..5%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%20%20%20%20%7D%0A%0A%20%20%20%20for%20x%20in%200..%3D5%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    fn main() {
+        for x in 0..5 {
+            println!("{}", x);
+        }
+
+        for x in 0..=5 {
+            println!("{}", x);
+        }
+    }
 - title: match
   content_markdown: >
     懷念你的 switch 條件判斷式嗎？Rust 有一個神妙的關鍵字 (keyword) 可以匹配所有可能的條件結果，
@@ -60,13 +91,46 @@
 
 
     配對與解構 (destructuring) 一起使用，是你目前為止看到 Rust 最常使用的模式之一。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20x%20%3D%2042%3B%0A%0A%20%20%20%20match%20x%20%7B%0A%20%20%20%20%20%20%20%200%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20println!(%22found%20zero%22)%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%2F%2F%20we%20can%20match%20against%20multiple%20values%0A%20%20%20%20%20%20%20%201%20%7C%202%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20println!(%22found%201%20or%202!%22)%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%2F%2F%20we%20can%20match%20against%20ranges%0A%20%20%20%20%20%20%20%203..%3D9%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20println!(%22found%20a%20number%203%20to%209%20inclusively%22)%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%2F%2F%20we%20can%20bind%20the%20matched%20number%20to%20a%20variable%0A%20%20%20%20%20%20%20%20matched_num%20%40%2010..%3D100%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20println!(%22found%20%7B%7D%20number%20between%2010%20to%20100!%22%2C%20matched_num)%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%2F%2F%20this%20is%20the%20default%20match%20that%20must%20exist%20if%20not%20all%20cases%20are%20handled%0A%20%20%20%20%20%20%20%20_%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20println!(%22found%20something%20else!%22)%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    fn main() {
+        let x = 42;
+
+        match x {
+            0 => {
+                println!("found zero");
+            }
+            // we can match against multiple values
+            1 | 2 => {
+                println!("found 1 or 2!");
+            }
+            // we can match against ranges
+            3..=9 => {
+                println!("found a number 3 to 9 inclusively");
+            }
+            // we can bind the matched number to a variable
+            matched_num @ 10..=100 => {
+                println!("found {} number between 10 to 100!", matched_num);
+            }
+            // this is the default match that must exist if not all cases are handled
+            _ => {
+                println!("found something else!");
+            }
+        }
+    }
 - title: 從迴圈回傳數值
   content_markdown: |
     `loop` 可以用 break 來回傳數值。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20mut%20x%20%3D%200%3B%0A%20%20%20%20let%20v%20%3D%20loop%20%7B%0A%20%20%20%20%20%20%20%20x%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20if%20x%20%3D%3D%2013%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20break%20%22found%20the%2013%22%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%20%20%20%20println!(%22from%20loop%3A%20%7B%7D%22%2C%20v)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let mut x = 0;
+        let v = loop {
+            x += 1;
+            if x == 13 {
+                break "found the 13";
+            }
+        };
+        println!("from loop: {}", v);
+    }
 - title: 從區塊表達式回傳數值
   content_markdown: >
     在 Rust 裡，`if`、`match`、functions 及區塊範疇 (scope blocks) 都有一個獨特的方式用來回傳數值。
@@ -78,8 +142,36 @@
 
 
     要注意 Rust 同時也允許 `if` 敘述可以用來當作簡潔的三元運算。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20example()%20-%3E%20i32%20%7B%0A%20%20%20%20let%20x%20%3D%2042%3B%0A%20%20%20%20%2F%2F%20Rust's%20ternary%20expression%0A%20%20%20%20let%20v%20%3D%20if%20x%20%3C%2042%20%7B%20-1%20%7D%20else%20%7B%201%20%7D%3B%0A%20%20%20%20println!(%22from%20if%3A%20%7B%7D%22%2C%20v)%3B%0A%0A%20%20%20%20let%20food%20%3D%20%22hamburger%22%3B%0A%20%20%20%20let%20result%20%3D%20match%20food%20%7B%0A%20%20%20%20%20%20%20%20%22hotdog%22%20%3D%3E%20%22is%20hotdog%22%2C%0A%20%20%20%20%20%20%20%20%2F%2F%20notice%20the%20braces%20are%20optional%20when%20its%20just%20a%20single%20return%20expression%0A%20%20%20%20%20%20%20%20_%20%3D%3E%20%22is%20not%20hotdog%22%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20println!(%22identifying%20food%3A%20%7B%7D%22%2C%20result)%3B%0A%0A%20%20%20%20let%20v%20%3D%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20This%20scope%20block%20lets%20us%20get%20a%20result%20without%20polluting%20function%20scope%0A%20%20%20%20%20%20%20%20let%20a%20%3D%201%3B%0A%20%20%20%20%20%20%20%20let%20b%20%3D%202%3B%0A%20%20%20%20%20%20%20%20a%20%2B%20b%0A%20%20%20%20%7D%3B%0A%20%20%20%20println!(%22from%20block%3A%20%7B%7D%22%2C%20v)%3B%0A%0A%20%20%20%20%2F%2F%20The%20idiomatic%20way%20to%20return%20a%20value%20in%20rust%20from%20a%20function%20at%20the%20end%0A%20%20%20%20v%20%2B%204%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%22from%20function%3A%20%7B%7D%22%2C%20example())%3B%0A%7D%0A
+  code: |
+    fn example() -> i32 {
+        let x = 42;
+        // Rust's ternary expression
+        let v = if x < 42 { -1 } else { 1 };
+        println!("from if: {}", v);
+
+        let food = "hamburger";
+        let result = match food {
+            "hotdog" => "is hotdog",
+            // notice the braces are optional when its just a single return expression
+            _ => "is not hotdog",
+        };
+        println!("identifying food: {}", result);
+
+        let v = {
+            // This scope block lets us get a result without polluting function scope
+            let a = 1;
+            let b = 2;
+            a + b
+        };
+        println!("from block: {}", v);
+
+        // The idiomatic way to return a value in rust from a function at the end
+        v + 4
+    }
+
+    fn main() {
+        println!("from function: {}", example());
+    }
 - title: 第二章 - 總結
   content_markdown: >
     希望即使是最基本的語言特性，我也讓你一瞥 Rust 的力量。

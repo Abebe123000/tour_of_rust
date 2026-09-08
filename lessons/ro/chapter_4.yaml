@@ -23,8 +23,31 @@
 
     puteți oricând să instanțiați explicit folosind operatorul `::<T>`, cunoscut sub numele de
     `turbofish` (e un bun prieten de-ai mei!).
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=%2F%2F%20Un%20tip%20de%20structur%C4%83%20definit%20par%C8%9Bial%0Astruct%20BagOfHolding%3CT%3E%20%7B%0A%20%20%20%20item%3A%20T%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20Observa%C8%9Bi%3A%20folosind%20tipuri%20generice%2C%20gener%C4%83m%20tipuri%20create%20la%20momentul%20compil%C4%83rii%0A%20%20%20%20%2F%2F%20Turbofish%20ne%20las%C4%83%20s%C4%83%20fim%20explici%C8%9Bi%0A%20%20%20%20let%20i32_bag%20%3D%20BagOfHolding%3A%3A%3Ci32%3E%20%7B%20item%3A%2042%20%7D%3B%0A%20%20%20%20let%20bool_bag%20%3D%20BagOfHolding%3A%3A%3Cbool%3E%20%7B%20item%3A%20true%20%7D%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20Rust%20poate%20deduce%20tipuri%20%C8%99i%20pentru%20cele%20generice!%0A%20%20%20%20let%20float_bag%20%3D%20BagOfHolding%20%7B%20item%3A%203.14%20%7D%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20Aten%C8%9Bie%3A%20nu%20pune%C8%9Bi%20niciodat%C4%83%20o%20geant%C4%83%20%C3%AEn%20alt%C4%83%20geant%C4%83%20%C3%AEn%20via%C8%9Ba%20real%C4%83%0A%20%20%20%20let%20bag_in_bag%20%3D%20BagOfHolding%20%7B%0A%20%20%20%20%20%20%20%20item%3A%20BagOfHolding%20%7B%20item%3A%20%22boom!%22%20%7D%2C%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%22%2C%0A%20%20%20%20%20%20%20%20i32_bag.item%2C%20bool_bag.item%2C%20float_bag.item%2C%20bag_in_bag.item.item%0A%20%20%20%20)%3B%0A%7D%0A
+  code: |
+    // Un tip de structură definit parțial
+    struct BagOfHolding<T> {
+        item: T,
+    }
+
+    fn main() {
+        // Observați: folosind tipuri generice, generăm tipuri create la momentul compilării
+        // Turbofish ne lasă să fim expliciți
+        let i32_bag = BagOfHolding::<i32> { item: 42 };
+        let bool_bag = BagOfHolding::<bool> { item: true };
+        
+        // Rust poate deduce tipuri și pentru cele generice!
+        let float_bag = BagOfHolding { item: 3.14 };
+        
+        // Atenție: nu puneți niciodată o geantă în altă geantă în viața reală
+        let bag_in_bag = BagOfHolding {
+            item: BagOfHolding { item: "boom!" },
+        };
+
+        println!(
+            "{} {} {} {}",
+            i32_bag.item, bool_bag.item, float_bag.item, bag_in_bag.item.item
+        );
+    }
 - title: Reprezentarea nimicului
   content_markdown: >
     În alte limbaje, cuvântul cheie `null` este folosit pentru a reprezenta absența unei
@@ -47,8 +70,16 @@
 
     des întâlnită în Rust din cauza lipsei unei valori `null`. Tipurile generice ne ajută însă
     să trecem de acest obstacol.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=enum%20Item%20%7B%0A%20%20%20%20Inventar(String)%2C%0A%20%20%20%20%2F%2F%20None%20reprezint%C4%83%20absen%C8%9Ba%20unui%20element%0A%20%20%20%20None%2C%0A%7D%0A%0Astruct%20Geant%C4%83%20%7B%0A%20%20%20%20item%3A%20Item%2C%0A%7D%0A
+  code: |
+    enum Item {
+        Inventar(String),
+        // None reprezintă absența unui element
+        None,
+    }
+
+    struct Geantă {
+        item: Item,
+    }
 - title: Option
   content_markdown: >
     Rust are o enumerare deja implementată numită `Option` care ne permite să reprezentăm
@@ -69,8 +100,39 @@
 
     Această enumerare este foarte comună, instanțe ale acestei enumerări pot fi create oriunde prin intermediul
     elementelor din enumerare `Some` și `None`.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=%2F%2F%20Un%20tip%20de%20structur%C4%83%20definit%20par%C8%9Bial%0Astruct%20Geant%C4%83%3CT%3E%20%7B%0A%20%20%20%20%2F%2F%20Tipul%20de%20parametru%20T%20poate%20fi%20folosit%20din%20Option%0A%20%20%20%20item%3A%20Option%3CT%3E%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20Observa%C8%9Bi%3A%20O%20geant%C4%83%20pentru%20i32%2C%20care%20nu%20con%C8%9Bine%20nimic!%20Trebuie%20s%C4%83%0A%20%20%20%20%2F%2F%20specific%C4%83m%20tipul%2C%20altfel%20Rust%20nu%20va%20%C8%99ti%20ce%20tip%20poate%20%C8%9Bine%20geanta%0A%20%20%20%20let%20i32_geant%C4%83%20%3D%20Geant%C4%83%3A%3A%3Ci32%3E%20%7B%20item%3A%20None%20%7D%3B%0A%0A%20%20%20%20if%20i32_geant%C4%83.item.is_none()%20%7B%0A%20%20%20%20%20%20%20%20println!(%22nu%20este%20nimic%20%C3%AEn%20geant%C4%83!%22)%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20println!(%22se%20afl%C4%83%20ceva%20%C3%AEn%20geant%C4%83!%22)%0A%20%20%20%20%7D%0A%0A%20%20%20%20let%20i32_geant%C4%83%20%3D%20Geant%C4%83%3A%3A%3Ci32%3E%20%7B%20item%3A%20Some(42)%20%7D%3B%0A%0A%20%20%20%20if%20i32_geant%C4%83.item.is_some()%20%7B%0A%20%20%20%20%20%20%20%20println!(%22se%20afl%C4%83%20ceva%20%C3%AEn%20geant%C4%83!%22)%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20println!(%22nu%20este%20nimic%20%C3%AEn%20geant%C4%83!%22)%0A%20%20%20%20%7D%0A%0A%20%20%20%20%2F%2F%20match%20ne%20permite%20s%C4%83%20destructur%C4%83m%20Option%20%C3%AEn%20mod%20elegant%20pentru%0A%20%20%20%20%2F%2F%20a%20gestiona%20toate%20cazurile%20posibile!%0A%20%20%20%20match%20i32_geant%C4%83.item%20%7B%0A%20%20%20%20%20%20%20%20Some(v)%20%3D%3E%20println!(%22g%C4%83sit%20%7B%7D%20%C3%AEn%20geant%C4%83!%22%2C%20v)%2C%0A%20%20%20%20%20%20%20%20None%20%3D%3E%20println!(%22nu%20a%20fost%20g%C4%83sit%20nimic%22)%2C%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    // Un tip de structură definit parțial
+    struct Geantă<T> {
+        // Tipul de parametru T poate fi folosit din Option
+        item: Option<T>,
+    }
+
+    fn main() {
+        // Observați: O geantă pentru i32, care nu conține nimic! Trebuie să
+        // specificăm tipul, altfel Rust nu va ști ce tip poate ține geanta
+        let i32_geantă = Geantă::<i32> { item: None };
+
+        if i32_geantă.item.is_none() {
+            println!("nu este nimic în geantă!")
+        } else {
+            println!("se află ceva în geantă!")
+        }
+
+        let i32_geantă = Geantă::<i32> { item: Some(42) };
+
+        if i32_geantă.item.is_some() {
+            println!("se află ceva în geantă!")
+        } else {
+            println!("nu este nimic în geantă!")
+        }
+
+        // match ne permite să destructurăm Option în mod elegant pentru
+        // a gestiona toate cazurile posibile!
+        match i32_geantă.item {
+            Some(v) => println!("găsit {} în geantă!", v),
+            None => println!("nu a fost găsit nimic"),
+        }
+    }
 - title: Result
   content_markdown: >
     Rust are o enumerare deja implementată numită `Result` care ne permite să returnăm
@@ -95,13 +157,56 @@
 
     Această enumerare este foarte comună, instanțe ale ei pot fi create oriunde prin intermediul
     elementelor din enumerare `Ok` și `Err`.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20execut%C4%83_ceva_ce_poate_e%C8%99ua(i%3Ai32)%20-%3E%20Result%3Cf32%2CString%3E%20%7B%0A%20%20%20%20if%20i%20%3D%3D%2042%20%7B%0A%20%20%20%20%20%20%20%20Ok(13.0)%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20Err(String%3A%3Afrom(%22acesta%20nu%20este%20num%C4%83rul%20corect%22))%20%20%20%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20result%20%3D%20execut%C4%83_ceva_ce_poate_e%C8%99ua(12)%3B%0A%0A%20%20%20%20%2F%2F%20match%20ne%20permite%20s%C4%83%20destructur%C4%83m%20Result-ul%20%C3%AEntr-un%20mod%20elegant%0A%20%20%20%20%2F%2F%20ca%20s%C4%83%20gestion%C4%83m%20toate%20cazurile%20posibile%0A%20%20%20%20match%20result%20%7B%0A%20%20%20%20%20%20%20%20Ok(v)%20%3D%3E%20println!(%22g%C4%83sit%20%7B%7D%22%2C%20v)%2C%0A%20%20%20%20%20%20%20%20Err(e)%20%3D%3E%20println!(%22Eroare%3A%20%7B%7D%22%2C%20e)%2C%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    fn execută_ceva_ce_poate_eșua(i:i32) -> Result<f32,String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("acesta nu este numărul corect"))   
+        }
+    }
+
+    fn main() {
+        let result = execută_ceva_ce_poate_eșua(12);
+
+        // match ne permite să destructurăm Result-ul într-un mod elegant
+        // ca să gestionăm toate cazurile posibile
+        match result {
+            Ok(v) => println!("găsit {}", v),
+            Err(e) => println!("Eroare: {}", e),
+        }
+    }
 - title: Main-ul care poate eșua
   content_markdown: |
     `main` are capacitatea de a returna un `Result`!
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2015&code=fn%20execut%C4%83_ceva_ce_poate_e%C8%99ua(i%3A%20i32)%20-%3E%20Result%3Cf32%2C%20String%3E%20%7B%0A%20%20%20%20if%20i%20%3D%3D%2042%20%7B%0A%20%20%20%20%20%20%20%20Ok(13.0)%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20Err(String%3A%3Afrom(%22acesta%20este%20num%C4%83rul%20corect%22))%0A%20%20%20%20%7D%0A%7D%0A%0A%2F%2F%20Main%20nu%20returneaz%C4%83%20nicio%20valoare%2C%20dar%20poate%20returna%20o%20eroare!%0Afn%20main()%20-%3E%20Result%3C()%2C%20String%3E%20%7B%0A%20%20%20%20let%20result%20%3D%20execut%C4%83_ceva_ce_poate_e%C8%99ua(12)%3B%0A%0A%20%20%20%20match%20result%20%7B%0A%20%20%20%20%20%20%20%20Ok(v)%20%3D%3E%20println!(%22g%C4%83sit%20%7B%7D%22%2C%20v)%2C%0A%20%20%20%20%20%20%20%20Err(_e)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20gestioneaz%C4%83%20aceast%C4%83%20eroare%20gra%C8%9Bios%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20returneaza%20o%20nou%C4%83%20eroare%20din%20main%20care%20explic%C4%83%20ce%20s-a%20%C3%AEnt%C3%A2mplat!%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20Err(String%3A%3Afrom(%22ceva%20nu%20a%20mers%20bine%20%C3%AEn%20main!%22))%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%0A%20%20%20%20%2F%2F%20Observa%C8%9Bi%20c%C4%83%20folosim%20o%20unitate%20%C3%AEn%20interiorul%20unui%20Result%20Ok%0A%20%20%20%20%2F%2F%20ca%20s%C4%83%20transmitem%20faptul%20c%C4%83%20totul%20a%20mers%20bine%0A%20%20%20%20Ok(())%0A%7D%0A
+  code: |
+    fn execută_ceva_ce_poate_eșua(i: i32) -> Result<f32, String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("acesta este numărul corect"))
+        }
+    }
+
+    // Main nu returnează nicio valoare, dar poate returna o eroare!
+    fn main() -> Result<(), String> {
+        let result = execută_ceva_ce_poate_eșua(12);
+
+        match result {
+            Ok(v) => println!("găsit {}", v),
+            Err(_e) => {
+                // gestionează această eroare grațios
+                
+                // returneaza o nouă eroare din main care explică ce s-a întâmplat!
+                return Err(String::from("ceva nu a mers bine în main!"));
+            }
+        }
+
+        // Observați că folosim o unitate în interiorul unui Result Ok
+        // ca să transmitem faptul că totul a mers bine
+        Ok(())
+    }
+  edition: 2015
 - title: Gestionare grațioasă a erorilor
   content_markdown: >
     `Result` e atât de des întâlnit încât Rust are un operator important, `?`, pentru a le
@@ -123,8 +228,21 @@
     }
 
     ```
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20execut%C4%83_ceva_ce_poate_e%C8%99ua(i%3A%20i32)%20-%3E%20Result%3Cf32%2C%20String%3E%20%7B%0A%20%20%20%20if%20i%20%3D%3D%2042%20%7B%0A%20%20%20%20%20%20%20%20Ok(13.0)%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20Err(String%3A%3Afrom(%22acesta%20nu%20este%20num%C4%83rul%20corect%22))%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20-%3E%20Result%3C()%2C%20String%3E%20%7B%0A%20%20%20%20%2F%2F%20Uita%C8%9Bi%20c%C3%A2t%20spa%C8%9Biu%20am%20salvat%20prin%20aceast%C4%83%20metod%C4%83%0A%20%20%20%20let%20v%20%3D%20execut%C4%83_ceva_ce_poate_e%C8%99ua(42)%3F%3B%0A%20%20%20%20println!(%22g%C4%83sit%20%7B%7D%22%2C%20v)%3B%0A%20%20%20%20Ok(())%0A%7D%0A
+  code: |
+    fn execută_ceva_ce_poate_eșua(i: i32) -> Result<f32, String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("acesta nu este numărul corect"))
+        }
+    }
+
+    fn main() -> Result<(), String> {
+        // Uitați cât spațiu am salvat prin această metodă
+        let v = execută_ceva_ce_poate_eșua(42)?;
+        println!("găsit {}", v);
+        Ok(())
+    }
 - title: Gestionarea inadecvată a enumerărilor Option/Result
   content_markdown: >
     Folosirea `Option`/`Result` poate fi obositoare când încercați doar să
@@ -179,8 +297,26 @@
 
 
     Fiți un bun Rustaceu și folosiți-vă de `match` când puteți face asta!
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20execut%C4%83_ceva_ce_poate_e%C8%99ua(i%3A%20i32)%20-%3E%20Result%3Cf32%2C%20String%3E%20%7B%0A%20%20%20%20if%20i%20%3D%3D%2042%20%7B%0A%20%20%20%20%20%20%20%20Ok(13.0)%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20Err(String%3A%3Afrom(%22acesta%20nu%20este%20num%C4%83rul%20corect%22))%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20-%3E%20Result%3C()%2C%20String%3E%20%7B%0A%20%20%20%20%2F%2F%20concis%2C%20dar%20este%20o%20presupunere%20%C8%99i%20poate%20fi%20periculos%0A%20%20%20%20let%20v%20%3D%20execut%C4%83_ceva_ce_poate_e%C8%99ua(42).unwrap()%3B%0A%20%20%20%20println!(%22g%C4%83sit%20%7B%7D%22%2C%20v)%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20aceasta%20va%20returna%20panic!%0A%20%20%20%20let%20v%20%3D%20execut%C4%83_ceva_ce_poate_e%C8%99ua(1).unwrap()%3B%0A%20%20%20%20println!(%22g%C4%83sit%20%7B%7D%22%2C%20v)%3B%0A%20%20%20%20%0A%20%20%20%20Ok(())%0A%7D%0A
+  code: |
+    fn execută_ceva_ce_poate_eșua(i: i32) -> Result<f32, String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("acesta nu este numărul corect"))
+        }
+    }
+
+    fn main() -> Result<(), String> {
+        // concis, dar este o presupunere și poate fi periculos
+        let v = execută_ceva_ce_poate_eșua(42).unwrap();
+        println!("găsit {}", v);
+        
+        // aceasta va returna panic!
+        let v = execută_ceva_ce_poate_eșua(1).unwrap();
+        println!("găsit {}", v);
+        
+        Ok(())
+    }
 - title: Vectori
   content_markdown: >
     Unele din cele mai utile tipuri generice sunt colecțiile. Un vector este o
@@ -207,8 +343,27 @@
     * Un vector începe cu o capacitate implicită; când sunt adăugate mai multe elemente decât
     poate conține, acesta
       realocă elementele sale pe heap pentru a avea o nouă listă fixă mai mare.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20%2F%2F%20Putem%20fi%20explici%C8%9Bi%20cu%20privire%20la%20tip%0A%20%20%20%20let%20mut%20i32_vec%20%3D%20Vec%3A%3A%3Ci32%3E%3A%3Anew()%3B%20%2F%2F%20turbofish%20%3C3%0A%20%20%20%20i32_vec.push(1)%3B%0A%20%20%20%20i32_vec.push(2)%3B%0A%20%20%20%20i32_vec.push(3)%3B%0A%0A%20%20%20%20%2F%2F%20Rust%20este%20foarte%20inteligent%20c%C3%A2nd%20vine%20vorba%20de%20determinarea%20automat%C4%83%20a%20tipului%0A%20%20%20%20let%20mut%20float_vec%20%3D%20Vec%3A%3Anew()%3B%0A%20%20%20%20float_vec.push(1.3)%3B%0A%20%20%20%20float_vec.push(2.3)%3B%0A%20%20%20%20float_vec.push(3.4)%3B%0A%0A%20%20%20%20%2F%2F%20Este%20un%20macro%20superb!%0A%20%20%20%20let%20string_vec%20%3D%20vec!%5BString%3A%3Afrom(%22Salutare%22)%2C%20String%3A%3Afrom(%22Lume%22)%5D%3B%0A%0A%20%20%20%20for%20cuv%C3%A2nt%20in%20string_vec.iter()%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20cuv%C3%A2nt)%3B%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    fn main() {
+        // Putem fi expliciți cu privire la tip
+        let mut i32_vec = Vec::<i32>::new(); // turbofish <3
+        i32_vec.push(1);
+        i32_vec.push(2);
+        i32_vec.push(3);
+
+        // Rust este foarte inteligent când vine vorba de determinarea automată a tipului
+        let mut float_vec = Vec::new();
+        float_vec.push(1.3);
+        float_vec.push(2.3);
+        float_vec.push(3.4);
+
+        // Este un macro superb!
+        let string_vec = vec![String::from("Salutare"), String::from("Lume")];
+
+        for cuvânt in string_vec.iter() {
+            println!("{}", cuvânt);
+        }
+    }
 - title: Capitolul 4 - Concluzie
   content_markdown: >
     Într-un singur capitol, am învățat câtă putere ne oferă tipurile generice! Nu vă

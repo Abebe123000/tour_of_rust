@@ -19,8 +19,13 @@
   content_markdown: |
     库的根模块需要在一个叫 `lib.rs` 的文件里面。
 - title: 引用其他模块和 crate
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Af64%3A%3Aconsts%3A%3API%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%22%E6%AC%A2%E8%BF%8E%E6%9D%A5%E5%88%B0%E7%BB%83%E4%B9%A0%E5%9C%BA%EF%BC%81%22)%3B%0A%20%20%20%20println!(%22%E6%88%91%E6%83%B3%E8%A6%81%E4%B8%80%E5%9D%97%20%7B%7D%EF%BC%81%22%2C%20PI)%3B%0A%7D%0A
+  code: |
+    use std::f64::consts::PI;
+
+    fn main() {
+        println!("欢迎来到练习场！");
+        println!("我想要一块 {}！", PI);
+    }
   content_markdown: >
     你可以使用完整的模块路径路径引用模块中的项目：
     `std::f64::consts::PI`。
@@ -110,8 +115,16 @@
 - title: 结构体可见性
   content_markdown: >
     就像函数一样，结构体可以使用 `pub` 声明它们想要在模块外暴露的东西。
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=%2F%2F%20SeaCreature%20%E7%BB%93%E6%9E%84%E4%BD%93%E5%9C%A8%E6%88%91%E4%BB%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%A4%96%E9%9D%A2%E4%B9%9F%E8%83%BD%E4%BD%BF%E7%94%A8%E4%BA%86%0Apub%20struct%20SeaCreature%20%7B%0A%20%20%20%20pub%20animal_type%3A%20String%2C%0A%20%20%20%20pub%20name%3A%20String%2C%0A%20%20%20%20pub%20arms%3A%20i32%2C%0A%20%20%20%20pub%20legs%3A%20i32%2C%0A%20%20%20%20%2F%2F%20%E6%88%91%E4%BB%AC%E6%8A%8A%E6%AD%A6%E5%99%A8%E4%BF%A1%E6%81%AF%E4%BF%9D%E5%AF%86%E8%B5%B7%E6%9D%A5%E5%A5%BD%E4%BA%86%0A%20%20%20%20weapon%3A%20String%2C%0A%7D%0A
+  code: |
+    // SeaCreature 结构体在我们的模块外面也能使用了
+    pub struct SeaCreature {
+        pub animal_type: String,
+        pub name: String,
+        pub arms: i32,
+        pub legs: i32,
+        // 我们把武器信息保密起来好了
+        weapon: String,
+    }
 - title: Prelude
   content_markdown: |
     你可能很好奇，为什么我们在没用 `use` 导入 `Vec` 或 `Box` 的情况下却可以到处使用它们。

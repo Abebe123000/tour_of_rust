@@ -24,8 +24,12 @@
 
     erreur dès que nous essayerions de l'utiliser!).
 - title: Pointeurs bruts (en anglais raw pointers)
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20a%20%3D%2042%3B%0A%20%20%20%20let%20memory_location%20%3D%20%26a%20as%20*const%20i32%20as%20usize%3B%0A%20%20%20%20println!(%22La%20donn%C3%A9e%20se%20trouve%20%C3%A0%20l%27adresse%20m%C3%A9moire%20%7B%7D%22%2C%20memory_location)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let a = 42;
+        let memory_location = &a as *const i32 as usize;
+        println!("La donnée se trouve à l'adresse mémoire {}", memory_location);
+    }
   content_markdown: |
     Les références peuvent être converties en un type plus primitif appelé
     *pointeurs bruts* (en anglais raw pointers). Ce type de pointeur peut
@@ -99,8 +103,26 @@
     println!("{}", (***ref_ref_ref_f).value);
     ```
 - title: Pointeurs intelligents
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Aops%3A%3ADeref%3B%0Astruct%20TattleTell%3CT%3E%20%7B%0A%20%20%20%20value%3A%20T%2C%0A%7D%0Aimpl%3CT%3E%20Deref%20for%20TattleTell%3CT%3E%20%7B%0A%20%20%20%20type%20Target%20%3D%20T%3B%0A%20%20%20%20fn%20deref(%26self)%20-%3E%20%26T%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%20was%20used!%22%2C%20std%3A%3Aany%3A%3Atype_name%3A%3A%3CT%3E())%3B%0A%20%20%20%20%20%20%20%20%26self.value%0A%20%20%20%20%7D%0A%7D%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo%20%3D%20TattleTell%20%7B%0A%20%20%20%20%20%20%20%20value%3A%20%22secret%20message%22%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20%2F%2F%20Un%20d%C3%A9r%C3%A9f%C3%A9rencement%20est%20fait%20par%20l%27appel%0A%20%20%20%20%2F%2F%20de%20la%20fonction%20%60len%60.%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo.len())%3B%0A%7D%0A
+  code: |
+    use std::ops::Deref;
+    struct TattleTell<T> {
+        value: T,
+    }
+    impl<T> Deref for TattleTell<T> {
+        type Target = T;
+        fn deref(&self) -> &T {
+            println!("{} was used!", std::any::type_name::<T>());
+            &self.value
+        }
+    }
+    fn main() {
+        let foo = TattleTell {
+            value: "secret message",
+        };
+        // Un déréférencement est fait par l'appel
+        // de la fonction `len`.
+        println!("{}", foo.len());
+    }
   content_markdown: >
     En plus de la possibilité de créer des références de données typées à
 
@@ -127,8 +149,29 @@
 
     structure est déréférencée avec les opérateurs `*` et `.`.
 - title: Code intelligents mais dangereux
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20a%3A%20%5Bu8%3B%204%5D%20%3D%20%5B86%2C%2014%2C%2073%2C%2064%5D%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20C%27est%20un%20pointeur%20brut.%20Obtenir%20l%27adresse%20m%C3%A9moire%0A%20%20%20%20%2F%2F%20d%27un%20nombre%20est%20totalement%20s%C3%BBr.%0A%20%20%20%20let%20pointer_a%20%3D%20%26a%20as%20*const%20u8%20as%20usize%3B%0A%20%20%20%20%20%20%20%20println!(%22Adresse%20m%C3%A9moire%3A%20%7B%7D%22%2C%20pointer_a)%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20Transformer%20notre%20nombre%20en%20un%20pointeur%20brut%20vers%20un%0A%20%20%20%20%2F%2F%20f32%20est%20%C3%A9galement%20s%C3%BBr.%0A%20%20%20%20let%20pointer_b%20%3D%20pointer_a%20as%20*const%20f32%3B%0A%20%20%20%20%0A%20%20%20%20let%20b%20%3D%20unsafe%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20C%27est%20dangereux%20car%20nous%20demandons%20au%20compilateur%0A%20%20%20%20%20%20%20%20%2F%2F%20de%20supposer%20que%20notre%20pointeur%20est%20un%20f32%20valide%0A%20%20%20%20%20%20%20%20%2F%2F%20et%20de%20d%C3%A9r%C3%A9f%C3%A9rencer%20sa%20valeur%20dans%20la%20variable%20b.%0A%20%20%20%20%20%20%20%20%2F%2F%20Rust%20n%27a%20aucun%20moyen%20de%20v%C3%A9rifier%20que%20cette%20hypoth%C3%A8se%0A%20%20%20%20%20%20%20%20%2F%2F%20soit%20vraie.%0A%20%20%20%20%20%20%20%20*pointer_b%0A%20%20%20%20%7D%3B%0A%20%20%20%20println!(%22Je%20jure%20que%20c%27est%20une%20tarte!%20%7B%7D%22%2C%20b)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let a: [u8; 4] = [86, 14, 73, 64];
+        
+        // C'est un pointeur brut. Obtenir l'adresse mémoire
+        // d'un nombre est totalement sûr.
+        let pointer_a = &a as *const u8 as usize;
+            println!("Adresse mémoire: {}", pointer_a);
+        
+        // Transformer notre nombre en un pointeur brut vers un
+        // f32 est également sûr.
+        let pointer_b = pointer_a as *const f32;
+        
+        let b = unsafe {
+            // C'est dangereux car nous demandons au compilateur
+            // de supposer que notre pointeur est un f32 valide
+            // et de déréférencer sa valeur dans la variable b.
+            // Rust n'a aucun moyen de vérifier que cette hypothèse
+            // soit vraie.
+            *pointer_b
+        };
+        println!("Je jure que c'est une tarte! {}", b);
+    }
   content_markdown: >
     Les pointeurs intelligents ont tendance à utiliser assez souvent du code
 
@@ -159,8 +202,54 @@
 
     pas de traces), il place le déréférencement dans un bloc `unsafe {...}`.
 - title: Amis familiers
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Aalloc%3A%3A%7Balloc%2C%20Layout%7D%3B%0Ause%20std%3A%3Aops%3A%3ADeref%3B%0A%0Astruct%20Pie%20%7B%0A%20%20%20%20secret_recipe%3A%20usize%2C%0A%7D%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20new()%20-%3E%20Self%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20On%20d%C3%A9finit%20l'agencement%20que%20doit%20avoir%20la%20m%C3%A9moire%0A%20%20%20%20%20%20%20%20%2F%2F%20pour%20pouvoir%20allouer%204%20octets.%0A%20%20%20%20%20%20%20%20let%20layout%20%3D%20Layout%3A%3Afrom_size_align(4%2C%201).unwrap()%3B%0A%0A%20%20%20%20%20%20%20%20unsafe%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20Alloue%20nos%204%20octets%20en%20m%C3%A9moire%20et%20sauvegarde%20la%20position%0A%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20de%20d%C3%A9but%20en%20tant%20qu'entier.%0A%20%20%20%20%20%20%20%20%20%20%20%20let%20ptr%20%3D%20alloc(layout)%20as%20*mut%20u8%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20On%20%C3%A9crit%20quelques%20valeurs%20u8%20en%20m%C3%A9moire%20avec%0A%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20un%20peu%20d'arithm%C3%A9tique%20des%20pointeurs.%0A%20%20%20%20%20%20%20%20%20%20%20%20ptr.write(86)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20ptr.add(1).write(14)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20ptr.add(2).write(73)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20ptr.add(3).write(64)%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20Pie%20%7B%20secret_recipe%3A%20ptr%20as%20usize%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%7D%0Aimpl%20Deref%20for%20Pie%20%7B%0A%20%20%20%20type%20Target%20%3D%20f32%3B%0A%20%20%20%20fn%20deref(%26self)%20-%3E%20%26f32%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20Interpr%C3%A8te%20le%20pointeur%20secret_recipe%20en%20tant%20que%0A%20%20%20%20%20%20%20%20%2F%2F%20pointeur%20brut%20f32.%0A%20%20%20%20%20%20%20%20let%20pointer%20%3D%20self.secret_recipe%20as%20*const%20f32%3B%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%2F%2F%20D%C3%A9r%C3%A9f%C3%A9rence%20le%20pointeur%20brut%20et%20retourne%20une%0A%20%20%20%20%20%20%20%20%2F%2F%20valeur%20%26f32.%0A%20%20%20%20%20%20%20%20unsafe%20%7B%20%26*pointer%20%7D%0A%20%20%20%20%7D%0A%7D%0Afn%20main()%20%7B%0A%20%20%20%20let%20p%20%3D%20Pie%3A%3Anew()%3B%0A%20%20%20%20%2F%2F%20On%20d%C3%A9r%C3%A9f%C3%A9rence%20le%20pointeur%20intelligent%20de%20notre%0A%20%20%20%20%2F%2F%20structure%20Pie.%0A%20%20%20%20println!(%22%7B%3A%3F%7D%22%2C%20*p)%3B%0A%7D%0A
+  code: |
+    use std::alloc::{alloc, Layout};
+    use std::ops::Deref;
+
+    struct Pie {
+        secret_recipe: usize,
+    }
+
+    impl Pie {
+        fn new() -> Self {
+            // On définit l'agencement que doit avoir la mémoire
+            // pour pouvoir allouer 4 octets.
+            let layout = Layout::from_size_align(4, 1).unwrap();
+
+            unsafe {
+                // Alloue nos 4 octets en mémoire et sauvegarde la position
+                // de début en tant qu'entier.
+                let ptr = alloc(layout) as *mut u8;
+                
+                // On écrit quelques valeurs u8 en mémoire avec
+                // un peu d'arithmétique des pointeurs.
+                ptr.write(86);
+                ptr.add(1).write(14);
+                ptr.add(2).write(73);
+                ptr.add(3).write(64);
+
+                Pie { secret_recipe: ptr as usize }
+            }
+        }
+    }
+    impl Deref for Pie {
+        type Target = f32;
+        fn deref(&self) -> &f32 {
+            // Interprète le pointeur secret_recipe en tant que
+            // pointeur brut f32.
+            let pointer = self.secret_recipe as *const f32;
+            
+            // Déréférence le pointeur brut et retourne une
+            // valeur &f32.
+            unsafe { &*pointer }
+        }
+    }
+    fn main() {
+        let p = Pie::new();
+        // On déréférence le pointeur intelligent de notre
+        // structure Pie.
+        println!("{:?}", *p);
+    }
   content_markdown: >
     Revenons sur quelques pointeurs intelligents que tu connais déjà: `Vec<T>`
     et `String`.
@@ -204,8 +293,19 @@
 
     pour allouer soi-même une région de la mémoire.
 - title: Mémoire allouée sur le tas
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Pie%3B%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20eat(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22C%27est%20bien%20meilleur%20sur%20le%20tas!%22)%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20heap_pie%20%3D%20Box%3A%3Anew(Pie)%3B%0A%20%20%20%20heap_pie.eat()%3B%0A%7D%0A
+  code: |
+    struct Pie;
+
+    impl Pie {
+        fn eat(&self) {
+            println!("C'est bien meilleur sur le tas!")
+        }
+    }
+
+    fn main() {
+        let heap_pie = Box::new(Pie);
+        heap_pie.eat();
+    }
   content_markdown: |
     `Box` est un pointeur intelligent qui nous permet de déplacer des données
     de la pile vers le tas.
@@ -213,8 +313,34 @@
     Le déréférencement nous permet d'utiliser les données allouées sur le tas
     de manière ergonomique comme s'il s'agissait du type d'origine.
 - title: Renvoi d'erreurs dans le main revisité
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20core%3A%3Afmt%3A%3ADisplay%3B%0Ause%20std%3A%3Aerror%3A%3AError%3B%0A%0Astruct%20Pie%3B%0A%0A%23%5Bderive(Debug)%5D%0Astruct%20NotFreshError%3B%0A%0Aimpl%20Display%20for%20NotFreshError%20%7B%0A%20%20%20%20fn%20fmt(%26self%2C%20f%3A%20%26mut%20std%3A%3Afmt%3A%3AFormatter%3C%27_%3E)%20-%3E%20std%3A%3Afmt%3A%3AResult%20%7B%0A%20%20%20%20%20%20%20%20write!(f%2C%20%22La%20tarte%20n%27est%20pas%20fra%C3%AEche!%22)%0A%20%20%20%20%7D%0A%7D%0A%0Aimpl%20Error%20for%20NotFreshError%20%7B%7D%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20eat(%26self)%20-%3E%20Result%3C()%2C%20Box%3Cdyn%20Error%3E%3E%20%7B%0A%20%20%20%20%20%20%20%20Err(Box%3A%3Anew(NotFreshError))%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20-%3E%20Result%3C()%2C%20Box%3Cdyn%20Error%3E%3E%20%7B%0A%20%20%20%20let%20heap_pie%20%3D%20Box%3A%3Anew(Pie)%3B%0A%20%20%20%20heap_pie.eat()%3F%3B%0A%20%20%20%20Ok(())%0A%7D%0A
+  code: |
+    use core::fmt::Display;
+    use std::error::Error;
+
+    struct Pie;
+
+    #[derive(Debug)]
+    struct NotFreshError;
+
+    impl Display for NotFreshError {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "La tarte n'est pas fraîche!")
+        }
+    }
+
+    impl Error for NotFreshError {}
+
+    impl Pie {
+        fn eat(&self) -> Result<(), Box<dyn Error>> {
+            Err(Box::new(NotFreshError))
+        }
+    }
+
+    fn main() -> Result<(), Box<dyn Error>> {
+        let heap_pie = Box::new(Pie);
+        heap_pie.eat()?;
+        Ok(())
+    }
   content_markdown: |
     Rust possède une pléthore de représentations d'erreurs, mais la bibliothèque
     standard met à disposition un trait universel `std::error::Error` pour
@@ -235,8 +361,29 @@
     fn main() -> Result<(), Box<dyn std::error::Error>>
     ```
 - title: Multi-propriétaire
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Arc%3A%3ARc%3B%0A%0Astruct%20Pie%3B%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20eat(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22C%27est%20bien%20meilleur%20sur%20le%20tas!%22)%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20heap_pie%20%3D%20Rc%3A%3Anew(Pie)%3B%0A%20%20%20%20let%20heap_pie2%20%3D%20heap_pie.clone()%3B%0A%20%20%20%20let%20heap_pie3%20%3D%20heap_pie2.clone()%3B%0A%0A%20%20%20%20heap_pie3.eat()%3B%0A%20%20%20%20heap_pie2.eat()%3B%0A%20%20%20%20heap_pie.eat()%3B%0A%0A%20%20%20%20%2F%2F%20Les%20donn%C3%A9es%20de%20Pie%20se%20trouvant%20sur%20le%20tas%20sont%0A%20%20%20%20%2F%2F%20d%C3%A9sallou%C3%A9es%20ici.%0A%7D%0A
+  code: |
+    use std::rc::Rc;
+
+    struct Pie;
+
+    impl Pie {
+        fn eat(&self) {
+            println!("C'est bien meilleur sur le tas!")
+        }
+    }
+
+    fn main() {
+        let heap_pie = Rc::new(Pie);
+        let heap_pie2 = heap_pie.clone();
+        let heap_pie3 = heap_pie2.clone();
+
+        heap_pie3.eat();
+        heap_pie2.eat();
+        heap_pie.eat();
+
+        // Les données de Pie se trouvant sur le tas sont
+        // désallouées ici.
+    }
   content_markdown: |
     `Rc` (en anglais Reference Counting) est un pointeur intelligent qui
     déplace les données de la pile vers le tas. Celui-ci peut être cloné
@@ -245,8 +392,40 @@
     Ce n'est que lorsque le dernier pointeur intelligent est déalloué que les
     données du tas sont désallouées.
 - title: Partage d'accès
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Acell%3A%3ARefCell%3B%0A%0Astruct%20Pie%20%7B%0A%20%20%20%20slices%3A%20u8%0A%7D%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20eat(%26mut%20self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22C%27est%20bien%20meilleur%20sur%20le%20tas!%22)%3B%0A%20%20%20%20%20%20%20%20self.slices%20-%3D%201%3B%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20RefCell%20valide%20les%20r%C3%A8gles%20de%20s%C3%A9curit%C3%A9%20li%C3%A9es%0A%20%20%20%20%2F%2F%20%C3%A0%20la%20m%C3%A9moire%20lors%20de%20l%27ex%C3%A9cution.%0A%20%20%20%20%2F%2F%20Note%3A%20pie_cell%20n%27est%20pas%20mutable!%0A%20%20%20%20let%20pie_cell%20%3D%20RefCell%3A%3Anew(Pie%7Bslices%3A8%7D)%3B%0A%20%20%20%20%0A%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20Mais%20rien%20n%27emp%C3%AAche%20d%27emprunter%20une%20r%C3%A9f%C3%A9rence%20mutable!%0A%20%20%20%20%20%20%20%20let%20mut%20mut_ref_pie%20%3D%20pie_cell.borrow_mut()%3B%0A%20%20%20%20%20%20%20%20mut_ref_pie.eat()%3B%0A%20%20%20%20%20%20%20%20mut_ref_pie.eat()%3B%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%2F%2F%20mut_ref_pie%20est%20d%C3%A9sallou%C3%A9%20ici.%0A%20%20%20%20%7D%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20Nous%20pouvons%20emprunter%20une%20r%C3%A9f%C3%A9rence%20immuable%20car%0A%20%20%20%20%2F%2F%20la%20r%C3%A9f%C3%A9rence%20mutable%20vient%20d%27%C3%AAtre%20d%C3%A9sallou%C3%A9e.%0A%20%20%20%20%20let%20ref_pie%20%3D%20pie_cell.borrow()%3B%0A%20%20%20%20%20println!(%22%7B%7D%20slices%20left%22%2Cref_pie.slices)%3B%0A%7D%0A
+  code: |
+    use std::cell::RefCell;
+
+    struct Pie {
+        slices: u8
+    }
+
+    impl Pie {
+        fn eat(&mut self) {
+            println!("C'est bien meilleur sur le tas!");
+            self.slices -= 1;
+        }
+    }
+
+    fn main() {
+        // RefCell valide les règles de sécurité liées
+        // à la mémoire lors de l'exécution.
+        // Note: pie_cell n'est pas mutable!
+        let pie_cell = RefCell::new(Pie{slices:8});
+        
+        {
+            // Mais rien n'empêche d'emprunter une référence mutable!
+            let mut mut_ref_pie = pie_cell.borrow_mut();
+            mut_ref_pie.eat();
+            mut_ref_pie.eat();
+            
+            // mut_ref_pie est désalloué ici.
+        }
+        
+        // Nous pouvons emprunter une référence immuable car
+        // la référence mutable vient d'être désallouée.
+         let ref_pie = pie_cell.borrow();
+         println!("{} slices left",ref_pie.slices);
+    }
   content_markdown: >
     `RefCell` est une structure de données couramment détenue par des pointeurs
 
@@ -265,8 +444,31 @@
 
     Si vous violez ces règles, `RefCell` paniquera.
 - title: Partage entre threads
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Async%3A%3AMutex%3B%0A%0Astruct%20Pie%3B%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20eat(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22Je%20suis%20le%20seul%20%C3%A0%20pouvoir%20manger%20la%20tarte!%22)%3B%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20mutex_pie%20%3D%20Mutex%3A%3Anew(Pie)%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20On%20emprunte%20une%20r%C3%A9f%C3%A9rence%20immuable.%20Celle-ci%20doit%20%C3%AAtre%0A%20%20%20%20%2F%2F%20verrouill%C3%A9e%20(en%20anglais%20locked).%20On%20doit%20%C3%A9galement%20faire%0A%20%20%20%20%2F%2F%20appel%20%C3%A0%20'unwrap'%20car%20l'appel%20%C3%A0%20'lock'%20peut%20%C3%A9chouer.%0A%20%20%20%20let%20ref_pie%20%3D%20mutex_pie.lock().unwrap()%3B%0A%20%20%20%20%0A%20%20%20%20ref_pie.eat()%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20La%20r%C3%A9f%C3%A9rence%20ref_pie%20est%20d%C3%A9sallou%C3%A9e%20ici.%20mutex_pie%0A%20%20%20%20%2F%2F%20pourrait%20de%20nouveau%20%C3%AAtre%20utilis%C3%A9%20ici.%0A%20%20%20%20%0A%7D%0A
+  code: |
+    use std::sync::Mutex;
+
+    struct Pie;
+
+    impl Pie {
+        fn eat(&self) {
+            println!("Je suis le seul à pouvoir manger la tarte!");
+        }
+    }
+
+    fn main() {
+        let mutex_pie = Mutex::new(Pie);
+        
+        // On emprunte une référence immuable. Celle-ci doit être
+        // verrouillée (en anglais locked). On doit également faire
+        // appel à 'unwrap' car l'appel à 'lock' peut échouer.
+        let ref_pie = mutex_pie.lock().unwrap();
+        
+        ref_pie.eat();
+        
+        // La référence ref_pie est désallouée ici. mutex_pie
+        // pourrait de nouveau être utilisé ici.
+        
+    }
   content_markdown: >
     `Mutex` est une structure de données (couramment détenue par des pointeurs
 
@@ -297,8 +499,54 @@
 
     pour avoir plusieurs références vers un même `Mutex`.
 - title: Utilisation avancée des pointeurs intelligents
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Acell%3A%3ARefCell%3B%0Ause%20std%3A%3Arc%3A%3ARc%3B%0A%0Astruct%20Pie%20%7B%0A%20%20%20%20slices%3A%20u8%2C%0A%7D%0A%0Aimpl%20Pie%20%7B%0A%20%20%20%20fn%20eat_slice(%26mut%20self%2C%20name%3A%20%26str)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%20a%20pris%20une%20part!%22%2C%20name)%3B%0A%20%20%20%20%20%20%20%20self.slices%20-%3D%201%3B%0A%20%20%20%20%7D%0A%7D%0A%0Astruct%20SeaCreature%20%7B%0A%20%20%20%20name%3A%20String%2C%0A%20%20%20%20pie%3A%20Rc%3CRefCell%3CPie%3E%3E%2C%0A%7D%0A%0Aimpl%20SeaCreature%20%7B%0A%20%20%20%20fn%20eat(%26self)%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20Utilise%20un%20pointeur%20intelligent%20vers%20Pie%20pour%0A%20%20%20%20%20%20%20%20%2F%2F%20effectuer%20un%20emprunt%20mutable.%0A%20%20%20%20%20%20%20%20let%20mut%20p%20%3D%20self.pie.borrow_mut()%3B%0A%20%20%20%20%20%20%20%20%2F%2F%20On%20modifie%20la%20donn%C3%A9e.%0A%20%20%20%20%20%20%20%20p.eat_slice(%26self.name)%3B%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20pie%20%3D%20Rc%3A%3Anew(RefCell%3A%3Anew(Pie%20%7B%20slices%3A%208%20%7D))%3B%0A%20%20%20%20%2F%2F%20Ferris%20et%20Sarah%20sont%20cr%C3%A9%C3%A9s%20avec%20des%20clones%20de%0A%20%20%20%20%2F%2F%20pointeurs%20intelligents%20vers%20Pie.%0A%20%20%20%20let%20ferris%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20name%3A%20String%3A%3Afrom(%22ferris%22)%2C%0A%20%20%20%20%20%20%20%20pie%3A%20pie.clone()%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20let%20sarah%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20name%3A%20String%3A%3Afrom(%22sarah%22)%2C%0A%20%20%20%20%20%20%20%20pie%3A%20pie.clone()%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20ferris.eat()%3B%0A%20%20%20%20sarah.eat()%3B%0A%0A%20%20%20%20let%20p%20%3D%20pie.borrow()%3B%0A%20%20%20%20println!(%22%7B%7D%20parts%20restantes.%22%2C%20p.slices)%3B%0A%7D%0A
+  code: |
+    use std::cell::RefCell;
+    use std::rc::Rc;
+
+    struct Pie {
+        slices: u8,
+    }
+
+    impl Pie {
+        fn eat_slice(&mut self, name: &str) {
+            println!("{} a pris une part!", name);
+            self.slices -= 1;
+        }
+    }
+
+    struct SeaCreature {
+        name: String,
+        pie: Rc<RefCell<Pie>>,
+    }
+
+    impl SeaCreature {
+        fn eat(&self) {
+            // Utilise un pointeur intelligent vers Pie pour
+            // effectuer un emprunt mutable.
+            let mut p = self.pie.borrow_mut();
+            // On modifie la donnée.
+            p.eat_slice(&self.name);
+        }
+    }
+
+    fn main() {
+        let pie = Rc::new(RefCell::new(Pie { slices: 8 }));
+        // Ferris et Sarah sont créés avec des clones de
+        // pointeurs intelligents vers Pie.
+        let ferris = SeaCreature {
+            name: String::from("ferris"),
+            pie: pie.clone(),
+        };
+        let sarah = SeaCreature {
+            name: String::from("sarah"),
+            pie: pie.clone(),
+        };
+        ferris.eat();
+        sarah.eat();
+
+        let p = pie.borrow();
+        println!("{} parts restantes.", p.slices);
+    }
   content_markdown: |
     Les pointeurs intelligents peuvent sembler limités, mais ils peuvent
     être utilisés de manière très puissante avec les structures que nous

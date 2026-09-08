@@ -1,11 +1,11 @@
-const showdown = require("showdown");
-const fs = require("fs");
-const yaml = require("js-yaml");
+const showdown = require('showdown');
+const fs = require('fs');
+const yaml = require('js-yaml');
+const { buildPlaygroundUrl } = require('./scripts/lib/playground');
 
 const lessonSource = process.argv[2];
 const targetDir = process.argv[3];
-const generateBetaContent =
-  process.argv.length >= 4 && process.argv[4] === "beta";
+const generateBetaContent = process.argv.length >= 4 && process.argv[4] === 'beta';
 
 /**
  * @param {number} num
@@ -13,7 +13,7 @@ const generateBetaContent =
  */
 function pad(num) {
   const s = `${num}`;
-  return s.padStart(2, "0");
+  return s.padStart(2, '0');
 }
 
 /**
@@ -24,8 +24,8 @@ function pad(num) {
  * @returns {string}
  */
 function getFileName(lang, i, isBeta, chapter) {
-  if (i === 0 && lang === "en") {
-    return "index.html";
+  if (i === 0 && lang === 'en') {
+    return 'index.html';
   }
   let fileName = `${pad(i)}_${lang}.html`;
   if (chapter !== undefined && chapter !== null) {
@@ -38,11 +38,10 @@ function getFileName(lang, i, isBeta, chapter) {
  * @param {string} source
  * @returns {string[]}
  */
-const getDirectories = (source) =>
-  fs
-    .readdirSync(source, { withFileTypes: true })
-    .filter((dirent) => dirent.isDirectory())
-    .map((dirent) => dirent.name);
+const getDirectories = (source) => fs
+  .readdirSync(source, { withFileTypes: true })
+  .filter((dirent) => dirent.isDirectory())
+  .map((dirent) => dirent.name);
 
 /**
  * @param {string} path
@@ -60,10 +59,10 @@ languages.forEach((lang) => {
   commonWords[lang] = getYaml(`${langDir}/common_words.yaml`);
   const languageFiles = fs
     .readdirSync(langDir, { withFileTypes: true })
-    .filter((f) => f.isFile() && f.name.indexOf("chapter_") === 0)
+    .filter((f) => f.isFile() && f.name.indexOf('chapter_') === 0)
     .map((f) => f.name);
   languageFiles.forEach((l) => {
-    const chap = parseInt(l.substring(8, l.indexOf(".")), 10);
+    const chap = parseInt(l.substring(8, l.indexOf('.')), 10);
     if (chapters[chap] === undefined) {
       chapters[chap] = {};
     }
@@ -93,6 +92,22 @@ const lessons = {
 const converter = new showdown.Converter();
 
 /**
+ * `code` is either a raw Rust source snippet (the modern format, migrated in
+ * #9 so that lessons/*.yaml diffs are human-readable) or, for entries not
+ * yet migrated (external gist references, WebAssembly Studio embeds, etc.),
+ * an already-complete embed URL to pass through unchanged.
+ * @param {string|undefined} code
+ * @param {number|string|undefined} edition
+ * @returns {string|undefined}
+ */
+function resolvePlaygroundCode(code, edition) {
+  if (!code || /^https?:\/\//.test(code)) {
+    return code;
+  }
+  return buildPlaygroundUrl(code, { edition });
+}
+
+/**
  * @param {string[]} words
  * @param {string} lang
  * @param {string} w
@@ -112,16 +127,16 @@ function getWord(words, lang, w) {
  * @returns {string}
  */
 const getHead = (words, lang) => {
-  let rtl_langs = ["ar"];
-  let lang_dir = rtl_langs.includes(lang) ? "rtl" : "ltr";
+  const rtl_langs = ['ar'];
+  const lang_dir = rtl_langs.includes(lang) ? 'rtl' : 'ltr';
   return `<!DOCTYPE html>
     <html lang="${lang}" dir="${lang_dir}">
     <head>
         <title>${getWord(
-          words,
-          lang,
-          "tor"
-        )} - Let's go on an adventure!</title>
+    words,
+    lang,
+    'tor',
+  )} - Let's go on an adventure!</title>
 
         <meta charset="UTF-8">
         <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
@@ -169,70 +184,70 @@ function template(
   index,
   isLast,
   words,
-  isBeta
+  isBeta,
 ) {
   return `${getHead(words, lang)}
     <body>
         <div class="tour">
             <div class="header">
                 <span class="title"><a href="${getFileName(
-                  lang,
-                  0,
-                  isBeta,
-                  lessonsData[0]?.chapter
-                )}">${getWord(words, lang, "tor")}</a></span>
+    lang,
+    0,
+    isBeta,
+    lessonsData[0]?.chapter,
+  )}">${getWord(words, lang, 'tor')}</a></span>
                 <span class="nav">
                 <span class="toc"><a href="TOC_${lang}.html">${getWord(
-    words,
-    lang,
-    "toc"
-  )}</a></span>
+  words,
+  lang,
+  'toc',
+)}</a></span>
             </div>
             <div class="page">
             <h1>${title}</h1>
             ${content}
             <div class="bottomnav">
                 ${
-                  index !== 0
-                    ? `<span class="back"><a href="${
-                        isBeta ? "beta_" : ""
-                      }${getFileName(
-                        lang,
-                        index - 1,
-                        isBeta,
-                        lessonsData[index - 1]?.chapter
-                      )}" rel="prev">❮ ${getWord(
-                        words,
-                        lang,
-                        "previous"
-                      )}</a></span>`
-                    : ""
-                }
+  index !== 0
+    ? `<span class="back"><a href="${
+      isBeta ? 'beta_' : ''
+    }${getFileName(
+      lang,
+      index - 1,
+      isBeta,
+      lessonsData[index - 1]?.chapter,
+    )}" rel="prev">❮ ${getWord(
+      words,
+      lang,
+      'previous',
+    )}</a></span>`
+    : ''
+}
                 ${
-                  isLast
-                    ? ""
-                    : `<span class="next"><a href="${
-                        isBeta ? "beta_" : ""
-                      }${getFileName(
-                        lang,
-                        index + 1,
-                        isBeta,
-                        lessonsData[index + 1]?.chapter
-                      )}" rel="next">${getWord(
-                        words,
-                        lang,
-                        "next"
-                      )} ❯</a></span>`
-                }
+  isLast
+    ? ''
+    : `<span class="next"><a href="${
+      isBeta ? 'beta_' : ''
+    }${getFileName(
+      lang,
+      index + 1,
+      isBeta,
+      lessonsData[index + 1]?.chapter,
+    )}" rel="next">${getWord(
+      words,
+      lang,
+      'next',
+    )} ❯</a></span>`
+}
             </div>
             </div>
             ${
-              code
-                ? `<div class="code">
+  code
+    ? `<div class="code">
             <iframe width="100%" src="${code}" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals" title="Rust Playground" loading="lazy"></iframe>
             </div>`
-                : '<div class="code"><center><img src="/ferris_lofi.png" alt="Mascot Ferris" width="300" height="236"></center></div>'
-            }
+    : '<div class="code"><center><img src="/ferris_lofi.png" alt="Mascot Ferris" width="300" height="236"></center></div>'
+}
             <div class="sitefooter">Unofficial fork of <a href="https://github.com/richardanaya/tour_of_rust">Tour of Rust</a> (&copy; Richard Anaya, MIT License) &mdash; <a href="https://github.com/Abebe123000/tour_of_rust">Source</a> / <a href="https://github.com/Abebe123000/tour_of_rust/blob/master/LICENSE">License</a></div>
         </div>
     </body>
@@ -252,15 +267,15 @@ languages.forEach((lang) => {
 
   langLessons.forEach((lesson, i) => {
     let fileName = getFileName(lang, i, false, lesson?.chapter);
-    if (i === 0 && lang === "en") {
-      fileName = "index.html";
+    if (i === 0 && lang === 'en') {
+      fileName = 'index.html';
     }
 
-    let lessonTitle = `[${getWord(words, lang, "untranslated")}] ${
+    let lessonTitle = `[${getWord(words, lang, 'untranslated')}] ${
       lesson.en.title
     }`;
     let lessonContent = converter.makeHtml(lesson.en.content_markdown);
-    let lessonCode = lesson.en.code;
+    let lessonCode = resolvePlaygroundCode(lesson.en.code, lesson.en.edition);
     if (lesson[lang]) {
       let targetLang = lang;
       if (lesson[lang].clone) {
@@ -273,11 +288,14 @@ languages.forEach((lang) => {
         content = converter.makeHtml(lesson[targetLang].content_markdown);
       }
       lessonContent = content;
-      lessonCode = lesson[targetLang].code || lesson.en.code;
+      lessonCode = resolvePlaygroundCode(
+        lesson[targetLang].code || lesson.en.code,
+        lesson[targetLang].edition || lesson.en.edition,
+      );
 
       if (lesson[lang].clone) {
         if (lesson[lang].code) {
-          lessonCode = lesson[lang].code;
+          lessonCode = resolvePlaygroundCode(lesson[lang].code, lesson[lang].edition);
         }
       }
     }
@@ -293,8 +311,8 @@ languages.forEach((lang) => {
         c,
         i === langLessons.length - 1,
         words,
-        false
-      )
+        false,
+      ),
     );
     c += 1;
   });
@@ -309,11 +327,11 @@ languages.forEach((lang) => {
       }
       const fileName = getFileName(lang, i, true, lesson.chapter);
 
-      let lessonTitle = `[${getWord(words, targetLang, "untranslated")}] ${
+      let lessonTitle = `[${getWord(words, targetLang, 'untranslated')}] ${
         lesson.en.title
       }`;
       let lessonContent = lesson.en.content_markdown;
-      let lessonCode = lesson.en.code;
+      let lessonCode = resolvePlaygroundCode(lesson.en.code, lesson.en.edition);
       if (lesson[targetLang]) {
         lessonTitle = lesson[targetLang].title;
         let content = lesson[targetLang].content_html;
@@ -321,7 +339,10 @@ languages.forEach((lang) => {
           content = converter.makeHtml(lesson[targetLang].content_markdown);
         }
         lessonContent = content;
-        lessonCode = lesson[targetLang].code || lesson.en.code;
+        lessonCode = resolvePlaygroundCode(
+          lesson[targetLang].code || lesson.en.code,
+          lesson[targetLang].edition || lesson.en.edition,
+        );
       }
       fs.writeFileSync(
         `${targetDir}/beta_${fileName}`,
@@ -334,8 +355,8 @@ languages.forEach((lang) => {
           c,
           i === betaLessons.length - 1,
           words,
-          true
-        )
+          true,
+        ),
       );
       c += 1;
     }
@@ -349,50 +370,50 @@ languages.forEach((lang) => {
         <div class="tour">
             <div class="header">
                 <span class="title"><a href="${getFileName(lang, 0)}">${getWord(
-      words,
-      lang,
-      "tor"
-    )}</a></span>
+  words,
+  lang,
+  'tor',
+)}</a></span>
                 <span class="nav">
                 </span>
             </div>
             <div>
-            <h1>${getWord(words, lang, "lessons")}</h1>
+            <h1>${getWord(words, lang, 'lessons')}</h1>
             <ul>
         ${langLessons
-          .map((x, i) => {
-            let targetLang = lang;
-            if (x[lang] && x[lang].clone) {
-              targetLang = x[lang].clone;
-            }
-            let s = `<li><a href="${getFileName(lang, i, false, x.chapter)}">${
-              x[targetLang]
-                ? x[targetLang].title
-                : `[${getWord(words, targetLang, "untranslated")}] ${
-                    x.en.title
-                  }`
-            }</a></li>`;
-            if (x.chapter !== undefined) {
-              s = `</ul><h3><a href="${getFileName(
-                lang,
-                i,
-                false,
-                x.chapter
-              )}">${
-                x[targetLang]
-                  ? x[targetLang].title
-                  : `[${getWord(words, targetLang, "untranslated")}] ${
-                      x.en.title
-                    }`
-              }</a></h3><ul>`;
-            }
-            return s;
-          })
-          .join("\n")}
+    .map((x, i) => {
+      let targetLang = lang;
+      if (x[lang] && x[lang].clone) {
+        targetLang = x[lang].clone;
+      }
+      let s = `<li><a href="${getFileName(lang, i, false, x.chapter)}">${
+        x[targetLang]
+          ? x[targetLang].title
+          : `[${getWord(words, targetLang, 'untranslated')}] ${
+            x.en.title
+          }`
+      }</a></li>`;
+      if (x.chapter !== undefined) {
+        s = `</ul><h3><a href="${getFileName(
+          lang,
+          i,
+          false,
+          x.chapter,
+        )}">${
+          x[targetLang]
+            ? x[targetLang].title
+            : `[${getWord(words, targetLang, 'untranslated')}] ${
+              x.en.title
+            }`
+        }</a></h3><ul>`;
+      }
+      return s;
+    })
+    .join('\n')}
             </ul>
             </div>
         </div>
     </body>
-    </html>`
+    </html>`,
   );
 });

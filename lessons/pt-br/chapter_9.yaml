@@ -19,8 +19,13 @@
   content_markdown: |
     Uma biblioteca possui um módulo raiz em um arquivo chamado `lib.rs`.
 - title: Referenciando outros módulos e crates
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Af64%3A%3Aconsts%3A%3API%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%22Bem-vindo%20ao%20playground!%22)%3B%0A%20%20%20%20println!(%22Eu%20adoraria%20uma%20fatia%20de%20%7B%7D!%22%2C%20PI)%3B%0A%7D%0A
+  code: |
+    use std::f64::consts::PI;
+
+    fn main() {
+        println!("Bem-vindo ao playground!");
+        println!("Eu adoraria uma fatia de {}!", PI);
+    }
   content_markdown: >
     Os itens nos módulos podem ser referenciados com o seu caminho completo do módulo `std::f64::consts::PI`.
 
@@ -101,8 +106,16 @@
 - title: Visibilidade da estrutura
   content_markdown: >
     Assim como as funções, as estruturas podem declarar o que desejam que seja exposto para fora de seu módulo usando `pub`.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=%2F%2F%20A%20struct%20CraturaMarinha%20ser%C3%A1%20us%C3%A1vel%20fora%20do%20nosso%20m%C3%B3dulo%0Apub%20struct%20CraturaMarinha%20%7B%0A%20%20%20%20pub%20tipo_animal%3A%20String%2C%0A%20%20%20%20pub%20nome%3A%20String%2C%0A%20%20%20%20pub%20bracos%3A%20i32%2C%0A%20%20%20%20pub%20patas%3A%20i32%2C%0A%20%20%20%20%2F%2F%20vamos%20manter%20nossa%20defesa%20privada%0A%20%20%20%20defesa%3A%20String%2C%0A%7D%0A
+  code: |
+    // A struct CraturaMarinha será usável fora do nosso módulo
+    pub struct CraturaMarinha {
+        pub tipo_animal: String,
+        pub nome: String,
+        pub bracos: i32,
+        pub patas: i32,
+        // vamos manter nossa defesa privada
+        defesa: String,
+    }
 - title: Prelude
   content_markdown: |
     Você pode estar se perguntando como temos acesso ao `Vec` ou` Box` em qualquer lugar sem um `use` para importá-los. É por causa do módulo `prelude` na biblioteca padrão.

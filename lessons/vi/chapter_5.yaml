@@ -9,8 +9,16 @@
     Việc khởi tạo một kiểu và **binding**(ràng buộc) nó với một tên biến sẽ tạo ra một tài nguyên 
     bộ nhớ mà trình biên dịch Rust sẽ xác thực thông qua toàn bộ **lifetime**(thời gian tồn tại) của nó. 
     Biến bị ràng buộc được gọi là **owner**(chủ sở hữu) của tài nguyên.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20Ch%C3%BAng%20ta%20kh%E1%BB%9Fi%20t%E1%BA%A1o%20struct%20v%C3%A0%20li%C3%AAn%20k%E1%BA%BFt%20v%E1%BB%9Bi%20c%C3%A1c%20bi%E1%BA%BFn%20%C4%91%E1%BB%83%20t%E1%BA%A1o%20t%C3%A0i%20nguy%C3%AAn%20b%E1%BB%99%20nh%E1%BB%9B%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20%2F%2F%20foo%20l%C3%A0%20ch%E1%BB%A7%20s%E1%BB%9F%20h%E1%BB%AFu%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        // Chúng ta khởi tạo struct và liên kết với các biến để tạo tài nguyên bộ nhớ
+        let foo = Foo { x: 42 };
+        // foo là chủ sở hữu
+    }
 - title: Quản lý tài nguyên dựa trên phạm vi(Scope-Based)
   content_markdown: |
     Rust sử dụng phần cuối của scope(phạm vi) làm nơi để giải cấu trúc(deconstruct) 
@@ -21,7 +29,21 @@
     Chi tiết bộ nhớ:
     * Rust không có bộ sưu tập rác.
     * Đây còn được gọi là Khởi tạo Tài nguyên (Resource Acquisition Is Initialization - RAII) trong C ++.
-  code: https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo_a%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20foo_b%20%3D%20Foo%20%7B%20x%3A%2013%20%7D%3B%0A%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo_a.x)%3B%0A%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo_b.x)%3B%0A%20%20%20%20%2F%2F%20foo_b%20b%E1%BB%8B%20drop%20%E1%BB%9F%20%C4%91%C3%A2y%20%0A%20%20%20%20%2F%2F%20foo_a%20b%E1%BB%8B%20drop%20%E1%BB%9F%20%C4%91%C3%A2y%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        let foo_a = Foo { x: 42 };
+        let foo_b = Foo { x: 13 };
+
+        println!("{}", foo_a.x);
+
+        println!("{}", foo_b.x);
+        // foo_b bị drop ở đây 
+        // foo_a bị drop ở đây
+    }
 - title: Việc Drop là có thứ bậc
   content_markdown: >
     Khi một cấu trúc bị drop, bản thân cấu trúc đó sẽ bị drop trước tiên, 
@@ -33,8 +55,21 @@
     * Bằng cách tự động giải phóng bộ nhớ, Rust giúp đảm bảo rằng có ít bộ nhớ bị rò rỉ hơn.
 
     * Tài nguyên bộ nhớ chỉ có thể bị drop một lần.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Bar%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Astruct%20Foo%20%7B%0A%20%20%20%20bar%3A%20Bar%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%20bar%3A%20Bar%20%7B%20x%3A%2042%20%7D%20%7D%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo.bar.x)%3B%0A%20%20%20%20%2F%2F%20foo%20b%E1%BB%8B%20drop%20tr%C6%B0%E1%BB%9Bc%0A%20%20%20%20%2F%2F%20sau%20%C4%91%C3%B3%20l%C3%A0%20foo.bar%20b%E1%BB%8B%20drop%20%0A%7D%0A
+  code: |
+    struct Bar {
+        x: i32,
+    }
+
+    struct Foo {
+        bar: Bar,
+    }
+
+    fn main() {
+        let foo = Foo { bar: Bar { x: 42 } };
+        println!("{}", foo.bar.x);
+        // foo bị drop trước
+        // sau đó là foo.bar bị drop 
+    }
 - title: Chuyển quyền sở hữu
   content_markdown: >
     Khi một chủ sở hữu được chuyển làm đối số cho một hàm, quyền sở hữu sẽ được chuyển đến tham số của hàm đó.
@@ -47,20 +82,57 @@
 
     * Trong một **move** bộ nhớ ngăn xếp của giá trị của chủ sở hữu được sao chép vào bộ nhớ 
     ngăn xếp tham số của lệnh gọi hàm.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20do_something(f%3A%20Foo)%20%7B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20f.x)%3B%0A%20%20%20%20%2F%2F%20f%20b%E1%BB%8B%20drop%20%E1%BB%9F%20%C4%91%C3%A2y%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20%2F%2F%20foo%20%C4%91%C6%B0%E1%BB%A3c%20move%20t%E1%BB%9Bi%20do_something%0A%20%20%20%20do_something(foo)%3B%0A%20%20%20%20%2F%2F%20foo%20kh%C3%B4ng%20c%C3%B2n%20c%C3%B3%20th%E1%BB%83%20%C4%91%C6%B0%E1%BB%A3c%20s%E1%BB%AD%20d%E1%BB%A5ng%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: Foo) {
+        println!("{}", f.x);
+        // f bị drop ở đây
+    }
+
+    fn main() {
+        let foo = Foo { x: 42 };
+        // foo được move tới do_something
+        do_something(foo);
+        // foo không còn có thể được sử dụng
+    }
 - title: Hoàn trả quyền sở hữu
   content_markdown: |
     Quyền sở hữu cũng có thể được trả lại từ một hàm.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20do_something()%20-%3E%20Foo%20%7B%0A%20%20%20%20Foo%20%7B%20x%3A%2042%20%7D%0A%20%20%20%20%2F%2F%20quy%E1%BB%81n%20s%E1%BB%9F%20h%E1%BB%AFu%20%C4%91%C6%B0%E1%BB%A3c%20move%20ra%20ngo%C3%A0i%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo%20%3D%20do_something()%3B%0A%20%20%20%20%2F%2F%20foo%20tr%E1%BB%9F%20th%C3%A0nh%20ch%E1%BB%A7%20s%E1%BB%9F%20h%E1%BB%AFu%0A%20%20%20%20%2F%2F%20v%C3%AC%20%E1%BB%9F%20cu%E1%BB%91i%20function%20scope%20n%C3%AAn%20foo%20b%E1%BB%8B%20drop%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something() -> Foo {
+        Foo { x: 42 }
+        // quyền sở hữu được move ra ngoài
+    }
+
+    fn main() {
+        let foo = do_something();
+        // foo trở thành chủ sở hữu
+        // vì ở cuối function scope nên foo bị drop
+    }
 - title: Mượn quyền sở hữu với Tham chiếu
   content_markdown: |
     Tham chiếu cho phép chúng tôi mượn quyền truy cập vào tài nguyên với toán tử `&`.
 
     Tham chiếu cũng bị loại bỏ giống như các tài nguyên khác.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20f%20%3D%20%26foo%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20f.x)%3B%0A%20%20%20%20%2F%2F%20f%20b%E1%BB%8B%20drop%20%E1%BB%9F%20%C4%91%C3%A2y%0A%20%20%20%20%2F%2F%20foo%20b%E1%BB%8B%20drop%20%E1%BB%9F%20%C4%91%C3%A2y%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        let foo = Foo { x: 42 };
+        let f = &foo;
+        println!("{}", f.x);
+        // f bị drop ở đây
+        // foo bị drop ở đây
+    }
 - title: Mượn quyền sở hữu có thể thay đổi(Mutable Ownership) với tham chiếu
   content_markdown: >
     Chúng ta cũng có thể mượn quyền truy cập có thể thay đổi vào tài nguyên bằng toán tử `&mut`.
@@ -73,8 +145,37 @@
 
     * Rust ngăn cản việc có hai cách để thay đổi một giá 
     trị đã bị sở hữu bởi vì nó dẫn đến khả năng xảy ra một cuộc chạy đua dữ liệu.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20do_something(f%3A%20Foo)%20%7B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20f.x)%3B%0A%20%20%20%20%2F%2F%20f%20b%E1%BB%8B%20drop%20%E1%BB%9F%20%C4%91%C3%A2y%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20mut%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20f%20%3D%20%26mut%20foo%3B%0A%0A%20%20%20%20%2F%2F%20FAILURE%3A%20do_something(foo)%20s%E1%BA%BD%20b%E1%BB%8B%20l%E1%BB%97i%20v%C3%AC%0A%20%20%20%20%2F%2F%20foo%20kh%C3%B4ng%20th%E1%BB%83%20b%E1%BB%8B%20di%20chuy%E1%BB%83n%20trong%20khi%20m%C6%B0%E1%BB%A3n%20l%E1%BA%ABn%20nhau%0A%0A%20%20%20%20%2F%2F%20FAILURE%3A%20foo.x%20%3D%2013%3B%20would%20s%E1%BA%BD%20b%E1%BB%8B%20l%E1%BB%97i%20v%C3%AC%0A%20%20%20%20%2F%2F%20foo%20kh%C3%B4ng%20th%E1%BB%83%20b%E1%BB%8B%20thay%20%C4%91%E1%BB%95i%20trong%20khi%20m%C6%B0%E1%BB%A3n%20l%E1%BA%ABn%20nhau%0A%0A%20%20%20%20f.x%20%3D%2013%3B%0A%20%20%20%20%2F%2F%20f%20%20drop%20%E1%BB%9F%20%C4%91%C3%A2y%20b%E1%BB%9Fi%20v%C3%AC%20sau%20th%E1%BB%9Di%20%C4%91i%E1%BB%83m%20n%C3%A0y%20c%C3%B3%20kh%C3%B4ng%20c%C3%B2n%20%C4%91%C6%B0%E1%BB%A3c%20s%E1%BB%AD%20d%E1%BB%A5ng%0A%20%20%20%20%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo.x)%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20%C4%91i%E1%BB%81u%20n%C3%A0y%20hi%E1%BB%87n%20ho%E1%BA%A1t%20%C4%91%E1%BB%99ng%20v%C3%AC%20t%E1%BA%A5t%20c%E1%BA%A3%20c%C3%A1c%20tham%20chi%E1%BA%BFu%20c%C3%B3%20th%E1%BB%83%20thay%20%C4%91%E1%BB%95i%20%C4%91%C3%A3%20b%E1%BB%8B%20drop%0A%20%20%20%20foo.x%20%3D%207%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20chuy%E1%BB%83n%20quy%E1%BB%81n%20s%E1%BB%9F%20h%E1%BB%AFu%20c%E1%BB%A7a%20foo%20t%E1%BB%9Bi%20m%E1%BB%99t%20h%C3%A0m%0A%20%20%20%20do_something(foo)%3B%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: Foo) {
+        println!("{}", f.x);
+        // f bị drop ở đây
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let f = &mut foo;
+
+        // FAILURE: do_something(foo) sẽ bị lỗi vì
+        // foo không thể bị di chuyển trong khi mượn lẫn nhau
+
+        // FAILURE: foo.x = 13; would sẽ bị lỗi vì
+        // foo không thể bị thay đổi trong khi mượn lẫn nhau
+
+        f.x = 13;
+        // f  drop ở đây bởi vì sau thời điểm này có không còn được sử dụng
+        
+        println!("{}", foo.x);
+        
+        // điều này hiện hoạt động vì tất cả các tham chiếu có thể thay đổi đã bị drop
+        foo.x = 7;
+        
+        // chuyển quyền sở hữu của foo tới một hàm
+        do_something(foo);
+    }
 - title: Dereferencing
   content_markdown: >
     Sử dụng tham chiếu `&mut`, bạn có thể đặt giá trị của chủ sở hữu bằng toán tử `*`.
@@ -84,8 +185,14 @@
     được sở hữu bằng cách sử dụng toán tử `*` 
     (nếu giá trị có thể được sao chép - chúng ta sẽ thảo luận về các loại có thể 
     sao chép trong các chương sau).
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn+main%28%29+%7B%0A++++let+mut+foo+%3D+42%3B%0A++++let+f+%3D+%26mut+foo%3B%0A++++let+bar+%3D+*f%3B+%2F%2F+nh%E1%BA%ADn+m%E1%BB%99t+b%E1%BA%A3n+sao+c%E1%BB%A7a+quy%E1%BB%81n+s%E1%BB%9F+h%E1%BB%AFu%0A++++println%21%28%22%7B%7D%22%2C+bar%29%3B%0A++++println%21%28%22%7B%7D%22%2C+foo%29%3B%0A%7D
+  code: |-
+    fn+main()+{
+    ++++let+mut+foo+=+42;
+    ++++let+f+=+&mut+foo;
+    ++++let+bar+=+*f;+//+nhận+một+bản+sao+của+quyền+sở+hữu
+    ++++println!("{}",+bar);
+    ++++println!("{}",+foo);
+    }
 - title: Truyền xung quanh dữ liệu đã mượn
   content_markdown: >
     Các quy tắc tham chiếu của Rust tốt nhất có thể được tóm tắt bằng:
@@ -109,13 +216,46 @@
 
     * Quy tắc thứ hai về tham chiếu ngăn chặn việc lạm dụng 
     tham chiếu tham chiếu đến dữ liệu không tồn tại (được gọi là con trỏ treo-dangling pointer trong C).
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20do_something(f%3A%20%26mut%20Foo)%20%7B%0A%20%20%20%20f.x%20%2B%3D%201%3B%0A%20%20%20%20%2F%2F%20mutable%20reference%20f%20b%E1%BB%8B%20drop%20%E1%BB%9F%20%C4%91%C3%A2y%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20mut%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20do_something(%26mut%20foo)%3B%0A%20%20%20%20%2F%2F%20b%E1%BB%9Fi%20v%C3%AC%20t%E1%BA%A5t%20c%E1%BA%A3%20c%C3%A1c%20tham%20chi%E1%BA%BFu%20c%C3%B3%20th%E1%BB%83%20thay%20%C4%91%E1%BB%95i%20trong%20h%C3%A0m%20do_something%20%C4%91%E1%BB%81u%20%C4%91%C3%A3%20b%E1%BB%8B%20drop%2C%20%0A%20%20%20%20%2F%2F%20ch%C3%BAng%20ta%20c%C3%B3%20th%E1%BB%83%20t%E1%BA%A1o%20m%E1%BB%99t%20tham%20chi%E1%BA%BFu%20kh%C3%A1c.%0A%20%20%20%20do_something(%26mut%20foo)%3B%0A%20%20%20%20%2F%2F%20foo%20b%E1%BB%8B%20drop%20%E1%BB%9F%20%C4%91%C3%A2y%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: &mut Foo) {
+        f.x += 1;
+        // mutable reference f bị drop ở đây
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        do_something(&mut foo);
+        // bởi vì tất cả các tham chiếu có thể thay đổi trong hàm do_something đều đã bị drop, 
+        // chúng ta có thể tạo một tham chiếu khác.
+        do_something(&mut foo);
+        // foo bị drop ở đây
+    }
 - title: Tham chiếu của tham chiếu
   content_markdown: |
     Tham chiếu thậm chí còn có thể được sử dụng trên các phần của tham chiếu.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0Afn%20do_something(a%3A%20%26Foo)%20-%3E%20%26i32%20%7B%0A%20%20%20%20return%20%26a.x%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20mut%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20x%20%3D%20%26mut%20foo.x%3B%0A%20%20%20%20*x%20%3D%2013%3B%0A%20%20%20%20%2F%2F%20x%20b%E1%BB%8B%20drop%20%E1%BB%9F%20%C4%91%C3%A2y%20cho%20ph%C3%A9p%20ch%C3%BAng%20ta%20non-mutable%20reference%0A%20%20%20%20let%20y%20%3D%20do_something(%26foo)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20y)%3B%0A%20%20%20%20%2F%2F%20y%20b%E1%BB%8B%20drop%20%E1%BB%9F%20%C4%91%C3%A2y%0A%20%20%20%20%2F%2F%20foo%20b%E1%BB%8B%20drop%20%E1%BB%9F%20%C4%91%C3%A2y%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(a: &Foo) -> &i32 {
+        return &a.x;
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let x = &mut foo.x;
+        *x = 13;
+        // x bị drop ở đây cho phép chúng ta non-mutable reference
+        let y = do_something(&foo);
+        println!("{}", y);
+        // y bị drop ở đây
+        // foo bị drop ở đây
+    }
 - title: Thời gian tồn tại minh bạch(Explicit Lifetimes)
   content_markdown: >
     Mặc dù Rust không phải lúc nào cũng hiển thị nó trong code, 
@@ -128,15 +268,53 @@
 
 
     Các từ chỉ định thời gian tồn tại luôn bắt đầu bằng dấu `'` (ví dụ:  `'a`, `'b`, `'c`)
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0A%2F%2F%20tham%20s%E1%BB%91%20foo%20v%C3%A0%20gi%C3%A1%20tr%E1%BB%8B%20tr%E1%BA%A3%20v%E1%BB%81%20c%C3%B3%20c%C3%B9ng%20th%E1%BB%9Di%20gian%20t%E1%BB%93n%20t%E1%BA%A1i%0Afn%20do_something%3C%27a%3E(foo%3A%20%26%27a%20Foo)%20-%3E%20%26%27a%20i32%20%7B%0A%20%20%20%20return%20%26foo.x%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20mut%20foo%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20x%20%3D%20%26mut%20foo.x%3B%0A%20%20%20%20*x%20%3D%2013%3B%0A%20%20%20%20%2F%2F%20x%20b%E1%BB%8B%20drop%20%E1%BB%9F%20%C4%91%C3%A2y%2C%20cho%20ph%C3%A9p%20ch%C3%BAng%20ta%20t%E1%BA%A1o%20ra%20m%E1%BB%99t%20non-mutable%20reference%0A%20%20%20%20let%20y%20%3D%20do_something(%26foo)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20y)%3B%0A%20%20%20%20%2F%2F%20y%20b%E1%BB%8B%20drop%20%E1%BB%9F%20%C4%91%C3%A2y%0A%20%20%20%20%2F%2F%20foo%20b%E1%BB%8B%20drop%20%E1%BB%9F%20%C4%91%C3%A2y%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    // tham số foo và giá trị trả về có cùng thời gian tồn tại
+    fn do_something<'a>(foo: &'a Foo) -> &'a i32 {
+        return &foo.x;
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let x = &mut foo.x;
+        *x = 13;
+        // x bị drop ở đây, cho phép chúng ta tạo ra một non-mutable reference
+        let y = do_something(&foo);
+        println!("{}", y);
+        // y bị drop ở đây
+        // foo bị drop ở đây
+    }
 - title: Đa thời gian tồn tại(Multiple Lifetimes)
   content_markdown: >
     Các chỉ định thời gian tồn tại cho phép chúng ta 
     rõ ràng với các tình huống nhất định mà trình biên dịch không thể tự giải quyết 
     bằng cách phân biệt tất cả các vòng đời của thành phần chữ ký hàm(signature component).
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%20%7B%0A%20%20%20%20x%3A%20i32%2C%0A%7D%0A%0A%2F%2F%20foo_b%20v%C3%A0%20gi%C3%A1%20tr%E1%BB%8B%20tr%E1%BA%A3%20v%E1%BB%81%20c%C3%B3%20c%C3%B9ng%20th%E1%BB%9Di%20gian%20t%E1%BB%93n%20t%E1%BA%A1i%0A%2F%2F%20foo_a%20c%C3%B3%20th%E1%BB%9Di%20gian%20t%E1%BB%93n%20t%E1%BA%A1i%20kh%C3%B4ng%20li%C3%AAn%20quan%0Afn%20do_something%3C%27a%2C%20%27b%3E(foo_a%3A%20%26%27a%20Foo%2C%20foo_b%3A%20%26%27b%20Foo)%20-%3E%20%26%27b%20i32%20%7B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo_a.x)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20foo_b.x)%3B%0A%20%20%20%20return%20%26foo_b.x%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20foo_a%20%3D%20Foo%20%7B%20x%3A%2042%20%7D%3B%0A%20%20%20%20let%20foo_b%20%3D%20Foo%20%7B%20x%3A%2012%20%7D%3B%0A%20%20%20%20let%20x%20%3D%20do_something(%26foo_a%2C%20%26foo_b)%3B%0A%20%20%20%20%2F%2F%20foo_a%20b%E1%BB%8B%20drop%20%E1%BB%9F%20%C4%91%C3%A2y%20v%C3%AC%20ch%E1%BB%89%20c%C3%B3%20th%E1%BB%9Di%20gian%20t%E1%BB%93n%20t%E1%BA%A1i%20c%E1%BB%A7a%20foo_b%20v%C6%B0%E1%BB%A3t%20qua%20%C4%91i%E1%BB%83m%20n%C3%A0y%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%20%20%20%20%2F%2F%20x%20b%E1%BB%8B%20drop%20%E1%BB%9F%20%C4%91%C3%A2y%0A%20%20%20%20%2F%2F%20foo_b%20b%E1%BB%8B%20drop%20%E1%BB%9F%20%C4%91%C3%A2y%0A%7D%0A
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    // foo_b và giá trị trả về có cùng thời gian tồn tại
+    // foo_a có thời gian tồn tại không liên quan
+    fn do_something<'a, 'b>(foo_a: &'a Foo, foo_b: &'b Foo) -> &'b i32 {
+        println!("{}", foo_a.x);
+        println!("{}", foo_b.x);
+        return &foo_b.x;
+    }
+
+    fn main() {
+        let foo_a = Foo { x: 42 };
+        let foo_b = Foo { x: 12 };
+        let x = do_something(&foo_a, &foo_b);
+        // foo_a bị drop ở đây vì chỉ có thời gian tồn tại của foo_b vượt qua điểm này
+        println!("{}", x);
+        // x bị drop ở đây
+        // foo_b bị drop ở đây
+    }
 - title: Thời gian tồn tại tĩnh(Static Lifetimes)
   content_markdown: >
     Biến **static**(tĩnh) là tài nguyên bộ nhớ được tạo tại thời điểm biên dịch, 
@@ -170,8 +348,25 @@
     style="color:red; font-weight:
     bold;">R̸͉̟͈͔̄͛̾̇͜U̶͓͖͋̅Ṡ̴͉͇̃̉̀T̵̻̻͔̟͉́͆Ơ̷̥̟̳̓͝N̶̨̼̹̲͛Ö̵̝͉̖̏̾̔M̶̡̠̺̠̐͜Î̷̛͓̣̃̐̏C̸̥̤̭̏͛̎͜O̶̧͚͖͔̊͗̇͠N̸͇̰̏̏̽̃</span>](https://doc.rust-lang.org/nomicon/)
     một cách tùy tiện.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=static%20PI%3A%20f64%20%3D%203.1415%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20C%C3%A1c%20bi%E1%BA%BFn%20t%C4%A9nh%20c%C5%A9ng%20c%C3%B3%20th%E1%BB%83%20%C4%91%C6%B0%E1%BB%A3c%20x%C3%A1c%20%C4%91%E1%BB%8Bnh%20ph%E1%BA%A1m%20vi%20th%C3%A0nh%20m%E1%BB%99t%20h%C3%A0m%0A%20%20%20%20static%20mut%20SECRET%3A%20%26%27static%20str%20%3D%20%22swordfish%22%3B%0A%0A%20%20%20%20%2F%2F%20string%20c%C3%B3%20th%E1%BB%9Di%20gian%20t%E1%BB%93n%20t%E1%BA%A1i%20t%C4%A9nh-%27static%20lifetime%0A%20%20%20%20let%20msg%3A%20%26%27static%20str%20%3D%20%22Hello%20World!%22%3B%0A%20%20%20%20let%20p%3A%20%26%27static%20f64%20%3D%20%26PI%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20msg%2C%20p)%3B%0A%0A%20%20%20%20%2F%2F%20B%E1%BA%A1n%20c%C3%B3%20th%E1%BB%83%20ph%C3%A1%20v%E1%BB%A1%20m%E1%BB%99t%20s%E1%BB%91%20quy%20t%E1%BA%AFc%2C%20nh%C6%B0ng%20b%E1%BA%A1n%20ph%E1%BA%A3i%20r%C3%B5%20r%C3%A0ng%0A%20%20%20%20unsafe%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20Ch%C3%BAng%20ta%20c%C3%B3%20th%E1%BB%83%20%C4%91%E1%BA%B7t%20SECRET%20th%C3%A0nh%20m%E1%BB%99t%20chu%E1%BB%97i%20k%C3%BD%20t%E1%BB%B1%20v%C3%AC%20n%C3%B3%20c%C5%A9ng%20l%C3%A0%20t%C4%A9nh-%27static%0A%20%20%20%20%20%20%20%20SECRET%20%3D%20%22abracadabra%22%3B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20SECRET)%3B%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    static PI: f64 = 3.1415;
+
+    fn main() {
+        // Các biến tĩnh cũng có thể được xác định phạm vi thành một hàm
+        static mut SECRET: &'static str = "swordfish";
+
+        // string có thời gian tồn tại tĩnh-'static lifetime
+        let msg: &'static str = "Hello World!";
+        let p: &'static f64 = &PI;
+        println!("{} {}", msg, p);
+
+        // Bạn có thể phá vỡ một số quy tắc, nhưng bạn phải rõ ràng
+        unsafe {
+            // Chúng ta có thể đặt SECRET thành một chuỗi ký tự vì nó cũng là tĩnh-'static
+            SECRET = "abracadabra";
+            println!("{}", SECRET);
+        }
+    }
 - title: Thời gian tồn tại trong các loại dữ liệu
   content_markdown: >
     Tương tự như các hàm, các kiểu dữ liệu có thể được tham số hóa với các 
@@ -183,8 +378,18 @@
 
 
     Chúng ta không thể có cấu trúc chạy xung quanh với các tham chiếu trỏ đến hư vô!
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%3C%27a%3E%20%7B%0A%20%20%20%20i%3A%26%27a%20i32%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20x%20%3D%2042%3B%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%0A%20%20%20%20%20%20%20%20i%3A%20%26x%0A%20%20%20%20%7D%3B%0A%20%20%20%20println!(%22%7B%7D%22%2Cfoo.i)%3B%0A%7D%0A
+  code: |
+    struct Foo<'a> {
+        i:&'a i32
+    }
+
+    fn main() {
+        let x = 42;
+        let foo = Foo {
+            i: &x
+        };
+        println!("{}",foo.i);
+    }
 - title: Chương 5 - Tổng kết
   content_markdown: >
     Chà chà, chúc mừng vì đã vượt qua được! Tôi biết còn rất 

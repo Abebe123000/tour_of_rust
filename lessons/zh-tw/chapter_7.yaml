@@ -27,8 +27,23 @@
 
     但是，Rust 實作許多程式語言的特徵，所以你可能不會注意到這些缺少的東西。
 - title: 封裝方法 (encapsulation with methods)
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20SeaCreature%20%7B%0A%20%20%20%20noise%3A%20String%2C%0A%7D%0A%0Aimpl%20SeaCreature%20%7B%0A%20%20%20%20fn%20get_sound(%26self)%20-%3E%20%26str%20%7B%0A%20%20%20%20%20%20%20%20%26self.noise%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20creature%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20noise%3A%20String%3A%3Afrom(%22blub%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20creature.get_sound())%3B%0A%7D%0A
+  code: |
+    struct SeaCreature {
+        noise: String,
+    }
+
+    impl SeaCreature {
+        fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            noise: String::from("blub"),
+        };
+        println!("{}", creature.get_sound());
+    }
   content_markdown: >
     Rust 支援*物件*的概念，即是一個結構與它的一些函式 (或稱*方法*)。
 
@@ -54,8 +69,25 @@
 
     ```
 - title: 暴露指定的抽象化 (abstraction with selective exposure)
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20SeaCreature%20%7B%0A%20%20%20%20pub%20name%3A%20String%2C%0A%20%20%20%20noise%3A%20String%2C%0A%7D%0A%0Aimpl%20SeaCreature%20%7B%0A%20%20%20%20pub%20fn%20get_sound(%26self)%20-%3E%20%26str%20%7B%0A%20%20%20%20%20%20%20%20%26self.noise%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20creature%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20name%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20noise%3A%20String%3A%3Afrom(%22blub%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20creature.get_sound())%3B%0A%7D%0A
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        println!("{}", creature.get_sound());
+    }
   content_markdown: >
     Rust 可以隱藏物件的實作細節。
 
@@ -65,8 +97,35 @@
 
     關鍵字 `pub` 可以暴露結構欄位及方法給外部模組使用。
 - title: 特徵多型 (polymorphism with traits)
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20SeaCreature%20%7B%0A%20%20%20%20pub%20name%3A%20String%2C%0A%20%20%20%20noise%3A%20String%2C%0A%7D%0A%0Aimpl%20SeaCreature%20%7B%0A%20%20%20%20pub%20fn%20get_sound(%26self)%20-%3E%20%26str%20%7B%0A%20%20%20%20%20%20%20%20%26self.noise%0A%20%20%20%20%7D%0A%7D%0A%0Atrait%20NoiseMaker%20%7B%0A%20%20%20%20fn%20make_noise(%26self)%3B%0A%7D%0A%0Aimpl%20NoiseMaker%20for%20SeaCreature%20%7B%0A%20%20%20%20fn%20make_noise(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20%26self.get_sound())%3B%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20creature%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20name%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20noise%3A%20String%3A%3Afrom(%22blub%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20creature.make_noise()%3B%0A%7D%0A
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        creature.make_noise();
+    }
   content_markdown: >
     Rust 支援特徵 (trait) 多型。特徵允許我們將一組方法與一個結構型別關聯在一起。
 
@@ -102,21 +161,129 @@
 
     ```
 - title: 特徵上的方法 (implemented methods on traits)
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20SeaCreature%20%7B%0A%20%20%20%20pub%20name%3A%20String%2C%0A%20%20%20%20noise%3A%20String%2C%0A%7D%0A%0Aimpl%20SeaCreature%20%7B%0A%20%20%20%20pub%20fn%20get_sound(%26self)%20-%3E%20%26str%20%7B%0A%20%20%20%20%20%20%20%20%26self.noise%0A%20%20%20%20%7D%0A%7D%0A%0Atrait%20NoiseMaker%20%7B%0A%20%20%20%20fn%20make_noise(%26self)%3B%0A%20%20%20%20%0A%20%20%20%20fn%20make_alot_of_noise(%26self)%7B%0A%20%20%20%20%20%20%20%20self.make_noise()%3B%0A%20%20%20%20%20%20%20%20self.make_noise()%3B%0A%20%20%20%20%20%20%20%20self.make_noise()%3B%0A%20%20%20%20%7D%0A%7D%0A%0Aimpl%20NoiseMaker%20for%20SeaCreature%20%7B%0A%20%20%20%20fn%20make_noise(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20%26self.get_sound())%3B%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20creature%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20name%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20noise%3A%20String%3A%3Afrom(%22blub%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20creature.make_alot_of_noise()%3B%0A%7D%0A
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+        
+        fn make_alot_of_noise(&self){
+            self.make_noise();
+            self.make_noise();
+            self.make_noise();
+        }
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        creature.make_alot_of_noise();
+    }
   content_markdown: >
     特徵可以有方法。
 
 
     函式沒有直接存取一個結構內部欄位的權限，但它可以被所有特徵實作者共享。
 - title: 特徵繼承 (trait inheritance)
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20SeaCreature%20%7B%0A%20%20%20%20pub%20name%3A%20String%2C%0A%20%20%20%20noise%3A%20String%2C%0A%7D%0A%0Aimpl%20SeaCreature%20%7B%0A%20%20%20%20pub%20fn%20get_sound(%26self)%20-%3E%20%26str%20%7B%0A%20%20%20%20%20%20%20%20%26self.noise%0A%20%20%20%20%7D%0A%7D%0A%0Atrait%20NoiseMaker%20%7B%0A%20%20%20%20fn%20make_noise(%26self)%3B%0A%7D%0A%0Atrait%20LoudNoiseMaker%3A%20NoiseMaker%20%7B%0A%20%20%20%20fn%20make_alot_of_noise(%26self)%20%7B%0A%20%20%20%20%20%20%20%20self.make_noise()%3B%0A%20%20%20%20%20%20%20%20self.make_noise()%3B%0A%20%20%20%20%20%20%20%20self.make_noise()%3B%0A%20%20%20%20%7D%0A%7D%0A%0Aimpl%20NoiseMaker%20for%20SeaCreature%20%7B%0A%20%20%20%20fn%20make_noise(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20%26self.get_sound())%3B%0A%20%20%20%20%7D%0A%7D%0A%0Aimpl%20LoudNoiseMaker%20for%20SeaCreature%20%7B%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20creature%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20name%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20noise%3A%20String%3A%3Afrom(%22blub%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20creature.make_alot_of_noise()%3B%0A%7D%0A
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    trait LoudNoiseMaker: NoiseMaker {
+        fn make_alot_of_noise(&self) {
+            self.make_noise();
+            self.make_noise();
+            self.make_noise();
+        }
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    impl LoudNoiseMaker for SeaCreature {}
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        creature.make_alot_of_noise();
+    }
   content_markdown: |
     特徵可以從其他特徵繼承方法。
 - title: 動態與靜態的發送 (dynamic vs static ispatch)
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20SeaCreature%20%7B%0A%20%20%20%20pub%20name%3A%20String%2C%0A%20%20%20%20noise%3A%20String%2C%0A%7D%0A%0Aimpl%20SeaCreature%20%7B%0A%20%20%20%20pub%20fn%20get_sound(%26self)%20-%3E%20%26str%20%7B%0A%20%20%20%20%20%20%20%20%26self.noise%0A%20%20%20%20%7D%0A%7D%0A%0Atrait%20NoiseMaker%20%7B%0A%20%20%20%20fn%20make_noise(%26self)%3B%0A%7D%0A%0Aimpl%20NoiseMaker%20for%20SeaCreature%20%7B%0A%20%20%20%20fn%20make_noise(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20%26self.get_sound())%3B%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20static_make_noise(creature%3A%20%26SeaCreature)%20%7B%0A%20%20%20%20%2F%2F%20we%20know%20the%20real%20type%0A%20%20%20%20creature.make_noise()%3B%0A%7D%0A%0Afn%20dynamic_make_noise(noise_maker%3A%20%26dyn%20NoiseMaker)%20%7B%0A%20%20%20%20%2F%2F%20we%20don't%20know%20the%20real%20type%0A%20%20%20%20noise_maker.make_noise()%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20creature%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20name%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20noise%3A%20String%3A%3Afrom(%22blub%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20static_make_noise(%26creature)%3B%0A%20%20%20%20dynamic_make_noise(%26creature)%3B%0A%7D%0A
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    fn static_make_noise(creature: &SeaCreature) {
+        // we know the real type
+        creature.make_noise();
+    }
+
+    fn dynamic_make_noise(noise_maker: &dyn NoiseMaker) {
+        // we don't know the real type
+        noise_maker.make_noise();
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        static_make_noise(&creature);
+        dynamic_make_noise(&creature);
+    }
   content_markdown: >
     執行方法有兩種方式：
 
@@ -157,8 +324,43 @@
     * `間接` (indirection) - 將實體放在堆 (heap) 上，我們就能間接使用它們而不需要擔心實際大小，
     只要儲存它的指標就好。而我們還是有其他方式的！
 - title: 泛型函式 (generic functions)
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20SeaCreature%20%7B%0A%20%20%20%20pub%20name%3A%20String%2C%0A%20%20%20%20noise%3A%20String%2C%0A%7D%0A%0Aimpl%20SeaCreature%20%7B%0A%20%20%20%20pub%20fn%20get_sound(%26self)%20-%3E%20%26str%20%7B%0A%20%20%20%20%20%20%20%20%26self.noise%0A%20%20%20%20%7D%0A%7D%0A%0Atrait%20NoiseMaker%20%7B%0A%20%20%20%20fn%20make_noise(%26self)%3B%0A%7D%0A%0Aimpl%20NoiseMaker%20for%20SeaCreature%20%7B%0A%20%20%20%20fn%20make_noise(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20%26self.get_sound())%3B%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20generic_make_noise%3CT%3E(creature%3A%20%26T)%0Awhere%0A%20%20%20%20T%3A%20NoiseMaker%2C%0A%7B%0A%20%20%20%20%2F%2F%20we%20know%20the%20real%20type%20at%20compile-time%0A%20%20%20%20creature.make_noise()%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20creature%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20name%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20noise%3A%20String%3A%3Afrom(%22blub%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20generic_make_noise(%26creature)%3B%0A%7D%0A
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    fn generic_make_noise<T>(creature: &T)
+    where
+        T: NoiseMaker,
+    {
+        // we know the real type at compile-time
+        creature.make_noise();
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        generic_make_noise(&creature);
+    }
   content_markdown: >
     在 Rust 裡，泛型與特徵攜手合作。當我們描述一個參數的型別 `T` 時，
     我們可以藉由列出特徵來限制該型別一定要實作這些特徵。
@@ -182,8 +384,41 @@
     藉由使用泛型，我們能產生靜態型別，如此在編譯期間就能知道型別及大小，
     允許我們使用靜態發送，並且將它以已知大小的數值儲存起來。
 - title: 泛型函式簡寫 (generic function shorthand)
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20SeaCreature%20%7B%0A%20%20%20%20pub%20name%3A%20String%2C%0A%20%20%20%20noise%3A%20String%2C%0A%7D%0A%0Aimpl%20SeaCreature%20%7B%0A%20%20%20%20pub%20fn%20get_sound(%26self)%20-%3E%20%26str%20%7B%0A%20%20%20%20%20%20%20%20%26self.noise%0A%20%20%20%20%7D%0A%7D%0A%0Atrait%20NoiseMaker%20%7B%0A%20%20%20%20fn%20make_noise(%26self)%3B%0A%7D%0A%0Aimpl%20NoiseMaker%20for%20SeaCreature%20%7B%0A%20%20%20%20fn%20make_noise(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20%26self.get_sound())%3B%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20generic_make_noise(creature%3A%20%26impl%20NoiseMaker)%0A%7B%0A%20%20%20%20%2F%2F%20we%20know%20the%20real%20type%20at%20compile-time%0A%20%20%20%20creature.make_noise()%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20creature%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20name%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20noise%3A%20String%3A%3Afrom(%22blub%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20generic_make_noise(%26creature)%3B%0A%7D%0A
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    fn generic_make_noise(creature: &impl NoiseMaker)
+    {
+        // we know the real type at compile-time
+        creature.make_noise();
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        generic_make_noise(&creature);
+    }
   content_markdown: |
     Rust 有一個簡寫可以用來表示一個被特徵限制的泛型：
 
@@ -204,8 +439,48 @@
     }
     ```
 - title: Box
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20SeaCreature%20%7B%0A%20%20%20%20pub%20name%3A%20String%2C%0A%20%20%20%20noise%3A%20String%2C%0A%7D%0A%0Aimpl%20SeaCreature%20%7B%0A%20%20%20%20pub%20fn%20get_sound(%26self)%20-%3E%20%26str%20%7B%0A%20%20%20%20%20%20%20%20%26self.noise%0A%20%20%20%20%7D%0A%7D%0A%0Atrait%20NoiseMaker%20%7B%0A%20%20%20%20fn%20make_noise(%26self)%3B%0A%7D%0A%0Aimpl%20NoiseMaker%20for%20SeaCreature%20%7B%0A%20%20%20%20fn%20make_noise(%26self)%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20%26self.get_sound())%3B%0A%20%20%20%20%7D%0A%7D%0A%0Astruct%20Ocean%20%7B%0A%20%20%20%20animals%3A%20Vec%3CBox%3Cdyn%20NoiseMaker%3E%3E%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20ferris%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20name%3A%20String%3A%3Afrom(%22Ferris%22)%2C%0A%20%20%20%20%20%20%20%20noise%3A%20String%3A%3Afrom(%22blub%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20let%20sarah%20%3D%20SeaCreature%20%7B%0A%20%20%20%20%20%20%20%20name%3A%20String%3A%3Afrom(%22Sarah%22)%2C%0A%20%20%20%20%20%20%20%20noise%3A%20String%3A%3Afrom(%22swish%22)%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20let%20ocean%20%3D%20Ocean%20%7B%0A%20%20%20%20%20%20%20%20animals%3A%20vec!%5BBox%3A%3Anew(ferris)%2C%20Box%3A%3Anew(sarah)%5D%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20for%20a%20in%20ocean.animals.iter()%20%7B%0A%20%20%20%20%20%20%20%20a.make_noise()%3B%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    struct Ocean {
+        animals: Vec<Box<dyn NoiseMaker>>,
+    }
+
+    fn main() {
+        let ferris = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        let sarah = SeaCreature {
+            name: String::from("Sarah"),
+            noise: String::from("swish"),
+        };
+        let ocean = Ocean {
+            animals: vec![Box::new(ferris), Box::new(sarah)],
+        };
+        for a in ocean.animals.iter() {
+            a.make_noise();
+        }
+    }
   content_markdown: >
     `Box` 是一種資料結構，允許我們將資料從堆疊 (stack) 搬到推 (heap) 上。
 

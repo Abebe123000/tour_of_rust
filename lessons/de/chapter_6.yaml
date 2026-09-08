@@ -27,8 +27,11 @@
 
     * Der Rust-Compiler wird die Zeichenfolge wahrscheinlich in das Datensegment von einfügen
     Programmspeicher.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn+main%28%29+%7B%0A++++let+a%3A+%26%27static+str+%3D+%22hallo+%F0%9F%A6%80%22%3B%0A++++println%21%28%22%7B%7D+%7B%7D%22%2C+a%2C+a.len%28%29%29%3B%0A%7D%0A
+  code: |
+    fn+main()+{
+    ++++let+a:+&'static+str+=+"hallo+🦀";
+    ++++println!("{}+{}",+a,+a.len());
+    }
 - title: Was ist utf-8
   content_markdown: "Da immer mehr Sprachen auf Computern verwendet wurden, brauchte die Welt Möglichkeiten, mehr Textzeichen darzustellen, als ASCII erlaubte (1 Byte erlaubte nur 256 Zeichen).\n\nEs wurde **utf-8** eingeführt , mit einer variablen Länge von Bytes (1-4 Bytes), was den Bereich möglicher Zeichen erheblich vergrößert.\n\nEin Vorteil von Zeichen variabler Größe besteht darin, dass der Text keine unnötigen Bytes mehr für sehr häufige ASCII-Zeichen enthält (die nur 1 erfordern). Byte in **utf-8**).\n\nEin Nachteil von Zeichen variabler Größe besteht darin, dass Zeichensuchen nicht mehr schnell durchgeführt werden können \n(** konstante Zeit O(1 )**) mit einfacher Indizierung (Beispiel : `my_text[3]`, um das 4. Zeichen zu erhalten).\nDie vorherigen Zeichen können variable Breiten haben, wodurch sich ändert, wo das 4. Zeichen tatsächlich in der Bytefolge beginnt.\n\nStattdessen müssen wir eine Schleife durch ein **utf- 8** Bytefolge, um zu verstehen, wo die Unicode-Zeichen tatsächlich beginnen (** lineare Zeit **O(n)**).\n\nFerris: „Meistens bin ich einfach nur froh, dass ich **utf-8 habe ** um Emoticons mit meinen Unterwasserfreunden zu rendern.\"\n\n<span class=\"emoji\">\U0001F420\U0001F419\U0001F41F\U0001F42C\U0001F40B</span>\n"
 - title: Escape-Sequenzen
@@ -54,15 +57,30 @@
 
     Die vollständige Liste ist vorhanden
     [Hier](https://doc.rust-lang.org/reference/tokens.html).
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&code=fn+main%28%29+%7B%0A++++let+a%3A+%26%27static+str+%3D+%22Ferris+sagt%3A%5Ct%5C%22hallo%5C%22%22%3B%0A++++println%21%28%22%7B%7D%22%2C+a%29%3B%0A%7D%0A
+  code: |
+    fn+main()+{
+    ++++let+a:+&'static+str+=+"Ferris+sagt:\t\"hallo\"";
+    ++++println!("{}",+a);
+    }
+  edition: 2021
 - title: String-Literale in mehreren Zeilen
   content_markdown: |
     Strings in Rust sind standardmäßig mehrzeilig.
 
     Verwenden Sie am Ende der Zeile ein `\`, wenn Sie keinen Zeilenumbruch wünschen.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20haiku%3A%20%26'static%20str%20%3D%20%22%0A%20%20%20%20%20%20%20%20I%20write%2C%20erase%2C%20rewrite%0A%20%20%20%20%20%20%20%20Erase%20again%2C%20and%20then%0A%20%20%20%20%20%20%20%20A%20poppy%20blooms.%0A%20%20%20%20%20%20%20%20-%20Katsushika%20Hokusai%22%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20haiku)%3B%0A%20%20%20%20%0A%20%20%20%20%0A%20%20%20%20println!(%22salutare%20%5C%0A%20%20%20%20lume%22)%20%2F%2F%20observati%20cum%20spatierea%20de%20dinainte%20de%20%22l%22%20este%20ignorata%0A%7D%0A
+  code: |
+    fn main() {
+        let haiku: &'static str = "
+            I write, erase, rewrite
+            Erase again, and then
+            A poppy blooms.
+            - Katsushika Hokusai";
+        println!("{}", haiku);
+        
+        
+        println!("salutare \
+        lume") // observati cum spatierea de dinainte de "l" este ignorata
+    }
 - title: Rohe Literalzeichenfolgen
   content_markdown: >
     Rohzeichenfolgen (auf Englisch *raw strings*) ermöglichen es uns, eine Folge von Zeichen zu schreiben,
@@ -70,8 +88,15 @@
 
     Zeichen, die sonst dazu führen könnten, dass wir eine normale Zeichenfolge mit einem Literal verwechseln
     (z. B. doppelte Anführungszeichen und Backslashes).
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20a%3A%20%26'static%20str%20%3D%20r%23%22%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22sfat%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20Sirurile%20de%20caractere%20brute%20sunt%20folositoare%20in%20unele%20situatii.%0A%20%20%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%22%23%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20a)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let a: &'static str = r#"
+            <div class="sfat">
+                Sirurile de caractere brute sunt folositoare in unele situatii.
+            </div>
+            "#;
+        println!("{}", a);
+    }
 - title: Literale Zeichenfolgen aus Dateien
   content_markdown: >
     Wenn Sie sehr großen Text haben, sollten Sie das Makro „include_str!“ verwenden
@@ -100,8 +125,16 @@
     * `is_empty` gibt *true* zurück, wenn die Länge null ist.
 
     * `find` gibt einen zurück `Option<usize>` der ersten Stelle in einem Text.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20a%20%3D%20%22salut%20%F0%9F%A6%80%22%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20a.len())%3B%0A%20%20%20%20let%20primul_cuvant%20%3D%20%26a%5B0..5%5D%3B%0A%20%20%20%20let%20al_doilea_cuvant%20%3D%20%26a%5B6..10%5D%3B%0A%20%20%20%20%2F%2F%20let%20jumatate_de_crab%20%3D%20%26a%5B6..8%5D%3B%20E%C8%98UEAZ%C4%82%0A%20%20%20%20%2F%2F%20Rust%20nu%20accepta%20subsiruri%20formate%20din%20caractere%20Unicode%20invalide%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20primul_cuvant%2C%20al_doilea_cuvant)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let a = "salut 🦀";
+        println!("{}", a.len());
+        let primul_cuvant = &a[0..5];
+        let al_doilea_cuvant = &a[6..10];
+        // let jumatate_de_crab = &a[6..8]; EȘUEAZĂ
+        // Rust nu accepta subsiruri formate din caractere Unicode invalide
+        println!("{} {}", primul_cuvant, al_doilea_cuvant);
+    }
 - title: der Typ `char`
   content_markdown: >
     Angesichts der vielen Schwierigkeiten bei der Arbeit mit Unicode bietet Rust eine Möglichkeit dazu
@@ -109,8 +142,14 @@
 
 
     Ein `char` ist immer 4 Bytes lang (was eine effiziente Suche nach einzelnen Zeichen ermöglicht).
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20%2F%2F%20colecteaza%20caracterele%20ca%20vector%20de%20char-uri%0A%20%20%20%20let%20chars%20%3D%20%22salut%20%F0%9F%A6%80%22.chars().collect%3A%3A%3CVec%3Cchar%3E%3E()%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20chars.len())%3B%20%2F%2F%20ar%20trebui%20sa%20fie%207%0A%20%20%20%20%2F%2F%20cum%20un%20char%20ocupa%204%20biti%2C%20putem%20converti%20la%20u32%0A%20%20%20%20println!(%22%7B%7D%22%2C%20chars%5B3%5D%20as%20u32)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        // colecteaza caracterele ca vector de char-uri
+        let chars = "salut 🦀".chars().collect::<Vec<char>>();
+        println!("{}", chars.len()); // ar trebui sa fie 7
+        // cum un char ocupa 4 biti, putem converti la u32
+        println!("{}", chars[3] as u32);
+    }
 - title: Zeichenfolgen
   content_markdown: >
     Eine Zeichenfolge (auf Englisch *string*) ist eine Struktur, die eine Folge von UTF-8-Bytes im Heap-Speicher enthält.
@@ -138,21 +177,40 @@
     Strings haben einen `+`-Operator, der den String mit einem `&str` erweitert. (Der String auf der linken Seite ist `verbraucht` und sein Puffer
     wird wiederverwendet, um den Endwert zu speichern. Die Zeichenfolge auf der rechten Seite wurde nur ausgeliehen, um die Verkettung durchzuführen.)
     aber es ist möglicherweise nicht so ergonomisch, wie Sie hoffen.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20mut%20salutarelume%20%3D%20String%3A%3Afrom(%22salutare%22)%3B%0A%20%20%20%20salutarelume.push_str(%22%20lume%22)%3B%0A%20%20%20%20salutarelume%20%3D%20salutarelume%20%2B%20%22!%22%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20salutarelume)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let mut salutarelume = String::from("salutare");
+        salutarelume.push_str(" lume");
+        salutarelume = salutarelume + "!";
+        println!("{}", salutarelume);
+    }
 - title: Text als Funktionsparameter
   content_markdown: >
     Zeichenfolgen (Literale) werden im Allgemeinen als Teilzeichenfolgen an Funktionen übergeben.
     
     Dies bietet in den meisten Szenarien große Flexibilität, wenn es nicht benötigt wird
     das Eigentum tatsächlich zu übertragen.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20spune_tare(msg%3A%26str)%7B%0A%20%20%20%20println!(%22%7B%7D!!!%22%2Cmsg.to_string().to_uppercase())%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20spune_tare%20poate%20imprumuta%20un%20%26'static%20str%20ca%20%26str%0A%20%20%20%20spune_tare(%22salut%22)%3B%0A%20%20%20%20%2F%2F%20spune_tare%20poate%2C%20de%20asemenea%2C%20imprumuta%20un%20String%20ca%20%26str%0A%20%20%20%20spune_tare(%26String%3A%3Afrom(%22la%20revedere%22))%3B%0A%7D%0A
+  code: |
+    fn spune_tare(msg:&str){
+        println!("{}!!!",msg.to_string().to_uppercase());
+    }
+
+    fn main() {
+        // spune_tare poate imprumuta un &'static str ca &str
+        spune_tare("salut");
+        // spune_tare poate, de asemenea, imprumuta un String ca &str
+        spune_tare(&String::from("la revedere"));
+    }
 - title: Konstruktion und Charaktercharakter
   content_markdown: |
     `concat` und `join` sind zwei einfache, aber effektive Möglichkeiten, Strings zu erstellen.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20salutarelume%20%3D%20%5B%22salutare%22%2C%20%22%20%22%2C%20%22lume%22%2C%20%22!%22%5D.concat()%3B%0A%20%20%20%20let%20abc%20%3D%20%5B%22a%22%2C%20%22b%22%2C%20%22c%22%5D.join(%22%2C%22)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20salutarelume)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2Cabc)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let salutarelume = ["salutare", " ", "lume", "!"].concat();
+        let abc = ["a", "b", "c"].join(",");
+        println!("{}", salutarelume);
+        println!("{}",abc);
+    }
 - title: Zeichenfolgen formatieren
   content_markdown: >
     Mit dem Makro `format!` können wir eine Zeichenfolge erstellen, indem wir eine parametrisierte Zeichenfolge definieren
@@ -164,16 +222,26 @@
 
     Die Möglichkeiten dieser Funktion sind zu groß für die *Rundgang durch Rust*;
     siehe Dokumentation [Hier](https://doc.rust-lang.org/std/fmt/).
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20a%20%3D%2042%3B%0A%20%20%20%20let%20f%20%3D%20format!(%22secretul%20vietii%3A%20%7B%7D%22%2Ca)%3B%0A%20%20%20%20println!(%22%7B%7D%22%2Cf)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let a = 42;
+        let f = format!("secretul vietii: {}",a);
+        println!("{}",f);
+    }
 - title: Konvertieren von Zeichenfolgen
   content_markdown: |
     Viele Typen können mit `to_string` in einen String konvertiert werden.
 
     Die generische Funktion `parse` kann zum Konvertieren von Zeichenfolgen (Literalen) verwendet werden.
     in einem typisierten Wert. Diese Funktion gibt ein `Result` zurück, da sie möglicherweise fehlschlägt.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20-%3E%20Result%3C()%2C%20std%3A%3Anum%3A%3AParseIntError%3E%20%7B%0A%20%20%20%20let%20a%20%3D%2042%3B%0A%20%20%20%20let%20a_string%20%3D%20a.to_string()%3B%0A%20%20%20%20let%20b%20%3D%20a_string.parse%3A%3A%3Ci32%3E()%3F%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20a%2C%20b)%3B%0A%20%20%20%20Ok(())%0A%7D%0A
+  code: |
+    fn main() -> Result<(), std::num::ParseIntError> {
+        let a = 42;
+        let a_string = a.to_string();
+        let b = a_string.parse::<i32>()?;
+        println!("{} {}", a, b);
+        Ok(())
+    }
 - title: Kapitel 6 - Schlüssig
   content_markdown: >
     Jetzt kennen Sie die Grundlagen des Textes! Wie Sie gesehen haben, erledigt Unicode den Zweck

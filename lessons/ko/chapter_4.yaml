@@ -17,8 +17,31 @@
 
     여러분의 도움이 필요한 경우에는 `turbofish` (내 친한 친구입니다!)로도 알려진 `::<T>` 연산자를 사용해
     언제든 명시적으로 지정할 수 있습니다.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=%2F%2F%20%EC%9D%BC%EB%B6%80%EB%A7%8C%20%EC%A0%95%EC%9D%98%EB%90%9C%20struct%20%EC%9E%90%EB%A3%8C%ED%98%95%0Astruct%20BagOfHolding%3CT%3E%20%7B%0A%20%20%20%20item%3A%20T%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20%EC%A4%91%EC%9A%94%3A%20%EC%97%AC%EA%B8%B0%EC%84%9C%20generic%20%EC%9E%90%EB%A3%8C%ED%98%95%EC%9D%84%20%EC%93%B0%EB%A9%B4%2C%20%EC%BB%B4%ED%8C%8C%EC%9D%BC%20%ED%83%80%EC%9E%84%EC%97%90%20%EC%83%9D%EC%84%B1%EB%90%9C%20%EC%9E%90%EB%A3%8C%ED%98%95%EC%9D%84%20%EC%83%9D%EC%84%B1%ED%95%98%EA%B2%8C%20%EB%90%A8.%0A%20%20%20%20%2F%2F%20Turbofish%EB%A5%BC%20%EC%93%B0%EB%A9%B4%20%EB%AA%85%EC%8B%9C%EC%A0%81%EC%9D%BC%20%EC%88%98%20%EC%9E%88%EB%8B%A4.%0A%20%20%20%20let%20i32_bag%20%3D%20BagOfHolding%3A%3A%3Ci32%3E%20%7B%20item%3A%2042%20%7D%3B%0A%20%20%20%20let%20bool_bag%20%3D%20BagOfHolding%3A%3A%3Cbool%3E%20%7B%20item%3A%20true%20%7D%3B%0A%0A%20%20%20%20%2F%2F%20Rust%EB%8A%94%20generic%EC%97%90%EB%8F%84%20%EC%9E%90%EB%A3%8C%ED%98%95%EC%9D%84%20%EC%9C%A0%EC%B6%94%ED%95%A0%20%EC%88%98%20%EC%9E%88%EB%8B%A4!%0A%20%20%20%20let%20float_bag%20%3D%20BagOfHolding%20%7B%20item%3A%203.14%20%7D%3B%0A%0A%20%20%20%20%2F%2F%20%EC%A4%91%EC%9A%94%3A%20%EC%8B%A4%EC%83%9D%ED%99%9C%EC%97%90%EC%84%9C%EB%8A%94%20%EA%B0%80%EB%B0%A9%20%EC%86%8D%EC%97%90%20%EA%B0%80%EB%B0%A9%EC%9D%84%20%EB%84%A3%EC%A7%80%20%EB%A7%88%EC%8B%9C%EC%98%A4%0A%20%20%20%20let%20bag_in_bag%20%3D%20BagOfHolding%20%7B%0A%20%20%20%20%20%20%20%20item%3A%20BagOfHolding%20%7B%20item%3A%20%22%EC%BE%85!%22%20%7D%2C%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%22%2C%0A%20%20%20%20%20%20%20%20i32_bag.item%2C%20bool_bag.item%2C%20float_bag.item%2C%20bag_in_bag.item.item%0A%20%20%20%20)%3B%0A%7D%0A
+  code: |
+    // 일부만 정의된 struct 자료형
+    struct BagOfHolding<T> {
+        item: T,
+    }
+
+    fn main() {
+        // 중요: 여기서 generic 자료형을 쓰면, 컴파일 타임에 생성된 자료형을 생성하게 됨.
+        // Turbofish를 쓰면 명시적일 수 있다.
+        let i32_bag = BagOfHolding::<i32> { item: 42 };
+        let bool_bag = BagOfHolding::<bool> { item: true };
+
+        // Rust는 generic에도 자료형을 유추할 수 있다!
+        let float_bag = BagOfHolding { item: 3.14 };
+
+        // 중요: 실생활에서는 가방 속에 가방을 넣지 마시오
+        let bag_in_bag = BagOfHolding {
+            item: BagOfHolding { item: "쾅!" },
+        };
+
+        println!(
+            "{} {} {} {}",
+            i32_bag.item, bool_bag.item, float_bag.item, bag_in_bag.item.item
+        );
+    }
 - title: 아무 것도 없는 것을 표현하기
   content_markdown: >
     다른 언어에서 `null` 키워드는 값이 없음을 나타내기 위해 사용됩니다.
@@ -37,8 +60,16 @@
 
     `null` 값이 없는 Rust에서 매우 흔한 패턴입니다. generic 자료형은 이러한 어려움을
     해결하는 데에 도움을 줍니다.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=enum%20Item%20%7B%0A%20%20%20%20Inventory(String)%2C%0A%20%20%20%20%2F%2F%20None%EC%9D%80%20%ED%95%AD%EB%AA%A9%EC%9D%98%20%EB%B6%80%EC%9E%AC%EB%A5%BC%20%EB%82%98%ED%83%80%EB%83%84%0A%20%20%20%20None%2C%0A%7D%0A%0Astruct%20BagOfHolding%20%7B%0A%20%20%20%20item%3A%20Item%2C%0A%7D%0A
+  code: |
+    enum Item {
+        Inventory(String),
+        // None은 항목의 부재를 나타냄
+        None,
+    }
+
+    struct BagOfHolding {
+        item: Item,
+    }
 - title: 옵션
   content_markdown: >
     Rust에는 `null`을 쓰지 않고도 nullable한 값을 표현할 수 있는
@@ -57,8 +88,38 @@
 
 
     이 enum은 매우 흔해서, 어디서나 `Some`과 `None`으로 enum을 인스턴스화 할 수 있습니다.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=%2F%2F%20%EC%9D%BC%EB%B6%80%EB%A7%8C%20%EC%A0%95%EC%9D%98%EB%90%9C%20struct%20%EC%9E%90%EB%A3%8C%ED%98%95%0Astruct%20BagOfHolding%3CT%3E%20%7B%0A%20%20%20%20%2F%2F%20%EC%9E%90%EB%A3%8C%ED%98%95%20T%EC%9D%98%20%EC%9D%B8%EC%9E%90%EB%8A%94%20%EB%8B%A4%EB%A5%B8%20%EA%B3%B3%EC%9C%BC%EB%A1%9C%20%EB%84%98%EA%B2%A8%EC%A7%88%20%EC%88%98%20%EC%9E%88%EC%9D%8C%0A%20%20%20%20item%3A%20Option%3CT%3E%2C%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20%EC%A4%91%EC%9A%94%3A%20i32%EB%A5%BC%20%EC%9C%84%ED%95%9C%20%EA%B0%80%EB%B0%A9%EC%97%90%20%EC%95%84%EB%AC%B4%20%EA%B2%83%EB%8F%84%20%EC%95%88%EB%93%A4%EC%97%88%EB%8B%A4!%0A%20%20%20%20%2F%2F%20Rust%EA%B0%80%20%EB%AC%B4%EC%8A%A8%20%EC%9E%90%EB%A3%8C%ED%98%95%EC%9D%98%20%EA%B0%80%EB%B0%A9%EC%9D%B8%EC%A7%80%20%EC%95%8C%20%EC%88%98%EA%B0%80%20%EC%97%86%EC%9C%BC%EB%AF%80%EB%A1%9C%20%EC%9E%90%EB%A3%8C%ED%98%95%EC%9D%84%20%EC%A7%80%EC%A0%95%ED%95%B4%EC%95%BC%20%ED%95%A8.%0A%20%20%20%20let%20i32_bag%20%3D%20BagOfHolding%3A%3A%3Ci32%3E%20%7B%20item%3A%20None%20%7D%3B%0A%0A%20%20%20%20if%20i32_bag.item.is_none()%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%EA%B0%80%EB%B0%A9%EC%97%90%20%EC%95%84%EB%AC%B4%20%EA%B2%83%EB%8F%84%20%EC%97%86%EB%8B%A4!%22)%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%EA%B0%80%EB%B0%A9%EC%97%90%20%EB%AD%94%EA%B0%80%20%EC%9E%88%EB%8B%A4!%22)%0A%20%20%20%20%7D%0A%0A%20%20%20%20let%20i32_bag%20%3D%20BagOfHolding%3A%3A%3Ci32%3E%20%7B%20item%3A%20Some(42)%20%7D%3B%0A%0A%20%20%20%20if%20i32_bag.item.is_some()%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%EA%B0%80%EB%B0%A9%EC%97%90%20%EB%AD%94%EA%B0%80%20%EC%9E%88%EB%8B%A4!%22)%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%EA%B0%80%EB%B0%A9%EC%97%90%20%EC%95%84%EB%AC%B4%20%EA%B2%83%EB%8F%84%20%EC%97%86%EB%8B%A4!%22)%0A%20%20%20%20%7D%0A%0A%20%20%20%20%2F%2F%20match%EB%8A%94%20Option%EC%9D%84%20%EC%9A%B0%EC%95%84%ED%95%98%EA%B2%8C%20%EB%B6%84%ED%95%B4%ED%95%98%EA%B3%A0%2C%20%EB%AA%A8%EB%93%A0%20%EC%BC%80%EC%9D%B4%EC%8A%A4%EB%A5%BC%20%EC%B2%98%EB%A6%AC%ED%95%98%EB%8F%84%EB%A1%9D%20%ED%95%B4%EC%A4%80%EB%8B%A4!%0A%20%20%20%20match%20i32_bag.item%20%7B%0A%20%20%20%20%20%20%20%20Some(v)%20%3D%3E%20println!(%22%EA%B0%80%EB%B0%A9%EC%97%90%EC%84%9C%20%7B%7D%EB%A5%BC%20%EC%B0%BE%EC%95%98%EB%8B%A4!%22%2C%20v)%2C%0A%20%20%20%20%20%20%20%20None%20%3D%3E%20println!(%22%EC%95%84%EB%AC%B4%20%EA%B2%83%EB%8F%84%20%EC%B0%BE%EC%A7%80%20%EB%AA%BB%ED%96%88%EB%8B%A4%22)%2C%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    // 일부만 정의된 struct 자료형
+    struct BagOfHolding<T> {
+        // 자료형 T의 인자는 다른 곳으로 넘겨질 수 있음
+        item: Option<T>,
+    }
+
+    fn main() {
+        // 중요: i32를 위한 가방에 아무 것도 안들었다!
+        // Rust가 무슨 자료형의 가방인지 알 수가 없으므로 자료형을 지정해야 함.
+        let i32_bag = BagOfHolding::<i32> { item: None };
+
+        if i32_bag.item.is_none() {
+            println!("가방에 아무 것도 없다!")
+        } else {
+            println!("가방에 뭔가 있다!")
+        }
+
+        let i32_bag = BagOfHolding::<i32> { item: Some(42) };
+
+        if i32_bag.item.is_some() {
+            println!("가방에 뭔가 있다!")
+        } else {
+            println!("가방에 아무 것도 없다!")
+        }
+
+        // match는 Option을 우아하게 분해하고, 모든 케이스를 처리하도록 해준다!
+        match i32_bag.item {
+            Some(v) => println!("가방에서 {}를 찾았다!", v),
+            None => println!("아무 것도 찾지 못했다"),
+        }
+    }
 - title: 결과
   content_markdown: >
     Rust에는 실패할 가능성이 있는 값을 리턴할 수 있도록 해주는 `Result`라 불리는
@@ -82,13 +143,54 @@
 
 
     이 enum은 매우 흔해서, 어디서나 `Ok`와 `Err`로 enum을 인스턴스화 할 수 있습니다.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20do_something_that_might_fail(i%3A%20i32)%20-%3E%20Result%3Cf32%2C%20String%3E%20%7B%0A%20%20%20%20if%20i%20%3D%3D%2042%20%7B%0A%20%20%20%20%20%20%20%20Ok(13.0)%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20Err(String%3A%3Afrom(%22%EB%A7%9E%EB%8A%94%20%EC%88%AB%EC%9E%90%EA%B0%80%20%EC%95%84%EB%8B%99%EB%8B%88%EB%8B%A4%22))%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20result%20%3D%20do_something_that_might_fail(12)%3B%0A%0A%20%20%20%20%2F%2F%20match%EB%8A%94%20Result%EB%A5%BC%20%EC%9A%B0%EC%95%84%ED%95%98%EA%B2%8C%20%EB%B6%84%ED%95%B4%ED%95%98%EA%B3%A0%2C%20%EB%AA%A8%EB%93%A0%20%EC%BC%80%EC%9D%B4%EC%8A%A4%EB%A5%BC%20%EC%B2%98%EB%A6%AC%ED%95%98%EB%8F%84%EB%A1%9D%20%ED%95%B4%EC%A4%80%EB%8B%A4!%0A%20%20%20%20match%20result%20%7B%0A%20%20%20%20%20%20%20%20Ok(v)%20%3D%3E%20println!(%22%7B%7D%20%EB%B0%9C%EA%B2%AC%22%2C%20v)%2C%0A%20%20%20%20%20%20%20%20Err(e)%20%3D%3E%20println!(%22%EC%98%A4%EB%A5%98%3A%20%7B%7D%22%2C%20e)%2C%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    fn do_something_that_might_fail(i: i32) -> Result<f32, String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("맞는 숫자가 아닙니다"))
+        }
+    }
+
+    fn main() {
+        let result = do_something_that_might_fail(12);
+
+        // match는 Result를 우아하게 분해하고, 모든 케이스를 처리하도록 해준다!
+        match result {
+            Ok(v) => println!("{} 발견", v),
+            Err(e) => println!("오류: {}", e),
+        }
+    }
 - title: 실패할 수 있는 메인
   content_markdown: |
     `main`은 `Result`를 리턴할 수 있다!
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20do_something_that_might_fail(i%3A%20i32)%20-%3E%20Result%3Cf32%2C%20String%3E%20%7B%0A%20%20%20%20if%20i%20%3D%3D%2042%20%7B%0A%20%20%20%20%20%20%20%20Ok(13.0)%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20Err(String%3A%3Afrom(%22%EB%A7%9E%EB%8A%94%20%EC%88%AB%EC%9E%90%EA%B0%80%20%EC%95%84%EB%8B%99%EB%8B%88%EB%8B%A4%22))%0A%20%20%20%20%7D%0A%7D%0A%0A%2F%2F%20Main%EC%9D%80%20%EC%95%84%EB%AC%B4%20%EA%B0%92%EB%8F%84%20%EB%A6%AC%ED%84%B4%ED%95%98%EC%A7%80%20%EC%95%8A%EC%A7%80%EB%A7%8C%2C%20%EC%98%A4%EB%A5%98%EB%A5%BC%20%EB%A6%AC%ED%84%B4%ED%95%A0%20%EC%88%98%20%EC%9E%88%EB%8B%A4!%0Afn%20main()%20-%3E%20Result%3C()%2C%20String%3E%20%7B%0A%20%20%20%20let%20result%20%3D%20do_something_that_might_fail(12)%3B%0A%0A%20%20%20%20match%20result%20%7B%0A%20%20%20%20%20%20%20%20Ok(v)%20%3D%3E%20println!(%22%7B%7D%20%EB%B0%9C%EA%B2%AC%22%2C%20v)%2C%0A%20%20%20%20%20%20%20%20Err(_e)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20%EC%9D%B4%20%EC%98%A4%EB%A5%98%EB%A5%BC%20%EC%9A%B0%EC%95%84%ED%95%98%EA%B2%8C%20%EC%B2%98%EB%A6%AC%ED%95%9C%EB%8B%A4%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20main%EC%9C%BC%EB%A1%9C%EB%B6%80%ED%84%B0%20%EB%AC%B4%EC%8A%A8%20%EC%9D%BC%EC%9D%B4%20%EB%B0%9C%EC%83%9D%ED%96%88%EB%8A%94%EC%A7%80%20%EC%83%88%20%EC%98%A4%EB%A5%98%EB%A5%BC%20%EB%A6%AC%ED%84%B4%ED%95%9C%EB%8B%A4!%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20Err(String%3A%3Afrom(%22main%EC%97%90%EC%84%9C%20%EB%AD%94%EA%B0%80%20%EC%9E%98%EB%AA%BB%20%EB%90%98%EC%97%88%EC%8A%B5%EB%8B%88%EB%8B%A4!%22))%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%0A%20%20%20%20%2F%2F%20%EB%AA%A8%EB%93%A0%20%EC%9D%BC%EC%9D%B4%20%EC%9E%98%20%EB%81%9D%EB%82%AC%EC%9D%8C%EC%9D%84%20%ED%91%9C%ED%98%84%ED%95%98%EA%B8%B0%20%EC%9C%84%ED%95%B4%0A%20%20%20%20%2F%2F%20Result%20Ok%20%EC%95%88%EC%97%90%20unit%20%EA%B0%92%EC%9D%84%20%EC%93%B0%EA%B3%A0%20%EC%9E%88%EB%8A%94%EA%B1%B8%20%EC%9E%98%20%EB%B4%90%EB%91%90%EC%8B%AD%EC%8B%9C%EC%98%A4%0A%20%20%20%20Ok(())%0A%7D%0A
+  code: |
+    fn do_something_that_might_fail(i: i32) -> Result<f32, String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("맞는 숫자가 아닙니다"))
+        }
+    }
+
+    // Main은 아무 값도 리턴하지 않지만, 오류를 리턴할 수 있다!
+    fn main() -> Result<(), String> {
+        let result = do_something_that_might_fail(12);
+
+        match result {
+            Ok(v) => println!("{} 발견", v),
+            Err(_e) => {
+                // 이 오류를 우아하게 처리한다
+
+                // main으로부터 무슨 일이 발생했는지 새 오류를 리턴한다!
+                return Err(String::from("main에서 뭔가 잘못 되었습니다!"));
+            }
+        }
+
+        // 모든 일이 잘 끝났음을 표현하기 위해
+        // Result Ok 안에 unit 값을 쓰고 있는걸 잘 봐두십시오
+        Ok(())
+    }
 - title: 우아한 오류 처리
   content_markdown: >
     Rust는 매우 흔히 사용되는 `Result`와 함께 쓸 수 있는 강력한 연산자 `?`를 갖고 있습니다.
@@ -110,8 +212,21 @@
     }
 
     ```
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20do_something_that_might_fail(i%3A%20i32)%20-%3E%20Result%3Cf32%2C%20String%3E%20%7B%0A%20%20%20%20if%20i%20%3D%3D%2042%20%7B%0A%20%20%20%20%20%20%20%20Ok(13.0)%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20Err(String%3A%3Afrom(%22%EB%A7%9E%EB%8A%94%20%EC%88%AB%EC%9E%90%EA%B0%80%20%EC%95%84%EB%8B%99%EB%8B%88%EB%8B%A4%22))%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20-%3E%20Result%3C()%2C%20String%3E%20%7B%0A%20%20%20%20%2F%2F%20%EC%96%BC%EB%A7%88%EB%82%98%20%EC%BD%94%EB%93%9C%EB%A5%BC%20%EC%A4%84%EC%98%80%EB%8A%94%EC%A7%80%20%EB%B3%B4%EC%84%B8%EC%9A%94!%0A%20%20%20%20let%20v%20%3D%20do_something_that_might_fail(42)%3F%3B%0A%20%20%20%20println!(%22%7B%7D%20%EB%B0%9C%EA%B2%AC%22%2C%20v)%3B%0A%20%20%20%20Ok(())%0A%7D%0A
+  code: |
+    fn do_something_that_might_fail(i: i32) -> Result<f32, String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("맞는 숫자가 아닙니다"))
+        }
+    }
+
+    fn main() -> Result<(), String> {
+        // 얼마나 코드를 줄였는지 보세요!
+        let v = do_something_that_might_fail(42)?;
+        println!("{} 발견", v);
+        Ok(())
+    }
 - title: 추한 옵션/결과 처리
   content_markdown: >
     간단한 코드를 짤 때에도 `Option`/`Result`를 쓰는 것은 귀찮은 일일 수 있습니다.
@@ -165,8 +280,26 @@
 
 
     좋은 러스타시안(rustacean)이 되어 가능한 제대로 `match`를 사용하세요!
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20do_something_that_might_fail(i%3A%20i32)%20-%3E%20Result%3Cf32%2C%20String%3E%20%7B%0A%20%20%20%20if%20i%20%3D%3D%2042%20%7B%0A%20%20%20%20%20%20%20%20Ok(13.0)%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20Err(String%3A%3Afrom(%22%EB%A7%9E%EB%8A%94%20%EC%88%AB%EC%9E%90%EA%B0%80%20%EC%95%84%EB%8B%99%EB%8B%88%EB%8B%A4%22))%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20-%3E%20Result%3C()%2C%20String%3E%20%7B%0A%20%20%20%20%2F%2F%20%EA%B0%84%EA%B2%B0%ED%95%98%EC%A7%80%EB%A7%8C%20%EA%B0%80%EC%A0%95%EC%A0%81%EC%9D%B4%EA%B3%A0%20%EB%B9%A0%EB%A5%B4%EA%B2%8C%20%EC%A7%80%EC%A0%80%EB%B6%84%20%ED%95%B4%EC%A7%90%0A%20%20%20%20let%20v%20%3D%20do_something_that_might_fail(42).unwrap()%3B%0A%20%20%20%20println!(%22%7B%7D%20%EB%B0%9C%EA%B2%AC%22%2C%20v)%3B%0A%0A%20%20%20%20%2F%2F%20panic!%20%EB%90%A0%20%EA%B2%83%EC%9E%84%0A%20%20%20%20let%20v%20%3D%20do_something_that_might_fail(1).unwrap()%3B%0A%20%20%20%20println!(%22%7B%7D%20%EB%B0%9C%EA%B2%AC%22%2C%20v)%3B%0A%0A%20%20%20%20Ok(())%0A%7D%0A
+  code: |
+    fn do_something_that_might_fail(i: i32) -> Result<f32, String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("맞는 숫자가 아닙니다"))
+        }
+    }
+
+    fn main() -> Result<(), String> {
+        // 간결하지만 가정적이고 빠르게 지저분 해짐
+        let v = do_something_that_might_fail(42).unwrap();
+        println!("{} 발견", v);
+
+        // panic! 될 것임
+        let v = do_something_that_might_fail(1).unwrap();
+        println!("{} 발견", v);
+
+        Ok(())
+    }
 - title: 벡터
   content_markdown: >
     가장 유용한 generic 자료형들 중 하나가 collection 자료형입니다.
@@ -189,8 +322,27 @@
 
     * vector는 기본 용량을 갖고 시작하는데, 용량보다 많은 내용물이 추가될 경우,
       큰 용량을 가진 새 고정 리스트를 위해 heap에 데이터를 재할당합니다.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20%2F%2F%20%EC%9E%90%EB%A3%8C%ED%98%95%EC%9D%84%20%EB%AA%85%EC%8B%9C%EC%A0%81%EC%9C%BC%EB%A1%9C%20%ED%95%A0%20%EC%88%98%20%EC%9E%88%EC%9D%8C%0A%20%20%20%20let%20mut%20i32_vec%20%3D%20Vec%3A%3A%3Ci32%3E%3A%3Anew()%3B%20%2F%2F%20turbofish%20%3C3%0A%20%20%20%20i32_vec.push(1)%3B%0A%20%20%20%20i32_vec.push(2)%3B%0A%20%20%20%20i32_vec.push(3)%3B%0A%0A%20%20%20%20%2F%2F%20%ED%95%98%EC%A7%80%EB%A7%8C%20Rust%EA%B0%80%20%EC%96%BC%EB%A7%88%EB%82%98%20%EB%98%91%EB%98%91%ED%95%98%EA%B2%8C%20%EC%9E%90%EB%A3%8C%ED%98%95%EC%9D%84%20%EC%9E%90%EB%8F%99%EC%9C%BC%EB%A1%9C%20%EA%B2%B0%EC%A0%95%ED%95%98%EB%8A%94%EC%A7%80%20%EB%B3%B4%EC%8B%AD%EC%8B%9C%EC%98%A4%0A%20%20%20%20let%20mut%20float_vec%20%3D%20Vec%3A%3Anew()%3B%0A%20%20%20%20float_vec.push(1.3)%3B%0A%20%20%20%20float_vec.push(2.3)%3B%0A%20%20%20%20float_vec.push(3.4)%3B%0A%0A%20%20%20%20%2F%2F%20%EC%95%84%EB%A6%84%EB%8B%A4%EC%9A%B4%20macro%EC%9E%85%EB%8B%88%EB%8B%A4!%0A%20%20%20%20let%20string_vec%20%3D%20vec!%5BString%3A%3Afrom(%22Hello%22)%2C%20String%3A%3Afrom(%22World%22)%5D%3B%0A%0A%20%20%20%20for%20word%20in%20string_vec.iter()%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20word)%3B%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    fn main() {
+        // 자료형을 명시적으로 할 수 있음
+        let mut i32_vec = Vec::<i32>::new(); // turbofish <3
+        i32_vec.push(1);
+        i32_vec.push(2);
+        i32_vec.push(3);
+
+        // 하지만 Rust가 얼마나 똑똑하게 자료형을 자동으로 결정하는지 보십시오
+        let mut float_vec = Vec::new();
+        float_vec.push(1.3);
+        float_vec.push(2.3);
+        float_vec.push(3.4);
+
+        // 아름다운 macro입니다!
+        let string_vec = vec![String::from("Hello"), String::from("World")];
+
+        for word in string_vec.iter() {
+            println!("{}", word);
+        }
+    }
 - title: 4장 - 마무리
   content_markdown: >
     우리에게 generic 자료형이 얼마나 도움이 되는지 한 장만에 배웠습니다!

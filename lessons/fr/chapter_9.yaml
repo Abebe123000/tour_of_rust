@@ -22,8 +22,14 @@
   content_markdown: |
     Un bibliothèque possède un module racine dans un fichier appelé `lib.rs`.
 - title: Référencement de modules et de crates
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=use%20std%3A%3Af64%3A%3Aconsts%3A%3API%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%22Bienvenue%20au%20terrain%20de%20jeu%20Rust!%22)%3B%0A%20%20%20%20println!(%22Chuck%20Norris%20connait%20la%20derni%C3%A8re%20%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20d%C3%A9cimale%20de%20%7B%7D...!%22%2C%20PI)%3B%0A%7D%0A
+  code: |
+    use std::f64::consts::PI;
+
+    fn main() {
+        println!("Bienvenue au terrain de jeu Rust!");
+        println!("Chuck Norris connait la dernière \
+                  décimale de {}...!", PI);
+    }
   content_markdown: |
     Les composants d'un module peuvent être référencés avec leur chemin
     complet `std::f64::consts::PI`.
@@ -112,8 +118,17 @@
   content_markdown: |
     Tout comme les fonctions, les structures peuvent déclarer quels champs
     seront visibles à l'extérieur du module en utilisant le mot-clé`pub`.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=%2F%2F%20La%20structure%20SeaCreature%20sera%20visible%0A%2F%2F%20en%20dehors%20du%20module.%0Apub%20struct%20SeaCreature%20%7B%0A%20%20%20%20pub%20animal_type%3A%20String%2C%0A%20%20%20%20pub%20name%3A%20String%2C%0A%20%20%20%20pub%20arms%3A%20i32%2C%0A%20%20%20%20pub%20legs%3A%20i32%2C%0A%20%20%20%20%2F%2F%20Le%20champ%20weapons%20ne%20sera%20pas%20visible.%0A%20%20%20%20weapon%3A%20String%2C%0A%7D%0A
+  code: |
+    // La structure SeaCreature sera visible
+    // en dehors du module.
+    pub struct SeaCreature {
+        pub animal_type: String,
+        pub name: String,
+        pub arms: i32,
+        pub legs: i32,
+        // Le champ weapons ne sera pas visible.
+        weapon: String,
+    }
 - title: prelude
   content_markdown: |
     Tu pourrais te demander comment, avec Rust, nous avons pu avoir accès à

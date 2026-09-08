@@ -5,16 +5,31 @@
 
     E se por acaso você está se perguntando quem é este adorável caranguejo falante, eu me chamo **Ferris** e sou o mascote não oficial da linguagem de programação Rust. Prazer em conhecê-lo.
 - title: O Playground do Rust
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20println!(%22Bem-vindo%20%C3%A0%20%C3%A1rea%20de%20testes!%20Voc%C3%AA%20pode%20modificar%20seu%20c%C3%B3digo%20aqui.%22)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        println!("Bem-vindo à área de testes! Você pode modificar seu código aqui.");
+    }
   content_markdown: >
     Este tour usa a ferramenta de codificação interativa [Rust Playground](https://play.rust-lang.org)
 
 
     É uma boa maneira de brincar com Rust e mostrar aos outros a sua criatividade e desafios!
 - title: Variáveis
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20%2F%2F%20Rust%20infere%20o%20tipo%20de%20x%0A%20%20%20%20let%20x%20%3D%2013%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%0A%20%20%20%20%2F%2F%20Rust%20tamb%C3%A9m%20pode%20ser%20expl%C3%ADcito%20com%20o%20tipo%0A%20%20%20%20let%20x%3A%20f64%20%3D%203.14159%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%0A%20%20%20%20%2F%2F%20Rust%20tamb%C3%A9m%20pode%20declarar%20primero%20e%20inicializar%20depois%2C%20mas%20%C3%A9%20incomum%0A%20%20%20%20let%20x%3B%0A%20%20%20%20x%20%3D%200%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        // Rust infere o tipo de x
+        let x = 13;
+        println!("{}", x);
+
+        // Rust também pode ser explícito com o tipo
+        let x: f64 = 3.14159;
+        println!("{}", x);
+
+        // Rust também pode declarar primero e inicializar depois, mas é incomum
+        let x;
+        x = 0;
+        println!("{}", x);
+    }
   content_markdown: >
     Variáveis são declaradas usando a palavra-chave **let**.
 
@@ -44,8 +59,20 @@
 
     Temos muito a explicar ainda sobre este conceito, mas por enquanto apenas preste atenção nesta palavra-chave.
 - title: Tipos básicos
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20x%20%3D%2012%3B%20%2F%2F%20infere%20o%20tipo%20i32%0A%20%20%20%20let%20a%20%3D%2012u8%3B%0A%20%20%20%20let%20b%20%3D%204.3%3B%20%2F%2F%20infere%20o%20tipo%20f64%0A%20%20%20%20let%20c%20%3D%204.3f32%3B%0A%20%20%20%20let%20bv%20%3D%20true%3B%0A%20%20%20%20let%20t%20%3D%20(13%2C%20false)%3B%0A%20%20%20%20let%20sentence%20%3D%20%22Ol%C3%A1%2C%20mundo!%22%3B%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%20%7B%7D%22%2C%0A%20%20%20%20%20%20%20%20x%2C%20a%2C%20b%2C%20c%2C%20bv%2C%20t.0%2C%20t.1%2C%20sentence%0A%20%20%20%20)%3B%0A%7D%0A
+  code: |
+    fn main() {
+        let x = 12; // infere o tipo i32
+        let a = 12u8;
+        let b = 4.3; // infere o tipo f64
+        let c = 4.3f32;
+        let bv = true;
+        let t = (13, false);
+        let sentence = "Olá, mundo!";
+        println!(
+            "{} {} {} {} {} {} {} {}",
+            x, a, b, c, bv, t.0, t.1, sentence
+        );
+    }
   content_markdown: >
     Rust tem uma variedade tipos que lhe serão familiares:
 
@@ -80,8 +107,15 @@
 
     Por sorte, o Rust faz com que as conversões de tipos numéricos sejam muito simples usando a plavra-chave **as**.
 - title: Constantes
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=const%20PI%3A%20f32%20%3D%203.14159%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%0A%20%20%20%20%20%20%20%20%22Para%20fazer%20uma%20%7B%7Dzza%2C%20voc%C3%AA%20deve%20primeiro%20criar%20o%20Universo.%22%2C%0A%20%20%20%20%20%20%20%20PI%0A%20%20%20%20)%3B%0A%7D%0A
+  code: |
+    const PI: f32 = 3.14159;
+
+    fn main() {
+        println!(
+            "Para fazer uma {}zza, você deve primeiro criar o Universo.",
+            PI
+        );
+    }
   content_markdown: >
     As constantes nos permitem especificar um valor comum que pode ser usado muitas vezes por todo o nosso código de maneira eficiente. Ao invés de copiar os valores como variáveis onde serão utilizadas, as constantes substituirão o identificador de texto pelo seu valor onde quer que estejam sendo usadas em tempo de compilação.
 
@@ -109,8 +143,20 @@
 
     Os nomes das funções são sempre em `snake_case`.
 - title: Retorno de Múltiplos Valores
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20swap(x%3A%20i32%2C%20y%3A%20i32)%20-%3E%20(i32%2C%20i32)%20%7B%0A%20%20%20%20return%20(y%2C%20x)%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20devolve%20uma%20tupla%20de%20valores%0A%20%20%20%20let%20result%20%3D%20swap(123%2C%20321)%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20result.0%2C%20result.1)%3B%0A%0A%20%20%20%20%2F%2F%20desestrutura%20a%20tupla%20para%20duas%20vari%C3%A1veis%0A%20%20%20%20let%20(a%2C%20b)%20%3D%20swap(result.0%2C%20result.1)%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20a%2C%20b)%3B%0A%7D%0A
+  code: |
+    fn swap(x: i32, y: i32) -> (i32, i32) {
+        return (y, x);
+    }
+
+    fn main() {
+        // devolve uma tupla de valores
+        let result = swap(123, 321);
+        println!("{} {}", result.0, result.1);
+
+        // desestrutura a tupla para duas variáveis
+        let (a, b) = swap(result.0, result.1);
+        println!("{} {}", a, b);
+    }
   content_markdown: >
     Funções podem devolver múltiplos valores retornando uma **tupla** de valores.
 
@@ -120,8 +166,25 @@
 
     O Rust suporta vários modos de desestruturação que veremos em diferentes formas, permitindo extrair subconjuntos de dados de maneira prática.
 - title: Retornando nada
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20faz_nada()%20-%3E%20()%20%7B%0A%20%20%20%20return%20()%3B%0A%7D%0A%0A%2F%2F%20o%20tipo%20de%20retorno%20%C3%A9%20implicitamente%20()%0Afn%20faz_nada2()%20%7B%0A%20%20%20%20%2F%2F%20esta%20fun%C3%A7%C3%A3o%20ir%C3%A1%20devolver%20()%20se%20nada%20for%20especificado%20para%20retornar%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20a%20%3D%20faz_nada()%3B%0A%20%20%20%20let%20b%20%3D%20faz_nada2()%3B%0A%0A%20%20%20%20%2F%2F%20Exibindo%20uma%20string%20de%20depura%C3%A7%C3%A3o%20para%20a%20e%20b%0A%20%20%20%20%2F%2F%20Porque%20%C3%A9%20dif%C3%ADcil%20n%C3%A3o%20mostrar%20nada%0A%20%20%20%20println!(%22O%20valor%20de%20a%3A%20%7B%3A%3F%7D%22%2C%20a)%3B%0A%20%20%20%20println!(%22O%20valor%20de%20b%3A%20%7B%3A%3F%7D%22%2C%20b)%3B%0A%7D%0A
+  code: |
+    fn faz_nada() -> () {
+        return ();
+    }
+
+    // o tipo de retorno é implicitamente ()
+    fn faz_nada2() {
+        // esta função irá devolver () se nada for especificado para retornar
+    }
+
+    fn main() {
+        let a = faz_nada();
+        let b = faz_nada2();
+
+        // Exibindo uma string de depuração para a e b
+        // Porque é difícil não mostrar nada
+        println!("O valor de a: {:?}", a);
+        println!("O valor de b: {:?}", b);
+    }
   content_markdown: >
     Se nenhum tipo for especificado para o retorno de uma função, ele devolve uma tupla vazia, também conhecida como *unit*.
 

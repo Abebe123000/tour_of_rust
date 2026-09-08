@@ -13,8 +13,10 @@
     nennen. Leute, die Rust benutzen, dazu beitragen oder generell daran interessiert sind,
     nennen sich selbst Rustaceans.
 - title: Der Rust Playground
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20println!(%22Willkommen%20im%20Playground!%20Du%20kannst%20den%20Code%20hier%20drin%20modifizieren.%22)%3B%0A%7D
+  code: |-
+    fn main() {
+        println!("Willkommen im Playground! Du kannst den Code hier drin modifizieren.");
+    }
   content_markdown: >
     Diese Tour macht sich das interaktive Coding Tool vom [Rust
     Playground](https://play.rust-lang.org)
@@ -27,8 +29,14 @@
     gesetzt. Ändere Codeschnipsel, teste Funktionen, lass deiner Fantasie freien
     Lauf!
 - title: Variablen
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20hello_world%20%3D%20%22Hello%20world%22%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20hello_world)%3B%0A%20%20%20%20%0A%20%20%20%20let%20hello_world%20%3D%20%22Hello%20playground%22%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20hello_world)%3B%0A%7D
+  code: |-
+    fn main() {
+        let hello_world = "Hello world";
+        println!("{}", hello_world);
+        
+        let hello_world = "Hello playground";
+        println!("{}", hello_world);
+    }
   content_html: >-
     <p>Variablen werden mit dem Schlüsselwort <code>let</code>
     deklariert.</p><p>Im Regelfall sollte man Rust die Entscheidung überlassen,
@@ -41,8 +49,15 @@
     hätte. Der Datentyp darf sich dabei auch ändern.</p><p>Variablennamen werden
     ebenfalls in <code>snake_case</code> geschrieben.</p>
 - title: Variablenwerte ändern
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20hello%20%3D%20%22Hello%22%3B%0A%20%20%20%20let%20mut%20world%20%3D%20%22playground%22%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20hello%2C%20world)%3B%0A%20%20%20%20%0A%20%20%20%20world%20%3D%20%22world%22%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20hello%2C%20world)%3B%0A%7D
+  code: |-
+    fn main() {
+        let hello = "Hello";
+        let mut world = "playground";
+        println!("{} {}", hello, world);
+        
+        world = "world";
+        println!("{} {}", hello, world);
+    }
   content_markdown: >
     Rust sorgt sich sehr darum, welche Variablen verändert werden können
 
@@ -152,8 +167,19 @@
     Einzelne Elemente können mit dem `[x]` Operator abgerufen werden, in welchem
     *x* den *usize* Index (beginnend bei 0) des gesuchten Elementes darstellt.
 - title: Funktionen
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20add(x%3A%20i32%2C%20y%3A%20i32)%20-%3E%20i32%20%7B%0A%20%20%20%20return%20x%20%2B%20y%3B%0A%7D%0A%0Afn%20subtract(x%3A%20i32%2C%20y%3A%20i32)%20-%3E%20i32%20%7B%0A%20%20%20%20x%20-%20y%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%2242%20%2B%2013%20%3D%20%7B%7D%22%2C%20add(42%2C%2013))%3B%0A%20%20%20%20println!(%2242%20-%2013%20%3D%20%7B%7D%22%2C%20subtract(42%2C%2013))%3B%0A%7D%0A
+  code: |
+    fn add(x: i32, y: i32) -> i32 {
+        return x + y;
+    }
+
+    fn subtract(x: i32, y: i32) -> i32 {
+        x - y
+    }
+
+    fn main() {
+        println!("42 + 13 = {}", add(42, 13));
+        println!("42 - 13 = {}", subtract(42, 13));
+    }
   content_markdown: >
     Eine Funktion kann eine beliebige (nicht-negative) Anzahl an Argumenten bzw.
     Parametern aufnehmen.

@@ -18,8 +18,17 @@
 
       Tất cả các toán tử quan hệ và logic thông thường vẫn hoạt động: `==`, `!=`,
       `<`, `>`, `<=`, `>=`, `!`, `||`, `&&`.
-    code: >-
-      https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20x%20%3D%2042%3B%0A%20%20%20%20if%20x%20%3C%2042%20%7B%0A%20%20%20%20%20%20%20%20println!(%22nh%E1%BB%8F%20h%C6%A1n%2042%22)%3B%0A%20%20%20%20%7D%20else%20if%20x%20%3D%3D%2042%20%7B%0A%20%20%20%20%20%20%20%20println!(%22x%20l%C3%A0%2042%22)%3B%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20println!(%22l%E1%BB%9Bn%20h%C6%A1n%2042%22)%3B%0A%20%20%20%20%7D%0A%7D   
+    code: |-
+      fn main() {
+          let x = 42;
+          if x < 42 {
+              println!("nhỏ hơn 42");
+          } else if x == 42 {
+              println!("x là 42");
+          } else {
+              println!("lớn hơn 42");
+          }
+      }   
   - title: loop(vòng lặp)
     content_markdown: |
 
@@ -30,15 +39,30 @@
       `break` giúp bạn thoát ra khỏi một vòng lặp khi bạn muốn.
 
       `vòng lặp` có một bí mật sẽ được bật mí sau.
-    code: >-
-      https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20mut%20x%20%3D%200%3B%0A%20%20%20%20loop%20%7B%0A%20%20%20%20%20%20%20%20x%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20if%20x%20%3D%3D%2042%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20break%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%7D%0A
+    code: |
+      fn main() {
+          let mut x = 0;
+          loop {
+              x += 1;
+              if x == 42 {
+                  break;
+              }
+          }
+          println!("{}", x);
+      }
   - title: while
     content_markdown: |
       `while` giúp bạn dễ dàng thêm một điều kiện vào một vòng lặp.
 
       Khi mà điều kiện trả về `false` (là nó bị sai á 😜), vòng lặp sẽ kết thúc.
-    code: >-
-      https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20mut%20x%20%3D%200%3B%0A%20%20%20%20while%20x%20!%3D%2042%20%7B%0A%20%20%20%20%20%20%20%20x%20%2B%3D%201%3B%0A%20%20%20%20%7D%0A%20%20%20%20println!(%22x%20is%20%7B%7D%22%2C%20x)%3B%0A%7D%0A
+    code: |
+      fn main() {
+          let mut x = 0;
+          while x != 42 {
+              x += 1;
+          }
+          println!("x is {}", x);
+      }
   - title: for
     content_markdown: >
 
@@ -64,8 +88,16 @@
 
 
       Hãy cùng xem qua ví dụ nhé.
-    code: >-
-      https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20for%20x%20in%200..5%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%20%20%20%20%7D%0A%0A%20%20%20%20for%20x%20in%200..%3D5%20%7B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20x)%3B%0A%20%20%20%20%7D%0A%7D%0A
+    code: |
+      fn main() {
+          for x in 0..5 {
+              println!("{}", x);
+          }
+
+          for x in 0..=5 {
+              println!("{}", x);
+          }
+      }
   - title: match
     content_markdown: >
 
@@ -85,13 +117,46 @@
       Đối sánh kết hợp với hủy cấu trúc cho đến nay là một trong những mô hình 
       phổ biến nhất mà bạn sẽ thấy trong Rust.
 
-    code: >-
-      https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20x%20%3D%2069%3B%0A%0A%20%20%20%20match%20x%20%7B%0A%20%20%20%20%20%20%20%200%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20println!(%22th%E1%BA%A5y%20s%E1%BB%91%20kh%C3%B4ng%20r%E1%BB%93i%20n%C3%A8%22)%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%2F%2F%20we%20can%20match%20against%20multiple%20values%0A%20%20%20%20%20%20%20%201%20%7C%202%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20println!(%22l%C3%A0%201%20ho%E1%BA%B7c%20l%C3%A0%202%22)%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%2F%2F%20we%20can%20match%20against%20ranges%0A%20%20%20%20%20%20%20%203..%3D9%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20println!(%22s%E1%BB%91%20n%C3%A0y%20n%E1%BA%B1m%20trong%20kho%E1%BA%A3ng%20t%E1%BB%AB%203%20t%E1%BB%9Bi%209%22)%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%2F%2F%20we%20can%20bind%20the%20matched%20number%20to%20a%20variable%0A%20%20%20%20%20%20%20%20matched_num%20%40%2010..%3D100%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20println!(%22%7B%7D%20n%E1%BA%B1m%20trong%20kho%E1%BA%A3ng%20t%E1%BB%AB%2010%20t%E1%BB%9Bi%20100%22%2C%20matched_num)%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%2F%2F%20this%20is%20the%20default%20match%20that%20must%20exist%20if%20not%20all%20cases%20are%20handled%0A%20%20%20%20%20%20%20%20_%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20println!(%22c%C3%A1i%20g%C3%AC%20th%E1%BA%BF%20nh%E1%BB%9D%3F%3F%3F%22)%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%7D%0A
+    code: |
+      fn main() {
+          let x = 69;
+
+          match x {
+              0 => {
+                  println!("thấy số không rồi nè");
+              }
+              // we can match against multiple values
+              1 | 2 => {
+                  println!("là 1 hoặc là 2");
+              }
+              // we can match against ranges
+              3..=9 => {
+                  println!("số này nằm trong khoảng từ 3 tới 9");
+              }
+              // we can bind the matched number to a variable
+              matched_num @ 10..=100 => {
+                  println!("{} nằm trong khoảng từ 10 tới 100", matched_num);
+              }
+              // this is the default match that must exist if not all cases are handled
+              _ => {
+                  println!("cái gì thế nhờ???");
+              }
+          }
+      }
   - title: Trả lại giá trị từ vòng lặp
     content_markdown: |
       `vòng lặp` có thể được ngắt để trả về giá trị.
-    code: >-
-      https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20mut%20x%20%3D%200%3B%0A%20%20%20%20let%20v%20%3D%20loop%20%7B%0A%20%20%20%20%20%20%20%20x%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20if%20x%20%3D%3D%2013%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20break%20%22th%E1%BA%A5y%20s%E1%BB%91%2013%20r%E1%BB%93i%22%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%20%20%20%20println!(%22t%E1%BB%AB%20v%C3%B2ng%20l%E1%BA%B7p%20th%E1%BB%A9%20%7B%7D%22%2C%20v)%3B%0A%7D%0A
+    code: |
+      fn main() {
+          let mut x = 0;
+          let v = loop {
+              x += 1;
+              if x == 13 {
+                  break "thấy số 13 rồi";
+              }
+          };
+          println!("từ vòng lặp thứ {}", v);
+      }
   - title: Trả về giá trị từ những Block Expression
     content_markdown: >
       `if`, `match`, hàm, và các scope block(khối phạm vi) đều có một cách trả về giá trị duy nhất trong Rust.
