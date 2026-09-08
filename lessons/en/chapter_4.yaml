@@ -372,4 +372,4 @@
     see again and again in code. Our functions are getting quite lengthy! In our
     next chapter we will 
 
-    spend talk about an important concept in Rust: data ownership.
+    talk about an important concept in Rust: data ownership.

@@ -11,7 +11,7 @@
 
 
     Once you get familiar with Rust, you can call yourself a **Rustacean**. That's
-    how people who use, contribute or are interested in Rust call themself.
+    how people who use, contribute or are interested in Rust call themselves.
 - title: The Rust Playground
   code: |
     fn main() {

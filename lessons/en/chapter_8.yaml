@@ -1,6 +1,6 @@
 - title: Chapter 8 - Smart Pointers
   content_markdown: >
-    In this chapter we will demystify smart pointers. Let's explore into
+    In this chapter we will demystify smart pointers. Let's explore
 
     these data structures that let us interact with the lowest level of 
 
@@ -200,7 +200,7 @@
         let b = unsafe {
             // This is unsafe because we are telling the compiler
             // to assume our pointer is a valid f32 and
-            // dereference it's value into the variable b.
+            // dereference its value into the variable b.
             // Rust has no way to verify this assumption is true.
             *pointer_b
         };
@@ -214,7 +214,7 @@
     Rust.
 
 
-    What is an unsafe code? Unsafe code behaves exactly like normal Rust with the
+    What is unsafe code? Unsafe code behaves exactly like normal Rust with the
     exception of a few abilities that
 
     the Rust compiler is unable to make guarantees about.
@@ -391,7 +391,7 @@
     fn main() -> Result<(), Box<dyn std::error::Error>>
 
     ```
-- title: Referencing Counting
+- title: Reference Counting
   code: |
     use std::rc::Rc;
 
