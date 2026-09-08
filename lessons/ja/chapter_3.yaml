@@ -138,7 +138,7 @@
 
     `match` は保有する全ての列挙値を処理する手助けすることができ、コードの品質を維持することもできます。
   code: |
-    #![allow(dead_code)] // この行でコンパイラのwaringsメッセージを止めます。
+    #![allow(dead_code)] // この行でコンパイラのwarningsメッセージを止めます。
 
     enum Species {
         Crab,
@@ -185,7 +185,7 @@
     * Rust の `列挙` は *tagged-union* とも言われています。
     * 複数の型を組み合わせて新しい型を作ることができます。 これが Rust には *algebraic types* を持つと言われる理由です。
   code: |-
-    #![allow(dead_code)] // この行でコンパイラのwaringsメッセージを止めます。
+    #![allow(dead_code)] // この行でコンパイラのwarningsメッセージを止めます。
 
     enum Species { Crab, Octopus, Fish, Clam }
     enum PoisonType { Acidic, Painful, Lethal }
