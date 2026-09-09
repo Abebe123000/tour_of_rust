@@ -81,7 +81,7 @@
 
     Bellek ayrıntıları:
 
-    * Mülkiyetin taşınması sırasında taşınanan değişkenle ilgili yığın öğeleri, çağrılan işlevin parametre yığınınına kopyalanır.
+    * Mülkiyetin taşınması sırasında taşınan değişkenle ilgili yığın öğeleri, çağrılan işlevin parametre yığınına kopyalanır.
   code: |
     struct Yapi {
         x: i32,
@@ -177,7 +177,7 @@
         // kalktığı için aşağıdaki ifade artık çalışır.
         ornek.x = 7;
 
-        // ornek'in sahibi bir kez daha degistiğinden
+        // ornek'in sahibi bir kez daha değiştiğinden
         // mülkiyeti bir_sey_yap işlev parametresine taşınır.
         bir_sey_yap(ornek);
     }
@@ -304,8 +304,8 @@
     }
 
     // ornek_b ve dönüş değeri aynı yaşam
-    //süresini paylaşmasına rağmen ornek_a
-    // alalakasız bir yaşam süresine sahiptir
+    // süresini paylaşmasına rağmen ornek_a
+    // alakasız bir yaşam süresine sahiptir
     fn bir_sey_yap<'a, 'b>(ornek_a: &'a Yapi, ornek_b: &'b Yapi) -> &'b i32 {
         println!("{}", ornek_a.x);
         println!("{}", ornek_b.x);

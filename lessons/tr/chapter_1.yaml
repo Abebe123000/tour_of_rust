@@ -44,7 +44,7 @@
     Buna, **değişken gölgeleme** denir ve bu isme her başvurulduğunda değişkenin türü de değiştirilebilir.
 
 
-    Değişken isimleri kelimelerin alt_tire ile birbirine bağlandığı `lover_snake_case` biçiminde seçilmelidir.
+    Değişken isimleri kelimelerin alt_tire ile birbirine bağlandığı `snake_case` biçiminde seçilmelidir.
 - title: Değişkenlerin Değiştirilmesi
   code: |
     fn main() {

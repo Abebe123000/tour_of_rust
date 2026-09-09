@@ -3,7 +3,7 @@
     Rust'ta genel türler veri içermeyen null değerlerin temsilinde, hata işleme yöntemlerinde ve koleksiyonlar ile çalışırken sıklıkla karşımıza 
     çıktıklarından oldukça önemlidir. Rust hakkındaki bilgilerimiz derinleştikçe, kullanmayı daha çok tercih edeceğimiz genel türleri bu bölümde 
     incelemeye başlıyoruz.
-- title: Genel TürLer Nelerdir?
+- title: Genel Türler Nelerdir?
   content_markdown: >
     Bunlar, derleyicinin kısmen tanımladığımız bir yapı (`struct`) yahut numaralandırmayı (`enum`), kodun kullanım 
     şekline göre değerlendirip, mükemmel şekilde tanımlanmış **derleme zamanı sürümü**nü oluşturmasına olanak 
@@ -57,7 +57,7 @@
   code: |
     enum Esya {
         EsyaListesi(String),
-        // None, bir eşyanın yoklugunu temsil eder
+        // None, bir eşyanın yokluğunu temsil eder
         None,
     }
 
@@ -329,6 +329,6 @@
 - title: Bölüm 4 - Sonuç
   content_markdown: >
     Türleri genelleyerek kullanmanın kodlarımızı ne kadar güçlü ve esnek hale getirebildiğini fark ettiniz değil mi? Bu bölümde anlattığım konuların
-    paratiğe nasıl döküleceği hakkında aklınızda soru işaretleri oluştuğunun farkındayım. Ancak şu an için, kodlarımızda sıkça karşılaşacağınız ana 
+    pratiğe nasıl döküleceği hakkında aklınızda soru işaretleri oluştuğunun farkındayım. Ancak şu an için, kodlarımızda sıkça karşılaşacağınız ana 
     fikirlere aşina olmanızı yeterli sayıyorum. Artık gittikçe yoğunlaşan işlevlerimize soluk aldırmak için **Veri Mülkiyeti** kavramını incelemek zorundayız.  
     Bir sonraki bölümümüzü Rust'ın önemli kavramlarından biri olan bu konuya ayıracağız.

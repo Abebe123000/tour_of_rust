@@ -38,9 +38,9 @@
   code: |
     fn main() {
         // Statik yöntem kulanarak bir dizgi örneği oluşturmak
-        let s = String::from("Merhaba Dunya!");
+        let s = String::from("Merhaba Dünya!");
         // Oluşturulan örnek üzerinde başka bir yöntem kullanmak
-        println!("{} {} karakter uzunlugundadir.", s, s.len());
+        println!("{} {} karakter uzunluğundadır.", s, s.len());
     }
 - title: Bellek
   content_markdown: >
@@ -272,7 +272,7 @@
                         kiskac_boyu, aciklamasi
                     )
                 }
-                _ => println!("Ferris değişik kıskaç yapsına sahip bir yengeçtir"),
+                _ => println!("Ferris değişik kıskaç yapısına sahip bir yengeçtir"),
             },
             _ => println!("Ferris başka bir deniz canlısı türüdür"),
         }

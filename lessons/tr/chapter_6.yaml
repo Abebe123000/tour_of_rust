@@ -2,7 +2,7 @@
   content_markdown: >
     Artık Rust'un belleği ele alış şeklini biraz daha anladığımıza göre, metin işleme konusuna odaklanabiliriz. 
     Rust diğer dillerde karşılaşmamış olabileceğiniz, uluslararası metin desteği ve bu desteğin bit düzeyi sorunlarıyla oldukça ilgili olduğundan, 
-    bit düzeyinişlemlerinde karşılaşılan sorunları özel olarak ele alan yetenekli araçlara sahiptir.
+    bit düzeyin işlemlerinde karşılaşılan sorunları özel olarak ele alan yetenekli araçlara sahiptir.
 - title: Dizgi Değişmezleri
   content_markdown: >
     Dilimize **dizgi değişmezleri** olarak çevirebileceğimiz *String literals* verileri, daima Unicode standardında kodlanırlar.
@@ -145,7 +145,7 @@
     fn main() {
         // karakterleri bir `char` vektörü olarak toplamak
         let harfler = "selam 🦀".chars().collect::<Vec<char>>();
-        println!("{}", harfler.len()); // 7 bayt olmalı
+        println!("{}", harfler.len()); // 7 karakter olmalı
                                        // karakterler 4 bayt olduğundan u32
                                        // türüne kolaylukla dönüştürebiliriz
         println!("{}", harfler[6] as u32);
@@ -161,7 +161,7 @@
     Yaygın olarak kullanılan `String` yöntemlerini aşağıda yer almaktadır:
 
 
-    * Bir dizginin sonuna daha fazla utf-8 baytı eklemek için`push_str` yöntemi kullanılır.
+    * Bir dizginin sonuna daha fazla utf-8 baytı eklemek için `push_str` yöntemi kullanılır.
 
     * UTF-8 bayt dizilerini bir başkasıyla değiştirmek için `replace` yönteminden faydalanılır.
 
@@ -191,7 +191,7 @@
     }
 
     fn main() {
-        // yuksek_perdeden_soyle &'static &str'yi
+        // yuksek_perdeden_soyle &'static str'yi
         // str olarak ödünç alabilir
         yuksek_perdeden_soyle("Merhabaaa");
         // yuksek_perdeden_soyle String'i
