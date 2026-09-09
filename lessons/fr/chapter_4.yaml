@@ -1,15 +1,15 @@
 - title: Chapitre 4 - Types Génériques
   content_markdown: >
-    Les types génériques sont incroyablement important avec Rust. Ils sont
+    Les types génériques sont incroyablement importants avec Rust. Ils sont
     utilisés pour la représentation
 
-    de valeurs potentiellement nulles (ex. variables qui n'a peut-être pas
-    encore de valeurs), gestion d'erreurs, 
+    de valeurs potentiellement nulles (ex. variables qui n'ont peut-être pas
+    encore de valeurs), gestion d'erreurs,
 
     collections, et plus! Dans cette section, nous allons découvrir les types
     génériques fondamentaux
 
-    dont vous ne pourrez plus vous passer.
+    dont tu ne pourras plus te passer.
 - title: Qu'est-ce que les types génériques?
   content_markdown: >
     Les types génériques permettent de définir partiellement une structure ou
@@ -23,7 +23,7 @@
 
     on peut explicitement utiliser l'opérateur `::<T>` pour spécifier le type,
 
-    egalement appelé `turbofish` (c'est un bon ami à moi!).
+    également appelé `turbofish` (c'est un bon ami à moi!).
   code: |
     // Une structure partiellement définie
     struct BagOfHolding<T> {
@@ -40,7 +40,7 @@
         // Rust peut toutefois inférer le type!
         let float_bag = BagOfHolding { item: 3.14 };
         
-        // Note: si vous êtes un joueur de Donjons et Dragons, vous devriez savoir
+        // Note: si tu es un joueur de Donjons et Dragons, tu devrais savoir
         // que mettre un sac de ce type dans un autre du même type est une
         // opération risquée.
         let bag_in_bag = BagOfHolding {
@@ -55,7 +55,7 @@
 - title: Representation de valeurs nulles
   content_markdown: >
     Dans les autres languages, le mot-clé `null` est utilisé pour représenter
-    l'abscence de valeur.
+    l'absence de valeur.
 
     Cela crée des difficultés dans les langages de programmation car il est
     possible que le programme
@@ -65,7 +65,7 @@
 
 
     Rust ne possède pas le mot-clé `null`, mais n'ignore pas la nécessité de
-    représenter l'abscence de valeur!
+    représenter l'absence de valeur!
 
     Nous pouvons cependant créer une représentation naive en utilisant un outil
     que nous connaissons déjà.
@@ -139,7 +139,7 @@
         // Avec 'match', nous pouvons déconstruire notre 'Option' élégamment et
         // s'assurer que nous prenions en compte tous les cas.
         match i32_bag.item {
-            Some(v) => println!("il y {} dans le sac!", v),
+            Some(v) => println!("il y a {} dans le sac!", v),
             None => println!("le sac est vide"),
         }
     }

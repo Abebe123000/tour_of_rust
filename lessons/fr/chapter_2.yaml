@@ -58,13 +58,14 @@
   content_markdown: |
     `while` permet d'ajouter facilement une condition à une boucle.
 
-    Si la condition est évaluée à `faux`, alors la boucle s'arrête.
+    Si la condition est évaluée à `false`, alors la boucle s'arrête.
   code: |
     fn main() {
         let mut x = 0;
         while x != 42 {
             x += 1;
         }
+        println!("x vaut {}", x);
     }
 - title: for
   content_markdown: >
@@ -127,7 +128,7 @@
 
 
     La destructuration combinée avec `match` fournit un des patterns les plus
-    utilisé de Rust. Tu pourra le constater par toi même.
+    utilisé de Rust. Tu pourras le constater par toi-même.
   code: |
     fn main() {
         let x = 42;
@@ -140,7 +141,7 @@
             1 | 2 => {
                 println!("C'est soit 1 soit 2!");
             }
-            // on peut comparer à un itérateur
+            // on peut comparer à une plage de valeurs
             3..=9 => {
                 println!("C'est un nombre compris entre 3 et 9 inclus!");
             }
@@ -153,7 +154,7 @@
             // Celui-ci doit être présent si tous les cas
             // ne sont pas présent.
             _ => {
-                println!("found something else!");
+                println!("c'est autre chose!");
             }
         }
     }

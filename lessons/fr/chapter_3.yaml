@@ -102,7 +102,7 @@
     Détail de la mémoire pour notre exemple:
 
     * Le texte à l'intérieur des guillemets est une donnée de lecture uniquement
-    (e.g. "ferris"),
+    (ex. "Ferris"),
 
     celui-ci est donc placé dans la région *data memory*.
 
@@ -190,12 +190,10 @@
 
     Ce type de structure est rarement utilisé.
   code: |
-    struct Location(i32, i32);
+    struct Marker;
 
     fn main() {
-        // On crée une structure sur la pile
-        let loc = Location(42, 32);
-        println!("{}, {}", loc.0, loc.1);
+        let _m = Marker;
     }
 - title: Enumerations
   content_markdown: >

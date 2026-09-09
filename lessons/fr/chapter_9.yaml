@@ -15,12 +15,12 @@
 
     Un module peut contenir des variables globales, des fonctions, des
     structures, des traits ou même d'autres modules!
-- title: Ecrire un programme
+- title: Écrire un programme
   content_markdown: |
     Un programme possède un module racine dans un fichier appelé `main.rs`.
-- title: Ecrire une bibliothèque
+- title: Écrire une bibliothèque
   content_markdown: |
-    Un bibliothèque possède un module racine dans un fichier appelé `lib.rs`.
+    Une bibliothèque possède un module racine dans un fichier appelé `lib.rs`.
 - title: Référencement de modules et de crates
   code: |
     use std::f64::consts::PI;
@@ -56,7 +56,7 @@
 - title: Création d'un module
   content_markdown: |
     Lorsqu'un développeur écrit un programme, il se retrouve généralement
-    avec une hiéarchie de fichiers organisés en répertoire. Rust permet
+    avec une hiérarchie de fichiers organisés en répertoire. Rust permet
     d'organiser son code sous forme de modules tout en préservant la structure
     des fichiers.
 
@@ -67,7 +67,7 @@
 - title: Hiérarchie de modules
   content_markdown: |
     Un module peut dépendre d'un autre. Afin d'établir une relation entre
-    un module et son sous-module, vous devez écrire dans le module parent:
+    un module et son sous-module, tu dois écrire dans le module parent:
 
     ```rust
     mod foo;
@@ -113,11 +113,11 @@
     Par défaut, les membres d'une *crate* ne sont pas accessibles en dehors
     de la crate. De même, il faut utiliser le mot-clé `pub` dans le
     *module racine* de la crate (` lib.rs` ou `main.rs`) si l'on souhaite
-    rendre accesssible les membres d'une crate depuis l'extérieur.
+    rendre accessibles les membres d'une crate depuis l'extérieur.
 - title: Visibilité des structures
   content_markdown: |
     Tout comme les fonctions, les structures peuvent déclarer quels champs
-    seront visibles à l'extérieur du module en utilisant le mot-clé`pub`.
+    seront visibles à l'extérieur du module en utilisant le mot-clé `pub`.
   code: |
     // La structure SeaCreature sera visible
     // en dehors du module.
@@ -147,14 +147,14 @@
 
     l'utilisation de la bibliothèque. Ces structures de données ne seront
 
-    pas automatiquement disponible (il faudra utiliser
+    pas automatiquement disponibles (il faudra utiliser
 
     `use my_library::prelude::*`) mais c'est une bonne convention à respecter.
 
 
     Ferris dit: "Sois un bon rustacean et aide les autres crabes avec un bon
     prélude!"
-- title: Chapter 9 - Conclusion
+- title: Chapitre 9 - Conclusion
   content_markdown: >
     Tu dois maintenant en connaître beaucoup sur la création de bibliothèques
 
@@ -164,7 +164,7 @@
 
     utilisé par d'autres développeurs, tu seras capable de trouver une
 
-    solution à chaque problème que tu rencontrera.
+    solution à chaque problème que tu rencontreras.
 
 
     Ressources (en anglais):

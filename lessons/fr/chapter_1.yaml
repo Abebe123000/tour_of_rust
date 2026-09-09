@@ -9,11 +9,11 @@
     m'appelle **Ferris**,
 
     la mascotte non officielle du langage de programmation Rust. Heureux de te
-    renconter!
+    rencontrer!
 - title: Le terrain de jeu de Rust
   code: |
     fn main() {
-        println!("Bienvenue au terrain de jeu Rust! Tu peux modifer le code ici.");
+        println!("Bienvenue au terrain de jeu Rust! Tu peux modifier le code ici.");
     }
   content_markdown: >
     Ce tour utilise l'outil de code interactif [Rust
@@ -59,7 +59,7 @@
     variable.
 
 
-    Les nom de variables sont toujours en `snake_case`
+    Les noms de variables sont toujours en `snake_case`.
 - title: Modification des variables
   code: |
     fn main() {
@@ -101,7 +101,7 @@
     }
   content_markdown: >
     Rust possède une variété de types primitifs dont certains te seront
-    certainement famillier:
+    certainement familiers:
 
 
     * booléens - `bool` pour représenter vrai/faux
