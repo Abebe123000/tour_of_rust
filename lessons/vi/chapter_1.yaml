@@ -9,7 +9,7 @@
     chính thức của ngôn ngữ lập trình Rust. Rất vui được gặp bạn. 
 
 
-    Một khi bạn đã quen thuộc với Rust, bạn có thể gọi bạn là một **Rustacean**.
+    Một khi bạn đã quen thuộc với Rust, bạn có thể gọi chính mình là một **Rustacean**.
     Đó là cách những người sử dụng, đóng góp hoặc quan tâm đến Rust gọi chính
     họ.
 - title: Sân chơi của bạn
@@ -46,7 +46,7 @@
     Các biến được khai báo bằng từ khóa **let**.
 
 
-    Khi gán vào biến một giá trị, Rust sẽ có thể suy ra kiểu của biến biến trong
+    Khi gán vào biến một giá trị, Rust sẽ có thể suy ra kiểu của biến trong
     hầu hết các trường hợp.  Nếu không, bạn có thể thêm kiểu vào khai báo biến
     của mình.
 
@@ -113,7 +113,7 @@
     * pointer sized integers - `usize` `isize` để biểu diễn các chỉ mục và kích
     thước của mọi thứ trong bộ nhớ
 
-    * floating point(Số dấy phẩy động, dấu chấm động) - `f32` `f64`
+    * floating point(Số dấu phẩy động, dấu chấm động) - `f32` `f64`
 
     * tuple - `(value, value, ...)` for passing fixed sequences of values on the
     stack
@@ -129,14 +129,14 @@
 
     Text có thể phức tạp hơn so với những ngôn ngữ khác bạn quen dùng,
 
-    vì Rust là một ngôn ngữ lập trình hệ thống, nó quan tâm đến bộ nhớ
+    vì Rust là một ngôn ngữ lập trình hệ thống, nó quan tâm đến những vấn đề bộ nhớ
 
-    những vấn đề bạn có thể không quen. Chúng ta sẽ đi vào chi tiết điều này
+    mà bạn có thể không quen. Chúng ta sẽ đi vào chi tiết điều này
     sau.
 
 
     Các loại số học có thể được chỉ định rõ ràng bằng cách thêm loại vào cuối
-    (ví dụ: `13u32`,` 2u8`).
+    (ví dụ: `13u32`, `2u8`).
 - title: Chuyển đổi loại cơ bản
   code: |
     fn main() {
@@ -150,7 +150,7 @@
     }
   content_markdown: >
     Rust yêu cầu sự rõ ràng khi nói đến các kiểu số. Chúng ta không thể sử dụng
-    `u8` cho` u32` một cách ngẫu nhiên mà không phát sinh lỗi.
+    `u8` cho `u32` một cách ngẫu nhiên mà không phát sinh lỗi.
 
 
      May mắn thay, Rust làm cho việc chuyển đổi kiểu số trở nên rất dễ dàng với từ khóa **as**.
@@ -227,7 +227,7 @@
     chấm phẩy ở cuối, như chúng ta đã làm trong hàm *subtract*.
 
 
-    Tên hàm luôn ở dạng `snake_case`..
+    Tên hàm luôn ở dạng `snake_case`.
 
 
     Mẹo: nếu bạn định nghĩa một hàm, dữ liệu mà nó chấp nhận được gọi là tham
@@ -244,7 +244,7 @@
         let result = swap(123, 321);
         println!("{} {}", result.0, result.1);
 
-        //hủy cấu trúc của tuple thành hai tên biến
+        // hủy cấu trúc của tuple thành hai tên biến
         let (a, b) = swap(result.0, result.1);
         println!("{} {}", a, b);
     }

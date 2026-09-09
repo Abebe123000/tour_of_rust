@@ -58,7 +58,7 @@
 
     * `\\` - In ký tự \
 
-    * `\0` - NULL có mã ASII là 0
+    * `\0` - NULL có mã ASCII là 0
 
     * `\'` - In ký tự '
 
@@ -209,7 +209,7 @@
     }
 - title: Định dạng chuỗi
   content_markdown: >
-    The `format!` cho phép chúng tôi tạo một chuỗi bằng cách xác định một chuỗi được tham số hóa 
+    Macro `format!` cho phép chúng tôi tạo một chuỗi bằng cách xác định một chuỗi được tham số hóa 
     với các trình giữ chỗ cho vị trí và cách các giá trị nên được đặt (ví dụ: `{}`).
 
 

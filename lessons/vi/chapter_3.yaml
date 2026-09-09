@@ -128,7 +128,7 @@
             ferris.name, ferris.animal_type, ferris.arms, ferris.legs, ferris.weapon
         );
         println!(
-            "{} là một {}. Chúng có {} tay, và {} legs. Và chúng không có vũ khí...",
+            "{} là một {}. Chúng có {} tay, và {} chân. Và chúng không có vũ khí...",
             sarah.name, sarah.animal_type, sarah.arms, sarah.legs
         );
     }

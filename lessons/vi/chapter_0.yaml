@@ -1,5 +1,5 @@
 - title: >-
-    Hello World!
+    Xin chào!
   code: |
     fn main() {
         println!("Xin chào, 🦀");
@@ -10,11 +10,12 @@
 
     **Chúc mừng sinh nhật 1 tuổi 🎉**
 
-    Chào mừng tới với *Tour of Rust*. Đây là hướng dẫn từng bước về các tính năng của ngôn ngữ lập trình Rust. Rust thường được coi là một ngôn ngữ có đường cong học tập khó khăn, nhưng tôi hy vọng tôi có thể thuyết phục bạn có rằng rất nhiều điều để khám phá trước khi chúng ta đi đến những phần phức tạp.
+    Chào mừng tới với *Tour of Rust*. Đây là hướng dẫn từng bước về các tính năng của ngôn ngữ lập trình Rust. Rust thường được coi là một ngôn ngữ có đường cong học tập khó khăn, nhưng tôi hy vọng tôi có thể thuyết phục bạn rằng có rất nhiều điều để khám phá trước khi chúng ta đi đến những phần phức tạp.
 
     Bạn cũng có thể đọc bài hướng dẫn này bằng những ngôn ngữ sau:
 
     * [Deutsch](00_de.html)
+    * [English](index.html)
     * [Español](00_es.html)
     * [Français](00_fr.html)
     * [Interlingue](00_ie.html)

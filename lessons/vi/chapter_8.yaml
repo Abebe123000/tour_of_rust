@@ -273,7 +273,7 @@
 
 
     Dereference nó cho phép chúng ta sử dụng dữ liệu được phân bổ theo heap một cách thuận tiện như thể nó là kiểu gốc.
-- title: Failable Main Revisited
+- title: Main lo được - Xem lại
   code: |
     use core::fmt::Display;
     use std::error::Error;
@@ -422,7 +422,7 @@
     Đa luồng nằm ngoài phạm vi của Tour of Rust, nhưng `Mutex` là một phần cơ bản của việc sắp xếp nhiều luồng CPU truy cập vào cùng một dữ liệu.
 
 
-    Có một con trỏ thông minh đặc biệt `Arc` giống hệt với` Rc` ngoại trừ việc sử dụng cách tăng số lượng tham chiếu một cách an toàn cho luồng. 
+    Có một con trỏ thông minh đặc biệt `Arc` giống hệt với `Rc` ngoại trừ việc sử dụng cách tăng số lượng tham chiếu một cách an toàn cho luồng. 
 
 
     Nó thường được sử dụng để có nhiều tham chiếu đến cùng một `Mutex`.

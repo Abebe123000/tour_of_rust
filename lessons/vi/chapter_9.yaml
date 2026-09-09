@@ -135,7 +135,7 @@
     Đó là vì mô-đun `prelude` trong thư viện tiêu chuẩn.
 
     Biết rằng trong thư viện tiêu chuẩn Rust, bất kỳ thứ gì được xuất trong `std::prelude::*` 
-    đều tự động có sẵn cho mọi phần của Rust. Đó là trường hợp của `Vec` và` Box` nhưng những thứ khác cũng vậy (Option, Copy, v.v.)..
+    đều tự động có sẵn cho mọi phần của Rust. Đó là trường hợp của `Vec` và` Box` nhưng những thứ khác cũng vậy (Option, Copy, v.v.).
 - title: Phần dạo đầu của riêng bạn
   content_markdown: >
     Do phần prelude của thư viện tiêu chuẩn, thư viện của bạn thường có mô-đun dạo đầu(prelude module) riêng 
