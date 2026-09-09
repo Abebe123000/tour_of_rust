@@ -255,7 +255,7 @@
     et `String`.
 
 
-    `Vec <T>` est un pointeur intelligent vers des octets en mémoire. Le
+    `Vec<T>` est un pointeur intelligent vers des octets en mémoire. Le
 
     compilateur Rust n'a aucune idée de la manière dont il faut interpréter ces
     octets.
@@ -275,7 +275,7 @@
 
     programmation le contenu qui y est écrit à toujours être de l'`utf-8`
 
-    valide. Il déréférence cette région de mémoire dans un type` &str`.
+    valide. Il déréférence cette région de mémoire dans un type `&str`.
 
 
     Ces deux structures de données doivent procéder à un déréférencement
@@ -389,7 +389,7 @@
     déplace les données de la pile vers le tas. Celui-ci peut être cloné
     et permet d'emprunter immuablement les données se trouvant sur le tas.
 
-    Ce n'est que lorsque le dernier pointeur intelligent est déalloué que les
+    Ce n'est que lorsque le dernier pointeur intelligent est désalloué que les
     données du tas sont désallouées.
 - title: Partage d'accès
   code: |
@@ -429,7 +429,7 @@
   content_markdown: >
     `RefCell` est une structure de données couramment détenue par des pointeurs
 
-    intelligents et qui contient des données. `RefCell`nous permet d'emprunter
+    intelligents et qui contient des données. `RefCell` nous permet d'emprunter
 
     des références mutables et immuables vers ces données. Il empêche d'abuser
 
@@ -442,7 +442,7 @@
     les deux!**
 
 
-    Si vous violez ces règles, `RefCell` paniquera.
+    Si tu violes ces règles, `RefCell` paniquera.
 - title: Partage entre threads
   code: |
     use std::sync::Mutex;
@@ -557,7 +557,7 @@
     données sur le tas.
 
     `Rc<RefCell<Foo>>` - Permet à plusieurs pointeurs intelligents d'emprunter
-    mutuellement ou immuablement la même structure `Foo`.
+    de manière mutable ou immuable la même structure `Foo`.
 
     `Arc<Mutex<Foo>>` - Permet à un pointeur intelligent de verrouiller
     temporairement une donnée (celle-ci ne pourra plus être emprunté mutablement
@@ -565,7 +565,7 @@
     n'y auront pas accès).
 
     Détail de la mémoire:
-    * Vous remarquerez un thème commun avec plusieurs de ces utilisations:
+    * Tu remarqueras un thème commun avec plusieurs de ces utilisations:
       l'utilisation d'un type de données immuable (possiblement emprunté par
       plusieurs pointeurs intelligents) pour modifier les données internes.
       C'est ce qu'on appelle la "mutabilité intérieure" (en anglais interior
@@ -576,6 +576,6 @@
   content_markdown: |
     Les pointeurs intelligents sont très utilisés avec Rust car cela nous
     évite de recréer nous-même ces schémas très courants d'utilisation de
-    la mémoire. Avec eux, tu sera prêt à affronter tous les défis! Maintenant
+    la mémoire. Avec eux, tu seras prêt à affronter tous les défis! Maintenant
     que nous avons vu les fondations de Rust, nous verrons dans le prochain
     chapitre comment se structure un projet Rust au-delà d'un simple fichier.

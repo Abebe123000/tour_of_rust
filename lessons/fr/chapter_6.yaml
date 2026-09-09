@@ -8,7 +8,7 @@
     Rust se soucie beaucoup du support des textes internationaux et des
     problèmes associés au niveau des bits 
 
-    (dont vous n'êtes peut-être pas familier). Cela dit, Rust dispose
+    (dont tu n'es peut-être pas familier). Cela dit, Rust dispose
     d'excellents
 
     outils pour gérer ces préoccupations.
@@ -218,7 +218,7 @@
 
     avec une autre chaîne de caractères de type `&str` et retourne la structure,
 
-    mais ce n'est peut-être pas aussi ergonomique que vous l'espérez.
+    mais ce n'est peut-être pas aussi ergonomique que tu l'espères.
   code: |
     fn main() {
         let mut helloworld = String::from("hello");
@@ -231,8 +231,8 @@
     Les chaînes de caractères et les structures String sont généralement passées
     aux fonctions sous forme de 'string slice'.
 
-    Cela offre beaucoup de flexibilité pour la plupart des scénarios où vous
-    n'avez pas besoin de transmettre la propriété (en anglais ownership).
+    Cela offre beaucoup de flexibilité pour la plupart des scénarios où tu
+    n'as pas besoin de transmettre la propriété (en anglais ownership).
   code: |
     fn say_it_loud(msg:&str){
         println!("{}!!!",msg.to_string().to_uppercase());
@@ -274,10 +274,10 @@
     Les possibilités offertes par cette fonction sont trop larges pour être
     toutes
 
-    vues dans note modeste * Tour de Rust *. Si vous souhaitez cependant en
+    vues dans notre modeste * Tour de Rust *. Si tu souhaites cependant en
     savoir plus,
 
-    vous pouvez consulter la documentation
+    tu peux consulter la documentation
     [ici](https://doc.rust-lang.org/std/fmt/).
   code: |
     fn main() {

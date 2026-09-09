@@ -104,7 +104,7 @@
     Détails de la mémoire:
 
     * Lors du transfert de propriétaire, les éléments de la pile concernant la
-    variable à déplacer sont copié sur la pile du paramètre de la fonction
+    variable à déplacer sont copiés sur la pile du paramètre de la fonction
     appelée.
   code: |
     struct Foo {
@@ -272,7 +272,7 @@
     * La deuxième règle nous évite la mauvaise utilisation de références qui
     pourrait faire référence à une donnée
 
-    inexistante (les fameux **dandling pointers** du language C).
+    inexistante (les fameux **dangling pointers** du language C).
   code: |
     struct Foo {
         x: i32,
@@ -332,7 +332,7 @@
     de vie de valeurs de retour.
 
 
-    Les spécifieurs de durée de vie commencent toujours par le symbole `'` (e.g.
+    Les spécifieurs de durée de vie commencent toujours par le symbole `'` (ex.
     `'a`, `'b`, `'c`).
   code: |
     struct Foo {
@@ -392,7 +392,7 @@
     Une variable statique (en anglais **static**) est une ressource mémoire
     créée lors de la compilation
 
-    et qui existe du début jusqu'à la fin du programme. le type doit être défini
+    et qui existe du début jusqu'à la fin du programme. Le type doit être défini
     explicitement.
 
 
