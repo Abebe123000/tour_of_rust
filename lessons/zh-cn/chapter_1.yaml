@@ -73,7 +73,7 @@
     Rust 有多种常见的类型：
 
     * 布尔型 - `bool` 表示 true 或 false
-    * 无符号整型- `u8` `u32` `u64` `u128` 表示非负整数
+    * 无符号整型 - `u8` `u32` `u64` `u128` 表示非负整数
     * 有符号整型 - `i8` `i32` `i64` `i128` 表示整数
     * 指针大小的整数 - `usize` `isize` 表示内存中内容的索引和大小
     * 浮点数 - `f32` `f64`
@@ -165,7 +165,7 @@
 
     元组元素可以通过他们的索引来获取。
 
-    Rust 允许我们将后续会看到的各种形式的解构，也允许我们以符合逻辑的方式提取数据结构的子片段。敬请期待后面的内容！
+    Rust 支持我们后续会看到的各种形式的解构，也允许我们以符合逻辑的方式提取数据结构的子片段。敬请期待后面的内容！
 - title: 返回空值
   code: |
     fn make_nothing() -> () {
@@ -199,10 +199,8 @@
 
     其他教学资源（英文）：
 
-    * [Youtube 视频：Rust Cast - 深入了解 Rust 的基础数字类型
-    types](https://www.youtube.com/watch?v=n5TRBkbystY)
+    * [Youtube 视频：Rust Cast - 深入了解 Rust 的基础数字类型](https://www.youtube.com/watch?v=n5TRBkbystY)
 
-    * [网页：Rust 之书 2018 - 基本数据的深层描述
-    types](https://doc.rust-lang.org/1.30.0/book/2018-edition/ch03-02-data-types.html)
+    * [网页：Rust 之书 2018 - 基本数据的深层描述](https://doc.rust-lang.org/1.30.0/book/2018-edition/ch03-02-data-types.html)
 
     * [网页：Rust Cheat Sheet - 数据类型](https://cheats.rs/#basic-types)

@@ -27,7 +27,7 @@
         println!("我想要一块 {}！", PI);
     }
   content_markdown: >
-    你可以使用完整的模块路径路径引用模块中的项目：
+    你可以使用完整的模块路径引用模块中的项目：
     `std::f64::consts::PI`。
 
 
@@ -41,7 +41,7 @@
 
 
     由社区创建的 crate 的搜索索引可以在这里找到：
-    [https://crates.io](https://crates.io/).
+    [https://crates.io](https://crates.io/)。
 - title: 引用多个项目
   content_markdown: |
     在同一个模块路径中可以引用多个项目，比如：
