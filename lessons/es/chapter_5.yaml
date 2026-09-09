@@ -30,7 +30,7 @@
 
     Detalles de la memoria:
     * Rust no tiene recolección de basura.
-    * Esto también se llama «Adquirir Recursos es Inicializar» o RAII ( del inglés *Resource Acquisition is Initialization* ) en C++.
+    * Esto también se llama «Adquisición de Recursos es Inicialización» o RAII ( del inglés *Resource Acquisition is Initialization* ) en C++.
   code: |
     struct Foo {
         x: i32,
@@ -170,11 +170,11 @@
         // foo is not modifiable while mutably borrowed
 
         f.x = 13;
-        // f is dropped here because its no longer used after this point
+        // f is dropped here because it's no longer used after this point
         
         println!("{}", foo.x);
         
-        // this works now because there all mutable references were dropped
+        // this works now because all mutable references were dropped
         foo.x = 7;
         
         // move foo's ownership to a function
@@ -356,7 +356,7 @@
     Al igual que las funciones, los tipos de datos se pueden parametrizar con especificadores de vida útil de sus miembros.
 
 
-    Rust valida que la estructura de datos que contiene las referencias nunca dure más que los propietariosa los que apuntan sus referencias.
+    Rust valida que la estructura de datos que contiene las referencias nunca dure más que los propietarios a los que apuntan sus referencias.
 
 
     ¡No podemos tener estructuras corriendo por ahí con referencias que no nos indiquen nada!

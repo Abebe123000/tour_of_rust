@@ -24,7 +24,7 @@
         println!("{} {}", a, a.len());
     }
 - title: ¿Qué es UTF-8?
-  content_markdown: "A medida que se incorporaban más idiomas en los ordenadores, estos necesitaban representar más caracteres de texto que los permitidos por el ASCII (1 byte sólo permitía 256 caracteres). \n\n**UTF-8** se introdujo con una longitud variable de 1 a 4 bytes, lo que aumentó enormemente el rango de caracteres posibles.\n\nUna ventaja de los caracteres de tamaño variable es que el texto no tiene bytes innecesarios para el ASCII (en UTF-8 sólo se requería 1 byte).\n\nUna desventaja de los caracteres de tamaño variable es que la búsqueda de caracteres ya no puede hacerse rápidamente \n(**O(1)** constant time) con una simple indexación (por ejemplo `my_text[3]` para obtener el 4º carácter). Es posible que los caracteres previos tengan tamaños variables, alterando la posición de inicio del 4º carácter en la secuencia de bytes.\n\nEn cambio, debemos iterar a través de una secuencia de bytes **UTF-8** para entender dónde comienzan realmente los caracteres unicode (**O(n)** tiempo lineal).\n\nFerris: \" Gracias a **UTF-8** puedo representar a mis amigos acuáticos con emojis.\"\n\n<span class=\"emoji\">\U0001F420\U0001F419\U0001F41F\U0001F42C\U0001F40B</span>\n"
+  content_markdown: "A medida que se incorporaban más idiomas en los ordenadores, estos necesitaban representar más caracteres de texto que los permitidos por el ASCII (1 byte sólo permitía 256 caracteres). \n\n**UTF-8** se introdujo con una longitud variable de 1 a 4 bytes, lo que aumentó enormemente el rango de caracteres posibles.\n\nUna ventaja de los caracteres de tamaño variable es que el texto no tiene bytes innecesarios para el ASCII (en UTF-8 sólo se requería 1 byte).\n\nUna desventaja de los caracteres de tamaño variable es que la búsqueda de caracteres ya no puede hacerse rápidamente \n(**O(1)** constant time) con una simple indexación (por ejemplo `my_text[3]` para obtener el 4º carácter). Es posible que los caracteres previos tengan tamaños variables, alterando la posición de inicio del 4º carácter en la secuencia de bytes.\n\nEn cambio, debemos iterar a través de una secuencia de bytes **UTF-8** para entender dónde comienzan realmente los caracteres unicode (**O(n)** tiempo lineal).\n\nFerris: \"Gracias a **UTF-8** puedo representar a mis amigos acuáticos con emojis.\"\n\n<span class=\"emoji\">\U0001F420\U0001F419\U0001F41F\U0001F42C\U0001F40B</span>\n"
 - title: Caracteres de Escape
   content_markdown: >
     Es un reto representar visualmente ciertos caracteres, pero los **códigos de escape** nos permiten usar símbolos.
@@ -190,11 +190,11 @@
     }
 - title: Formatear Strings
   content_markdown: >
-    La macro`format!` nos permite crear una cadena (strings) definiendo una cadena parametrizada con placeholders para indicar dónde y cómo deben colocarse los valores  (por ejemplo
+    La macro `format!` nos permite crear una cadena (strings) definiendo una cadena parametrizada con placeholders para indicar dónde y cómo deben colocarse los valores (por ejemplo
     `{}`).
 
 
-    `format!` utiliza los mismos parámteros que `println!`
+    `format!` utiliza los mismos parámetros que `println!`
 
 
     Las capacidades de esta función son demasiado amplias para el Tour del Rust, pero puedes echarle un vistazo a la documentación [aquí](https://doc.rust-lang.org/std/fmt/).
