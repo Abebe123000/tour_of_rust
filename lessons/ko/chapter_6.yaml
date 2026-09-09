@@ -101,7 +101,7 @@
 
     ```rust
 
-    let 00_html = include_str!("00_ko.html");
+    let hello_html = include_str!("hello.html");
 
     ```
 - title: 문자열 슬라이스
