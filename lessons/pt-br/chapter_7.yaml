@@ -1,6 +1,6 @@
 - title: Capítulo 7 - Programação orientada a objetos
   content_markdown: >
-    Expressar idéias com funções é uma maneira comprovada de representar comportamentos e dados (C faz isso há décadas!). Historicamente, a ciência da computação encontrou outras agregações e abstrações expressivas úteis para os dados. Você pode estar familiarizado com a programação orientada a objetos (OOP) como uma dessas maneiras. Neste capítulo exploraremos a linguagem de programação Rust para além das funções.
+    Expressar ideias com funções é uma maneira comprovada de representar comportamentos e dados (C faz isso há décadas!). Historicamente, a ciência da computação encontrou outras agregações e abstrações expressivas úteis para os dados. Você pode estar familiarizado com a programação orientada a objetos (OOP) como uma dessas maneiras. Neste capítulo exploraremos a linguagem de programação Rust para além das funções.
 - title: O que é OOP?
   content_markdown: >
     A programação orientada a objetos refere-se *grosso modo* a linguagens de programação que possuem vários recursos icônicos:
@@ -9,7 +9,7 @@
 
     * Abstração - ocultando dados e membros da função para obscurecer detalhes da implementação de um objeto.
 
-    * Polimorfismo - a capacidade de interagir com um objeto de diferentes perspectivas funcionais.
+    * Polimorfismo - a capacidade de interagir com objetos de diferentes tipos através de uma única interface.
 
     * Herança - a capacidade de herdar dados e comportamentos de outros objetos.
 - title: Rust não é OOP
@@ -286,7 +286,7 @@
     * dynamic dispatch - quando o tipo da instância não é conhecido precisamos descobrir uma maneira de chamar a função correta.
 
 
-    Os tipos de trait `&dyn MinhaTrait` nos permite a habilidade de trabalhar com instâncias  de objetos indiretamente usando dispatch dinâmico.
+    Os tipos de trait `&dyn MinhaTrait` nos permitem a habilidade de trabalhar com instâncias de objetos indiretamente usando dispatch dinâmico.
 
 
     Quando o dispatch dinâmico é usado, o Rust irá encorajar você a pôr o `dyn` antes do seu tipo da trait, assim os outros ficarão cientes.
@@ -491,7 +491,7 @@
     Box::new(Foo { ... })
 
     ```
-- title: Structs genéricas revisitada
+- title: Structs genéricas revisitadas
   content_markdown: >
     As structs genéricas também podem ter seus tipos parametrizados restritos por traits.
 
@@ -522,7 +522,7 @@
     ```
 - title: Capítulo 7 - Conclusão
   content_markdown: >
-    Agora temos mais recursos da linguagem em mãos para representar nossas idéias com clareza! As abstrações do Rust podem ser simples, mas são poderosas o suficiente para tornar o trabalho de codar uma alegria. Neste capítulo vislumbramos ponteiros inteligentes com o `Box`. No próximo capítulo aprenderemos como os ponteiros inteligentes podem nos ajudar com outras situações especiais de memória.
+    Agora temos mais recursos da linguagem em mãos para representar nossas ideias com clareza! As abstrações do Rust podem ser simples, mas são poderosas o suficiente para tornar o trabalho de codar uma alegria. Neste capítulo vislumbramos ponteiros inteligentes com o `Box`. No próximo capítulo aprenderemos como os ponteiros inteligentes podem nos ajudar com outras situações especiais de memória.
 
 
     Recursos:
