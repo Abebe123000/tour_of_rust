@@ -40,7 +40,7 @@
     Se não for possível, você poderá especificar o tipo ao declarar a variável.
 
 
-    Veja que podemos atribuir valores à mesma variável várias vezes. Isto é chamado *sobreamento* de variáveis (shadowing) e podemos mudar o seu tipo para referências futuras a esse nome.
+    Veja que podemos atribuir valores à mesma variável várias vezes. Isto é chamado *sombreamento* de variáveis (shadowing) e podemos mudar o seu tipo para referências futuras a esse nome.
 
 
     Os nomes das variáveis são sempre em `snake_case`.
@@ -74,7 +74,7 @@
         );
     }
   content_markdown: >
-    Rust tem uma variedade tipos que lhe serão familiares:
+    Rust tem uma variedade de tipos que lhe serão familiares:
 
 
     * booleanos - `bool` para representar verdadeiro/falso
@@ -89,7 +89,7 @@
 
     * tuplas - `(value, value, ...)` para passar sequências de valores fixas para a pilha
 
-    * matriz - uma coleção de elementos similares com comprimento fixo conhecidos em tempo de compilação
+    * matriz - uma coleção de elementos similares com comprimento fixo conhecido em tempo de compilação
 
     * slices - uma coleção de elementos similares com comprimento conhecido em tempo de execução
 
@@ -105,7 +105,7 @@
     O Rust requer que sejamos explícitos quando se trata de tipos numéricos. Não podemos usar um `u8` como um `u32` sem que se produza um erro.
 
 
-    Por sorte, o Rust faz com que as conversões de tipos numéricos sejam muito simples usando a plavra-chave **as**.
+    Por sorte, o Rust faz com que as conversões de tipos numéricos sejam muito simples usando a palavra-chave **as**.
 - title: Constantes
   code: |
     const PI: f32 = 3.14159;
@@ -120,7 +120,7 @@
     As constantes nos permitem especificar um valor comum que pode ser usado muitas vezes por todo o nosso código de maneira eficiente. Ao invés de copiar os valores como variáveis onde serão utilizadas, as constantes substituirão o identificador de texto pelo seu valor onde quer que estejam sendo usadas em tempo de compilação.
 
 
-    Diferentemente das variáveis, o tipo das constantes devem ser sempre declarados.
+    Diferentemente das variáveis, o tipo das constantes deve ser sempre declarado.
 
 
     Os nomes das constantes são sempre em `SCREAMING_SNAKE_CASE`.

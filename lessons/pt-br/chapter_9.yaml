@@ -30,7 +30,7 @@
     Os itens nos módulos podem ser referenciados com o seu caminho completo do módulo `std::f64::consts::PI`.
 
 
-    Uma maneira simples é a palavra-chave **use**. Ela nos permite especificar determinados itens dos módulos que desejamos usar em todo o nosso código sem um caminho completo. Por exemplo, `use std::f64::consts::PI` me permite usar apenas o identificador` PI` em minha função principal.
+    Uma maneira simples é a palavra-chave **use**. Ela nos permite especificar determinados itens dos módulos que desejamos usar em todo o nosso código sem um caminho completo. Por exemplo, `use std::f64::consts::PI` me permite usar apenas o identificador `PI` em minha função principal.
 
 
     **std** é o crate da **biblioteca padrão** do Rust que está repleta de estruturas de dados úteis e funções para interagir com o seu sistema operacional.
@@ -65,7 +65,7 @@
     ```
 
 
-    A declaração acima irá procurar por um arquivo chamado `foo.rs` ou` foo/mod.rs` e irá inserir seu conteúdo dentro de um módulo chamado `foo` neste escopo.
+    A declaração acima irá procurar por um arquivo chamado `foo.rs` ou `foo/mod.rs` e irá inserir seu conteúdo dentro de um módulo chamado `foo` neste escopo.
 - title: Módulo embutido
   content_markdown: >
     Um submódulo pode ser embutido diretamente no código de um módulo.
@@ -107,8 +107,8 @@
   content_markdown: >
     Assim como as funções, as estruturas podem declarar o que desejam que seja exposto para fora de seu módulo usando `pub`.
   code: |
-    // A struct CraturaMarinha será usável fora do nosso módulo
-    pub struct CraturaMarinha {
+    // A struct CriaturaMarinha será usável fora do nosso módulo
+    pub struct CriaturaMarinha {
         pub tipo_animal: String,
         pub nome: String,
         pub bracos: i32,

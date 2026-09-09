@@ -137,7 +137,7 @@
     }
 - title: Emprestando Propriedades Mutáveis Usando Referências
   content_markdown: >
-    Também podemos emprestar um acesso mutável a um recurso usando o operador `& mut`.
+    Também podemos emprestar um acesso mutável a um recurso usando o operador `&mut`.
 
 
     O proprietário de um recurso não pode ser movido ou modificado durante um empréstimo mutável.
@@ -190,7 +190,7 @@
         let mut foo = 42;
         let f = &mut foo;
         let bar = *f; // pega uma cópia do proprietário do valor
-        *f = 13;      // atribue à referência do proprietário do valor
+        *f = 13;      // atribui à referência do proprietário do valor
         println!("{}", bar);
         println!("{}", foo);
     }
@@ -210,7 +210,7 @@
     Detalhes da memória:
 
 
-    * A primeira regra das referências previnem as corridas de dados. O que é uma corrida de dados? Uma corrida de dados acontece quando, na leitura dos dados, temos a possibilidade de conflito com a existência de outras escritas de dados ao mesmo tempo. Isso acontece frequentemente na programação multithread.
+    * A primeira regra das referências previne as corridas de dados. O que é uma corrida de dados? Uma corrida de dados acontece quando, na leitura dos dados, temos a possibilidade de conflito com a existência de outras escritas de dados ao mesmo tempo. Isso acontece frequentemente na programação multithread.
 
     * A segunda regra de referências evita o uso indevido de referências que se referem a dados inexistentes (chamados ponteiros pendentes em C).
   code: |
@@ -258,7 +258,7 @@
     Mesmo que o Rust nem sempre nos mostre no código, o compilador conhece o tempo de vida de cada variável e tentará validar uma referência que nunca deve existir por mais tempo que seu proprietário.
 
 
-    As funções podem ser explícitas parametrizando a assinatura da função com símbolos que ajudam a identificar quais parâmetros e valores de retorno compartilham a mesma tempo de vida.
+    As funções podem ser explícitas parametrizando a assinatura da função com símbolos que ajudam a identificar quais parâmetros e valores de retorno compartilham o mesmo tempo de vida.
 
 
     Os especificadores de tempo de vida sempre começam com um `'` (por exemplo `'a`, `'b`, `'c`)
@@ -276,15 +276,15 @@
         let mut foo = Foo { x: 42 };
         let x = &mut foo.x;
         *x = 13;
-        // x é descartada aqui permitindo-nos criar uma refrência não-mutável
+        // x é descartado aqui permitindo-nos criar uma referência não-mutável
         let y = faz_alguma_coisa(&foo);
         println!("{}", y);
-        // y é descartada aqui
-        // foo é descartada aqui
+        // y é descartado aqui
+        // foo é descartado aqui
     }
 - title: Tempos de Vida Múltiplos
   content_markdown: >
-    Os especificadores de tempo de vida nos permitem ser explícitos em certos cenários que o compilador não pode resolver sozinho, distinguindo todas os tempo de vida dos componentes na assinatura de uma função.
+    Os especificadores de tempo de vida nos permitem ser explícitos em certos cenários que o compilador não pode resolver sozinho, distinguindo todos os tempos de vida dos componentes na assinatura de uma função.
   code: |
     struct Foo {
         x: i32,

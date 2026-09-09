@@ -281,10 +281,10 @@
     Alguns dos tipos genéricos mais úteis são os tipos de coleção. Um vetor é uma lista de itens de tamanho variável representada pela estrutura `Vec`.
 
 
-    A macro `vec!` nos permite criar facilmente um ao invés de contruir uma manualmente.
+    A macro `vec!` nos permite criar facilmente um ao invés de construir um manualmente.
 
 
-    `Vec` possui o método `iter()` o qual cria um iterador a partir de uma matriz, permitindo-nos facilmente usar um vetor em um loop `for`.
+    `Vec` possui o método `iter()` o qual cria um iterador a partir de um vetor, permitindo-nos facilmente usar um vetor em um loop `for`.
 
 
     Detalhes da Memória:
@@ -316,4 +316,4 @@
     }
 - title: Capítulo 4 - Conclusão
   content_markdown: >
-    Em um capítulo aprendemos quanta força os tipos genéricos nos dão! Não se preocupe se você não souber como usar tudo, porque agora é bom estar ciente das principais idéias que você verá repetidas vezes no código. Nossas funções estão ficando muito longas! No próximo capítulo, falaremos sobre um conceito importante no Rust: propriedade de dados.
+    Em um capítulo aprendemos quanta força os tipos genéricos nos dão! Não se preocupe se você não souber como usar tudo, porque agora é bom estar ciente das principais ideias que você verá repetidas vezes no código. Nossas funções estão ficando muito longas! No próximo capítulo, falaremos sobre um conceito importante no Rust: propriedade de dados.

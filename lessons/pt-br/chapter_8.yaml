@@ -6,7 +6,7 @@
     Ferris diz: "Não se sinta pressionado por este capítulo se você acha que não pode escrever seu próprio código de gerenciamento de memória de baixo nível em uma leitura rápida. Este capítulo é principalmente para apresentá-lo a algumas ferramentas úteis e dar uma ideia de como eles trabalham!"
 - title: Revisitando referências
   content_markdown: >
-    Uma referência é fundamentalmente apenas um número que é a posição inicial de alguns bytes na memória. Seu único propósito é representar o conceito de onde os dados de um tipo específico estão. O que torna uma referência diferente de apenas um número é que o Rust validará o tempo de vida das referências para que não dure mais do que a o que ele se refere (caso contrário, obteríamos um erro quando o usarmos!).
+    Uma referência é fundamentalmente apenas um número que é a posição inicial de alguns bytes na memória. Seu único propósito é representar o conceito de onde os dados de um tipo específico estão. O que torna uma referência diferente de apenas um número é que o Rust validará o tempo de vida das referências para que não dure mais do que o que ele se refere (caso contrário, obteríamos um erro quando o usarmos!).
 - title: Ponteiros brutos
   code: |
     fn main() {
@@ -143,7 +143,7 @@
             // não tem como verificar se essa suposição é verdadeira.
             *ponteiro_b
         };
-        println!("Eu juro que isso é uma pi.zza! {}", b);
+        println!("Eu juro que isso é uma pizza! {}", b);
     }
   content_markdown: >
     Os ponteiros inteligentes tendem a usar código *inseguro* com bastante frequência. Como mencionado anteriormente, eles são ferramentas comuns para interagir com os níveis mais baixos de memória no Rust.
@@ -353,7 +353,7 @@
     **Apenas uma referência mutável OU várias referências imutáveis, mas não ambas!**
 
 
-    Se você violar essas regras, o `RefCell` retornará um panic.
+    Se você violar essas regras, o `RefCell` entrará em pânico.
 - title: Compartilhando entre threads
   code: |
     use std::sync::Mutex;
@@ -382,7 +382,7 @@
     O multithreading está além do escopo do Tour por Rust, mas `Mutex` é uma parte fundamental da orquestração de várias threads de CPU acessando os mesmos dados.
 
 
-    Há um ponteiro inteligente especial `Arc` que é idêntico ao` Rc`, exceto pelo uso de incrementos thread-safe de contagens de referência. Frequentemente é usado para ter muitas referências ao mesmo `Mutex`.
+    Há um ponteiro inteligente especial `Arc` que é idêntico ao `Rc`, exceto pelo uso de incrementos thread-safe de contagens de referência. Frequentemente é usado para ter muitas referências ao mesmo `Mutex`.
 - title: Combinando ponteiros inteligentes
   code: |
     use std::cell::RefCell;

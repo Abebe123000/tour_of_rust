@@ -6,7 +6,7 @@
     O Rust se preocupa muito com as questões de texto internacional e byte-level de um jeito que talvez não lhe seja familiar em outras linguagens. Dito isto, o Rust possui muitas ótimas ferramentas para gerenciar essas preocupações.
 - title: Literais string
   content_markdown: >
-    Asd literais string são sempre Unicode.
+    As literais string são sempre Unicode.
 
 
     O tipo de literais String é `&'static str`:
@@ -169,14 +169,14 @@
     }
 - title: Texto como parâmetros de função
   content_markdown: >
-    As literais de string e strings geralmente são passados como uma fatia de string para as funções. Isso oferece muita flexibilidade para a maioria dos cenários em que você realmente não precisa passar a propriedade.
+    As literais de string e strings geralmente são passadas como uma fatia de string para as funções. Isso oferece muita flexibilidade para a maioria dos cenários em que você realmente não precisa passar a propriedade.
   code: |-
     fn gritar(msg:&str){
         println!("{}!!!",msg.to_string().to_uppercase());
     }
 
     fn main() {
-        // gritar pode pegar emprstado uma &'static str como &str
+        // gritar pode pegar emprestado uma &'static str como &str
         gritar("olá");
         // gritar também pode pegar emprestado uma string como &str
         gritar(&String::from("adeus"));
