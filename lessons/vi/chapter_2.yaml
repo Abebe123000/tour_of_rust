@@ -67,7 +67,6 @@
     content_markdown: >
 
       Vòng lặp `for` của Rust là một nâng cấp mạnh mẽ.
-      Rust's `for` loop is a powerful upgrade.
 
       Nó lặp lại các giá trị từ bất kỳ biểu thức nào được đánh giá thành một trình *iterator*.
 

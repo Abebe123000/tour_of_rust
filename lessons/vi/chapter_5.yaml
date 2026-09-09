@@ -1,7 +1,7 @@
 - title: Chương 5 - Quyền sở hữu và mượn dữ liệu
   content_markdown: >
     Rust có một mô hình độc nhất để quản lý bộ nhớ so với các ngôn ngữ lập trình khác.
-    Chúng ta sẽ xem xét từng hành vi và xác nhận của trình biên dịch để không bạn không bị quá tải. 
+    Chúng ta sẽ xem xét từng hành vi và xác nhận của trình biên dịch để bạn không bị quá tải.
     Điều quan trọng cần nhớ là cuối cùng các quy tắc được đưa ra 
     không tồn tại để làm khó bạn, mà là để giúp bạn làm cho code của mình ít bị lỗi hơn!
 - title: Quyền sỡ hữu
@@ -138,7 +138,7 @@
     Chúng ta cũng có thể mượn quyền truy cập có thể thay đổi vào tài nguyên bằng toán tử `&mut`.
 
 
-    Không thể di chuyển hoặc sửa đổi chủ sở hữu tài nguyên trong khi mượn lẫn nhau.
+    Không thể di chuyển hoặc sửa đổi chủ sở hữu tài nguyên trong khi mượn có thể thay đổi.
 
 
     Chi tiết bộ nhớ:
@@ -160,13 +160,13 @@
         let f = &mut foo;
 
         // FAILURE: do_something(foo) sẽ bị lỗi vì
-        // foo không thể bị di chuyển trong khi mượn lẫn nhau
+        // foo không thể bị di chuyển trong khi mượn có thể thay đổi
 
-        // FAILURE: foo.x = 13; would sẽ bị lỗi vì
-        // foo không thể bị thay đổi trong khi mượn lẫn nhau
+        // FAILURE: foo.x = 13; sẽ bị lỗi vì
+        // foo không thể bị thay đổi trong khi mượn có thể thay đổi
 
         f.x = 13;
-        // f  drop ở đây bởi vì sau thời điểm này có không còn được sử dụng
+        // f bị drop ở đây bởi vì sau thời điểm này không còn được sử dụng
         
         println!("{}", foo.x);
         
@@ -186,12 +186,13 @@
     (nếu giá trị có thể được sao chép - chúng ta sẽ thảo luận về các loại có thể 
     sao chép trong các chương sau).
   code: |-
-    fn+main()+{
-    ++++let+mut+foo+=+42;
-    ++++let+f+=+&mut+foo;
-    ++++let+bar+=+*f;+//+nhận+một+bản+sao+của+quyền+sở+hữu
-    ++++println!("{}",+bar);
-    ++++println!("{}",+foo);
+    fn main() {
+        let mut foo = 42;
+        let f = &mut foo;
+        let bar = *f; // nhận một bản sao của giá trị chủ sở hữu
+        *f = 13;      // đặt giá trị mới cho chủ sở hữu thông qua tham chiếu
+        println!("{}", bar);
+        println!("{}", foo);
     }
 - title: Truyền xung quanh dữ liệu đã mượn
   content_markdown: >
