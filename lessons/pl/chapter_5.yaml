@@ -159,7 +159,7 @@
 - title: Pożyczanie z Możliwością Dokonania Zmian Przy Pomocy Referencji Mutowalnych
   content_markdown: >
     Możemy też pożyczyć dany zasób w sposób który pozwoli nam na dokonywanie
-    zmian, czyli tzw. *mutowanie*. Dokonamy tego używając operatora '&mut'.
+    zmian, czyli tzw. *mutowanie*. Dokonamy tego używając operatora `&mut`.
 
 
     Właściciel zasobu nie może być przenoszony ani modyfikowany podczas istnienia
@@ -206,7 +206,7 @@
     }
 - title: Dereferencja
   content_markdown: >
-    Używając referencji '&mut' mamy możliwość modyfikacji danych na którą
+    Używając referencji `&mut` mamy możliwość modyfikacji danych na którą
     ona wskazuje. Możemy to zrobić używając operatora gwiazdki `*`.
 
 

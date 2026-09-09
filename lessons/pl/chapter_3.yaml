@@ -134,7 +134,7 @@
         );
         println!(
             "{} to {}. Posiada {} ramion i {} nóg. Nie posiada żadnej broni..",
-            sarah.imie, sarah.rodzaj, sarah.ramiona, sarah.nogi
+            sara.imie, sara.rodzaj, sara.ramiona, sara.nogi
         );
     }
 - title: Struktury Krotkowe

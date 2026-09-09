@@ -65,6 +65,7 @@
         while x != 42 {
             x += 1;
         }
+        println!("x wynosi {}", x);
     }
 - title: for
   content_markdown: >
@@ -190,7 +191,7 @@
         let food = "kanapka";
         let result = match food {
             "sałatka" => "to sałatka",
-            // \nawiasy klamrowe nie są konieczne gdy zwracamy proste wyrażenia
+            // nawiasy klamrowe nie są konieczne gdy zwracamy proste wyrażenia
             _ => "to nie sałatka",
         };
         println!("dostaliśmy następujące jedzenie: {}", result);
