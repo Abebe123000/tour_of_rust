@@ -176,7 +176,7 @@
 
         match ferris.species {
             Species::Crab => println!("{} is a crab",ferris.name),
-            Species::Octopus => println!("{} is a octopus",ferris.name),
+            Species::Octopus => println!("{} is an octopus",ferris.name),
             Species::Fish => println!("{} is a fish",ferris.name),
             Species::Clam => println!("{} is a clam",ferris.name),
         }
@@ -251,7 +251,7 @@
 - title: Розділ 3 - Висновки
   content_markdown: >
     Чудово! Тепер ми маємо усі базові інструменти для надання форми нашим ідеям у коді.
-    Сподіваюся, що тепер ви бачите, як фундаментальні операціі мови Rust працюють в гармонії з її типами.
+    Сподіваюся, що тепер ви бачите, як фундаментальні операції мови Rust працюють в гармонії з її типами.
 
 
     Далі ми поговоримо про концепт, що надає типам даних ще більшої гнучкості в представленні: *узагальненим типам* (generics)
