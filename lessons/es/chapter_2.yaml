@@ -37,7 +37,7 @@
   content_markdown: >
     `while` permite añadir fácilmente una condición al bucle.
 
-    El bucle terminará cuando la condición se evalúe a `false`
+    El bucle terminará cuando la condición se evalúe a `false`.
 - title: for
   content_markdown: >
     El bucle `for` en Rust es una gran mejora, ya que itera sobre valores en cualquier expresión que se evalúe como un iterador. ¿Qué es un iterador? Un iterador es un objeto al que le puedes hacer la pregunta: "¿Cuál es el siguiente elemento?" hasta que ya no queden más elementos.
@@ -71,7 +71,7 @@
             1 | 2 => {
                 println!("encontré 1 o 2!");
             }
-            // podemos hacer comparaciones con iteradores
+            // podemos hacer comparaciones con rangos
             3..=9 => {
                 println!("encontré un numero entre 3 y 9, ambos incluidos");
             }

@@ -49,7 +49,7 @@
     referencias a ese nombre.
 
 
-    Los nombres de las variables se escriben siempre en `snake_case`
+    Los nombres de las variables se escriben siempre en `snake_case`.
 - title: Modificar Variables
   content_markdown: >
     En Rust es importante tener en cuenta qué valores se modifican.

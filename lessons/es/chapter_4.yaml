@@ -70,7 +70,7 @@
     palabras reservadas `Some` y `None`.
 - title: Result
   content_markdown: >
-    Rust tiene  un enumerado genérico integrado llamado `Result` que nos permite
+    Rust tiene un enumerado genérico integrado llamado `Result` que nos permite
     devolver un
 
     valor que puede dar error. Es la forma que este lenguaje tiene de gestionar
@@ -99,7 +99,7 @@
     palabras reservadas `Ok` y `Err`.
 - title: Main Fallido
   content_markdown: |
-    `main` tiene la capacidad de devolver un valor del enumerado `Result`
+    `main` tiene la capacidad de devolver un valor del enumerado `Result`.
 - title: Gestionar Errores de Forma Elegante
   content_markdown: >
     `Result` es tan común que Rust cuenta con el operador `?` para trabajar con

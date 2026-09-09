@@ -84,7 +84,7 @@
 
     ```
 
-    ¿Por qué no hace falta añadir `***` antes de `ref_ref_ref_f`? Pues porque el operador `.` operator indirecciona automáticamente una secuencia de referencias. La última línea se convierte automáticamente en la siguiente por el compilador.
+    ¿Por qué no hace falta añadir `***` antes de `ref_ref_ref_f`? Pues porque el operador `.` indirecciona automáticamente una secuencia de referencias. La última línea se convierte automáticamente en la siguiente por el compilador.
 
 
     ```rust
@@ -115,7 +115,7 @@
         println!("{}", foo.len());
     }
   content_markdown: >
-    Además de la capacidad de crear referencias de tipos de datos existentes utilizando el operador `&` operator, 
+    Además de la capacidad de crear referencias de tipos de datos existentes utilizando el operador `&`,
     Rust nos permite crear *estructuras de referencia* llamadas **punteros inteligentes**.  
 
 
@@ -160,7 +160,7 @@
     ahí existe una estructura de datos para después convertirlo en una representación de los datos que 
     se pueden utilizar (es decir, `*const u8` en `u8`). Rust no tiene forma de rastrear el significado 
     de cada byte que se escribe en la memoria. Debido a que Rust no puede hacer garantizar lo que existe 
-    en un número arbitrario que se ha usado comoun *puntero sin procesar*, pone la indirección en un bloque 
+    en un número arbitrario que se ha usado como un *puntero sin procesar*, pone la indirección en un bloque
     no seguro `unsafe { ... }`. 
 
 
@@ -216,7 +216,7 @@
     de Rust no tiene ni idea de lo que existe en estos bytes. El puntero inteligente interpreta lo que 
     significa tomar elementos de la región de memoria que gestiona, mantiene un registro de dónde comienzan 
     y terminan las estructuras de datos dentro de esos bytes, y luego finalmente indirecciona un puntero 
-    sin procesar en estructuras de datos en una interfaz ergonómica y sencilla para que la usemos. (e.g. `my_vec[3]`).
+    sin procesar en estructuras de datos en una interfaz ergonómica y sencilla para que la usemos. (por ejemplo, `my_vec[3]`).
 
 
     `String` mantiene un registro de una región de memoria de bytes, y restringe de forma programada el 
@@ -300,7 +300,7 @@
     fn main() -> Result<(), Box<dyn std::error::Error>>
 
     ```
-- title: Rc (Referencing Counting)
+- title: Rc (Reference Counting)
   code: |
     use std::rc::Rc;
 
@@ -465,7 +465,7 @@
     `Rc<Vec<Foo>>` - Permite la clonación de múltiples punteros inteligentes que pueden tomar prestado el mismo vector de estructuras de datos inmutables en el montículo.
 
 
-    `Rc<RefCell<Foo>>` - Permite a varios punteros inteligentes la capacidad de tomar prestada mutablemente/immutablemente la misma estructura `Foo`.
+    `Rc<RefCell<Foo>>` - Permite a varios punteros inteligentes la capacidad de tomar prestada mutablemente/inmutablemente la misma estructura `Foo`.
 
 
     `Arc<Mutex<Foo>>` - Permite a múltiples punteros inteligentes la capacidad de bloquear préstamos temporales mutables/inmutables en un hilo de CPU de manera exclusiva.

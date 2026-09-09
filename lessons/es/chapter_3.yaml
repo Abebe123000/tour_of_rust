@@ -73,8 +73,8 @@
 
     Detalles de memoria de nuestro ejemplo:
 
-    * El texto dentro de las comillas es de sólo lectura de datos (por ejemplo,
-    "ferris"), por lo tanto se
+    * El texto dentro de las comillas es un dato de sólo lectura (por ejemplo,
+    "Ferris"), por lo tanto se
       coloca en la *región de memoria de datos*.
     * La llamada a la función `String::from` crea una estructura `String` que se
     coloca al lado de los campos

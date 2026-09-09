@@ -9,7 +9,7 @@
 
     * Abstracción: Ocultar datos y miembros de la función para obstruir los detalles de implementación de un objeto.
 
-    * Polimorfismo: La capacidad de interactuar con un objeto desde diferentes perspectivas funcionales.
+    * Polimorfismo: La capacidad de interactuar con objetos de diferentes tipos a través de una única interfaz.
 
     * Herencia: Como su propio nombre indica, es la habilidad de heredar datos y comportamiento de otros objetos.
 - title: Rust No Es POO
@@ -140,7 +140,7 @@
     ```
 
 
-    Cuando una estructura implementa un trait, establece un contrato que nos permite interactuar indirectamente con la estructura a través del Trait (e.g. `&dyn MyTrait`) sin tener que conocer el tipo real.
+    Cuando una estructura implementa un trait, establece un contrato que nos permite interactuar indirectamente con la estructura a través del Trait (por ejemplo, `&dyn MyTrait`) sin tener que conocer el tipo real.
 
 
     Los métodos de traits implementados en una estructura se definen dentro de un bloque de implementación:

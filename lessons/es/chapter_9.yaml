@@ -60,7 +60,7 @@
       * Un directorio llamado `foo` que contiene un fichero llamado `mod.rs`.
 - title: Jerarquía de Módulos
   content_markdown: >
-    Un módulo puede depender de otro. Para establecer una relación entre un módulo y su submódulo, debemos escribir el módulo padre: 
+    Un módulo puede depender de otro. Para establecer una relación entre un módulo y su submódulo, debemos escribir en el módulo padre:
 
 
     ```rust
@@ -77,7 +77,7 @@
     Un sub-módulo se puede insertar directamente dentro del código del módulo.
 
 
-    Un uso muy común de los módulos en línea es la creación de pruebas unitarias/tests unitarios. Creamos un módulo en línea que sólo existe cuando al usar Rust para hacer pruebas.
+    Un uso muy común de los módulos en línea es la creación de pruebas unitarias/tests unitarios. Creamos un módulo en línea que sólo existe cuando usamos Rust para hacer pruebas.
 
 
     ```
