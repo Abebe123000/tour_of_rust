@@ -10,7 +10,7 @@
     Rust'ın koşullu ifadelerde paranteze ihtiyaç duymaması, kodumuzun daha temiz ve
 
     daha rahat okunabilir olmasını sağlar. Parantezlerin yokluğu mantıksal işleçlerin çalışmasını engellemeyeceğinden, 
-    bu işleçlerin her birini: `!`, `!=`, `||`, `&&`, `<`, `>`, `<=`, `>=` yandaki örnek kod üzerinde kolaylıkla deneyip değerlendirebilirsiniz.
+    bu işleçlerin her birini: `==`, `!`, `!=`, `||`, `&&`, `<`, `>`, `<=`, `>=` yandaki örnek kod üzerinde kolaylıkla deneyip değerlendirebilirsiniz.
   code: |
     fn main() {
         let x = 42;
@@ -112,7 +112,7 @@
             1 | 2 => {
                 println!("Değer 1 ya da 2!");
             }
-            // Yineleyicilerle eşleştirebiliriz
+            // Aralıklarla eşleştirebiliriz
             3..=9 => {
                 println!("Değer 3 ile 9 arasında");
             }

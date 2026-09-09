@@ -205,7 +205,7 @@
     Özelliklerin de uyguladıkları kendi yöntemleri olabilir.
 
 
-    Ancak özelliklerin uyguladığı yöntemler yapı alanlarına erişimediklerinden, çeşitli özellik uygulamaları arasındaki davranışları 
+    Ancak özelliklerin uyguladığı yöntemler yapı alanlarına erişemediklerinden, çeşitli özellik uygulamaları arasındaki davranışları 
     paylaşırken yararlıdırlar.
 - title: Özellik Kalıtımı
   code: |
@@ -310,7 +310,7 @@
     * Dinamik iletim, çağrılan işlevin gerçek adresini bulmak için işaretçi takibi gerektirdiğinden, daha yavaş bir yöntem çağrısı olarak kabul edilir.
 - title: Özellik Nesneleri
   content_markdown: >
-    Bir nesne örneğini `&dyn BirOzellik` türündeki bir parametreye ilettiğimizde, özellik nesnesini adını verdiğimiz seyi iletmiş oluruz. 
+    Bir nesne örneğini `&dyn BirOzellik` türündeki bir parametreye ilettiğimizde, özellik nesnesini adını verdiğimiz şeyi iletmiş oluruz. 
 
 
     O halde bir özellik nesnesi: "Bir örneğin doğru metotlarını, dinamik iletim yoluyla ve dolaylı olarak çağırmamıza izin veren, hem örneğin kendi 

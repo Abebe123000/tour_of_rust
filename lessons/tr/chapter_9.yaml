@@ -105,7 +105,7 @@
       
     * `crate` - sandığınızın kök modülü.
 
-    * `super` - mevcut modülününüzün üst modülü
+    * `super` - mevcut modülünüzün üst modülü
 
     * `self` - mevcut modülünüz.
 - title: Dışa Aktarmak

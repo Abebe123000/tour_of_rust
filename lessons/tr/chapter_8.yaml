@@ -24,7 +24,7 @@
     geçerli olduğunu garantilemez.
 
 
-    Rust'un iki türlü ham işareçisi vardır:
+    Rust'un iki türlü ham işaretçisi vardır:
 
 
     * `*const T` - Asla değişmemesi gereken **T** türündeki verilere yönelik ham işaretçi.
@@ -44,7 +44,7 @@
     derleme zamanı kısıtlaması içerirler.
 
     * Rust'ın ham işaretçileri, C'nin işaretçilerine benzemekle beraber; kopyalanabilen, bir işleve bağımsız değişken olarak iletilebilen, 
-    hatta tıpkı işaretçi aritmediğinde olduğu gibi, aritmetik işlemlerin yapılabileceği sayısal türe dönüştürülebilen bir sayıyı temsil eder.
+    hatta tıpkı işaretçi aritmetiğinde olduğu gibi, aritmetik işlemlerin yapılabileceği sayısal türe dönüştürülebilen bir sayıyı temsil eder.
 - title: Referansı Kaldırmak
   content_markdown: |
     Bir **referans**ın atıfta bulunduğu verilere erişme ve/veya o verileri değiştirme işlemine **dereferencing**, dilimizdeki yaklaşık 
@@ -94,7 +94,7 @@
 
     ```
 
-    `ref_ref_ref_f`'den önce `***` işleçlerinin eklenmediğini fark ettiniz değil mi?. Bu şaşırtıcı durum `.` işlecinin, bir dizi referansı otomatik olarak 
+    `ref_ref_ref_f`'den önce `***` işleçlerinin eklenmediğini fark ettiniz değil mi? Bu şaşırtıcı durum `.` işlecinin, bir dizi referansı otomatik olarak 
     kaldırmasından kaynaklanır. Oysa gerçekte örneğin son satırı, derleyici tarafından otomatik olarak aşağıda gösterildiği gibi değerlendirilmektedir.
 
 
@@ -122,7 +122,7 @@
         let tur = SohbetEt {
             deger: "Gizli sohbet",
         };
-        // dereference, tur'un `len`işlevi için
+        // dereference, tur'un `len` işlevi için
         // otomatik olarak başvurmasından
         // hemen sonra burada gerçekleşir
         println!("{}", tur.len());
@@ -376,11 +376,11 @@
         // Artık değişken referans düşürüldüğüne göre
         // değişmez bir referans ödünç alabiliriz
         let ref_pasta = pasta.borrow();
-        println!("{} slices left", ref_pasta.dilim);
+        println!("{} dilim kaldı", ref_pasta.dilim);
     }
   content_markdown: >
     `RefCell`, kapsadığı verilere değişmez veya değişken referanslar ödünç almamızı sağlayan ve genellikle akıllı işaretçiler tarafından tutulan 
-    kapsayıcı bir veri yapsıdır. Bu veri yapısının biricik özelliği, bellekle ilgili güvenlik kurallarını çalışma zamanında uygulamak ve borçlanma
+    kapsayıcı bir veri yapısıdır. Bu veri yapısının biricik özelliği, bellekle ilgili güvenlik kurallarını çalışma zamanında uygulamak ve borçlanma
     sisteminin kötüye kullanılmasını önlemektir. Bu yapıyla ilgili bilinmesi gereken tek kural aşağıda yer almaktadır:
 
 
@@ -407,12 +407,12 @@
         // kilitten dönen Result türünün açılması gerekir.
         let ref_pasta = mutex_pasta.lock().unwrap();
         ref_pasta.atistir();
-        // kilitli referans burada düşürülecedğinden mutex
+        // kilitli referans burada düşürüleceğinden mutex
         // korumalı değer başkası tarafından kullanılabilir.
     }
   content_markdown: >
     `Mutex`, kapsadığı verilere değişmez veya değişken referansları ödünç alabilmemizi sağlayan ve genellikle akıllı işaretçiler tarafından 
-    tutulan kapsayıcı bir veri yapsıdır. Mutex'in biricik özelliği, veri erişimini tek bir CPU iş parçacığıyla kısıtlayarak, asıl iş parçacığının 
+    tutulan kapsayıcı bir veri yapısıdır. Mutex'in biricik özelliği, veri erişimini tek bir CPU iş parçacığıyla kısıtlayarak, asıl iş parçacığının 
     çalışmasını beklemek, bu bekleme sırasında diğer iş parçacıklarını engellemek ve beklemenin sonunda verilere erişimin kilidini açmaktır.
 
 
