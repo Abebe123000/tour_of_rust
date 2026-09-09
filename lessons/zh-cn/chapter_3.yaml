@@ -50,14 +50,14 @@
   content_markdown: |
     当我们在代码中**实例化**一个**结构体**时，我们的程序会在内存中并排创建关联的字段数据。
 
-    当我们通过制定所有字段值的方式来实例化时：
+    当我们通过指定所有字段值的方式来实例化时：
 
     `结构体名 { ... }`.
 
     结构体字段可以通过 `.` 运算符来获取。
 
     我们例子的内存详情：
-    * 引号内的文本是只读数据（例如“ferris”），因此它位于*数据内存区*。
+    * 引号内的文本是只读数据（例如“Ferris”），因此它位于*数据内存区*。
     * 函数调用 `String::from` 创建一个结构体 `String`，该结构体与 SeaCreature 的字段并排放置在*栈*中。
       字符串容器通过如下步骤表示可更改的文本：
         1. 在*堆*上创建可修改文本的内存。
@@ -93,11 +93,11 @@
         };
         
         println!(
-            "{} 是只{}。它有 {} 只胳膊 {} 条腿，还有一个{}。",
+            "{} 是只{}。它有 {} 只胳膊，{} 条腿，还有一个{}。",
             ferris.name, ferris.animal_type, ferris.arms, ferris.legs, ferris.weapon
         );
         println!(
-            "{} 是只{}。它有 {} 只胳膊 {} 条腿。它没有杀伤性武器…",
+            "{} 是只{}。它有 {} 只胳膊，{} 条腿。它没有杀伤性武器…",
             sarah.name, sarah.animal_type, sarah.arms, sarah.legs
         );
     }
@@ -159,7 +159,7 @@
 
         match ferris.species {
             Species::Crab => println!("{} is a crab",ferris.name),
-            Species::Octopus => println!("{} is a octopus",ferris.name),
+            Species::Octopus => println!("{} is an octopus",ferris.name),
             Species::Fish => println!("{} is a fish",ferris.name),
             Species::Clam => println!("{} is a clam",ferris.name),
         }
