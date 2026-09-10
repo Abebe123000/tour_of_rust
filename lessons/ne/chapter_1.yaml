@@ -24,10 +24,10 @@
 
     Het is een goede manier om met Rust te spelen
     en anderen uw creativiteit en uitdagingen te laten zien!
-- title: Variabile
+- title: Variabelen
   code: |
     fn main() {
-        // Rust raadt het gegevenstype van x aan
+        // Rust leidt het gegevenstype van x af
         let x = 13;
         println!("{}", x);
 
@@ -53,7 +53,7 @@
     kan veranderen voor latere verwijzingen naar die variabelnaam.
 
     Variabelnamen worden altijd geschreven in de vorm van `snake_case` (ex: my\_first\_variable).
-- title: Modificarea variabilelor
+- title: Variabelen wijzigen
   code: |
     fn main() {
         let mut x = 42;
@@ -256,7 +256,7 @@
 
         // Weergave van een debugtekst voor a en b
         // Omdat het moeilijk is om niets af te drukken
-        println!("De waarde van a:: {:?}", a);
+        println!("De waarde van a: {:?}", a);
         println!("De waarde van b: {:?}", b);
     }
 - title: Hoofdstuk 1 - Conclusies
