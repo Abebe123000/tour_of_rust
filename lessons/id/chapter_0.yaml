@@ -6,7 +6,7 @@
         println!("Hello, 🦀");
     }
   content_markdown: |
-    Selamat datang di *Rust Tur*. Ini dimaksudkan sebagai panduan secara bertahap dari fitur bahasa pemprograman Rust. Rust sering dianggap sebagai bahasa yang sukar untuk dipelajari, tetapi saya harap saya dapat meyakinkaan anda bahwa ada banyak hal yang perlu dijelajahi sebelum kita sampai ke bagian yang rumit.
+    Selamat datang di *Rust Tur*. Ini dimaksudkan sebagai panduan secara bertahap dari fitur bahasa pemprograman Rust. Rust sering dianggap sebagai bahasa yang sukar untuk dipelajari, tetapi saya harap saya dapat meyakinkan anda bahwa ada banyak hal yang perlu dijelajahi sebelum kita sampai ke bagian yang rumit.
 
     Kamu juga dapat menemukan panduan ini dalam bahasa-bahasa ini:
 

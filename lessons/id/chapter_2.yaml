@@ -8,10 +8,10 @@
     Code branching pada Rust tidaklah mengejutkan.
 
 
-    Kondisi tidak mempunyai tanda kurung! Apakah kita sangat memebutuhkannya? Logika kita sekarang terlihat bagus dan bersih.
+    Kondisi tidak mempunyai tanda kurung! Apakah kita sangat membutuhkannya? Logika kita sekarang terlihat bagus dan bersih.
 
 
-    Semua operator relasioinal dan logika tetap berkerja: `==`, `!=`, `<`, `>`, `<=`, `>=`, `!`, `||`, `&&`.
+    Semua operator relasional dan logika tetap bekerja: `==`, `!=`, `<`, `>`, `<=`, `>=`, `!`, `||`, `&&`.
   code: |-
     fn main() {
         let x = 42;
@@ -81,10 +81,10 @@
     }
 - title: match
   content_markdown: >
-    Kangen dengan switch statement? Rust mempunyai kata kunci yang sangat powerful untuk mencocokkan semua kemungkinan kondisi dari sebuah nilai dan mengksekusi code tersebut ketika kondisi cocok (dievaluasi sebagai true). Kita akan  melihat bagaimana hal ini hal ini bekerja pada angka. Kita punya banyak hal yang akan disampaikan pada bab yang akan datang pada bab pencocokkan pola pada data struktur kompleks. Saya berjanji hal tersebut sangatlah layak untuk ditunggu.
+    Kangen dengan switch statement? Rust mempunyai kata kunci yang sangat powerful untuk mencocokkan semua kemungkinan kondisi dari sebuah nilai dan mengeksekusi code tersebut ketika kondisi cocok (dievaluasi sebagai true). Kita akan melihat bagaimana hal ini bekerja pada angka. Kita punya banyak hal yang akan disampaikan pada bab yang akan datang pada bab pencocokkan pola pada data struktur kompleks. Saya berjanji hal tersebut sangatlah layak untuk ditunggu.
 
 
-    `match` merupakan kata kunci yang bersifat menyeluruh, jadi semua kasus harus di tangani.
+    `match` merupakan kata kunci yang bersifat menyeluruh, jadi semua kasus harus ditangani.
 
 
     Match dikombinasikan dengan destructuring, sampai saat ini sangatlah umum dan kamu akan melihat hal tersebut disepanjang Rust.
@@ -116,7 +116,7 @@
     }
 - title: Mengembalikan Nilai dari Loop
   content_markdown: |
-    `loop` dapat menggukan `break` untuk mengembalikan nilai.
+    `loop` dapat menggunakan `break` untuk mengembalikan nilai.
   code: |
     fn main() {
         let mut x = 0;
@@ -133,7 +133,7 @@
     `if`, `match`, fungsi, dan blok scope semua mempunyai sebuah hal unik untuk mengembalikan nilai di dalam Rust.
 
 
-    Jika statement terakhir di dalam `if`, `match`, fungsi, atau blok scope adalah tanpa menggunakan `;`, maka Rust akan mengembalikan nilai tersebut dari blok. Ini merupakan cara yang bagus untuk membuat sebuah logika ringkas yang mengembalikan sebuat nilai yang dapat dimasukkan ke dalam sebuah variabel.
+    Jika statement terakhir di dalam `if`, `match`, fungsi, atau blok scope adalah tanpa menggunakan `;`, maka Rust akan mengembalikan nilai tersebut dari blok. Ini merupakan cara yang bagus untuk membuat sebuah logika ringkas yang mengembalikan sebuah nilai yang dapat dimasukkan ke dalam sebuah variabel.
 
 
     Perhatikan bahwa hal tersebut juga memperbolehkan kita menggunakan `if` statement layaknya expresi ternary.
@@ -169,4 +169,4 @@
     }
 - title: Bab 2 - Kesimpulan
   content_markdown: >
-    Saya berharap bahwa saya telah memperlihatkan sekilas kekuatan dari Rust bahkan pada fitur dasar dari bahasa pemprograman. Kita akan membicarakan tentang `for` dan `match` lebih lanjut secara mendalam sambil kita mendapatkan pengetahuan yang dapat memfaatkan kemampuan mereka. Selanjutkan kita akan masuk pada data struktur dasar pada Rust.
+    Saya berharap bahwa saya telah memperlihatkan sekilas kekuatan dari Rust bahkan pada fitur dasar dari bahasa pemprograman. Kita akan membicarakan tentang `for` dan `match` lebih lanjut secara mendalam sambil kita mendapatkan pengetahuan yang dapat memanfaatkan kemampuan mereka. Selanjutnya kita akan masuk pada data struktur dasar pada Rust.
