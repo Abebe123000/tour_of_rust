@@ -168,7 +168,7 @@
     Für Leute, die ein Fan von ternary Operatoren sind und das
     Fragezeichensymbol in Rust vermissen,
 
-    `if` Statements bieten dazu die Alternative.</p>"
+    `if` Statements bieten dazu die Alternative.
   code: |
     fn example() -> i32 {
         let x = 42;

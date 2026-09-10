@@ -9,7 +9,7 @@
     **Ferris**,
     das inoffizielle Maskottchen der Programmiersprache Rust. Sag hallo!
 
-    Sobald du dich mit Rust vertraut gemacht hast, kannst du dich ein **Rustacean**.
+    Sobald du dich mit Rust vertraut gemacht hast, kannst du dich ein **Rustacean**
     nennen. Leute, die Rust benutzen, dazu beitragen oder generell daran interessiert sind,
     nennen sich selbst Rustaceans.
 - title: Der Rust Playground
@@ -31,11 +31,19 @@
 - title: Variablen
   code: |-
     fn main() {
-        let hello_world = "Hello world";
-        println!("{}", hello_world);
-        
-        let hello_world = "Hello playground";
-        println!("{}", hello_world);
+        // Rust leitet den Typ von x automatisch her
+        let x = 13;
+        println!("{}", x);
+
+        // Rust kann den Typ auch explizit angeben
+        let x: f64 = 3.14159;
+        println!("{}", x);
+
+        // Rust kann eine Variable auch erst deklarieren und später
+        // initialisieren, dies wird aber selten gemacht
+        let x;
+        x = 0;
+        println!("{}", x);
     }
   content_html: >-
     <p>Variablen werden mit dem Schlüsselwort <code>let</code>
@@ -80,6 +88,20 @@
 
     zu wissen, dass "mutable" die Veränderbarkeit einer Variablen bestimmt.
 - title: Basistypen
+  code: |
+    fn main() {
+        let x = 12; // ist standardmäßig i32
+        let a = 12u8;
+        let b = 4.3; // ist standardmäßig f64
+        let c = 4.3f32;
+        let bv = true;
+        let t = (13, false);
+        let sentence = "hello world!";
+        println!(
+            "{} {} {} {} {} {} {} {}",
+            x, a, b, c, bv, t.0, t.1, sentence
+        );
+    }
   content_markdown: >
     Rust besitzt eine vielzahl an bekannten Datentypen
 

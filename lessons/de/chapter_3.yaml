@@ -148,7 +148,7 @@
 
         match ferris.species {
             Species::Crab => println!("ferris is a crab"),
-            Species::Octopus => println!("ferris is a octopus"),
+            Species::Octopus => println!("ferris is an octopus"),
             Species::Fish => println!("ferris is a fish"),
         }
     }
