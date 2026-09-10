@@ -1,4 +1,4 @@
-- title: Chapter 7 - Object Oriented Programming
+- title: บทที่ 7 - Object Oriented Programming
   content_markdown: >
     แนวคิดเรื่องการใช้ฟังก์ชันมาสะท้อนความเป็นไปของข้อมูลนั้นเป็นที่ยอมรับแล้ว (ซึ่ง ภาษา C ทำมาเป็นสิบปี!)
 
@@ -251,7 +251,7 @@
         creature.make_alot_of_noise();
     }
   content_markdown: |
-    Traits ทำการสือทอดเมธอดจาก traits ตัวอื่นได้
+    Traits ทำการสืบทอดเมธอดจาก traits ตัวอื่นได้
 - title: Dynamic vs Static Dispatch
   code: |
     struct SeaCreature {
