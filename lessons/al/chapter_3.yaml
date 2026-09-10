@@ -26,7 +26,7 @@
         arms: i32,
         legs: i32,
         weapon: String,
-    })
+    }
   edition: 2021
 - title: Metodat e thirrjes
   content_markdown: >
@@ -50,7 +50,6 @@
         // Përdorimi i një metode në instancë
         println!("{} është {} karaktere gjatë.", s, s.len());
     }
-    )
   edition: 2021
 - title: Memorja
   content_markdown: >
@@ -140,7 +139,7 @@
             "{} është nje {}. Ata kanë {} krahë, dhe {} kembe. Nuk kanë arme..",
             sarah.name, sarah.animal_type, sarah.arms, sarah.legs
         );
-    })
+    }
   edition: 2021
 - title: Struktura të ngjashme me tufë
   content_markdown: |
@@ -169,7 +168,7 @@
 
     fn main() {
         let _m = Marker;
-    })
+    }
   edition: 2021
 - title: Enumeracionet
   content_markdown: >
@@ -180,11 +179,11 @@
      "match" ndihmon në sigurimin e trajtimit shterues të të gjitha bërjes së vlerave të mundshme të numrit
      është një mjet i fuqishëm për të siguruar kod cilësor.
   code: |-
-    #![lejohet(dead_code)] // ky rresht parandalon sinjalizimet e kompiluesit
+    #![allow(dead_code)] // ky rresht parandalon sinjalizimet e kompiluesit
 
     enum Lloji {
         Karkalec,
-        Zogu i detit,
+        Oktapod,
         Peshku,
         Palura
     }
@@ -208,13 +207,13 @@
 
         match ferris.lloji {
             Lloji::Karkalec => println!("{} është një karkalec",ferris.emri),
-            Lloji::Zogu i detit => println!("{} është një zog i detit",ferris.emri),
+            Lloji::Oktapod => println!("{} është një oktapod",ferris.emri),
             Lloji::Peshku => println!("{} është një peshk",ferris.emri),
             Lloji::Palura => println!("{} është një palurë",ferris.emri),
         }
-    })
+    }
   edition: 2021
-- title: Enumerations With Data
+- title: Enumeracionet me të dhëna
   content_markdown: >
     Elementet "enum" mund të kenë gjithashtu një ose më shumë lloje të dhënash që i lejojnë ata të sillen
      si *union* nga C.
@@ -240,9 +239,9 @@
      * Kombinimi i llojeve për të krijuar një lloj të ri është ajo që njerëzit nënkuptojnë kur ata
      Ndryshku ka *lloje algjebrike*.
   code: |-
-    #![lejohet(dead_code)] // ky rresht parandalon sinjalizimet e kompiluesit
+    #![allow(dead_code)] // ky rresht parandalon sinjalizimet e kompiluesit
 
-    enum Lloji { Karkalec, Zogu i detit, Peshku, Palura }
+    enum Lloji { Karkalec, Oktapod, Peshku, Palura }
     enum LlojiVeneni { Acid, Dhimbshme, Vdekjeprurese }
     enum Madhesia { Madhe, Vogel }
     enum Arma {
@@ -260,7 +259,7 @@
     }
 
     fn main() {
-        // Te dhenat e KrijesБeDeti jane ne stek
+        // Te dhenat e KrijesaDeti jane ne stek
         let ferris = KrijesaDeti {
             // Struktura String gjithashtu eshte ne stek,
             // por mban nje referenc ne te dhena ne heap
@@ -286,7 +285,7 @@
             },
             _ => println!("ferris është një kafshë tjetër"),
         }
-    })
+    }
   edition: 2021
 - title: Kapitulli 3 - Konkluzion
   content_markdown: >

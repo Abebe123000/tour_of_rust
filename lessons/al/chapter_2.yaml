@@ -27,7 +27,7 @@
         } else {
             println!("Më shumë se 42");
         }
-    })
+    }
   edition: 2021
 - title: loop/lak
   content_markdown: |
@@ -62,7 +62,7 @@
             x += 1;
         }
         println!("x is {}", x);
-    })
+    }
   edition: 2021
 - title: for
   content_markdown: >
@@ -102,7 +102,7 @@
         for x in 0..=5 {
             println!("{}", x);
         }
-    })
+    }
   edition: 2021
 - title: match
   content_markdown: >
@@ -146,14 +146,14 @@
             }
             // mund të lidhet numri gjetur me një variabël
             numri_gjetur @ 10..=100 => {
-                println!("gjeta numrin nga 10 deri në 100!", numri_gjetur);
+                println!("gjeta numrin {} nga 10 deri në 100!", numri_gjetur);
             }
             // kjo është nje lidhje e përgjithshme që duhet të ekzistojë në rast se të gjitha rastet nuk janë të mbuluara
             _ => {
                 println!("gjeta diçka tjetër!");
             }
         }
-    })
+    }
   edition: 2021
 - title: Kthimi i nje vlere nga loop-i
   content_markdown: |
@@ -169,7 +169,6 @@
         };
         println!("nga loop: {}", v);
     }
-    )
   edition: 2021
 - title: Kthimi i vlerave nga shprehjet e bllokut
   content_markdown: >

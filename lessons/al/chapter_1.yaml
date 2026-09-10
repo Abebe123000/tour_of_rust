@@ -13,8 +13,10 @@
      Pasi të njiheni me Rust, mund ta quani veten **Rustacean**. Kjo është
      si e quajnë veten njerëzit që përdorin, kontribuojnë ose janë të interesuar për Rust.
 - title: Sheshi i Lojërave Rust
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2021  
+  code: |
+    fn main() {
+        println!("Welcome to the playground! You can modify the code in here.");
+    }
   content_markdown: >
     Ky tur përdor një mjet kodimi ndërveprues nga [Rust
     Playground](https://play.rust-lang.org).
@@ -23,8 +25,21 @@
     Është një mënyrë e shkëlqyer për të luajtur me Rust dhe për t'u treguar të tjerëve kreativitetin tuaj
      dhe te maresh pjese ne sfida!
 - title: Variablat
-  code: >-
-   https://play.rust-lang.org/?version=stable&mode=debug&edition=2021
+  code: |
+    fn main() {
+        // rust infers the type of x
+        let x = 13;
+        println!("{}", x);
+
+        // rust can also be explicit about the type
+        let x: f64 = 3.14159;
+        println!("{}", x);
+
+        // rust can also declare and initialize later, but this is rarely done
+        let x;
+        x = 0;
+        println!("{}", x);
+    }
   content_markdown: >
     Variablat deklarohen duke përdorur fjalën kyçe **let**.
 
@@ -44,8 +59,13 @@
 
     Emrat e variabilave jane sa here ne `snake_case`.
 - title: Ndryshimi i variabilava
-  code: >-
-   https://play.rust-lang.org/?version=stable&mode=debug&edition=2021
+  code: |
+    fn main() {
+        let mut x = 42;
+        println!("{}", x);
+        x = 13;
+        println!("{}", x);
+    }
   content_markdown: >
    Rust kujdeset shumë për variablat që mund të modifikohen. vlerat
 
@@ -64,9 +84,22 @@
     Ne do të kemi më shumë për të thënë më vonë për këtë koncept, por tani për tani vetëm mbani një sy
      jashtë për këtë fjalë kyçe.
 - title: Tipet Bazike
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2021
-
+  code: |
+    fn main() {
+        let x = 12; // by default this is i32
+        let a = 12u8;
+        let b = 4.3; // by default this is f64
+        let c = 4.3f32;
+        let d = 'r'; // unicode character
+        let ferris = '🦀'; // also a unicode character
+        let bv = true;
+        let t = (13, false);
+        let sentence = "hello world!";
+        println!(
+            "{} {} {} {} {} {} {} {} {} {}",
+            x, a, b, c, d, ferris, bv, t.0, t.1, sentence
+        );
+    }
   content_markdown: >
     Rust ka një sërë llojesh të njohura:
 
@@ -107,8 +140,16 @@
      Llojet numerike mund të specifikohen në mënyrë eksplicite duke i bashkangjitur tipit në fund
      të numrit (p.sh. "13u32", "2u8").
 - title: Konvertimi i tipit bazë
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2021
+  code: |
+    fn main() {
+        let a = 13u8;
+        let b = 7u32;
+        let c = a as u32 + b;
+        println!("{}", c);
+
+        let t = true;
+        println!("{}", t as u8);
+    }
   content_markdown: >
     Ndryshku kërkon qartësi kur bëhet fjalë për llojet numerike. Një nuk mund
 
@@ -120,8 +161,15 @@
      Fatmirësisht Rust i bën konvertimet e tipit numerik shumë të lehtë me  fjalë kyçen 
      **as**.
 - title: Konstantet
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2021
+  code: |
+    const PI: f32 = 3.14159;
+
+    fn main() {
+        println!(
+            "To make an apple {} from scratch, you must first create a universe.",
+            PI
+        );
+    }
   content_markdown: >
     Konstantet na lejojnë të specifikojmë një vlerë të përbashkët që përdoret gjatë gjithë kohës
 
@@ -138,8 +186,12 @@
 
      Emrat konstant janë gjithmonë ne `SCREAMING_SNAKE_CASE`.
 - title: Vargjet
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2021
+  code: |
+    fn main() {
+        let nums: [i32; 3] = [1, 2, 3];
+        println!("{:?}", nums);
+        println!("{}", nums[1]);
+    }
   content_markdown: >
     Një *array/varg* është një **përmbledhje me gjatësi fikse** të elementeve të të dhënave të gjitha të te njëjta
      lloji.
@@ -156,8 +208,19 @@
      Koleksionet me gjatësi dinamike, të quajtura shpesh vargje dinamike ose të ndryshueshme, janë
      prezantuar në një kapitull të mëvonshëm rreth **Vektorëve**.
 - title: Funksionet
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2021
+  code: |
+    fn add(x: i32, y: i32) -> i32 {
+        return x + y;
+    }
+
+    fn subtract(x: i32, y: i32) -> i32 {
+        x - y
+    }
+
+    fn main() {
+        println!("42 + 13 = {}", add(42, 13));
+        println!("42 - 13 = {}", subtract(42, 13));
+    }
   content_markdown: >
     Një funksion ka zero ose më shumë parametra.
 
@@ -176,8 +239,20 @@
      Këshillë: nëse përcaktoni një funksion, të dhënat që ai pranon quhen parametra.
      Nëse e thërrisni atë funksion dhe i kaloni të dhëna, atëherë ai quhet argumente.
 - title: Vlerat e shumëfishta të kthimit
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2021
+  code: |
+    fn swap(x: i32, y: i32) -> (i32, i32) {
+        return (y, x);
+    }
+
+    fn main() {
+        // return a tuple of return values
+        let result = swap(123, 321);
+        println!("{} {}", result.0, result.1);
+
+        // destructure the tuple into two variables names
+        let (a, b) = swap(result.0, result.1);
+        println!("{} {}", a, b);
+    }
   content_markdown: >
     Funksionet mund të kthejnë vlera të shumta duke kthyer një **tuple**
 
@@ -203,9 +278,26 @@
 
      Përdorimi i `()` është i pazakontë, por do të shfaqet aq shpesh sa është mirë të dihet
      cfare po ndodh.
-  code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2021
-- title: Chapter 1 - Conclusion
+  code: |
+    fn make_nothing() -> () {
+        return ();
+    }
+
+    // the return type is implied as ()
+    fn make_nothing2() {
+        // this function will return () if nothing is specified to return
+    }
+
+    fn main() {
+        let a = make_nothing();
+        let b = make_nothing2();
+
+        // Printing a debug string for a and b
+        // Because it's hard to print nothingness
+        println!("The value of a: {:?}", a);
+        println!("The value of b: {:?}", b);
+    }
+- title: Kapitulli 1 - Përfundim
   content_markdown: >
     Punë e bukur deri tani! Bazat e Rust nuk janë aq të këqija, apo jo? ne jemi
 
