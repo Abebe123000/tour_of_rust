@@ -16,15 +16,15 @@
     per tutta la sua **vita**. La variabile associata è chiamata risorsa
     **proprietario**.
   code: |
-    struct+Foo+{
-    ++++x:+i32,
+    struct Foo {
+        x: i32,
     }
 
-    fn+main()+{
-    ++++//+Istanziamo+le+strutture+e+le+leghiamo+alle+variabili
-    ++++//+per+creare+risorse+di+memoria
-    ++++let+foo+=+Foo+{+x:+42+};
-    ++++//+foo+è+il+proprietario
+    fn main() {
+        // Istanziamo le strutture e le leghiamo alle variabili
+        // per creare risorse di memoria
+        let foo = Foo { x: 42 };
+        // foo è il proprietario
     }
   edition: 2021
 - title: Gestione delle risorse basata sull'ambito
@@ -37,19 +37,19 @@
     * Rust non prevede la raccolta dei rifiuti.
     * In C++ questa operazione viene anche chiamata Resource Acquisition Is Inizializzazione (RAII).
   code: |
-    struct+Foo+{
-    ++++x:+i32,
+    struct Foo {
+        x: i32,
     }
 
-    fn+main()+{
-    ++++let+foo_a+=+Foo+{+x:+42+};
-    ++++let+foo_b+=+Foo+{+x:+13+};
+    fn main() {
+        let foo_a = Foo { x: 42 };
+        let foo_b = Foo { x: 13 };
 
-    ++++println!("{}",+foo_a.x);
+        println!("{}", foo_a.x);
 
-    ++++println!("{}",+foo_b.x);
-    ++++//+foo_b+viene+rilasciato+qui
-    ++++//+foo_a+viene+rilasciato+qui
+        println!("{}", foo_b.x);
+        // foo_b viene rilasciato qui
+        // foo_a viene rilasciato qui
     }
   edition: 2021
 - title: L'eliminazione è gerarchica
@@ -65,19 +65,19 @@
 
     * Le risorse di memoria possono essere eliminate solo una volta.
   code: |
-    struct+Bar+{
-    ++++x:+i32,
+    struct Bar {
+        x: i32,
     }
 
-    struct+Foo+{
-    ++++bar:+Bar,
+    struct Foo {
+        bar: Bar,
     }
 
-    fn+main()+{
-    ++++let+foo+=+Foo+{+bar:+Bar+{+x:+42+}+};
-    ++++println!("{}",+foo.bar.x);
-    ++++//+foo+viene+eliminato+per+primo
-    ++++//+quindi+foo.bar+viene+eliminato
+    fn main() {
+        let foo = Foo { bar: Bar { x: 42 } };
+        println!("{}", foo.bar.x);
+        // foo viene eliminato per primo
+        // quindi foo.bar viene eliminato
     }
   edition: 2021
 - title: Trasferimento di proprietà
@@ -95,39 +95,39 @@
     * Durante uno **spostamento** la memoria dello stack del valore del proprietario viene copiata nel file
     memoria dello stack dei parametri della chiamata di funzione.
   code: |
-    struct+Foo+{
-    ++++x:+i32,
+    struct Foo {
+        x: i32,
     }
 
-    fn+do_something(f:+Foo)+{
-    ++++println!("{}",+f.x);
-    ++++//+f+is+dropped+here
+    fn do_something(f: Foo) {
+        println!("{}", f.x);
+        // f is dropped here
     }
 
-    fn+main()+{
-    ++++let+foo+=+Foo+{+x:+42+};
-    ++++//+foo+viene+spostato+in+do_qualcosa
-    ++++do_something(foo);
-    ++++//+foo+non+può+più+essere+utilizzato
+    fn main() {
+        let foo = Foo { x: 42 };
+        // foo viene spostato in do_qualcosa
+        do_something(foo);
+        // foo non può più essere utilizzato
     }
   edition: 2021
 - title: Restituzione della proprietà
   content_markdown: |
     La proprietà può anche essere restituita da una funzione.
   code: |
-    struct+Foo+{
-    ++++x:+i32,
+    struct Foo {
+        x: i32,
     }
 
-    fn+do_something()+->+Foo+{
-    ++++Foo+{+x:+42+}
-    ++++//+la+proprietà+viene+spostata
+    fn do_something() -> Foo {
+        Foo { x: 42 }
+        // la proprietà viene spostata
     }
 
-    fn+main()+{
-    ++++let+foo+=+do_something();
-    ++++//+foo+diventa+il+proprietario
-    ++++//+foo+viene+eliminato+a+causa+della+fine+dell'ambito+della+funzione
+    fn main() {
+        let foo = do_something();
+        // foo diventa il proprietario
+        // foo viene eliminato a causa della fine dell'ambito della funzione
     }
   edition: 2021
 - title: Proprietà in prestito con referenze
@@ -136,16 +136,16 @@
 
     Anche i riferimenti vengono eliminati come le altre risorse.
   code: |
-    struct+Foo+{
-    ++++x:+i32,
+    struct Foo {
+        x: i32,
     }
 
-    fn+main()+{
-    ++++let+foo+=+Foo+{+x:+42+};
-    ++++let+f+=+&foo;
-    ++++println!("{}",+f.x);
-    ++++//+f+viene+rilasciato+qui
-    ++++//+foo+viene+rilasciato+qui
+    fn main() {
+        let foo = Foo { x: 42 };
+        let f = &foo;
+        println!("{}", f.x);
+        // f viene rilasciato qui
+        // foo viene rilasciato qui
     }
   edition: 2021
 - title: Prestito di proprietà mutevole con referenze
@@ -161,35 +161,35 @@
     * Rust impedisce di avere due modi per modificare un valore posseduto perché
     introduce la possibilità di una gara di dati.
   code: |
-    struct+Foo+{
-    ++++x:+i32,
+    struct Foo {
+        x: i32,
     }
 
-    fn+do_something(f:+Foo)+{
-    ++++println!("{}",+f.x);
-    ++++//+f+viene+rilasciato+qui
+    fn do_something(f: Foo) {
+        println!("{}", f.x);
+        // f viene rilasciato qui
     }
 
-    fn+main()+{
-    ++++let+mut+foo+=+Foo+{+x:+42+};
-    ++++let+f+=+&mut+foo;
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let f = &mut foo;
 
-    +++//+FAILURE:+do_something(foo)+fallirebbe+perché
-    ++++//+foo+non+può+essere+spostato+mentre+è+preso+in+prestito+in+modo+mutabile
+       // FAILURE: do_something(foo) fallirebbe perché
+        // foo non può essere spostato mentre è preso in prestito in modo mutabile
 
-    ++++//+ERRORE:+foo.x+=+13;+fallirebbe+qui+perché
-    ++++//+foo+non+è+modificabile+se+preso+in+prestito+in+modo+mutabile
+        // ERRORE: foo.x = 13; fallirebbe qui perché
+        // foo non è modificabile se preso in prestito in modo mutabile
 
-    ++++f.x+=+13;
-    ++++//+f+viene+eliminato+qui+perché+non+viene+più+utilizzato+da+questo+punto
-    ++++
-    ++++println!("{}",+foo.x);
-    ++++
-    ++++//+ora+funziona+perché+tutti+i+riferimenti+modificabili+sono+stati+eliminati
-    ++++foo.x+=+7;
-    ++++
-    ++++//+sposta+la+proprietà+di+foo+su+una+funzione
-    ++++do_something(foo);
+        f.x = 13;
+        // f viene eliminato qui perché non viene più utilizzato da questo punto
+        
+        println!("{}", foo.x);
+        
+        // ora funziona perché tutti i riferimenti modificabili sono stati eliminati
+        foo.x = 7;
+        
+        // sposta la proprietà di foo su una funzione
+        do_something(foo);
     }
   edition: 2021
 - title: Dereferenziazione
@@ -201,13 +201,13 @@
     Puoi anche ottenere una copia di un valore posseduto utilizzando l'operatore "*" (se value
     possono essere copiati - discuteremo dei tipi copiabili nei capitoli successivi).
   code: |
-    fn+main()+{
-    ++++let+mut+foo+=+42;
-    ++++let+f+=+&mut+foo;
-    ++++let+bar+=+*f;+//+ottiene+una+copia+del+valore+del+proprietario
-    ++++*f+=+13;++++++//+imposta+il+valore+del+proprietario+del+riferimento
-    ++++println!("{}",+bar);
-    ++++println!("{}",+foo);
+    fn main() {
+        let mut foo = 42;
+        let f = &mut foo;
+        let bar = *f; // ottiene una copia del valore del proprietario
+        *f = 13;      // imposta il valore del proprietario del riferimento
+        println!("{}", bar);
+        println!("{}", foo);
     }
   edition: 2021
 - title: Passaggio di dati presi in prestito
@@ -235,45 +235,45 @@
     * La seconda regola dei riferimenti impedisce l'uso improprio dei riferimenti che rimandano
     a dati inesistenti (chiamati puntatori pendenti in C).
   code: |
-    struct+Foo+{
-    ++++x:+i32,
+    struct Foo {
+        x: i32,
     }
 
-    fn+do_something(f:+&mut+Foo)+{
-    ++++f.x++=+1;
-    ++++//+il+riferimento+mutabile+f+viene+eliminato+qui
+    fn do_something(f: &mut Foo) {
+        f.x += 1;
+        // il riferimento mutabile f viene eliminato qui
     }
 
-    fn+main()+{
-    ++++let+mut+foo+=+Foo+{+x:+42+};
-    ++++do_something(&mut+foo);
-    ++++//+perché+tutti+i+riferimenti+mutabili+vengono+eliminati+all'interno
-    ++++//+la+funzione+fai_qualcosa,+possiamo+crearne+un'altra.
-    ++++do_something(&mut+foo);
-    ++++//+foo+viene+rilasciato+qui
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        do_something(&mut foo);
+        // perché tutti i riferimenti mutabili vengono eliminati all'interno
+        // la funzione fai_qualcosa, possiamo crearne un'altra.
+        do_something(&mut foo);
+        // foo viene rilasciato qui
     }
   edition: 2021
 - title: Riferimenti di riferimenti
   content_markdown: |
     I riferimenti possono essere utilizzati anche su pezzi di riferimento.
   code: |
-    struct+Foo+{
-    ++++x:+i32,
+    struct Foo {
+        x: i32,
     }
 
-    fn+do_something(a:+&Foo)+->+&i32+{
-    ++++return+&a.x;
+    fn do_something(a: &Foo) -> &i32 {
+        return &a.x;
     }
 
-    fn+main()+{
-    ++++let+mut+foo+=+Foo+{+x:+42+};
-    ++++let+x+=+&mut+foo.x;
-    ++++*x+=+13;
-    ++++//+x+viene+rilasciato+qui+ci+permette+di+creare+un+riferimento+non+mutabile
-    ++++let+y+=+do_something(&foo);
-    ++++println!("{}",+y);
-    ++++//+y+viene+rilasciato+qui
-    ++++//+foo+viene+rilasciato+qui
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let x = &mut foo.x;
+        *x = 13;
+        // x viene rilasciato qui ci permette di creare un riferimento non mutabile
+        let y = do_something(&foo);
+        println!("{}", y);
+        // y viene rilasciato qui
+        // foo viene rilasciato qui
     }
   edition: 2021
 - title: Vite di vita esplicite
@@ -292,24 +292,24 @@
 
     Gli identificatori di durata iniziano sempre con `'` (ad esempio `'a`, `'b`, `'c`)
   code: |
-    struct+Foo+{
-    ++++x:+i32,
+    struct Foo {
+        x: i32,
     }
 
-    //+il+parametro+foo+e+il+valore+restituito+condividono+la+stessa+durata
-    fn+do_something<'a>(foo:+&'a+Foo)+->+&'a+i32+{
-    ++++return+&foo.x;
+    // il parametro foo e il valore restituito condividono la stessa durata
+    fn do_something<'a>(foo: &'a Foo) -> &'a i32 {
+        return &foo.x;
     }
 
-    fn+main()+{
-    ++++let+mut+foo+=+Foo+{+x:+42+};
-    ++++let+x+=+&mut+foo.x;
-    ++++*x+=+13;
-    ++++//+x+viene+rilasciato+qui,+permettendoci+di+creare+un+riferimento+non+mutabile
-    ++++let+y+=+do_something(&foo);
-    ++++println!("{}",+y);
-    ++++//+y+viene+rilasciato+qui
-    ++++//+foo+viene+rilasciato+qui
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let x = &mut foo.x;
+        *x = 13;
+        // x viene rilasciato qui, permettendoci di creare un riferimento non mutabile
+        let y = do_something(&foo);
+        println!("{}", y);
+        // y viene rilasciato qui
+        // foo viene rilasciato qui
     }
   edition: 2021
 - title: Vite multiple
@@ -319,26 +319,26 @@
 
     distinguendo tutte le durate di un componente della firma di funzione.
   code: |
-    struct+Foo+{
-    ++++x:+i32,
+    struct Foo {
+        x: i32,
     }
 
-    //+foo_b+e+il+valore+restituito+condividono+la+stessa+durata
-    //+foo_a+ha+una+durata+non+correlata
-    fn+do_something<'a,+'b>(foo_a:+&'a+Foo,+foo_b:+&'b+Foo)+->+&'b+i32+{
-    ++++println!("{}",+foo_a.x);
-    ++++println!("{}",+foo_b.x);
-    ++++return+&foo_b.x;
+    // foo_b e il valore restituito condividono la stessa durata
+    // foo_a ha una durata non correlata
+    fn do_something<'a, 'b>(foo_a: &'a Foo, foo_b: &'b Foo) -> &'b i32 {
+        println!("{}", foo_a.x);
+        println!("{}", foo_b.x);
+        return &foo_b.x;
     }
 
-    fn+main()+{
-    ++++let+foo_a+=+Foo+{+x:+42+};
-    ++++let+foo_b+=+Foo+{+x:+12+};
-    ++++let+x+=+do_something(&foo_a,+&foo_b);
-    ++++//+foo_a+viene+eliminato+qui+perché+oltre+qui+esiste+solo+la+vita+di+foo_b
-    ++++println!("{}",+x);
-    ++++//+x+viene+rilasciato+qui
-    ++++//+foo_b+viene+rilasciato+qui
+    fn main() {
+        let foo_a = Foo { x: 42 };
+        let foo_b = Foo { x: 12 };
+        let x = do_something(&foo_a, &foo_b);
+        // foo_a viene eliminato qui perché oltre qui esiste solo la vita di foo_b
+        println!("{}", x);
+        // x viene rilasciato qui
+        // foo_b viene rilasciato qui
     }
   edition: 2021
 - title: Durata statica
@@ -377,23 +377,23 @@
     grassetto;">R̸͉̟͈͔̄͛̾̇͜U̶͓͖͋̅Ṡ̴͉͇̃̉̀T̵̻̻͔̟͉́͆Ơ̷̥̟̳̓͝N̶̨̼̹̲͛Ö̵̝͉̖̏̾̔M̶̡̠̺̠̐ ͜Î̷̛͓̣̃̐̏C̸̥̤̭̏͛̎͜O̶̧͚͖͔̊͗̇͠N̸͇̰̏̏̽̃</span>](https://doc.rust-lang.org/nomicon/)
     non se ne dovrebbe parlare casualmente.
   code: |
-    static+PI:+f64+=+3.1415;
+    static PI: f64 = 3.1415;
 
-    fn+main()+{
-    ++++//+le+variabili+statiche+possono+anche+avere+come+ambito+una+funzione
-    ++++static+mut+SECRET:+&'static+str+=+"swordfish";
+    fn main() {
+        // le variabili statiche possono anche avere come ambito una funzione
+        static mut SECRET: &'static str = "swordfish";
 
-    ++++//+i+valori+letterali+delle+stringhe+hanno+una+durata+statica
-    ++++let+msg:+&'static+str+=+"Hello+World!";
-    ++++let+p:+&'static+f64+=+&PI;
-    ++++println!("{}+{}",+msg,+p);
+        // i valori letterali delle stringhe hanno una durata statica
+        let msg: &'static str = "Hello World!";
+        let p: &'static f64 = &PI;
+        println!("{} {}", msg, p);
 
-    ++++//+Puoi+infrangere+alcune+regole,+ma+devi+essere+esplicito
-    ++++unsafe+{
-    ++++++++//+possiamo+impostare+SECRET+su+una+stringa+letterale+perché+è+anche+`statico
-    ++++++++SECRET+=+"abracadabra";
-    ++++++++println!("{}",+SECRET);
-    ++++}
+        // Puoi infrangere alcune regole, ma devi essere esplicito
+        unsafe {
+            // possiamo impostare SECRET su una stringa letterale perché è anche `statico
+            SECRET = "abracadabra";
+            println!("{}", SECRET);
+        }
     }
   edition: 2021
 - title: Durata nei tipi di dati
@@ -409,16 +409,16 @@
     Non possiamo avere strutture che vanno in giro con riferimenti che puntano a
     il nulla!
   code: |
-    struct+Foo<'a>+{
-    ++++i:&'a+i32
+    struct Foo<'a> {
+        i:&'a i32
     }
 
-    fn+main()+{
-    ++++let+x+=+42;
-    ++++let+foo+=+Foo+{
-    ++++++++i:+&x
-    ++++};
-    ++++println!("{}",foo.i);
+    fn main() {
+        let x = 42;
+        let foo = Foo {
+            i: &x
+        };
+        println!("{}",foo.i);
     }
   edition: 2021
 - title: Capitolo 5 - Conclusione
