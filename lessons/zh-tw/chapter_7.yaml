@@ -243,7 +243,7 @@
     }
   content_markdown: |
     特徵可以從其他特徵繼承方法。
-- title: 動態與靜態的發送 (dynamic vs static ispatch)
+- title: 動態與靜態的發送 (dynamic vs static dispatch)
   code: |
     struct SeaCreature {
         pub name: String,
@@ -307,7 +307,7 @@
 
 
     一個特徵物件允許我們間接正確地呼叫一個實體的方法。一個特徵物件是一個擁有實體指標的結構，
-    該體實有一個函式指標的列表，這些函式指標指向實體的方法。
+    同時擁有一個函式指標的列表，這些函式指標指向實體的方法。
 
 
     記憶體細節：
