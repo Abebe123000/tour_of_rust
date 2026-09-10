@@ -31,9 +31,9 @@
     * Il compilatore Rust probabilmente inserirà la tua stringa nel segmento dati del tuo file
     memoria del programma
   code: |
-    fn+main()+{
-    ++++let+a:+&'static+str+=+"hi+🦀";
-    ++++println!("{}+{}",+a,+a.len());
+    fn main() {
+        let a: &'static str = "hi 🦀";
+        println!("{} {}", a, a.len());
     }
   edition: 2021
 - title: Cos'è utf-8
@@ -62,9 +62,9 @@
     L'elenco completo esiste
     [here](https://doc.rust-lang.org/reference/tokens.html).
   code: |
-    fn+main()+{
-    ++++let+a:+&'static+str+=+"Ferris+says:\t\"hello\"";
-    ++++println!("{}",a);
+    fn main() {
+        let a: &'static str = "Ferris says:\t\"hello\"";
+        println!("{}",a);
     }
   edition: 2021
 - title: Stringhe letterali su più righe
@@ -73,17 +73,17 @@
 
     Usa un `\` alla fine di una riga se non si desidera una pausa.
   code: |
-    fn+main()+{
-    ++++let+haiku:+&'static+str+=+"
-    ++++++++I+write,+erase,+rewrite
-    ++++++++Erase+again,+and+then
-    ++++++++A+poppy+blooms.
-    ++++++++-+Tachibana+Hokushi";
-    ++++println!("{}",+haiku);
-    ++++
-    ++++
-    ++++println!("hello+\
-    ++++world")+//+nota+che+la+spaziatura+prima+di+w+viene+ignorata
+    fn main() {
+        let haiku: &'static str = "
+            I write, erase, rewrite
+            Erase again, and then
+            A poppy blooms.
+            - Tachibana Hokushi";
+        println!("{}", haiku);
+        
+        
+        println!("hello \
+        world") // nota che la spaziatura prima di w viene ignorata
     }
   edition: 2021
 - title: Stringhe letterali grezze
@@ -94,13 +94,13 @@
     caratteri che altrimenti potrebbero confondere una stringa normale come letterali (come
     virgolette doppie e barre rovesciate).
   code: |
-   fn+main()+{
-   ++++let+a:+&'static+str+=+r#"
-   ++++++++<div+class="advice">
-   ++++++++++++Raw+strings+are+useful+for+some+situations.
-   ++++++++</div>
-   ++++++++"#;
-   ++++println!("{}",+a);
+   fn main() {
+       let a: &'static str = r#"
+           <div class="advice">
+               Raw strings are useful for some situations.
+           </div>
+           "#;
+       println!("{}", a);
    }
   edition: 2021
 - title: Stringhe letterali da file
@@ -134,14 +134,14 @@
 
     * `find` restituisce una `Option<usize>` della prima posizione di del testo.
   code: |
-    fn+main()+{
-    ++++let+a+=+"hi+🦀";
-    ++++println!("{}",+a.len());
-    ++++let+first_word+=+&a[0..2];
-    ++++let+second_word+=+&a[3..7];
-    ++++//+lascia+mezzo_granchio+=+&a[3..5];+NON+RIESCE
-    ++++//+Rust+non+accetta+porzioni+di+caratteri+Unicode+non+validi
-    ++++println!("{}+{}",+first_word,+second_word);
+    fn main() {
+        let a = "hi 🦀";
+        println!("{}", a.len());
+        let first_word = &a[0..2];
+        let second_word = &a[3..7];
+        // lascia mezzo_granchio = &a[3..5]; NON RIESCE
+        // Rust non accetta porzioni di caratteri Unicode non validi
+        println!("{} {}", first_word, second_word);
     }
   edition: 2021
 - title: Caratteri
@@ -153,12 +153,12 @@
     Un "char" è sempre lungo 4 byte (consentendo una ricerca efficiente dei singoli file
     caratteri).
   code: |
-    fn+main()+{
-    ++++//+raccoglie+i+caratteri+come+vettore+di+char
-    ++++let+chars+=+"hi+🦀".chars().collect::<Vec<char>>();
-    ++++println!("{}",+chars.len());+//+dovrebbe+essere+4
-    ++++//+poiché+i+caratteri+sono+4+byte,+possiamo+convertirli+in+u32
-    ++++println!("{}",+chars[3]+as+u32);
+    fn main() {
+        // raccoglie i caratteri come vettore di char
+        let chars = "hi 🦀".chars().collect::<Vec<char>>();
+        println!("{}", chars.len()); // dovrebbe essere 4
+        // poiché i caratteri sono 4 byte, possiamo convertirli in u32
+        println!("{}", chars[3] as u32);
     }
   edition: 2021
 - title: Corda
@@ -188,11 +188,11 @@
     `String` ha un operatore `+` che estende la stringa con un `&str` e
     ritorna da solo, ma potrebbe non essere ergonomico come speri.
   code: |
-    fn+main()+{
-    ++++let+mut+helloworld+=+String::from("hello");
-    ++++helloworld.push_str("+world");
-    ++++helloworld+=+helloworld+++"!";
-    ++++println!("{}",+helloworld);
+    fn main() {
+        let mut helloworld = String::from("hello");
+        helloworld.push_str(" world");
+        helloworld = helloworld + "!";
+        println!("{}", helloworld);
     }
   edition: 2021
 - title: Testo come parametri di funzione
@@ -202,26 +202,26 @@
 
     nella maggior parte degli scenari in cui non è necessario trasferire effettivamente la proprietà.
   code: |
-    fn+say_it_loud(msg:&str){
-    ++++println!("{}!!!",msg.to_string().to_uppercase());
+    fn say_it_loud(msg:&str){
+        println!("{}!!!",msg.to_string().to_uppercase());
     }
 
-    fn+main()+{
-    ++++//+say_it_loud+può+prendere+in+prestito+&'static+str+come+&str
-    ++++say_it_loud("hello");
-    ++++//+say_it_loud+può+anche+prendere+in+prestito+String+come+&str
-    ++++say_it_loud(&String::from("goodbye"));
+    fn main() {
+        // say_it_loud può prendere in prestito &'static str come &str
+        say_it_loud("hello");
+        // say_it_loud può anche prendere in prestito String come &str
+        say_it_loud(&String::from("goodbye"));
     }
   edition: 2021
 - title: Costruire stringhe
   content_markdown: |
     "concat" e "join" sono due modi semplici ma potenti per creare stringhe.
   code: |
-    fn+main()+{
-    ++++let+helloworld+=+["hello",+"+",+"world",+"!"].concat();
-    ++++let+abc+=+["a",+"b",+"c"].join(",");
-    ++++println!("{}",+helloworld);
-    ++++println!("{}",abc);
+    fn main() {
+        let helloworld = ["hello", " ", "world", "!"].concat();
+        let abc = ["a", "b", "c"].join(",");
+        println!("{}", helloworld);
+        println!("{}",abc);
     }
   edition: 2021
 - title: Stringhe di formattazione
@@ -237,10 +237,10 @@
     Le capacità di questa funzione sono troppo ampie per *Tour of Rust*;
     consulta la documentazione [qui](https://doc.rust-lang.org/std/fmt/).
   code: |
-    fn+main()+{
-    ++++let+a+=+42;
-    ++++let+f+=+format!("secret+to+life:+{}",a);
-    ++++println!("{}",f);
+    fn main() {
+        let a = 42;
+        let f = format!("secret to life: {}",a);
+        println!("{}",f);
     }
   edition: 2021
 - title: Conversione di stringhe
@@ -251,12 +251,12 @@
     o valori letterali stringa in un valore tipizzato. Questa funzione ritorna
     un "Risultato" perché potrebbe fallire.
   code: |
-    fn+main()+->+Result<(),+std::num::ParseIntError>+{
-    ++++let+a+=+42;
-    ++++let+a_string+=+a.to_string();
-    ++++let+b+=+a_string.parse::<i32>()?;
-    ++++println!("{}+{}",+a,+b);
-    ++++Ok(())
+    fn main() -> Result<(), std::num::ParseIntError> {
+        let a = 42;
+        let a_string = a.to_string();
+        let b = a_string.parse::<i32>()?;
+        println!("{} {}", a, b);
+        Ok(())
     }
   edition: 2021
 - title: Capitolo 6 - Conclusione

@@ -40,21 +40,21 @@
     potrebbe non dispiacere questa mancanza.
 - title: Incapsulamento con metodi
   code: |
-    struct+CreaturaMarina+{
-    ++++rumore:+String,
+    struct CreaturaMarina {
+        rumore: String,
     }
 
-    impl+CreaturaMarina+{
-    ++++fn+ottieni_suono(&self)+->+&str+{
-    ++++++++&self.rumore
-    ++++}
+    impl CreaturaMarina {
+        fn ottieni_suono(&self) -> &str {
+            &self.rumore
+        }
     }
 
-    fn+main()+{
-    ++++let+creatura+=+CreaturaMarina+{
-    ++++++++rumore:+String::from("blub"),
-    ++++};
-    ++++println!("{}",+creatura.ottieni_suono());
+    fn main() {
+        let creatura = CreaturaMarina {
+            rumore: String::from("blub"),
+        };
+        println!("{}", creatura.ottieni_suono());
     }
   edition: 2021
   content_markdown: >
@@ -84,23 +84,23 @@
     ```
 - title: Astrazione con esposizione selettiva
   code: |
-    struct+CreaturaMarina+{
-    ++++pub+nome:+String,
-    ++++rumore:+String,
+    struct CreaturaMarina {
+        pub nome: String,
+        rumore: String,
     }
 
-    impl+CreaturaMarina+{
-    ++++pub+fn+ottieni_suono(&self)+->+&str+{
-    ++++++++&self.rumore
-    ++++}
+    impl CreaturaMarina {
+        pub fn ottieni_suono(&self) -> &str {
+            &self.rumore
+        }
     }
 
-    fn+main()+{
-    ++++let+creatura+=+CreaturaMarina+{
-    ++++++++nome:+String::from("Ferris"),
-    ++++++++rumore:+String::from("blub"),
-    ++++};
-    ++++println!("{}",+creatura.ottieni_suono());
+    fn main() {
+        let creatura = CreaturaMarina {
+            nome: String::from("Ferris"),
+            rumore: String::from("blub"),
+        };
+        println!("{}", creatura.ottieni_suono());
     }
   edition: 2021
   content_markdown: >
@@ -114,39 +114,39 @@
     La parola chiave "pub" espone campi e metodi della struttura all'esterno del modulo.
 - title: Polimorfismo con tratti
   code: |
-    struct+CreaturaMarina+{
-    ++++pub+nome:+String,
-    ++++rumore:+String,
+    struct CreaturaMarina {
+        pub nome: String,
+        rumore: String,
     }
 
-    impl+CreaturaMarina+{
-    ++++pub+fn+ottieni_suono(&self)+->+&str+{
-    ++++++++&self.rumore
-    ++++}
+    impl CreaturaMarina {
+        pub fn ottieni_suono(&self) -> &str {
+            &self.rumore
+        }
     }
 
-    trait+Rumoroso+{
-    ++++fn+fare_rumore(&self);
-    ++++
-    ++++fn+fare_molto_rumore(&self){
-    ++++++++self.fare_rumore();
-    ++++++++self.fare_rumore();
-    ++++++++self.fare_rumore();
-    ++++}
+    trait Rumoroso {
+        fn fare_rumore(&self);
+        
+        fn fare_molto_rumore(&self){
+            self.fare_rumore();
+            self.fare_rumore();
+            self.fare_rumore();
+        }
     }
 
-    impl+Rumoroso+for+CreaturaMarina+{
-    ++++fn+fare_rumore(&self)+{
-    ++++++++println!("{}",+&self.ottieni_suono());
-    ++++}
+    impl Rumoroso for CreaturaMarina {
+        fn fare_rumore(&self) {
+            println!("{}", &self.ottieni_suono());
+        }
     }
 
-    fn+main()+{
-    ++++let+creatura+=+CreaturaMarina+{
-    ++++++++nome:+String::from("Ferris"),
-    ++++++++rumore:+String::from("blub"),
-    ++++};
-    ++++creatura.fare_molto_rumore();
+    fn main() {
+        let creatura = CreaturaMarina {
+            nome: String::from("Ferris"),
+            rumore: String::from("blub"),
+        };
+        creatura.fare_molto_rumore();
     }
   edition: 2021
   content_markdown: >
@@ -190,39 +190,39 @@
     ```
 - title: Metodi implementati sui tratti
   code: |
-    struct+CreaturaMarina+{
-    ++++pub+nome:+String,
-    ++++rumore:+String,
+    struct CreaturaMarina {
+        pub nome: String,
+        rumore: String,
     }
 
-    impl+CreaturaMarina+{
-    ++++pub+fn+ottieni_suono(&self)+->+&str+{
-    ++++++++&self.rumore
-    ++++}
+    impl CreaturaMarina {
+        pub fn ottieni_suono(&self) -> &str {
+            &self.rumore
+        }
     }
 
-    trait+Rumoroso+{
-    ++++fn+fare_rumore(&self);
-    ++++
-    ++++fn+fare_molto_rumore(&self){
-    ++++++++self.fare_rumore();
-    ++++++++self.fare_rumore();
-    ++++++++self.fare_rumore();
-    ++++}
+    trait Rumoroso {
+        fn fare_rumore(&self);
+        
+        fn fare_molto_rumore(&self){
+            self.fare_rumore();
+            self.fare_rumore();
+            self.fare_rumore();
+        }
     }
 
-    impl+Rumoroso+for+CreaturaMarina+{
-    ++++fn+fare_rumore(&self)+{
-    ++++++++println!("{}",+&self.ottieni_suono());
-    ++++}
+    impl Rumoroso for CreaturaMarina {
+        fn fare_rumore(&self) {
+            println!("{}", &self.ottieni_suono());
+        }
     }
 
-    fn+main()+{
-    ++++let+creatura+=+CreaturaMarina+{
-    ++++++++nome:+String::from("Ferris"),
-    ++++++++rumore:+String::from("blub"),
-    ++++};
-    ++++creatura.fare_molto_rumore();
+    fn main() {
+        let creatura = CreaturaMarina {
+            nome: String::from("Ferris"),
+            rumore: String::from("blub"),
+        };
+        creatura.fare_molto_rumore();
     }
   edition: 2021
   content_markdown: >
@@ -235,87 +235,87 @@
     essere utile per condividere il comportamento tra molti implementatori di tratti.
 - title: Eredità dei tratti
   code: |
-    struct+CreaturaMarina+{
-    ++++pub+nome:+String,
-    ++++rumore:+String,
+    struct CreaturaMarina {
+        pub nome: String,
+        rumore: String,
     }
 
-    impl+CreaturaMarina+{
-    ++++pub+fn+ottieni_suono(&self)+->+&str+{
-    ++++++++&self.rumore
-    ++++}
+    impl CreaturaMarina {
+        pub fn ottieni_suono(&self) -> &str {
+            &self.rumore
+        }
     }
 
-    trait+Rumoroso+{
-    ++++fn+fare_rumore(&self);
+    trait Rumoroso {
+        fn fare_rumore(&self);
     }
 
-    trait+ForteRumoroso:+Rumoroso+{
-    ++++fn+fare_molto_rumore(&self)+{
-    ++++++++self.fare_rumore();
-    ++++++++self.fare_rumore();
-    ++++++++self.fare_rumore();
-    ++++}
+    trait ForteRumoroso: Rumoroso {
+        fn fare_molto_rumore(&self) {
+            self.fare_rumore();
+            self.fare_rumore();
+            self.fare_rumore();
+        }
     }
 
-    impl+Rumoroso+for+CreaturaMarina+{
-    ++++fn+fare_rumore(&self)+{
-    ++++++++println!("{}",+&self.ottieni_suono());
-    ++++}
+    impl Rumoroso for CreaturaMarina {
+        fn fare_rumore(&self) {
+            println!("{}", &self.ottieni_suono());
+        }
     }
 
-    impl+ForteRumoroso+for+CreaturaMarina+{}
+    impl ForteRumoroso for CreaturaMarina {}
 
-    fn+main()+{
-    ++++let+creatura+=+CreaturaMarina+{
-    ++++++++nome:+String::from("Ferris"),
-    ++++++++rumore:+String::from("blub"),
-    ++++};
-    ++++creatura.fare_molto_rumore();
+    fn main() {
+        let creatura = CreaturaMarina {
+            nome: String::from("Ferris"),
+            rumore: String::from("blub"),
+        };
+        creatura.fare_molto_rumore();
     }
   edition: 2021
   content_markdown: >
     I tratti possono ereditare metodi da altri tratti.
 - title: Invio dinamico e statico
   code: |
-    struct+CreaturaMarina+{
-    ++++pub+nome:+String,
-    ++++rumore:+String,
+    struct CreaturaMarina {
+        pub nome: String,
+        rumore: String,
     }
 
-    impl+CreaturaMarina+{
-    ++++pub+fn+ottieni_suono(&self)+->+&str+{
-    ++++++++&self.rumore
-    ++++}
+    impl CreaturaMarina {
+        pub fn ottieni_suono(&self) -> &str {
+            &self.rumore
+        }
     }
 
-    trait+Rumoroso+{
-    ++++fn+fare_rumore(&self);
+    trait Rumoroso {
+        fn fare_rumore(&self);
     }
 
-    impl+Rumoroso+for+CreaturaMarina+{
-    ++++fn+fare_rumore(&self)+{
-    ++++++++println!("{}",+&self.ottieni_suono());
-    ++++}
+    impl Rumoroso for CreaturaMarina {
+        fn fare_rumore(&self) {
+            println!("{}", &self.ottieni_suono());
+        }
     }
 
-    fn+static_fare_rumore(creatura:+&CreaturaMarina)+{
-    ++++//+conosciamo+il+vero+tipo
-    ++++creatura.fare_rumore();
+    fn static_fare_rumore(creatura: &CreaturaMarina) {
+        // conosciamo il vero tipo
+        creatura.fare_rumore();
     }
 
-    fn+dynamic_fare_rumore(rumoroso:+&dyn+Rumoroso)+{
-    ++++//+non+conosciamo+il+vero+tipo
-    ++++rumoroso.fare_rumore();
+    fn dynamic_fare_rumore(rumoroso: &dyn Rumoroso) {
+        // non conosciamo il vero tipo
+        rumoroso.fare_rumore();
     }
 
-    fn+main()+{
-    ++++let+creatura+=+CreaturaMarina+{
-    ++++++++nome:+String::from("Ferris"),
-    ++++++++rumore:+String::from("blub"),
-    ++++};
-    ++++static_fare_rumore(&creatura);
-    ++++dynamic_fare_rumore(&creatura);
+    fn main() {
+        let creatura = CreaturaMarina {
+            nome: String::from("Ferris"),
+            rumore: String::from("blub"),
+        };
+        static_fare_rumore(&creatura);
+        dynamic_fare_rumore(&creatura);
     }
   edition: 2021
   content_markdown: >
@@ -357,41 +357,41 @@
     * Questo elenco di funzioni è noto in C++ come *vtable*.
 - title: Funzioni generiche
   code: |
-    struct+CreaturaMarina+{
-    ++++pub+nome:+String,
-    ++++rumore:+String,
+    struct CreaturaMarina {
+        pub nome: String,
+        rumore: String,
     }
 
-    impl+CreaturaMarina+{
-    ++++pub+fn+ottieni_suono(&self)+->+&str+{
-    ++++++++&self.rumore
-    ++++}
+    impl CreaturaMarina {
+        pub fn ottieni_suono(&self) -> &str {
+            &self.rumore
+        }
     }
 
-    trait+Rumoroso+{
-    ++++fn+fare_rumore(&self);
+    trait Rumoroso {
+        fn fare_rumore(&self);
     }
 
-    impl+Rumoroso+for+CreaturaMarina+{
-    ++++fn+fare_rumore(&self)+{
-    ++++++++println!("{}",+&self.ottieni_suono());
-    ++++}
+    impl Rumoroso for CreaturaMarina {
+        fn fare_rumore(&self) {
+            println!("{}", &self.ottieni_suono());
+        }
     }
 
-    fn+generic_fare_rumore<T>(creatura:+&T)
+    fn generic_fare_rumore<T>(creatura: &T)
     where
-    ++++T:+Rumoroso,
+        T: Rumoroso,
     {
-    ++++//+conosciamo+il+tipo+reale+in+fase+di+compilazione
-    ++++creatura.fare_rumore();
+        // conosciamo il tipo reale in fase di compilazione
+        creatura.fare_rumore();
     }
 
-    fn+main()+{
-    ++++let+creatura+=+CreaturaMarina+{
-    ++++++++nome:+String::from("Ferris"),
-    ++++++++rumore:+String::from("blub"),
-    ++++};
-    ++++generic_fare_rumore(&creatura);
+    fn main() {
+        let creatura = CreaturaMarina {
+            nome: String::from("Ferris"),
+            rumore: String::from("blub"),
+        };
+        generic_fare_rumore(&creatura);
     }
   edition: 2021
   content_markdown: >
@@ -423,39 +423,39 @@
     eseguire l'invio statico e archiviarlo come valore dimensionato.
 - title: Abbreviazione di funzioni generiche
   code: |
-    struct+CreaturaMarina+{
-    ++++pub+nome:+String,
-    ++++rumore:+String,
+    struct CreaturaMarina {
+        pub nome: String,
+        rumore: String,
     }
 
-    impl+CreaturaMarina+{
-    ++++pub+fn+ottieni_suono(&self)+->+&str+{
-    ++++++++&self.rumore
-    ++++}
+    impl CreaturaMarina {
+        pub fn ottieni_suono(&self) -> &str {
+            &self.rumore
+        }
     }
 
-    trait+Rumoroso+{
-    ++++fn+fare_rumore(&self);
+    trait Rumoroso {
+        fn fare_rumore(&self);
     }
 
-    impl+Rumoroso+for+CreaturaMarina+{
-    ++++fn+fare_rumore(&self)+{
-    ++++++++println!("{}",+&self.ottieni_suono());
-    ++++}
+    impl Rumoroso for CreaturaMarina {
+        fn fare_rumore(&self) {
+            println!("{}", &self.ottieni_suono());
+        }
     }
 
-    fn+generic_fare_rumore(creatura:+&impl+Rumoroso)
+    fn generic_fare_rumore(creatura: &impl Rumoroso)
     {
-    ++++//+conosciamo+il+tipo+reale+in+fase+di+compilazione
-    ++++creatura.fare_rumore();
+        // conosciamo il tipo reale in fase di compilazione
+        creatura.fare_rumore();
     }
 
-    fn+main()+{
-    ++++let+creatura+=+CreaturaMarina+{
-    ++++++++nome:+String::from("Ferris"),
-    ++++++++rumore:+String::from("blub"),
-    ++++};
-    ++++generic_fare_rumore(&creatura);
+    fn main() {
+        let creatura = CreaturaMarina {
+            nome: String::from("Ferris"),
+            rumore: String::from("blub"),
+        };
+        generic_fare_rumore(&creatura);
     }
   edition: 2021
   content_markdown: >
@@ -479,46 +479,46 @@
     ```
 - title: Box
   code: |
-    struct+CreaturaMarina+{
-    ++++pub+nome:+String,
-    ++++rumore:+String,
+    struct CreaturaMarina {
+        pub nome: String,
+        rumore: String,
     }
 
-    impl+CreaturaMarina+{
-    ++++pub+fn+ottieni_suono(&self)+->+&str+{
-    ++++++++&self.rumore
-    ++++}
+    impl CreaturaMarina {
+        pub fn ottieni_suono(&self) -> &str {
+            &self.rumore
+        }
     }
 
-    trait+Rumoroso+{
-    ++++fn+fare_rumore(&self);
+    trait Rumoroso {
+        fn fare_rumore(&self);
     }
 
-    impl+Rumoroso+for+CreaturaMarina+{
-    ++++fn+fare_rumore(&self)+{
-    ++++++++println!("{}",+&self.ottieni_suono());
-    ++++}
+    impl Rumoroso for CreaturaMarina {
+        fn fare_rumore(&self) {
+            println!("{}", &self.ottieni_suono());
+        }
     }
 
-    struct+Oceano+{
-    ++++animali:+Vec<Box<dyn+Rumoroso>>,
+    struct Oceano {
+        animali: Vec<Box<dyn Rumoroso>>,
     }
 
-    fn+main()+{
-    ++++let+ferris+=+CreaturaMarina+{
-    ++++++++nome:+String::from("Ferris"),
-    ++++++++rumore:+String::from("blub"),
-    ++++};
-    ++++let+sarah+=+CreaturaMarina+{
-    ++++++++nome:+String::from("Sarah"),
-    ++++++++rumore:+String::from("swish"),
-    ++++};
-    ++++let+oceano+=+Oceano+{
-    ++++++++animali:+vec![Box::new(ferris),+Box::new(sarah)],
-    ++++};
-    ++++for+a+in+oceano.animali.iter()+{
-    ++++++++a.fare_rumore();
-    ++++}
+    fn main() {
+        let ferris = CreaturaMarina {
+            nome: String::from("Ferris"),
+            rumore: String::from("blub"),
+        };
+        let sarah = CreaturaMarina {
+            nome: String::from("Sarah"),
+            rumore: String::from("swish"),
+        };
+        let oceano = Oceano {
+            animali: vec![Box::new(ferris), Box::new(sarah)],
+        };
+        for a in oceano.animali.iter() {
+            a.fare_rumore();
+        }
     }
   edition: 2021
   content_markdown: >
