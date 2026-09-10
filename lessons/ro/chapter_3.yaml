@@ -183,7 +183,7 @@
     }
 
     struct CreaturăMarină {
-        Specii: Specii,
+        specii: Specii,
         nume: String,
         nr_mâini: i32,
         nr_picioare: i32,
@@ -192,14 +192,14 @@
 
     fn main() {
         let ferris = CreaturăMarină {
-            Specii: Specii::Crab,
+            specii: Specii::Crab,
             nume: String::from("Ferris"),
             nr_mâini: 2,
             nr_picioare: 4,
             armă: String::from("ghiară"),
         };
 
-        match ferris.Specii {
+        match ferris.specii {
             Specii::Crab => println!("{} este crab",ferris.nume),
             Specii::Caracatiță => println!("{} este caracatiță",ferris.nume),
             Specii::Pește => println!("{} este pește",ferris.nume),
@@ -244,11 +244,11 @@
     }
 
     struct CreaturăMarină {
-        Specii: Specii,
+        specii: Specii,
         nume: String,
         nr_mâini: i32,
         nr_picioare: i32,
-        Armă: Armă,
+        armă: Armă,
     }
 
     fn main() {
@@ -256,18 +256,18 @@
         let ferris = CreaturăMarină {
             // Struct-ul String este de asemenea pe stivă,
             // dar ține o referință a informației pe heap
-            Specii: Specii::Crab,
+            specii: Specii::Crab,
             nume: String::from("Ferris"),
             nr_mâini: 2,
             nr_picioare: 4,
-            Armă: Armă::Ghiară(2, Mărime::Mic),
+            armă: Armă::Ghiară(2, Mărime::Mic),
         };
 
-        match ferris.Specii {
+        match ferris.specii {
             Specii::Crab => {
-                match ferris.Armă {
-                    Armă::Ghiară(nr_ghiare, Mărime) => {
-                        let mărime_descriere = match Mărime {
+                match ferris.armă {
+                    Armă::Ghiară(nr_ghiare, mărime) => {
+                        let mărime_descriere = match mărime {
                             Mărime::Mare => "mari",
                             Mărime::Mic => "mici"
                         };

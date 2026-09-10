@@ -254,44 +254,44 @@
     Trăsăturile pot moșteni metode de la alte trăsături.
 - title: Expediere dinamică vs statică
   code: |-
-    struct+CreaturaMaritima+{
-    ++++pub+nume:+String,
-    ++++zgomot:+String,
+    struct CreaturaMaritima {
+        pub nume: String,
+        zgomot: String,
     }
 
-    impl+CreaturaMaritima+{
-    ++++pub+fn+luare_zgomot(&self)+->+&str+{
-    ++++++++&self.zgomot
-    ++++}
+    impl CreaturaMaritima {
+        pub fn luare_zgomot(&self) -> &str {
+            &self.zgomot
+        }
     }
 
-    trait+FacatorDeZgomot+{
-    ++++fn+fa_zgomot(&self);
+    trait FacatorDeZgomot {
+        fn fa_zgomot(&self);
     }
 
-    impl+FacatorDeZgomot+for+CreaturaMaritima+{
-    ++++fn+fa_zgomot(&self)+{
-    ++++++++println!("{}",+&self.luare_zgomot());
-    ++++}
+    impl FacatorDeZgomot for CreaturaMaritima {
+        fn fa_zgomot(&self) {
+            println!("{}", &self.luare_zgomot());
+        }
     }
 
-    fn+static_fa_zgomot(creatura:+&CreaturaMaritima)+{
-    ++++//+cunoastem+tipul+real
-    ++++creatura.fa_zgomot();
+    fn static_fa_zgomot(creatura: &CreaturaMaritima) {
+        // cunoastem tipul real
+        creatura.fa_zgomot();
     }
 
-    fn+dinamic_fa_zgomot(facator_de_zgomot:+&dyn+FacatorDeZgomot)+{
-    ++++//+nu+cunoastem+tipul+real
-    ++++facator_de_zgomot.fa_zgomot();
+    fn dinamic_fa_zgomot(facator_de_zgomot: &dyn FacatorDeZgomot) {
+        // nu cunoastem tipul real
+        facator_de_zgomot.fa_zgomot();
     }
 
-    fn+main()+{
-    ++++let+creatura+=+CreaturaMaritima+{
-    ++++++++nume:+String::from("Ferris"),
-    ++++++++zgomot:+String::from("blub"),
-    ++++};
-    ++++static_fa_zgomot(&creatura);
-    ++++dinamic_fa_zgomot(&creatura);
+    fn main() {
+        let creatura = CreaturaMaritima {
+            nume: String::from("Ferris"),
+            zgomot: String::from("blub"),
+        };
+        static_fa_zgomot(&creatura);
+        dinamic_fa_zgomot(&creatura);
     }
   content_markdown: >
     Metodele sunt executate în două moduri:

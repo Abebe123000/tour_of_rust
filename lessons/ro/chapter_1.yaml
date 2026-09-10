@@ -87,20 +87,20 @@
     atenți la acest cuvânt cheie.
 - title: Tipuri de date de bază
   code: |
-    fn+main()+{
-    ++++let+x+=+12;+//+acesta+este+un+i32+în+mod+implicit
-    ++++let+a+=+12u8;
-    ++++let+b+=+4.3;+//+acesta+este+un+f64+în+mod+implicit
-    ++++let+c+=+4.3f32;
-    ++++let+d+=+'r';+//+caracter+unicode
-    ++++let+ferris+=+'🦀';+//+tot+un+caracter+unicode
-    ++++let+bv+=+true;
-    ++++let+t+=+(13,+false);
-    ++++let+sentence+=+"hello+world!";
-    ++++println!(
-    ++++++++"{}+{}+{}+{}+{}+{}+{}+{}+{}+{}",
-    ++++++++x,+a,+b,+c,+d,+ferris,+bv,+t.0,+t.1,+sentence
-    ++++);
+    fn main() {
+        let x = 12; // acesta este un i32 în mod implicit
+        let a = 12u8;
+        let b = 4.3; // acesta este un f64 în mod implicit
+        let c = 4.3f32;
+        let d = 'r'; // caracter unicode
+        let ferris = '🦀'; // tot un caracter unicode
+        let bv = true;
+        let t = (13, false);
+        let sentence = "hello world!";
+        println!(
+            "{} {} {} {} {} {} {} {} {} {}",
+            x, a, b, c, d, ferris, bv, t.0, t.1, sentence
+        );
     }
   content_markdown: >
     Rust are o varietate de tipuri de date familiare dumneavoastră:
