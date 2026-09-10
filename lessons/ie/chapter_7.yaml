@@ -209,7 +209,7 @@
     equivale scrir:
 
     ```rust
-    fn miFunction<T>(foo: T)
+    fn mi_function<T>(foo: T)
     where
         T: Foo
     {
