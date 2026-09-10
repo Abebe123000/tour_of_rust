@@ -1,4 +1,4 @@
-- title: Chapter 2 - Basic Control-flution
+- title: Capitul 2 - Basic Control-flution
   content_html: >-
     <p>Lass nos in ti-ci capitul parlar pri li metodes de basic control-flution
     in Rust. Si tu ha ja conossentat te con lingues basat sur C tu va trovar it
@@ -44,8 +44,13 @@
     <p><code>while</code> possibilisa te adjunter un condition a un
     cicle.</p><p>Si li condition evalua se a <code>false</code>, li cicle va
     exear.</p>
-  code-ie: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%0A%20%20%20%20let%20mut%20x%20%3D%200%3B%0A%20%20%20%20while%20x%20!%3D%2042%20%7B%0A%20%20%20%20%20%20%20%20x%20%2B%3D%201%3B%0A%20%20%20%20%7D%0A%7D%0A
+  code: |
+    fn main() {
+        let mut x = 0;
+        while x != 42 {
+            x += 1;
+        }
+    }
 - title: for (por)
   content_html: >-
     <p>Li cicle <code>for</code> de Rust es un potent amelioration. It itera sur

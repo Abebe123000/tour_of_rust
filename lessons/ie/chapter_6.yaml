@@ -77,7 +77,7 @@
             Erase again, and then
             A poppy blooms.
             - Tachibana Hokushi";
-        println!("{}", haiku);
+        println!("{}", haiku_anglés);
         
         
         println!("salute \
