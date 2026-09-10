@@ -1,44 +1,40 @@
-- title: Chapter 7 - Object Oriented Programming
+- title: Rozdział 7 - Programowanie Obiektowe
   content_markdown: >
-    Expressing ideas with functions is a proven way of representing behavior and
-    data (C 
-
-    has been doing it for decades!). Historically, computer science has found
-    other
-
-    useful expressive aggregations and abstractions for data. You may be
-    familiar with object oriented programming (OOP) as one
-
-    such way. In this chapter we'll explore the Rust programming language beyond
-    functions.
-- title: What Is OOP?
+    Wyrażanie idei przy pomocy funkcji to sprawdzony sposób na reprezentowanie
+    zachowań i danych (język C robi tak już od dekad!). Historycznie,
+    informatyka odnalazła też inne przydatne, ekspresyjne sposoby agregacji
+    i abstrakcji danych. Być może znasz programowanie obiektowe (ang. *OOP*)
+    jako jeden z takich sposobów. W tym rozdziale zbadamy, co Rust oferuje
+    poza samymi funkcjami.
+- title: Czym Jest OOP?
   content_markdown: >
-    Object oriented programming roughly refers to programming languages that
-    have a number of iconic features:
+    Programowanie obiektowe odnosi się z grubsza do języków programowania,
+    które posiadają kilka charakterystycznych cech:
 
-    * Encapsulation - Associating data and functions into the conceptual unit of
-    a single type called an *object*.
+    * Enkapsulacja - łączenie danych i funkcji w pojedynczą, konceptualną
+    jednostkę zwaną *obiektem*.
 
-    * Abstraction - Hiding data and function members to obfuscate implementation
-    details of an object.
+    * Abstrakcja - ukrywanie danych i składowych funkcji, żeby zatuszować
+    szczegóły implementacyjne obiektu.
 
-    * Polymorphism - The ability to interacting with an object from different
-    functional perspectives.
+    * Polimorfizm - zdolność do interakcji z obiektem z różnych perspektyw
+    funkcjonalnych.
 
-    * Inheritance - The ability to inherit data and behavior from other objects.
-- title: Rust Is Not OOP
+    * Dziedziczenie - zdolność do dziedziczenia danych i zachowań od innych
+    obiektów.
+- title: Rust To Nie OOP
   content_markdown: >
-    Rust lacks inheritance of data and behavior in any meaningful way.
+    W Ruście brakuje w istotny sposób dziedziczenia danych i zachowań.
 
 
-    * Structs cannot inherit fields from a parent struct.
+    * Struktury nie mogą dziedziczyć pól od struktury rodzicielskiej.
 
-    * Structs cannot inherit functions from a parent struct.
+    * Struktury nie mogą dziedziczyć funkcji od struktury rodzicielskiej.
 
 
-    That said, Rust implements many programming language features, so that you
-    might not mind this lacking.
-- title: Encapsulation With Methods
+    Mimo to, Rust implementuje wiele innych cech znanych z innych języków
+    programowania, więc możesz nawet nie zauważyć tego braku.
+- title: Enkapsulacja Za Pomocą Metod
   code: |
     struct SeaCreature {
         noise: String,
@@ -57,23 +53,26 @@
         println!("{}", creature.get_sound());
     }
   content_markdown: >
-    Rust supports the concept of an *object* that is a struct associated with
-    some functions (also known as *methods*).
+    Rust wspiera koncepcję *obiektu*, czyli struktury powiązanej z pewnymi
+    funkcjami (znanymi też jako *metody*).
 
 
-    The first parameter of any method must be a reference to the instance
-    associated with the method call (e.g. `instanceOfObj.foo()`). Rust uses:
+    Pierwszym parametrem każdej metody musi być referencja do instancji
+    powiązanej z wywołaniem tej metody (np. `instancjaObiektu.foo()`). Rust
+    używa do tego:
 
-    * `&self` - Immutable reference to the instance.
+    * `&self` - Niemutowalnej referencji do instancji.
 
-    * `&mut self` - Mutable reference to the instance.
+    * `&mut self` - Mutowalnej referencji do instancji.
 
 
-    Methods are defined within an implementation block with keyword `impl`:
+    Metody są zdefiniowane wewnątrz bloku implementacji, oznaczonego słowem
+    kluczowym `impl`:
+
 
     ```rust
 
-    impl MyStruct { 
+    impl MyStruct {
         ...
         fn foo(&self) {
             ...
@@ -81,7 +80,7 @@
     }
 
     ```
-- title: Abstraction With Selective Exposure
+- title: Abstrakcja Przy Pomocy Selektywnego Udostępniania
   code: |
     struct SeaCreature {
         pub name: String,
@@ -102,15 +101,16 @@
         println!("{}", creature.get_sound());
     }
   content_markdown: >
-    Rust can hide the inner workings of objects.
+    Rust potrafi ukrywać wewnętrzne działanie obiektów.
 
 
-    By default fields and methods are accessible only to the module they belong
-    to.
+    Domyślnie pola i metody są dostępne wyłącznie dla modułu, do którego
+    należą.
 
 
-    The `pub` keyword exposes struct fields and methods outside of the module.
-- title: Polymorphism With Traits
+    Słowo kluczowe `pub` udostępnia pola i metody struktury na zewnątrz
+    modułu.
+- title: Polimorfizm Przy Pomocy Cech
   code: |
     struct SeaCreature {
         pub name: String,
@@ -141,11 +141,11 @@
         creature.make_noise();
     }
   content_markdown: >
-    Rust supports polymorphism with traits. Traits allow us to associate a set
-    of methods with a struct type. 
+    Rust wspiera polimorfizm przy pomocy cech (ang. *traits*). Cechy
+    pozwalają nam powiązać zestaw metod z typem struktury.
 
 
-    We first define the signatures of methods of a trait within:
+    Najpierw definiujemy sygnatury metod danej cechy:
 
 
     ```
@@ -158,28 +158,27 @@
     ```
 
 
-    When a struct implements a trait, it establishes a contract that allows us
-    to indirectly interact with the struct 
+    Kiedy struktura implementuje cechę, ustanawia to kontrakt, który
+    pozwala nam pośrednio wchodzić w interakcję ze strukturą poprzez typ
+    cechy (np. `&dyn MyTrait`), bez konieczności znajomości jej rzeczywistego
+    typu.
 
-    through the trait type (e.g. `&dyn MyTrait`) without having to know the real
-    type.
 
-
-    A struct's implemented traits methods are defined within an implementation
-    block:
+    Zaimplementowane przez strukturę metody cechy są zdefiniowane wewnątrz
+    bloku implementacji:
 
 
     ```rust
 
-    impl MyTrait for MyStruct { 
+    impl MyTrait for MyStruct {
         fn foo(&self) {
             ...
         }
-        ... 
+        ...
     }
 
     ```
-- title: Implemented Methods On Traits
+- title: Zaimplementowane Metody Cech
   code: |
     struct SeaCreature {
         pub name: String,
@@ -194,7 +193,7 @@
 
     trait NoiseMaker {
         fn make_noise(&self);
-        
+
         fn make_alot_of_noise(&self){
             self.make_noise();
             self.make_noise();
@@ -216,14 +215,13 @@
         creature.make_alot_of_noise();
     }
   content_markdown: >
-    Traits can have implemented methods.
+    Cechy mogą posiadać zaimplementowane metody.
 
 
-    The functions have no direct access to the inner fields of a struct, but it
-    can 
-
-    be useful for sharing behavior between many trait implementors.
-- title: Trait Inheritance
+    Takie funkcje nie mają bezpośredniego dostępu do wewnętrznych pól
+    struktury, ale mogą być przydatne do współdzielenia zachowania pomiędzy
+    wieloma implementującymi je strukturami.
+- title: Dziedziczenie Cech
   code: |
     struct SeaCreature {
         pub name: String,
@@ -264,8 +262,8 @@
         creature.make_alot_of_noise();
     }
   content_markdown: |
-    Traits can inherit methods from other traits.
-- title: Dynamic vs Static Dispatch
+    Cechy mogą dziedziczyć metody od innych cech.
+- title: Dynamiczne Kontra Statyczne Wywoływanie Metod
   code: |
     struct SeaCreature {
         pub name: String,
@@ -307,58 +305,61 @@
         dynamic_make_noise(&creature);
     }
   content_markdown: >
-    Methods are executed in two ways:
+    Metody są wykonywane na dwa sposoby:
 
-    * static dispatch - When the instance type is known, we have direct
-    knowledge of what function to call.
+    * wywoływanie statyczne (ang. *static dispatch*) - Kiedy typ instancji
+    jest znany, mamy bezpośrednią wiedzę o tym, jaką funkcję wywołać.
 
-    * dynamic dispatch - When an instance type is not known, we must find out
-    some way of calling the correct function.
-
-
-    Trait types `&dyn MyTrait` give us the ability to work with instances of
-    objects indirectly using dynamic dispatch.
+    * wywoływanie dynamiczne (ang. *dynamic dispatch*) - Kiedy typ instancji
+    nie jest znany, musimy znaleźć jakiś sposób na wywołanie odpowiedniej
+    funkcji.
 
 
-    When dynamic dispatch is used, Rust will encourage you to put `dyn` before
-    your trait type so people are aware.
+    Typy cech `&dyn MyTrait` dają nam możliwość pracy z instancjami obiektów
+    w sposób pośredni, przy użyciu wywoływania dynamicznego.
 
 
-    Memory details:
+    Kiedy używane jest wywoływanie dynamiczne, Rust zachęci Cię do
+    umieszczenia `dyn` przed typem cechy, aby inni byli tego świadomi.
 
-    * Dynamic dispatch is slightly slower because of the pointer chasing to find
-    the real function call.
-- title: Trait Objects
+
+    Kilka szczegółów dotyczących pamięci:
+
+    * Wywoływanie dynamiczne jest odrobinę wolniejsze, ze względu na
+    podążanie za wskaźnikiem w celu odnalezienia rzeczywistego wywołania
+    funkcji.
+- title: Obiekty Cech
   content_markdown: >
-    When we pass an instance of an object to a parameter of type `&dyn MyTrait`
-    we pass what is called a *trait object*. 
+    Kiedy przekazujemy instancję obiektu do parametru typu `&dyn MyTrait`,
+    przekazujemy coś, co nazywamy *obiektem cechy* (ang. *trait object*).
 
 
-    A trait object is what allows us to indirectly call the correct methods of
-    an instance. A trait object is a struct that holds the pointer of 
+    Obiekt cechy to coś, co pozwala nam pośrednio wywoływać właściwe metody
+    instancji. Obiekt cechy to struktura, która przechowuje wskaźnik do
+    naszej instancji wraz z listą wskaźników do funkcji będących metodami
+    naszej instancji.
 
-    our instance with a list of function pointers to our instance's methods.
 
+    Kilka szczegółów dotyczących pamięci:
 
-    Memory details:
-
-    * This list of functions is known in C++ as a *vtable*.
-- title: Handling Unsized Data
+    * Ta lista funkcji jest znana w C++ jako *vtable*.
+- title: Obsługa Danych O Nieznanym Rozmiarze
   content_markdown: >
-    Traits introduce an interesting challenge when we want to store them within
-    another struct. Traits obfuscate the original
+    Cechy wprowadzają ciekawe wyzwanie, kiedy chcemy przechowywać je wewnątrz
+    innej struktury. Cechy zaciemniają oryginalną strukturę, przez co
+    zaciemniają też jej oryginalny rozmiar. Wartości o nieznanym rozmiarze,
+    przechowywane w strukturach, są w Ruście obsługiwane na dwa sposoby:
 
-    struct thus it also obfuscates the original size. Unsized values being
-    stored in structs are handled in two ways in Rust:
 
+    * `generyki` (ang. *generics*) - Użycie sparametryzowanych typów
+    skutecznie tworzy struktury/funkcje o znanych typach, a co za tym idzie,
+    znanych rozmiarach.
 
-    * `generics` - Using parameterized types effectively create struct/functions
-    known types and thus known sizes.
-
-    * `indirection` - Putting instances on the heap gives us a level of
-    indirection that allow us to not have to worry about the size of the actual
-    type and just store a pointer to it. There are other ways as well!
-- title: Generic Functions
+    * `pośredniość` (ang. *indirection*) - Umieszczenie instancji na stercie
+    daje nam poziom pośredniości, dzięki której nie musimy martwić się o
+    rozmiar rzeczywistego typu, a jedynie przechowywać do niego wskaźnik.
+    Istnieją też inne sposoby!
+- title: Funkcje Generyczne
   code: |
     struct SeaCreature {
         pub name: String,
@@ -397,14 +398,13 @@
         generic_make_noise(&creature);
     }
   content_markdown: >
-    Generics in Rust work hand in hand with traits. When we describe a
-    parameterized type `T` we can constrain what types 
+    Generyki w Ruście działają ramię w ramię z cechami. Kiedy opisujemy
+    sparametryzowany typ `T`, możemy ograniczyć, jakie typy mogą zostać
+    użyte jako argument, wymieniając jakie cechy musi implementować taki
+    argument.
 
-    can be used as an argument by listing what required traits the argument must
-    implement.
 
-
-    In this example type `T` must implement trait `Foo`:
+    W tym przykładzie typ `T` musi implementować cechę `Foo`:
 
     ```rust
 
@@ -419,11 +419,11 @@
     ```
 
 
-    By using generics we create static typed functions at compile time that will
-    have known types and sizes, allowing us to
-
-    perform static dispatch and store as a sized value.
-- title: Generic Function Shorthand
+    Używając generyków tworzymy statycznie otypowane funkcje w czasie
+    kompilacji, które będą miały znane typy i rozmiary, pozwalając nam na
+    wykonanie wywoływania statycznego i przechowywanie ich jako wartości o
+    znanym rozmiarze.
+- title: Skrócona Notacja Funkcji Generycznych
   code: |
     struct SeaCreature {
         pub name: String,
@@ -460,7 +460,8 @@
         generic_make_noise(&creature);
     }
   content_markdown: |
-    Rust has a shorthand for expressing generics constrained by a trait:
+    Rust posiada skróconą notację do wyrażania generyków ograniczonych
+    cechą:
 
     ```rust
     fn my_function(foo: impl Foo) {
@@ -468,7 +469,7 @@
     }
     ```
 
-    This is equivalent to writing:
+    Jest to równoważne zapisaniu:
 
     ```rust
     fn my_function<T>(foo: T)
@@ -522,24 +523,20 @@
         }
     }
   content_markdown: >
-    `Box` is a data structure that allows us to move our data from the stack to
-    the heap.
+    `Box` to struktura danych, która pozwala nam przenieść nasze dane ze
+    stosu na stertę.
 
 
-    `Box` is a struct known as a *smart pointer* that holds the pointer to our
-    data on the heap.
+    `Box` to struktura znana jako *inteligentny wskaźnik* (ang. *smart
+    pointer*), która przechowuje wskaźnik do naszych danych na stercie.
 
 
-    Because `Box` is a struct with a known size (because it just holds a
-    pointer), it is 
-
-    often used as a way to store a reference to something in a struct that must
-    know the size 
-
-    of its fields.
+    Ponieważ `Box` jest strukturą o znanym rozmiarze (przechowuje jedynie
+    wskaźnik), jest często używany jako sposób na przechowanie referencji do
+    czegoś wewnątrz struktury, która musi znać rozmiar swoich pól.
 
 
-    `Box` is so common it can be used from anywhere:
+    `Box` jest na tyle powszechny, że może być użyty właściwie wszędzie:
 
 
     ```rust
@@ -547,10 +544,10 @@
     Box::new(Foo { ... })
 
     ```
-- title: Generic Structs Revisited
+- title: Generyczne Struktury Ponownie
   content_markdown: >
-    Generic structs can also have their parameterized types constrained by
-    traits.
+    Generyczne struktury mogą również mieć swoje sparametryzowane typy
+    ograniczone przez cechy.
 
 
     ```rust
@@ -567,8 +564,8 @@
     ```
 
 
-    Generic structs have their parameterized type in their implementation
-    blocks:
+    Generyczne struktury posiadają swój sparametryzowany typ również w
+    bloku implementacji:
 
 
     ```rust
@@ -578,25 +575,23 @@
     }
 
     ```
-- title: Chapter 7 - Conclusion
+- title: Rozdział 7 - Podsumowanie
   content_markdown: >
-    We now have more language features at hand to represent our ideas clearly! 
-
-    Rust abstractions might be simple but they are powerful enough to make
-
-    working with code a joy. In this chapter, we caught a glimpse of smart
-    pointers
-
-    with `Box`. In the next chapter we'll learn about how smart pointers can
-    help us with other
-
-    specialized memory situations.
+    Mamy teraz do dyspozycji więcej narzędzi językowych, żeby jasno
+    wyrażać nasze pomysły!
 
 
-    Resources:
+    Abstrakcje w Ruście mogą być proste, ale są wystarczająco potężne, żeby
+    praca z kodem sprawiała przyjemność. W tym rozdziale zerknęliśmy na
+    inteligentne wskaźniki przy pomocy `Box`. W następnym rozdziale
+    dowiemy się, jak inteligentne wskaźniki mogą pomóc nam w innych,
+    specjalistycznych sytuacjach związanych z pamięcią.
 
-    * [Video - Object-oriented Programming in 7
+
+    Zasoby (w języku angielskim):
+
+    * [Wideo - Object-oriented Programming in 7
     minutes](https://www.youtube.com/watch?v=pTB0EiLXUC8)
 
-    * [Article - "The faster you unlearn OOP, the better for you and your
+    * [Artykuł - "The faster you unlearn OOP, the better for you and your
     software"](https://dpc.pw/the-faster-you-unlearn-oop-the-better-for-you-and-your-software)

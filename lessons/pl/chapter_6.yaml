@@ -1,75 +1,78 @@
-- title: Chapter 6 - Text
+- title: Rozdział 6 - Tekst
   content_markdown: >
-    Now that we understand a bit how Rust thinks of memory, we are prepared to
-    talk about text in more detail.
+    Teraz kiedy rozumiemy już trochę jak Rust myśli o pamięci, jesteśmy gotowi
+    porozmawiać o tekście w bardziej szczegółowy sposób.
 
-    Rust cares a great deal about international text and byte level concerns you
-    might not be familiar with
 
-    from other languages. That said, Rust has many great tools for managing
-    those concerns.
-- title: String Literals
+    Rust bardzo poważnie podchodzi do tematu tekstu międzynarodowego oraz
+    zagadnień na poziomie bajtów, z którymi możesz nie być zaznajomiony z
+    innych języków. Mimo to, Rust posiada wiele świetnych narzędzi do
+    zarządzania tymi zagadnieniami.
+- title: Literały Łańcuchowe
   content_markdown: >
-    String literals are always Unicode.
+    Literały łańcuchowe są zawsze zakodowane w Unicode.
 
 
-    String literals type are `&'static str`:
+    Typ literałów łańcuchowych to `&'static str`:
 
 
-    * `&` meaning that it's referring to a place in memory, and it lacks a
-    `&mut` meaning that the compiler will not allow modification
+    * `&` oznacza, że odnosi się do miejsca w pamięci, a brak `&mut` oznacza,
+    że kompilator nie pozwoli na jego modyfikację
 
-    * `'static` meaning the string data will be available till the end of our
-    program (it never drops)
+    * `'static` oznacza, że dane łańcucha będą dostępne aż do końca trwania
+    naszego programu (nigdy nie zostaną wypuszczone)
 
-    * `str` means that it points to a sequence of bytes that are always valid
-    **utf-8**
+    * `str` oznacza, że wskazuje on na sekwencję bajtów, które muszą zawsze
+    być poprawnym kodowaniem **utf-8**
 
 
-    Memory details:
+    Kilka szczegółów dotyczących pamięci:
 
-    * The Rust compiler will likely put your string in the data segment of your
-    program memory
+    * Kompilator Rusta najprawdopodobniej umieści Twój łańcuch znaków
+    w segmencie danych pamięci Twojego programu
   code: |
     fn main() {
         let a: &'static str = "hi 🦀";
         println!("{} {}", a, a.len());
     }
-- title: What is utf-8
-  content_markdown: "As more languages were used on computers, the world needed to represent more text characters\nthan ASCII allowed (1 byte only allowed 256 characters). \n\n**utf-8** was introduced with a variable byte length of 1-4 bytes greatly increasing the range of possible characters.\n\nAn advantage of variable sized characters is text did not have unnecessary bytes for very common ASCII (only requiring 1 byte still in **utf-8**).\n\nA downside of variable sized characters is that character lookup can no longer be done quickly \n(**O(1)** constant time) with a simple indexing (e.g. `my_text[3]` to get the 4th character). It's possible that the \npreceding characters could have variable widths, altering where the 4th character actually begins in the sequence of bytes.\n\nInstead we must iterate through a **utf-8** byte sequence to understand where the Unicode characters actually begin (**O(n)** linear time).\n\nFerris: \"I'm mostly just happy to have **utf-8** for representing emojis of my underwater friends.\"\n\n<span class=\"emoji\">\U0001F420\U0001F419\U0001F41F\U0001F42C\U0001F40B</span>\n"
-- title: Escaping Characters
+- title: Czym jest utf-8
+  content_markdown: "W miarę jak coraz więcej języków było używanych na komputerach, świat potrzebował sposobu na reprezentowanie większej liczby znaków tekstowych\nniż pozwalał na to ASCII (1 bajt pozwalał jedynie na 256 znaków).\n\nWprowadzono **utf-8** ze zmienną długością bajtową wynoszącą od 1 do 4 bajtów, co znacznie zwiększyło zakres możliwych do przedstawienia znaków.\n\nZaletą znaków o zmiennym rozmiarze jest to, że tekst nie posiada niepotrzebnych bajtów dla bardzo powszechnych znaków ASCII (nadal wymagających tylko 1 bajtu w **utf-8**).\n\nWadą znaków o zmiennym rozmiarze jest to, że wyszukiwanie konkretnego znaku nie może być już wykonane szybko\n(w stałym czasie **O(1)**) przy pomocy prostego indeksowania (np. `my_text[3]` żeby dostać się do 4. znaku). Możliwe jest bowiem, że\npoprzedzające znaki mają zmienną szerokość, przez co zmienia się miejsce, w którym faktycznie zaczyna się 4. znak w sekwencji bajtów.\n\nZamiast tego musimy przeiterować przez sekwencję bajtów **utf-8**, żeby zrozumieć, gdzie faktycznie zaczynają się poszczególne znaki Unicode (w liniowym czasie **O(n)**).\n\nFerris: \"Głównie cieszę się po prostu z tego, że mam **utf-8** do reprezentowania emotikon moich podwodnych przyjaciół.\"\n\n<span class=\"emoji\">\U0001F420\U0001F419\U0001F41F\U0001F42C\U0001F40B</span>\n"
+- title: Znaki Ucieczki
   content_markdown: >
-    It's challenging to visually represent certain characters, so **escape
-    codes** allow us to put a symbol in their place.
+    Wizualne przedstawienie niektórych znaków bywa wyzwaniem, dlatego
+    **sekwencje ucieczki** pozwalają nam umieścić w ich miejsce odpowiedni
+    symbol.
 
 
-    Rust supports the common escape codes from C-based languages:
+    Rust obsługuje powszechne sekwencje ucieczki znane z języków bazujących
+    na C:
 
-    * `\n` - newline
+    * `\n` - nowa linia
 
-    * `\r` - carriage return
+    * `\r` - powrót karetki
 
-    * `\t` - tab
+    * `\t` - tabulacja
 
-    * `\\` - backslash
+    * `\\` - ukośnik wsteczny
 
-    * `\0` - null
+    * `\0` - znak pusty (null)
 
-    * `\'` - single-quote
+    * `\'` - pojedynczy cudzysłów
 
 
-    The complete list exists
-    [here](https://doc.rust-lang.org/reference/tokens.html).
+    Kompletną listę znajdziesz
+    [tutaj](https://doc.rust-lang.org/reference/tokens.html).
   code: |
     fn main() {
         let a: &'static str = "Ferris says:\t\"hello\"";
         println!("{}",a);
     }
-- title: Multi-line String Literals
+- title: Wieloliniowe Literały Łańcuchowe
   content_markdown: |
-    Rust strings are multiline by default.
+    Łańcuchy znaków w Ruście są domyślnie wieloliniowe.
 
-    Use a `\` at the end of a line if you don't want a line break.
+    Użyj `\` na końcu linii, jeśli nie chcesz, żeby wystąpiło w tym miejscu
+    złamanie linii.
   code: |
     fn main() {
         let haiku: &'static str = "
@@ -78,18 +81,17 @@
             A poppy blooms.
             - Tachibana Hokushi";
         println!("{}", haiku);
-        
-        
-        println!("hello \
-        world") // notice that the spacing before w is ignored
-    }
-- title: Raw String Literals
-  content_markdown: >
-    Raw strings allow us to write a sequence of characters verbatim by starting
-    with `r#"` and ending with `"#`. It lets us insert
 
-    characters that might otherwise confuse a normal string as literals (like
-    double quotes and backslashes).
+
+        println!("hello \
+        world") // zwróć uwagę, że spacja przed w jest ignorowana
+    }
+- title: Surowe Literały Łańcuchowe
+  content_markdown: >
+    Surowe łańcuchy znaków pozwalają nam zapisać sekwencję znaków dosłownie,
+    zaczynając od `r#"` i kończąc na `"#`. Dzięki temu możemy wstawiać
+    znaki, które w normalnym łańcuchu mogłyby zostać pomylone z jego
+    literałami (jak podwójny cudzysłów czy ukośnik wsteczny).
   code: |
     fn main() {
         let a: &'static str = r#"
@@ -99,10 +101,10 @@
             "#;
         println!("{}", a);
     }
-- title: String Literals From Files
+- title: Literały Łańcuchowe Z Plików
   content_markdown: >
-    If you have some very large text, consider using the macro `include_str!` to
-    include text from local files in your program:
+    Jeśli posiadasz bardzo duży tekst, rozważ użycie makra `include_str!`,
+    żeby dołączyć tekst z lokalnego pliku do swojego programu:
 
 
     ```rust
@@ -110,25 +112,26 @@
     let hello_html = include_str!("hello.html");
 
     ```
-- title: String Slice
+- title: Wycinek Łańcucha Znaków
   content_markdown: >
-    A string slice is a reference to a sequence of bytes in memory that must
-    always be valid utf-8.
+    Wycinek łańcucha znaków (ang. *string slice*) to referencja do sekwencji
+    bajtów w pamięci, która zawsze musi stanowić poprawne kodowanie utf-8.
 
 
-    A string slice (a sub-slice) of a `str` slice, must also be valid utf-8.
+    Wycinek (podwycinek) wycinka `str` również musi stanowić poprawne
+    kodowanie utf-8.
 
 
-    Common methods of `&str`:
+    Popularne metody `&str`:
 
-    * `len` gets the length of the string literal in bytes (not number of
-    characters).
+    * `len` zwraca długość literału łańcuchowego w bajtach (nie w liczbie
+    znaków).
 
-    *  `starts_with`/`ends_with` for basic testing.
+    * `starts_with`/`ends_with` do podstawowego sprawdzania początku/końca.
 
-    * `is_empty` returns true if zero length.
+    * `is_empty` zwraca `true`, jeśli długość wynosi zero.
 
-    * `find` returns an `Option<usize>` of the first position of some text.
+    * `find` zwraca `Option<usize>` z pierwszą pozycją poszukiwanego tekstu.
   code: |
     fn main() {
         let a = "hi 🦀";
@@ -139,14 +142,14 @@
         // Rust does not accept slices of invalid unicode characters
         println!("{} {}", first_word, second_word);
     }
-- title: Chars
+- title: Znaki (Chars)
   content_markdown: >
-    With so much difficulty in working with Unicode, Rust offers a way to
-    retrieve a sequence of utf-8 bytes as a vector of characters of type `char`.
+    Ze względu na trudności związane z pracą z Unicode, Rust oferuje sposób
+    na pobranie sekwencji bajtów utf-8 jako wektora znaków typu `char`.
 
 
-    A `char` is always 4 bytes long (allowing for efficient lookup of individual
-    characters).
+    Typ `char` ma zawsze długość 4 bajtów (co pozwala na wydajne wyszukiwanie
+    poszczególnych znaków).
   code: |
     fn main() {
         // collect the characters as a vector of char
@@ -157,30 +160,33 @@
     }
 - title: String
   content_markdown: >
-    A **String** is a struct that owns a sequence of utf-8 bytes in heap memory.
+    **String** to struktura, która jest właścicielem sekwencji bajtów utf-8
+    przechowywanych na stercie.
 
 
-    Because its memory is on the heap, it can be extended, modified, etc. in
-    ways string literals cannot.
+    Ponieważ jej pamięć znajduje się na stercie, może ona być rozszerzana,
+    modyfikowana itp. w sposoby niedostępne dla literałów łańcuchowych.
 
 
-    Common methods:
+    Popularne metody:
 
 
-    * `push_str` to add more utf-8 bytes to the end of a string.
+    * `push_str` dodaje kolejne bajty utf-8 na koniec łańcucha.
 
-    * `replace` to replace sequences of utf-8 bytes with others.
+    * `replace` zastępuje sekwencje bajtów utf-8 innymi.
 
-    * `to_lowercase`/`to_uppercase` for case changes.
+    * `to_lowercase`/`to_uppercase` do zmiany wielkości liter.
 
-    * `trim` for trimming space
-
-
-    When a String is dropped, its heap memory is also dropped.
+    * `trim` do usuwania białych znaków z brzegów.
 
 
-    `String` has a `+` operator that extends the string with a `&str` and
-    returns itself, but it might not be as ergonomic as you hope for.
+    Kiedy `String` zostaje wypuszczony, jego pamięć na stercie również
+    zostaje wypuszczona.
+
+
+    `String` posiada operator `+`, który rozszerza łańcuch o `&str` i zwraca
+    sam siebie, ale może okazać się to mniej ergonomiczne, niż mógłbyś się
+    spodziewać.
   code: |
     fn main() {
         let mut helloworld = String::from("hello");
@@ -188,12 +194,11 @@
         helloworld = helloworld + "!";
         println!("{}", helloworld);
     }
-- title: Text As Function Parameters
+- title: Tekst Jako Parametr Funkcji
   content_markdown: >
-    String literals and strings are generally passed around as a string slice to
-    functions. This offers a lot of flexibility for
-
-    most scenarios where you don't actually have to pass ownership.
+    Literały łańcuchowe oraz `String`y są zazwyczaj przekazywane do funkcji
+    jako wycinek łańcucha znaków. Daje to sporo elastyczności w większości
+    scenariuszy, w których tak naprawdę nie musisz przekazywać własności.
   code: |
     fn say_it_loud(msg:&str){
         println!("{}!!!",msg.to_string().to_uppercase());
@@ -205,9 +210,10 @@
         // say_it_loud can also borrow String as a &str
         say_it_loud(&String::from("goodbye"));
     }
-- title: Building Strings
+- title: Budowanie Łańcuchów Znaków
   content_markdown: |
-    `concat` and `join` are two simple but powerful ways for building strings.
+    `concat` oraz `join` to dwa proste, ale potężne sposoby na budowanie
+    łańcuchów znaków.
   code: |
     fn main() {
         let helloworld = ["hello", " ", "world", "!"].concat();
@@ -215,31 +221,33 @@
         println!("{}", helloworld);
         println!("{}",abc);
     }
-- title: Formatting Strings
+- title: Formatowanie Łańcuchów Znaków
   content_markdown: >
-    The `format!` macro allows us to create a string by defining a parameterized
-    string with placeholders for where and how values should be placed (e.g.
-    `{}`).
+    Makro `format!` pozwala nam stworzyć łańcuch znaków poprzez zdefiniowanie
+    sparametryzowanego łańcucha z symbolami zastępczymi określającymi gdzie i
+    jak powinny zostać umieszczone wartości (np. `{}`).
 
 
-    `format!` uses the same parameterized strings as `println!`
+    `format!` używa tych samych sparametryzowanych łańcuchów co `println!`
 
 
-    The capabilities of this function are too large of scope for *Tour of Rust*;
-    check out the documentation [here](https://doc.rust-lang.org/std/fmt/).
+    Możliwości tej funkcji są zbyt szerokie jak na zakres *Tour of Rust*;
+    zajrzyj do [dokumentacji](https://doc.rust-lang.org/std/fmt/), żeby
+    dowiedzieć się więcej.
   code: |
     fn main() {
         let a = 42;
         let f = format!("secret to life: {}",a);
         println!("{}",f);
     }
-- title: Converting Strings
+- title: Konwertowanie Łańcuchów Znaków
   content_markdown: |
-    Many types can be converted to a string using `to_string`.
+    Wiele typów może zostać przekonwertowanych na łańcuch znaków przy użyciu
+    `to_string`.
 
-    The generic function `parse` can be used to convert strings 
-    or string literals into a typed value. This function returns 
-    a `Result` because it could fail.
+    Generyczna funkcja `parse` może zostać użyta do przekonwertowania
+    łańcuchów lub literałów łańcuchowych na wartość konkretnego typu. Ta
+    funkcja zwraca `Result`, ponieważ operacja ta może się nie powieść.
   code: |
     fn main() -> Result<(), std::num::ParseIntError> {
         let a = 42;
@@ -248,16 +256,15 @@
         println!("{} {}", a, b);
         Ok(())
     }
-- title: Chapter 6 - Conclusion
+- title: Rozdział 6 - Podsumowanie
   content_markdown: >
-    Now you know the basics of text!  As you have seen, Unicode makes working
-    with text a bit tricky, but the standard library 
+    Teraz znasz już podstawy związane z tekstem! Jak zdążyłeś zauważyć,
+    Unicode sprawia, że praca z tekstem jest odrobinę bardziej skomplikowana,
+    ale biblioteka standardowa oferuje mnóstwo funkcjonalności, które
+    ułatwiają zarządzanie nim.
 
-    has plenty of functionality to make it easy to manage.  
 
-
-    Up to now, we've mostly looked at Rust from the lens of a procedural
-    paradigm (i.e. just functions and data),
-
-    but it's time we now talk about traits and the capabilities unlocked by
-    Rust's object oriented paradigm.
+    Do tej pory patrzyliśmy na Rusta głównie przez pryzmat paradygmatu
+    proceduralnego (tj. same funkcje i dane), ale nadszedł czas, żeby
+    porozmawiać o cechach (ang. *traits*) oraz możliwościach odblokowywanych
+    przez obiektowy paradygmat Rusta.

@@ -1,25 +1,29 @@
-- title: Chapter 9 - Project Organization and Structure
+- title: Rozdział 9 - Organizacja i Struktura Projektu
   content_markdown: >
-    So far all of our code examples have been a single file. Let's discuss how
-    our code can be better organized and shared by others!
-- title: Modules
+    Do tej pory wszystkie nasze przykłady kodu mieściły się w pojedynczym
+    pliku. Porozmawiajmy o tym, jak nasz kod może zostać lepiej
+    zorganizowany i udostępniony innym!
+- title: Moduły
   content_markdown: |
-    Every Rust program or library is a *crate*.
+    Każdy program lub biblioteka napisana w Ruście jest *crate'em*.
 
-    Every crate is made of a hierarchy of *modules*.
+    Każdy crate składa się z hierarchii *modułów*.
 
-    Every crate has a root module.
+    Każdy crate posiada moduł główny (ang. *root module*).
 
-    A module can hold global variables, functions, structs, traits or even other modules!
+    Moduł może zawierać zmienne globalne, funkcje, struktury, cechy, a
+    nawet inne moduły!
 
-    In Rust there is not a 1 to 1 mapping of files to the module tree hierarchy. We must build the module tree explicitly by hand in our code.
-- title: Writing a Program
+    W Ruście nie istnieje relacja jeden do jednego pomiędzy plikami a
+    hierarchią drzewa modułów. Musimy zbudować drzewo modułów jawnie,
+    ręcznie w naszym kodzie.
+- title: Pisanie Programu
   content_markdown: |
-    A program has a root module in a file called `main.rs`.
-- title: Writing a Library
+    Program posiada moduł główny w pliku o nazwie `main.rs`.
+- title: Pisanie Biblioteki
   content_markdown: |
-    A library has a root module in a file called `lib.rs`.
-- title: Referencing Other Modules and Crates
+    Biblioteka posiada moduł główny w pliku o nazwie `lib.rs`.
+- title: Odwoływanie Się Do Innych Modułów i Crate'ów
   code: |
     use std::f64::consts::PI;
 
@@ -28,51 +32,49 @@
         println!("I would love a slice of {}!", PI);
     }
   content_markdown: >
-    Items in modules can be referenced with their full module path
-    `std::f64::consts::PI`.
+    Do elementów wewnątrz modułów można odwoływać się przy pomocy ich
+    pełnej ścieżki modułu, np. `std::f64::consts::PI`.
 
 
-    A simpler way is the **use** keyword. It allows us to specify particular
-    items from modules we want
-
-    to use throughout our code without a full path. For instance `use
-    std::f64::consts::PI`
-
-    allows me to just use the identifier `PI` in my main function.
+    Prostszym sposobem jest słowo kluczowe **use**. Pozwala nam ono
+    określić konkretne elementy z modułów, których chcemy używać w całym
+    naszym kodzie, bez podawania pełnej ścieżki. Na przykład `use
+    std::f64::consts::PI` pozwala mi używać w mojej funkcji `main` samego
+    identyfikatora `PI`.
 
 
-    **std** is the crate of the **standard library** of Rust which is full of
-    useful data
+    **std** to crate **biblioteki standardowej** Rusta, który jest pełen
+    przydatnych struktur danych i funkcji do interakcji z Twoim systemem
+    operacyjnym.
 
-    structures and functions for interacting with your operating system.
 
-
-    A searchable directory of crates created by the community can be found at
-    [https://crates.io](https://crates.io/).
-- title: Referencing Multiple Items
+    Przeszukiwalny katalog crate'ów stworzonych przez społeczność znajdziesz
+    pod adresem [https://crates.io](https://crates.io/).
+- title: Odwoływanie Się Do Wielu Elementów
   content_markdown: |
-    Multiple items can be referenced in a single module path as so:
+    Do wielu elementów można odwołać się w ramach jednej ścieżki modułu w
+    następujący sposób:
 
     ```rust
     use std::f64::consts::{PI,TAU}
     ```
 
-    Ferris doesn't eat TAU, he only eats PI.
-- title: Creating Modules
+    Ferris nie je TAU, je tylko PI.
+- title: Tworzenie Modułów
   content_markdown: |
-    When we think of code, we usually imagine a hierarchy of files organized
-    in directories. Rust lets you create modules closely related to your file
-    structure.
+    Myśląc o kodzie, zazwyczaj wyobrażamy sobie hierarchię plików
+    zorganizowanych w katalogach. Rust pozwala Ci tworzyć moduły ściśle
+    powiązane ze strukturą Twoich plików.
 
-    There are two ways in Rust to declare a module. For example, a module
-    `foo` can be represented as:
-      * a file named `foo.rs`
-      * a directory named `foo` with a file `mod.rs` inside
-- title: Module Hierarchy
+    W Ruście istnieją dwa sposoby na zadeklarowanie modułu. Na przykład
+    moduł `foo` może zostać przedstawiony jako:
+      * plik o nazwie `foo.rs`
+      * katalog o nazwie `foo`, zawierający plik `mod.rs`
+- title: Hierarchia Modułów
   content_markdown: >
-    A module can depend on another one. In order to establish a relationship
-
-    between a module and its sub-module, you must write in the parent module:
+    Jeden moduł może zależeć od drugiego. Żeby ustanowić relację pomiędzy
+    modułem a jego podmodułem, musisz zapisać w module rodzicielskim
+    następujący wpis:
 
 
     ```rust
@@ -82,109 +84,108 @@
     ```
 
 
-    The declaration above  will look for a file named `foo.rs` or `foo/mod.rs`
-    and
-
-    will insert its contents inside a module named `foo` under this scope.
-- title: Inline Module
+    Powyższa deklaracja spowoduje wyszukanie pliku o nazwie `foo.rs` lub
+    `foo/mod.rs`, a następnie wstawienie jego zawartości wewnątrz modułu o
+    nazwie `foo`, w ramach tego zasięgu.
+- title: Moduł Wewnętrzny
   content_markdown: >
-    A sub-module can be directly inlined within a module's code.
+    Podmoduł może zostać zdefiniowany bezpośrednio wewnątrz kodu innego
+    modułu.
 
 
-    One very common use for inline modules is creating unit tests. We create an
-    inline module that only exists when Rust is used for testing!
+    Jednym z bardzo popularnych zastosowań modułów wewnętrznych jest
+    tworzenie testów jednostkowych. Tworzymy moduł wewnętrzny, który
+    istnieje jedynie wtedy, gdy Rust jest używany do testowania!
 
 
     ```
 
-    // This macro removes this inline module when Rust 
+    // To makro usuwa ten moduł wewnętrzny, kiedy Rust
 
-    // is not in test mode.
+    // nie znajduje się w trybie testowania.
 
     #[cfg(test)]
 
     mod tests {
-        // Notice that we don't immediately get access to the 
-        // parent module. We must be explicit.
+        // Zwróć uwagę, że nie mamy od razu dostępu do
+        // modułu rodzicielskiego. Musimy zrobić to jawnie.
         use super::*;
 
         ... tests go here ...
     }
 
     ```
-- title: Internal Module Referencing
+- title: Wewnętrzne Odwołania Do Modułów
   content_markdown: >
-    Rust has several keywords you can use in your `use` path to quickly get
-    ahold of the module you want:
-      
-    * `crate` - the root module of your crate
+    Rust posiada kilka słów kluczowych, których możesz użyć w swojej
+    ścieżce `use`, żeby szybko dostać się do modułu, którego potrzebujesz:
 
-    * `super` - the parent module of your current module
 
-    * `self` - the current module
-- title: Exporting
+    * `crate` - moduł główny Twojego crate'a
+
+    * `super` - moduł rodzicielski Twojego obecnego modułu
+
+    * `self` - obecny moduł
+- title: Eksportowanie
   content_markdown: >
-    By default members of a *module* are not accessible from outside of the
-    module (not even to its child modules!). We make members 
+    Domyślnie składowe *modułu* nie są dostępne spoza tego modułu (nawet
+    dla jego modułów potomnych!). Udostępniamy składowe modułu przy pomocy
+    słowa kluczowego `pub`.
 
-    of a module accessible using the `pub` keyword.
 
-
-    By default members of a *crate* are not accessible outside of the crate. We
-    make members of
-
-    a crate accessible by marking them as `pub` in the *root module* of your
-    crate (`lib.rs` or `main.rs`).
-- title: Structure Visibility
+    Domyślnie składowe *crate'a* nie są dostępne spoza tego crate'a.
+    Udostępniamy składowe crate'a oznaczając je jako `pub` w *module
+    głównym* Twojego crate'a (`lib.rs` lub `main.rs`).
+- title: Widoczność Struktur
   content_markdown: >
-    Just like functions, structures can declare what they want exposed outside
-    of their module using `pub`.
+    Podobnie jak funkcje, struktury mogą deklarować co chcą udostępnić
+    poza swój moduł, korzystając ze słowa kluczowego `pub`.
   code: |
-    // SeaCreature struct will be usable outside of our module
+    // struktura SeaCreature będzie mogła być używana poza naszym modułem
     pub struct SeaCreature {
         pub animal_type: String,
         pub name: String,
         pub arms: i32,
         pub legs: i32,
-        // let's keep our weapon private
+        // niech uzbrojenie pozostanie prywatne
         weapon: String,
     }
 - title: Prelude
   content_markdown: |
-    You might be wondering how we have access to `Vec` or `Box`
-    everywhere without a `use` to import them. It is because of the module
-    `prelude` in the standard library.
+    Być może zastanawiasz się, w jaki sposób mamy dostęp wszędzie do `Vec`
+    czy `Box` bez potrzeby użycia `use`, żeby je zaimportować. Dzieje się
+    tak dzięki modułowi `prelude` w bibliotece standardowej.
 
-    Know that in the Rust standard library anything that is exported in
-    `std::prelude::*` is automatically available to every part of Rust.
-    That is the case for `Vec` and `Box` but others as well (Option, Copy,
-    etc.).
-- title: Your Own Prelude
+    Wiedz, że w bibliotece standardowej Rusta wszystko, co jest
+    eksportowane w `std::prelude::*`, jest automatycznie dostępne w każdej
+    części Rusta. Dotyczy to zarówno `Vec` i `Box`, jak i innych (Option,
+    Copy, itd.).
+- title: Twój Własny Prelude
   content_markdown: >
-    Because of standard library's prelude, it's common for your libary to have
-    its own prelude module as a starting point for 
-
-    where users should import all of the most common data structures for using
-    your library (e.g `use my_library::prelude::*`).
-
-    It doesn't automatically get used in programs/libraries that use your crate,
-    but it's a good convention to follow so people
-
-    know where to start.
+    Ze względu na istnienie prelude biblioteki standardowej, powszechną
+    praktyką jest posiadanie własnego modułu prelude w Twojej bibliotece,
+    jako punktu startowego, z którego użytkownicy mogą zaimportować
+    wszystkie najbardziej powszechne struktury danych potrzebne do
+    korzystania z Twojej biblioteki (np. `use my_library::prelude::*`).
 
 
-    Ferris says, "Be a good rustacean and help a fellow crab out with a good
-    prelude!"
-- title: Chapter 9 - Conclusion
+    Nie jest on automatycznie używany w programach/bibliotekach, które
+    korzystają z Twojego crate'a, ale jest to dobra konwencja, dzięki
+    której ludzie wiedzą, od czego zacząć.
+
+
+    Ferris mówi: "Bądź dobrym rustowcem i pomóż koledze krabowi dobrym
+    modułem prelude!"
+- title: Rozdział 9 - Podsumowanie
   content_markdown: >
-    You now have a few tricks up your sleeve when it comes to creating Rust
-    applications and libraries ready for the world. Don't
+    Masz teraz kilka sztuczek w zanadrzu, jeśli chodzi o tworzenie
+    aplikacji i bibliotek w Ruście, gotowych na spotkanie ze światem. Nie
+    martw się tym, żeby zapamiętać to wszystko. W miarę jak Twoja
+    biblioteka będzie rosnąć i będzie używana przez inne osoby,
+    odkryjesz, co sprawdza się najlepiej na każdym etapie.
 
-    worry about remembering it all. As your library grows and is used by other
-    people, you'll find what works best at each milestone.
 
-
-    Resources:
+    Zasoby:
 
     - [Guidelines For Writing Rust
     APIs](https://rust-lang.github.io/api-guidelines/)
