@@ -1,4 +1,4 @@
-- title: Chapter 1 - Dasar-Dasar
+- title: Bab 1 - Dasar-Dasar
   content_markdown: >
     Di dalam bab pertama ini kita akan menjelajahi hal yang paling dasar
 
@@ -9,7 +9,7 @@
     ia adalah **Ferris**,
 
     maskot unofficial untuk bahasa pemprograman Rust. Senang bertemu denganmu.
-- title: The Rust Playground
+- title: Taman Bermain Rust
   code: |
     fn main() {
         println!("Welcome to the playground! You can modify the code in here.");
@@ -41,7 +41,7 @@
     Variabel dideklaraskan menggunakan kata kunci **let**.
 
 
-    Ketika memberikan nilai kepada variabel, Rust hampir selalu dapat menggambil kesimpulan
+    Ketika memberikan nilai kepada variabel, Rust hampir selalu dapat mengambil kesimpulan
     terhadap tipe data dari sebuah variabel. Jika tidak, kamu dapat menambahkan
     tipe data pada deklarasi variabel kamu.
 
@@ -51,7 +51,7 @@
     untuk referensi selanjutnya dari nama tersebut.
 
 
-    Nama variabel selalu menggunakan `snake_scase`.
+    Nama variabel selalu menggunakan `snake_case`.
 - title: Merubah Variabel
   code: |
     fn main() {
@@ -71,7 +71,7 @@
     * **immutable** - kompiler hanya memperbolehkan variabel untuk dibaca.
 
 
-    Nilai yang dapat mungkin di rubah dilambangkan dengan kata kunci **mut**.
+    Nilai yang mungkin dirubah dilambangkan dengan kata kunci **mut**.
 
 
     Kita akan berbicara lebih banyak tentang konsep ini nanti, untuk sekarang
@@ -112,7 +112,7 @@
     tetap pada stack
 
     * arrays - `[value, value, ...]` koleksi dari elemen serupa dengan lebar
-    yang di diketahui saat waktu kompilasi
+    yang diketahui saat waktu kompilasi
 
     * slices - koleksi dari elemen serupa dengan lebar yang diketahui pada saat
     program berjalan
@@ -132,7 +132,7 @@
 
     Tipe data numerik dapat secara explisit ditetapkan dengan menambahkan tipe
     di akhir angka (contoh `13u32`, `2u8`)
-- title: Basic Type Conversion
+- title: Konversi Tipe Data Dasar
   code: |
     fn main() {
         let a = 13u8;
@@ -146,10 +146,10 @@
   content_markdown: >
     Rust mengharuskan kejelasan untuk tipe data numerik. Kamu tidak bisa
 
-    menggunnakan `u8` untuk tipe data `u32` tanpa sebuah error.
+    menggunakan `u8` untuk tipe data `u32` tanpa sebuah error.
 
 
-    Untungnya, Rust membuat koversi tipe data numerik mudah dengan kata kunci
+    Untungnya, Rust membuat konversi tipe data numerik mudah dengan kata kunci
 
     **as**.
 - title: Konstanta
@@ -208,7 +208,7 @@
         println!("{}", add(42, 13));
     }
   content_markdown: >
-    Sebuah fungsi memepunyai parameter dengan jumlah nol atau lebih.
+    Sebuah fungsi mempunyai parameter dengan jumlah nol atau lebih.
 
 
     Di dalam contoh ini, add membutuhkan dua argumen dengan tipe data `i32` 
@@ -242,7 +242,7 @@
 
     berbagai macam bentuk, memungkinkan kita untuk mengekstrak sub-bagian dari
 
-    data struktur secara ergonimis.
+    data struktur secara ergonomis.
 - title: Tidak mengembalikan apa-apa
   content_markdown: >
     Jika tidak ada nilai yang dikembalikan oleh sebuah fungsi secara tertulis,
@@ -284,7 +284,7 @@
 
     dimodifikasi atau tidak, dan memastikan matematika yang kamu tulis sesuai
 
-    dengan yang kamu inginkan. Selanjutnya kita kaan melihat pada kawan lama
+    dengan yang kamu inginkan. Selanjutnya kita akan melihat pada kawan lama
 
     kita:
 
