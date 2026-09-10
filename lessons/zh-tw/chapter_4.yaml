@@ -205,13 +205,13 @@
         println!("found {}", v);
         Ok(())
     }
-- title: 醜陋的選項 (optino)/結果 (result) 處理
+- title: 醜陋的選項 (option)/結果 (result) 處理
   content_markdown: >
     如果你只是想快速寫點程式，使用 `Option`/`Result` 可能會讓你覺得煩躁。
     `Option` 和 `Result` 都有個函式稱作`展開` (unwrap)，它可以幫你迅速但骯髒的取得數值。
     `unwrap` 將會：
 
-    1. 取得選項 (optino)/結果 (result) 裡的數值
+    1. 取得選項 (option)/結果 (result) 裡的數值
 
     2. 如果列舉 (enum) 是 None/Err 型別，那將發生 `panic` 
 
