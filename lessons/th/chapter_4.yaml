@@ -1,4 +1,4 @@
-- title: Chapter 4 - Generic Types
+- title: บทที่ 4 - Generic Types
   content_markdown: >
     Generic เป็น type ที่มีความสำคัญอย่างยิ่งใน Rust มันถูกนำมาใช้เป็นตัวแทนของค่าที่เป็น null ได้
     (เช่น ตัวแปรที่อาจจะยังไม่มีค่าใดๆ) หรือการจัดการกับ error กับ กลุ่มของข้อมูลคอลเล็คชัน และอื่นๆ

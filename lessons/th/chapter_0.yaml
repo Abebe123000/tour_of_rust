@@ -27,9 +27,10 @@
     * [Türkçe](00_tr.html)
     * [Українська](00_ua.html)
     * [Tiếng Việt](00_vi.html)
+    * [ภาษาไทย](00_th.html)
 
     หากคุณมีข้อเสนอแนะเกี่ยวกับเนื้อหาหรือต้องการมีส่วนร่วมในการแปลโปรดดูที่ [github repository](https://github.com/richardanaya/tour_of_rust) ของ Tour of Rust
 
-    คุณสามารถสำรวจ tour ด้วยการใช้คียบอร์ด <span class="emoji">⬅️</span> and <span class="emoji">➡️</span>
+    คุณสามารถสำรวจ tour ด้วยการใช้คีย์บอร์ด <span class="emoji">⬅️</span> และ <span class="emoji">➡️</span>
 
     ในตัวอย่างนี้เราแสดงให้เห็นว่า Rust ใช้ Unicode strings
