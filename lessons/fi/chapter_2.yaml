@@ -1,4 +1,4 @@
-- title: Kapple 2 - Perusohjausvirta
+- title: Kappale 2 - Perusohjausvirta
   content_markdown: >
     Tässä luvussa käsitellään ohjausrakenteiden perusmetodeja Rust-ohjelmointikielessä.
 
@@ -64,7 +64,7 @@
   content_markdown: >
     Rustin `for` silmukka on tehokas päivitys. Se
 
-    Iteroi arvojen yli mistä tahansa lausekkeesta, joka arvioituu iteraattoriksi.
+    iteroi arvojen yli mistä tahansa lausekkeesta, joka arvioituu iteraattoriksi.
     Mikä
 
     on iteraattori? Iteraattori on objekti, jolta voi kysyä "Mikä

@@ -50,7 +50,7 @@
     esittelyyn.
 
 
-    Huomaa, että vaimme sijoittaa samannimiseen muuttujaan monta kertaa.
+    Huomaa, että voimme sijoittaa samannimiseen muuttujaan monta kertaa.
     Sitä kutsutaan muuttujan varjostamiseksi, ja muuttujan tyyppi voi muuttua
     myöhemmillä viittauksilla samaan nimeen.
 
@@ -66,13 +66,13 @@
         println!("{}", x);
     }
   content_markdown: >
-    Rustissa on tärkeää tietää, mitkä muuttujat ovat muuttuvia. muuttujat
+    Rustissa on tärkeää tietää, mitkä muuttujat ovat muuttuvia. Muuttujat
     kuuluvat kahteen ryhmään:
 
 
     * **mutable** - kääntäjä sallii muuttujaan kirjoittamisen ja lukemisen.
 
-    * **immutable** - kääntäjä saallii vain muuttujan arvon lukemisen.
+    * **immutable** - kääntäjä sallii vain muuttujan arvon lukemisen.
 
 
     Mutable-arvot merkitään **mut** -avainsanalla.
@@ -104,7 +104,7 @@
     * etumerkittömät kokonaisluvut - `u8` `u16` `u32` `u64` `u128`, joihin
     voi sijoittaa vain positiivisia kokonaislukuja
 
-    * etumerkilliset kokonaisluvut - `i8` `i16` `i32` `i64` `i128`, joihin voi
+    * etumerkilliset kokonaisluvut - `i8` `i16` `i32` `i64` `i128`, joihin
     voi sijoittaa myös negatiivisia kokonaislukuja
 
     * osoittimen kokoiset kokonaisluvut - `usize` `isize`, joilla voi
@@ -211,10 +211,10 @@
         println!("42 - 13 = {}", subtract(42, 13));
     }
   content_markdown: >
-    Fuktiolla on nolla tai enemmän parametreja.
+    Funktiolla on nolla tai enemmän parametreja.
 
 
-    Tässä erimerkissä, funktio *add* saa kaksi parametriä, joiden tyyppi on `i32`
+    Tässä esimerkissä, funktio *add* saa kaksi parametriä, joiden tyyppi on `i32`
     (etumerkillinen 32-bittinen kokonaisluku).
 
 
@@ -250,7 +250,7 @@
 
 
     Rust tukee useita eri tapoja pilkkoa tietorakenteet osiinsa, mikä
-    mahdollistaa monia erginomisia keinoja päästä käsiksi muuttujien
+    mahdollistaa monia ergonomisia keinoja päästä käsiksi muuttujien
     alirakenteisiin. Odota vain hetki!
 - title: Tyhjän palauttaminen
   content_markdown: >
@@ -286,7 +286,7 @@
   content_markdown: >
     Hyvää työtä tähän mennessä! Rustin perusteet eivät ole niin pahoja, vai mitä?
     Pääsimme kurkistamaan kuinka Rust-kääntäjä ajattelee.
-    Systeemiohjelmointikielenä Rust on välittää hyvin paljon siitä,
+    Systeemiohjelmointikielenä Rust välittää hyvin paljon siitä,
     kuinka paljon eri arvot kuluttavat muistia, voidaanko arvoja muuttaa, ja
     varmistaa, että laskutoimitukset menevät juuri niin kuin niiden
     kuvitteletkin menevän. Seuraavaksi tutustumme vanhoihin ystäviin:
