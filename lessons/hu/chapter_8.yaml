@@ -27,7 +27,7 @@
 
     Kétféle nyers mutatót különböztetünk meg:
     * `*const T` - Olyan, T típusú adatra mutat, aminek nem szabad megváltoznia.
-    * `mut T` - Olyan, T típusú adatra mutat, ami megváltoztatható.
+    * `*mut T` - Olyan, T típusú adatra mutat, ami megváltoztatható.
 
     Nyers mutatók szabadon konvertálhatók számokká (pl. `usize`), és vissza.
     Nyers mutatók nem biztonságos (`unsafe`) kódban használhatók adatok elérésére. (Erre még
@@ -375,7 +375,7 @@
         // locked reference drops here, and mutex protected value can be used by someone else
     }
   content_markdown: |
-    A `RefCell` egy olyan adatstruktúra, ami képes kölcsönadni mind meg nem változtatható, mind
+    A `Mutex` egy olyan adatstruktúra, ami képes kölcsönadni mind meg nem változtatható, mind
     pedig megváltoztatható módon az általa birtokolt adatot. Gyakran használják egyéb okos mutatók
     megvalósításakor. Egy időben csak egy programszál számára enged hozzáférést a benne tárolt
     adathoz, így segíti a Rust memóriahasználati szabályainak betartását többszálú környezetben. Ha

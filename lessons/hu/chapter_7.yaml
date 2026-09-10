@@ -193,7 +193,7 @@
     A trait-ek maguk is megvalósíthatnak metódusokat.
 
     Az ilyen metódusok nem képesek elérni a struct-ok mezőit, de hasznosak lehetnek olyan esetekben,
-    amikor olyan viselkedlst szeretnénk leírni, ami sokféle struct-ban előfordul.
+    amikor olyan viselkedést szeretnénk leírni, ami sokféle struct-ban előfordul.
 - title: Trait-ek öröklése
   code: |
     struct SeaCreature {
