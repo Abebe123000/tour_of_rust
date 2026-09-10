@@ -1,0 +1,154 @@
+- title: 第九章 - 專案組織與結構
+  content_markdown: >
+    到目前為止，我們所有的程式碼範例都只有單一一個檔案。讓我們來討論一下，該如何把我們的程式碼組織得更好，並且分享給其他人！
+- title: 模組
+  content_markdown: |
+    每一個 Rust 程式或函式庫都是一個 *crate*。
+
+    每一個 crate 都是由一個*模組*的階層結構所組成。
+
+    每一個 crate 都有一個根模組。
+
+    一個模組可以擁有全域變量、函數、結構、特徵，甚至是其他的模組！
+
+    在 Rust 裡，檔案與模組樹的階層結構並不是一對一的對應關係。我們必須在程式碼裡手動明確地建立模組樹。
+- title: 撰寫一個程式
+  content_markdown: |
+    一個程式的根模組會放在一個叫做 `main.rs` 的檔案裡。
+- title: 撰寫一個函式庫
+  content_markdown: |
+    一個函式庫的根模組會放在一個叫做 `lib.rs` 的檔案裡。
+- title: 參考其他模組及 crate
+  code: |
+    use std::f64::consts::PI;
+
+    fn main() {
+        println!("Welcome to the playground!");
+        println!("I would love a slice of {}!", PI);
+    }
+  content_markdown: >
+    模組裡的項目可以透過完整的模組路徑來參考，例如 `std::f64::consts::PI`。
+
+
+    一個更簡單的方式是使用 **use** 這個關鍵字。它讓我們可以指定想從模組裡使用的特定項目，
+    這樣一來在程式碼裡就可以不需要寫出完整的路徑。舉例來說，`use std::f64::consts::PI`
+    讓我可以在我的 main 函數裡直接使用識別字 `PI` 就好。
+
+
+    **std** 是 Rust **標準函式庫**的 crate，裡面充滿了與你的作業系統互動時會用到的各種有用的資料結構及函數。
+
+
+    由社群建立的 crate，可以在這個可搜尋的目錄裡找到：[https://crates.io](https://crates.io/)。
+- title: 參考多個項目
+  content_markdown: |
+    可以在同一個模組路徑裡參考多個項目，就像這樣：
+
+    ```rust
+    use std::f64::consts::{PI,TAU}
+    ```
+
+    Ferris 不吃 TAU，牠只吃 PI。
+- title: 建立模組
+  content_markdown: |
+    當我們想到程式碼時，我們通常會想像一個以目錄組織起來的檔案階層結構。Rust 讓你可以建立與你的檔案結構緊密相關的模組。
+
+    在 Rust 裡有兩種方式可以宣告一個模組。舉例來說，一個叫做 `foo` 的模組可以被表示成：
+      * 一個叫做 `foo.rs` 的檔案
+      * 一個叫做 `foo` 的目錄，裡面放著一個叫做 `mod.rs` 的檔案
+- title: 模組階層結構
+  content_markdown: >
+    一個模組可以依賴另一個模組。為了在一個模組及它的子模組之間建立關係，你必須在父模組裡這樣寫：
+
+
+    ```rust
+
+    mod foo;
+
+    ```
+
+
+    上面這個宣告會去尋找一個叫做 `foo.rs` 或 `foo/mod.rs` 的檔案，並且把它的內容插入到這個作用域裡一個叫做 `foo` 的模組中。
+- title: 內嵌模組
+  content_markdown: >
+    一個子模組可以直接內嵌在一個模組的程式碼裡。
+
+
+    內嵌模組一個非常常見的用途，就是用來建立單元測試。我們建立一個只有在 Rust 被用來做測試時才會存在的內嵌模組！
+
+
+    ```
+
+    // 這個巨集會在 Rust 不是處於測試模式時，
+
+    // 移除這個內嵌模組。
+
+    #[cfg(test)]
+
+    mod tests {
+        // 請注意，我們並不會立即取得存取
+        // 父模組的權限。我們必須明確地指定。
+        use super::*;
+
+        ... tests go here ...
+    }
+
+    ```
+- title: 內部模組參考
+  content_markdown: >
+    Rust 有幾個關鍵字，你可以在你的 `use` 路徑裡使用它們，快速地取得你想要的模組：
+
+
+    * `crate` - 你的 crate 的根模組
+
+    * `super` - 你目前所在模組的父模組
+
+    * `self` - 目前所在的模組
+- title: 匯出
+  content_markdown: >
+    預設情況下，一個*模組*的成員無法從模組外部存取 (甚至它的子模組也不行！)。我們透過 `pub` 這個關鍵字，
+    讓一個模組的成員可以被存取。
+
+
+    預設情況下，一個 *crate* 的成員無法在 crate 外部存取。我們透過在你的 crate 的*根模組* (`lib.rs` 或 `main.rs`)
+    裡把成員標記為 `pub`，讓它們可以被存取。
+- title: 結構的可見性
+  content_markdown: >
+    就跟函數一樣，結構也可以使用 `pub` 來宣告它們想要在模組外部暴露的東西。
+  code: |
+    // SeaCreature struct will be usable outside of our module
+    pub struct SeaCreature {
+        pub animal_type: String,
+        pub name: String,
+        pub arms: i32,
+        pub legs: i32,
+        // let's keep our weapon private
+        weapon: String,
+    }
+- title: Prelude
+  content_markdown: |
+    你可能會好奇，為什麼我們可以在任何地方使用 `Vec` 或 `Box`，卻不需要用 `use` 來匯入它們。
+    這是因為標準函式庫裡有一個叫做 `prelude` 的模組。
+
+
+    要知道，在 Rust 標準函式庫裡，任何在 `std::prelude::*` 裡被匯出的東西，都會自動被提供給 Rust 的每一個部分使用。
+    `Vec` 及 `Box` 是這樣，其他的東西 (Option、Copy 等) 也是如此。
+- title: 屬於你自己的 Prelude
+  content_markdown: >
+    因為標準函式庫有它自己的 prelude，所以你的函式庫也很常見會有屬於它自己的 prelude 模組，
+    作為使用者匯入你函式庫裡所有最常用資料結構的起點 (例如：`use my_library::prelude::*`)。
+
+
+    它並不會自動被用在使用了你的 crate 的程式或函式庫裡，但這是一個很好的慣例，讓大家知道該從哪裡開始。
+
+
+    Ferris 說：「當一個好的 rustacean，幫幫其他的螃蟹夥伴，給他們一個好用的 prelude 吧！」
+- title: 第九章 - 總結
+  content_markdown: >
+    現在你已經學會了幾招，可以用來建立準備好讓全世界使用的 Rust 應用程式及函式庫了。不用擔心要把這些全部記起來。
+    隨著你的函式庫成長，並且被越來越多人使用，你會慢慢發現在每個階段最適合的作法是什麼。
+
+
+    資源：
+
+    - [Guidelines For Writing Rust
+    APIs](https://rust-lang.github.io/api-guidelines/)

@@ -1,0 +1,488 @@
+- title: 第八章 - 智慧指標
+  content_markdown: >
+    在這個章節，我們將會揭開智慧指標的神秘面紗。讓我們一起探索這些能讓我們與最底層的記憶體互動的資料結構。
+
+
+    Ferris 說：「如果你看完這個短短的章節後，還不覺得自己有能力寫出屬於自己的底層記憶體管理程式碼，也不用感到壓力。這個章節主要是想讓你認識一些有用的工具，並且大致了解它們是怎麼運作的！」
+- title: 重新認識參考
+  content_markdown: >
+    一個參考本質上只是一個數字，它代表著記憶體裡某些位元組的起始位置。它唯一的目的就是用來表示某個特定型別的資料存在於何處。
+    讓參考與單純的數字不同的地方在於，Rust 會確保參考的生命週期不會比它所指向的東西還要長（否則我們在使用它時就會遇到錯誤！）。
+- title: 原始指標 (raw pointers)
+  code: |
+    fn main() {
+        let a = 42;
+        let memory_location = &a as *const i32 as usize;
+        println!("Data is here {}", memory_location);
+    }
+  content_markdown: >
+    參考可以被轉換成一個更原始的型別，稱作*原始指標*。就跟數字一樣，它可以幾乎不受限制地被複製及移動。
+    Rust 不會保證它所指向的記憶體位置是有效的。
+
+
+    原始指標有兩種：
+
+
+    * `*const T` - 一個指向型別 T 的資料，且該資料永遠不應該被改變的原始指標。
+
+    * `*mut T` - 一個指向型別 T 的資料，且該資料可以被改變的原始指標。
+
+
+    原始指標可以與數字互相轉換 (例如：`usize`)。
+
+
+    原始指標可以透過 *unsafe* 程式碼來存取資料 (後續章節會有更詳細的說明)。
+
+
+    記憶體細節：
+
+    * Rust 裡的參考在用法上跟 C 語言裡的指標非常相似，但在編譯時期，對於它可以怎麼被儲存及傳遞到其他函數上，有更多的限制。
+
+    * Rust 裡的原始指標跟 C 語言裡的指標很類似，它代表一個可以被複製或傳遞的數字，甚至可以被轉換成數字型別，讓你可以把它當作數字來修改，藉此做指標的數學運算。
+- title: 解參考 (dereferencing)
+  content_markdown: |
+    存取/操作由一個*參考* (例如：`&i32`) 所指向的資料的這個過程，稱作*解參考*。
+
+    我們用兩種方式透過參考來存取/操作資料：
+    * 在指定變量時存取被參考的資料。
+    * 存取被參考的資料的欄位或方法。
+
+    Rust 有幾個強大的運算子讓我們可以做到這件事。
+- title: 運算子 *
+  code: |-
+    fn main() {
+        let a: i32 = 42;
+        let ref_ref_ref_a: &&&i32 = &&&a;
+        let ref_a: &i32 = **ref_ref_ref_a;
+        let b: i32 = *ref_a;
+        println!("{}", b)
+    }
+  content_markdown: >
+    `*` 運算子是一個明確用來解參考一個參考的方式。
+
+
+    ```rust
+
+    let a: i32 = 42;
+
+    let ref_ref_ref_a: &&&i32 = &&&a;
+
+    let ref_a: &i32 = **ref_ref_ref_a;
+
+    let b: i32 = *ref_a;
+
+    ```
+
+
+    記憶體細節：
+
+    - 因為 i32 是一個有實作 `Copy` 特徵的原始型別，所以在堆疊上變量 `a` 的位元組會被複製到變量 `b` 的位元組裡。
+- title: 運算子 .
+  code: |-
+    struct Foo {
+        value: i32
+    }
+
+    fn main() {
+        let f = Foo { value: 42 };
+        let ref_ref_ref_f = &&&f;
+        println!("{}", ref_ref_ref_f.value);
+    }
+  content_markdown: >
+    `.` 運算子被用來存取一個參考的欄位及方法。它的運作方式稍微精妙一點。
+
+
+    ```rust
+
+    let f = Foo { value: 42 };
+
+    let ref_ref_ref_f = &&&f;
+
+    println!("{}", ref_ref_ref_f.value);
+
+    ```
+
+
+    哇，為什麼我們不需要在 `ref_ref_ref_f` 前面加上 `***` 呢？這是因為 `.` 運算子會自動地解參考一連串的參考。
+    最後一行會被編譯器自動轉換成以下這樣：
+
+
+    ```rust
+
+    println!("{}", (***ref_ref_ref_f).value);
+
+    ```
+- title: 智慧指標
+  code: |
+    use std::ops::Deref;
+    struct TattleTell<T> {
+        value: T,
+    }
+    impl<T> Deref for TattleTell<T> {
+        type Target = T;
+        fn deref(&self) -> &T {
+            println!("{} was used!", std::any::type_name::<T>());
+            &self.value
+        }
+    }
+    fn main() {
+        let foo = TattleTell {
+            value: "secret message",
+        };
+        // dereference occurs here immediately 
+        // after foo is auto-referenced for the
+        // function `len`
+        println!("{}", foo.len());
+    }
+  content_markdown: >
+    除了可以用 `&` 運算子來為已存在型別的資料建立參考之外，Rust 也讓我們有能力建立一種*類參考*的結構，稱作**智慧指標**。
+
+
+    我們可以把參考想像成一個較高層次的型別，它讓我們能夠存取另一個型別。智慧指標與一般的參考不同的地方在於，
+    它們的行為是根據程式設計師所寫的內部邏輯來運作的。你——這位程式設計師——就是那個*智慧*的部分。
+
+
+    通常智慧指標會實作 `Deref`、`DerefMut` 及 `Drop` 這些特徵，用來指定當這個結構被 `*` 及 `.` 運算子解參考時應該發生什麼事。
+- title: 智慧的不安全程式碼
+  code: |
+    fn main() {
+        let a: [u8; 4] = [86, 14, 73, 64];
+        // this is a raw pointer. Getting the memory address
+        // of something as a number is totally safe
+        let pointer_a = &a as *const u8 as usize;
+        println!("Data memory location: {}", pointer_a);
+        // Turning our number into a raw pointer to a f32 is
+        // also safe to do.
+        let pointer_b = pointer_a as *const f32;
+        let b = unsafe {
+            // This is unsafe because we are telling the compiler
+            // to assume our pointer is a valid f32 and
+            // dereference its value into the variable b.
+            // Rust has no way to verify this assumption is true.
+            *pointer_b
+        };
+        println!("I swear this is a pie! {}", b);
+    }
+  content_markdown: >
+    智慧指標常常會使用*不安全*的程式碼。如同前面提過的，它們是用來與 Rust 裡最底層的記憶體互動的常見工具。
+
+
+    什麼是不安全的程式碼呢？不安全的程式碼跟一般的 Rust 程式碼運作方式完全相同，只是多了一些 Rust 編譯器無法保證的能力。
+
+
+    不安全程式碼的一個主要能力，就是*解參考一個原始指標*。這代表拿一個*原始指標*指向記憶體裡的某個位置，並宣告「這裡存在一個資料結構！」，
+    然後把它轉換成你可以使用的資料表示方式 (例如：把 `*const u8` 轉成 `u8`)。
+
+
+    Rust 沒有辦法追蹤寫入記憶體的每一個位元組代表的意義。因為 Rust 無法保證某個被當作*原始指標*使用的任意數字所指向的位置究竟存在什麼，
+    所以它把解參考這個動作放進一個 `unsafe { ... }` 區塊裡。
+
+
+    智慧指標會大量地*解參考原始指標*，但它們在這方面的作法已經被證實是可靠的。
+- title: 熟悉的老朋友
+  code: |
+    use std::alloc::{alloc, Layout};
+    use std::ops::Deref;
+
+    struct Pie {
+        secret_recipe: usize,
+    }
+
+    impl Pie {
+        fn new() -> Self {
+            // let's ask for 4 bytes
+            let layout = Layout::from_size_align(4, 1).unwrap();
+
+            unsafe {
+                // allocate and save the memory location as a number
+                let ptr = alloc(layout) as *mut u8;
+                // use pointer math and write a few 
+                // u8 values to memory
+                ptr.write(86);
+                ptr.add(1).write(14);
+                ptr.add(2).write(73);
+                ptr.add(3).write(64);
+
+                Pie { secret_recipe: ptr as usize }
+            }
+        }
+    }
+    impl Deref for Pie {
+        type Target = f32;
+        fn deref(&self) -> &f32 {
+            // interpret secret_recipe pointer as a f32 raw pointer
+            let pointer = self.secret_recipe as *const f32;
+            // dereference it into a return value &f32
+            unsafe { &*pointer }
+        }
+    }
+    fn main() {
+        let p = Pie::new();
+        // "make a pie" by dereferencing our 
+        // Pie struct smart pointer
+        println!("{:?}", *p);
+    }
+  content_markdown: >
+    來看看一些我們已經見過的智慧指標，例如 `Vec<T>` 及 `String`。
+
+
+    `Vec<T>` 是一個智慧指標，它擁有一段位元組的記憶體區域。Rust 編譯器完全不知道這些位元組裡有什麼東西。
+    這個智慧指標會負責解讀從它所管理的記憶體區域裡取得元素代表的意思，追蹤這些位元組裡的資料結構是從哪裡開始、在哪裡結束，
+    最後再把一個原始指標解參考成資料結構，變成一個乾淨、符合人體工學的介面讓我們可以使用 (例如：`my_vec[3]`)。
+
+
+    同樣地，`String` 也會追蹤一段位元組的記憶體區域，並且以程式的方式限制寫入其中的內容永遠都是合法的 `utf-8`，
+    並協助把那段記憶體區域解參考成型別 `&str`。
+
+
+    這兩種資料結構都使用了不安全的原始指標解參考來完成它們的工作。
+
+
+    記憶體細節：
+
+    * Rust 有一個相當於 C 語言裡 `malloc` 的東西，就是
+    [alloc](https://doc.rust-lang.org/std/alloc/fn.alloc.html) 及
+    [Layout](https://doc.rust-lang.org/std/alloc/struct.Layout.html)，讓你能夠取得自己的記憶體區域來管理。
+- title: 分配在堆上的記憶體
+  code: |
+    struct Pie;
+
+    impl Pie {
+        fn eat(&self) {
+            println!("tastes better on the heap!")
+        }
+    }
+
+    fn main() {
+        let heap_pie = Box::new(Pie);
+        heap_pie.eat();
+    }
+  content_markdown: >
+    `Box` 是一個智慧指標，讓我們可以把資料從堆疊搬到堆上。
+
+
+    解參考它可以讓我們用符合人體工學的方式使用堆上分配的資料，就好像它還是原本的型別一樣。
+- title: 重新認識可能會失敗的 main
+  code: |
+    use std::fmt::Display;
+    use std::error::Error;
+
+    struct Pie;
+
+    #[derive(Debug)]
+    struct NotFreshError;
+
+    impl Display for NotFreshError {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "This pie is not fresh!")
+        }
+    }
+
+    impl Error for NotFreshError {}
+
+    impl Pie {
+        fn eat(&self) -> Result<(), Box<dyn Error>> {
+            Err(Box::new(NotFreshError))
+        }
+    }
+
+    fn main() -> Result<(), Box<dyn Error>> {
+        let heap_pie = Box::new(Pie);
+        heap_pie.eat()?;
+        Ok(())
+    }
+  content_markdown: >
+    Rust 的程式碼可能會用各種不同的方式來表示錯誤，但標準函式庫裡有一個通用的特徵 `std::error::Error` 用來描述錯誤。
+
+
+    使用智慧指標 `Box`，我們可以用型別 `Box<dyn std::error::Error>` 作為一個共通的型別來回傳錯誤，
+    因為它讓我們能夠把一個錯誤傳播到堆上，並且在不需要知道特定型別的情況下，用比較高的層次跟它互動。
+
+
+    在 Tour of Rust 一開始的時候，我們就學過 `main` 可以回傳一個錯誤。現在我們可以回傳一個型別，
+    只要這個錯誤的資料結構有實作 Rust 通用的 `Error` 特徵，這個型別就能夠描述幾乎任何可能在我們程式裡發生的錯誤。
+
+
+    ```rust
+
+    fn main() -> Result<(), Box<dyn std::error::Error>>
+
+    ```
+- title: 參考計數 (reference counting)
+  code: |
+    use std::rc::Rc;
+
+    struct Pie;
+
+    impl Pie {
+        fn eat(&self) {
+            println!("tastes better on the heap!")
+        }
+    }
+
+    fn main() {
+        let heap_pie = Rc::new(Pie);
+        let heap_pie2 = heap_pie.clone();
+        let heap_pie3 = heap_pie2.clone();
+
+        heap_pie3.eat();
+        heap_pie2.eat();
+        heap_pie.eat();
+
+        // all reference count smart pointers are dropped now
+        // the heap data Pie finally deallocates
+    }
+  content_markdown: >
+    `Rc` 是一個智慧指標，它會把資料從堆疊搬到堆上。它讓我們可以複製 (clone) 出其他的 `Rc` 智慧指標，
+    這些智慧指標都擁有以不可變的方式借用那份放在堆上的資料的能力。
+
+
+    只有當最後一個智慧指標被徹下時，堆上的資料才會被釋放。
+- title: 共享存取
+  code: |
+    use std::cell::RefCell;
+
+    struct Pie {
+        slices: u8
+    }
+
+    impl Pie {
+        fn eat(&mut self) {
+            println!("tastes better on the heap!");
+            self.slices -= 1;
+        }
+    }
+
+    fn main() {
+        // RefCell validates memory safety at runtime
+        // notice: pie_cell is not mut!
+        let pie_cell = RefCell::new(Pie{slices:8});
+        
+        {
+            // but we can borrow mutable references!
+            let mut mut_ref_pie = pie_cell.borrow_mut();
+            mut_ref_pie.eat();
+            mut_ref_pie.eat();
+            
+            // mut_ref_pie is dropped at end of scope
+        }
+        
+        // now we can borrow immutably once our mutable reference drops
+         let ref_pie = pie_cell.borrow();
+         println!("{} slices left",ref_pie.slices);
+    }
+  content_markdown: >
+    `RefCell` 是一個容器式的資料結構，通常由智慧指標持有，它接收資料，並且讓我們可以借用其中內容的可變及不可變參考。
+    當你要求借用其中的資料時，它會在執行期強制執行 Rust 的記憶體安全規則，藉此防止借用被濫用：
+
+
+    **只能有一個可變參考，或者多個不可變參考，但絕對不能兩者同時存在！**
+
+
+    如果你違反了這些規則，`RefCell` 就會發生 panic。
+- title: 跨執行緒共享
+  code: |
+    use std::sync::Mutex;
+
+    struct Pie;
+
+    impl Pie {
+        fn eat(&self) {
+            println!("only I eat the pie right now!");
+        }
+    }
+
+    fn main() {
+        let mutex_pie = Mutex::new(Pie);
+        // let's borrow a locked immutable reference of pie
+        // we have to unwrap the result of a lock
+        // because it might fail
+        let ref_pie = mutex_pie.lock().unwrap();
+        ref_pie.eat();
+        // locked reference drops here, and mutex protected value can be used by someone else
+    }
+  content_markdown: >
+    `Mutex` 是一個容器式的資料結構，通常也是由智慧指標持有，它接收資料，並且讓我們可以借用其中資料的可變及不可變參考。
+    這防止了借用被濫用的方式是，讓作業系統限制同一時間只有一個 CPU 執行緒可以存取這份資料，並且阻擋其他的執行緒，
+    直到原本那個執行緒完成它已鎖定的借用為止。
+
+
+    多執行緒已經超出了 Tour of Rust 的範圍，但 `Mutex` 是協調多個 CPU 執行緒存取同一份資料的一個基礎元件。
+
+
+    另外還有一個特殊的智慧指標 `Arc`，它跟 `Rc` 幾乎一模一樣，差別只在於它使用的是執行緒安全的方式來遞增參考計數。
+
+
+    它通常被用在需要對同一個 `Mutex` 保有許多參考的情況下。
+- title: 組合智慧指標
+  code: |
+    use std::cell::RefCell;
+    use std::rc::Rc;
+
+    struct Pie {
+        slices: u8,
+    }
+
+    impl Pie {
+        fn eat_slice(&mut self, name: &str) {
+            println!("{} took a slice!", name);
+            self.slices -= 1;
+        }
+    }
+
+    struct SeaCreature {
+        name: String,
+        pie: Rc<RefCell<Pie>>,
+    }
+
+    impl SeaCreature {
+        fn eat(&self) {
+            // use smart pointer to pie for a mutable borrow
+            let mut p = self.pie.borrow_mut();
+            // take a bite!
+            p.eat_slice(&self.name);
+        }
+    }
+
+    fn main() {
+        let pie = Rc::new(RefCell::new(Pie { slices: 8 }));
+        // ferris and sarah are given clones of smart pointer to pie
+        let ferris = SeaCreature {
+            name: String::from("ferris"),
+            pie: pie.clone(),
+        };
+        let sarah = SeaCreature {
+            name: String::from("sarah"),
+            pie: pie.clone(),
+        };
+        ferris.eat();
+        sarah.eat();
+
+        let p = pie.borrow();
+        println!("{} slices left", p.slices);
+    }
+  content_markdown: >
+    智慧指標看起來可能有些侷限，但它們可以組合出一些非常強大的用法。
+
+
+    `Rc<Vec<Foo>>` - 讓多個智慧指標可以被複製 (clone)，並借用堆上同一個不可變的資料結構的向量。
+
+
+    `Rc<RefCell<Foo>>` - 讓多個智慧指標有能力以可變/不可變的方式借用同一個結構 `Foo`。
+
+
+    `Arc<Mutex<Foo>>` - 讓多個智慧指標有能力以只限單一 CPU 執行緒獨占的方式，鎖定暫時的可變/不可變借用。
+
+
+    記憶體細節：
+
+    * 你會發現這些組合有一個共通的主題：使用一個不可變的資料型別 (可能被多個智慧指標所擁有) 來修改內部的資料。
+    這在 Rust 裡被稱作「內部可變性」(interior mutability) 這種模式。它是一種讓我們可以在執行期繞過記憶體使用規則的模式，
+    同時還能保有跟 Rust 在編譯期檢查一樣的安全等級。
+- title: 第八章 - 總結
+  content_markdown: >
+    智慧指標是 Rust 程式設計裡的慣用手法，它讓我們不需要重新建立那些非常常見的記憶體使用模式。
+    有了它們，你已經準備好迎接最艱難的挑戰了！
+
+
+    現在我們已經掌握了 Rust 的基礎，讓我們稍微來談談如何建立更大型的專案。在第九章，我們將擺脫把所有程式碼都寫在單一頁面裡的限制。
