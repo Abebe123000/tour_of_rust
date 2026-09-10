@@ -29,9 +29,9 @@
     * Compilatorul de Rust va pune probabil șirul de caractere în segmentul de date al
     memoriei programului dumneavoastră.
   code: |
-    fn+main()+{
-    ++++let+a:+&'static+str+=+"salut+🦀";
-    ++++println!("{}+{}",+a,+a.len());
+    fn main() {
+        let a: &'static str = "salut 🦀";
+        println!("{} {}", a, a.len());
     }
 - title: Ce este utf-8
   content_markdown: "Pe măsură ce tot mai multe limbi au început a fi folosite pe calculatoare, lumea a avut nevoie de modalități de reprezentare a mai multor caractere de text\ndecat ASCII permitea (1 byte permitea numai 256 de caractere). \n\nA fost introdus **utf-8**, având o lungime variabilă de bytes (1-4 bytes), lucru ce a crescut considerabil gama de caractere posibile.\n\nUn avantaj al caracterelor de dimensiuni variabile este că textul nu mai are octeți inutili pentru caractere ASCII foarte comune (necesitând doar 1 octet în **utf-8**).\n\nUn dezavantaj al caracterelor de dimensiuni variabile este faptul că căutarea caracterelor nu se mai poate face rapid \n(timp constant **O(1)**) cu o simplă indexare (exemplu: `my_text[3]` pentru a obține al patrulea caracter). Este posibil ca\ncaracterele anterioare să aibă lățimi variabile, modificând locul în care începe de fapt al 4-lea caracter în secvența de octeți.\n\nTrebuie în schimb să parcurgem o secvență **utf-8** de octeți pentru a înțelege unde încep de fapt caracterele Unicode (timp liniar **O(n)**).\n\nFerris: \"În mare parte, doar mă bucur că am **utf-8** pentru a reprezenta emoticoane cu prietenii mei subacvatici.\"\n\n<span class=\"emoji\">\U0001F420\U0001F419\U0001F41F\U0001F42C\U0001F40B</span>\n"
@@ -69,17 +69,17 @@
 
     Folosiți un `\` la sfârșitul rândului dacă nu doriți să se facă o întrerupere de rând.
   code: |
-    fn+main()+{
-    ++++let+haiku:+&'static+str+=+"
-    ++++++++Scriu,+șterg,+rescriu
-    ++++++++Șterg+iarăși,+și+apoi
-    ++++++++Înflorește+un+mac.
-    ++++++++-+Katsushika+Hokusai";
-    ++++println!("{}",+haiku);
-    ++++
-    ++++
-    ++++println!("salutare+\
-    ++++lume")+//+observați+cum+spațierea+de+dinainte+de+„l”+este+ignorată
+    fn main() {
+        let haiku: &'static str = "
+            Scriu, șterg, rescriu
+            Șterg iarăși, și apoi
+            Înflorește un mac.
+            - Katsushika Hokusai";
+        println!("{}", haiku);
+
+
+        println!("salutare \
+        lume") // observați cum spațierea de dinainte de „l” este ignorată
     }
 - title: Șiruri de caractere literale brute
   content_markdown: >
@@ -142,12 +142,12 @@
 
     Un `char` are întotdeauna o lungime de 4 octeți (ceea ce permite o căutare eficientă după caractere individuale).
   code: |
-    fn+main()+{
-    ++++//+colectează+caracterele+ca+vector+de+char-uri
-    ++++let+chars+=+"salut+🦀".chars().collect::<Vec<char>>();
-    ++++println!("{}",+chars.len());+//+ar+trebui+să+fie+7
-    ++++//+cum+un+char+ocupă+4+octeți,+putem+converti+la+u32
-    ++++println!("{}",+chars[3]+as+u32);
+    fn main() {
+        // colectează caracterele ca vector de char-uri
+        let chars = "salut 🦀".chars().collect::<Vec<char>>();
+        println!("{}", chars.len()); // ar trebui să fie 7
+        // cum un char ocupă 4 octeți, putem converti la u32
+        println!("{}", chars[3] as u32);
     }
 - title: Șiruri de caractere
   content_markdown: >
@@ -190,15 +190,15 @@
     Acest lucru oferă o mare flexibilitate în majoritatea scenariilor, când nu este nevoie
     să transmiteți de fapt proprietatea (ownership).
   code: |
-    fn+spune_tare(mesaj:&str){
-    ++++println!("{}!!!",mesaj.to_string().to_uppercase());
+    fn spune_tare(mesaj:&str){
+        println!("{}!!!",mesaj.to_string().to_uppercase());
     }
 
-    fn+main()+{
-    ++++//+spune_tare+poate+împrumuta+un+&'static+str+ca+&str
-    ++++spune_tare("salut");
-    ++++//+spune_tare+poate,+de+asemenea,+împrumuta+un+String+ca+&str
-    ++++spune_tare(&String::from("la+revedere"));
+    fn main() {
+        // spune_tare poate împrumuta un &'static str ca &str
+        spune_tare("salut");
+        // spune_tare poate, de asemenea, împrumuta un String ca &str
+        spune_tare(&String::from("la revedere"));
     }
 - title: Construirea șirurilor de caractere
   content_markdown: |
@@ -222,10 +222,10 @@
     Capabilitățile acestei funcții sunt de o amploare prea mare pentru *Turul limbajului Rust*;
     puteți consulta documentația [aici](https://doc.rust-lang.org/std/fmt/).
   code: |
-    fn+main()+{
-    ++++let+a+=+42;
-    ++++let+f+=+format!("secretul+vieții:+{}",a);
-    ++++println!("{}",f);
+    fn main() {
+        let a = 42;
+        let f = format!("secretul vieții: {}",a);
+        println!("{}",f);
     }
 - title: Convertirea șirurilor de caractere
   content_markdown: |

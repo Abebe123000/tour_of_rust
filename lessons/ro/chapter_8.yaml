@@ -585,7 +585,7 @@
       se mai numește și pattern-ul "mutabilității interne" în Rust. Este un pattern ce ne permite să ocolim regulile de întrebuințare a memoriei la rulare cu același nivel de siguranță ca
       verificarea la compilare a limbajului Rust.
 
-- title: Chapter 8 - Concluzii
+- title: Capitolul 8 - Concluzii
   content_markdown: >
     Pointerii inteligenți sunt expresii specifice programării în Rust ce ne scutesc
     de recrearea

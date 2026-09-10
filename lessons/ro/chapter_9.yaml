@@ -34,9 +34,8 @@
 
 
     O modalitate mai simplă este cuvântul cheie **use**. Acesta ne permite să specificăm
-    anumite elemente din modulele pe care dorim să le
-
-    să folosim în tot codul nostru fără o cale completă. Spre exemplu `use
+    anumite elemente din modulele pe care dorim
+    să le folosim în tot codul nostru fără o cale completă. Spre exemplu `use
     std::f64::consts::PI`
 
     îmi permite să folosesc doar identificatorul `PI` în funcția mea principală.
@@ -46,7 +45,7 @@
     structuri de date și funcții utile pentru interacțiunea cu sistemul de operare.
 
 
-    Un repertoriu de căutare a cutiilor (în denumite engleza *crate*) create de comunitate poate fi găsit la adresa
+    Un repertoriu de căutare a cutiilor (denumite *crate* în engleză) create de comunitate poate fi găsit la adresa
     [https://crates.io](https://crates.io/).
 - title: Referința la mai multe elemente
   content_markdown: |
@@ -150,7 +149,7 @@
     }
 - title: Preludiu
   content_markdown: |
-    Poate vă întrebați cum de avem acces la `Vec` sau `Box`.
+    Poate vă întrebați cum de avem acces la `Vec` sau `Box`
     peste tot, fără un `use` pentru a le importa. Acest lucru se datorează modulului
     `prelude` din biblioteca standard.
 
