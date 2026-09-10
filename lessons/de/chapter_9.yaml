@@ -157,7 +157,7 @@
     aber es ist eine Konvention dem zu folgen, damit Benutzer wissen, wo sie starten können.
 
     Ferris sagt, "Sein ein guter Rustacean und hilf einer verbündeten Krabbe mit einem guten Prelude"
-- title: Chapter 9 - Fazit
+- title: Kapitel 9 - Fazit
   content_markdown: >
     Jetzt hast Du ein paar Tricks in der Tasche, wenn es um das Schreiben von Rust Programmen und Bibliotheken geht,
     die auf der ganzen Welt verwendet werden. Mach Dir keine Gedanken, an alles zu denken. Sobald deine Bibliothek
