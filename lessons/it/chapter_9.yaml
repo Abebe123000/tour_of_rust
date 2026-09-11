@@ -1,0 +1,191 @@
+- title: Capitolo 9 - Organizzazione E Struttura Del Progetto
+  content_markdown: >
+    Finora tutti i nostri esempi di codice sono stati in un singolo
+    file. Parliamo di come il nostro codice può essere organizzato
+    meglio e condiviso con altri!
+- title: Moduli
+  content_markdown: |
+    Ogni programma o libreria Rust è un *crate*.
+
+    Ogni crate è composto da una gerarchia di *moduli*.
+
+    Ogni crate ha un modulo radice (root module).
+
+    Un modulo può contenere variabili globali, funzioni, struct, trait o
+    persino altri moduli!
+
+    In Rust non esiste una corrispondenza uno a uno tra i file e la
+    gerarchia ad albero dei moduli. Dobbiamo costruire l'albero dei
+    moduli esplicitamente, a mano, nel nostro codice.
+- title: Scrivere Un Programma
+  content_markdown: |
+    Un programma ha un modulo radice in un file chiamato `main.rs`.
+- title: Scrivere Una Libreria
+  content_markdown: |
+    Una libreria ha un modulo radice in un file chiamato `lib.rs`.
+- title: Fare Riferimento Ad Altri Moduli E Crate
+  code: |
+    use std::f64::consts::PI;
+
+    fn main() {
+        println!("Welcome to the playground!");
+        println!("I would love a slice of {}!", PI);
+    }
+  content_markdown: >
+    Gli elementi nei moduli possono essere referenziati con il loro
+    percorso completo, `std::f64::consts::PI`.
+
+
+    Un modo più semplice è la parola chiave **use**. Ci permette di
+    specificare elementi particolari dai moduli che vogliamo usare in
+    tutto il nostro codice, senza un percorso completo. Per esempio,
+    `use std::f64::consts::PI` mi permette di usare solo l'identificatore
+    `PI` nella mia funzione main.
+
+
+    **std** è il crate della **libreria standard** di Rust, pieno di
+    strutture dati e funzioni utili per interagire con il tuo sistema
+    operativo.
+
+
+    Un elenco navigabile di crate creati dalla comunità si trova su
+    [https://crates.io](https://crates.io/).
+- title: Fare Riferimento A Più Elementi
+  content_markdown: |
+    Più elementi possono essere referenziati in un unico percorso di
+    modulo, così:
+
+    ```rust
+    use std::f64::consts::{PI,TAU}
+    ```
+
+    Ferris non mangia TAU, mangia solo PI.
+- title: Creare Moduli
+  content_markdown: |
+    Quando pensiamo al codice, di solito immaginiamo una gerarchia di
+    file organizzati in directory. Rust ti permette di creare moduli
+    strettamente legati alla struttura dei tuoi file.
+
+    Ci sono due modi in Rust per dichiarare un modulo. Per esempio, un
+    modulo `foo` può essere rappresentato come:
+      * un file chiamato `foo.rs`
+      * una directory chiamata `foo` con dentro un file `mod.rs`
+- title: Gerarchia Dei Moduli
+  content_markdown: >
+    Un modulo può dipendere da un altro. Per stabilire una relazione tra
+    un modulo e il suo sotto-modulo, devi scrivere nel modulo genitore:
+
+
+    ```rust
+
+    mod foo;
+
+    ```
+
+
+    La dichiarazione sopra cercherà un file chiamato `foo.rs` o
+    `foo/mod.rs` e inserirà il suo contenuto dentro un modulo chiamato
+    `foo`, in questo ambito.
+- title: Modulo Inline
+  content_markdown: >
+    Un sotto-modulo può essere direttamente inserito in linea (inline)
+    dentro il codice di un modulo.
+
+
+    Un uso molto comune dei moduli inline è la creazione di unit test.
+    Creiamo un modulo inline che esiste solo quando Rust viene usato per
+    i test!
+
+
+    ```
+
+    // This macro removes this inline module when Rust
+
+    // is not in test mode.
+
+    #[cfg(test)]
+
+    mod tests {
+        // Notice that we don't immediately get access to the
+        // parent module. We must be explicit.
+        use super::*;
+
+        ... tests go here ...
+    }
+
+    ```
+- title: Riferimenti Interni Ai Moduli
+  content_markdown: >
+    Rust ha diverse parole chiave che puoi usare nel tuo percorso `use`
+    per raggiungere rapidamente il modulo che vuoi:
+
+
+    * `crate` - il modulo radice del tuo crate
+
+    * `super` - il modulo genitore del tuo modulo attuale
+
+    * `self` - il modulo attuale
+- title: Esportazione
+  content_markdown: >
+    Per impostazione predefinita, i membri di un *modulo* non sono
+    accessibili dall'esterno del modulo (nemmeno dai suoi moduli figli!).
+    Rendiamo i membri di un modulo accessibili usando la parola chiave
+    `pub`.
+
+
+    Per impostazione predefinita, i membri di un *crate* non sono
+    accessibili dall'esterno del crate. Rendiamo i membri di un crate
+    accessibili marcandoli come `pub` nel *modulo radice* del tuo crate
+    (`lib.rs` o `main.rs`).
+- title: Visibilità Delle Struct
+  content_markdown: >
+    Proprio come le funzioni, le struct possono dichiarare cosa vogliono
+    esporre fuori dal loro modulo usando `pub`.
+  code: |
+    // SeaCreature struct will be usable outside of our module
+    pub struct SeaCreature {
+        pub animal_type: String,
+        pub name: String,
+        pub arms: i32,
+        pub legs: i32,
+        // let's keep our weapon private
+        weapon: String,
+    }
+- title: Prelude
+  content_markdown: |
+    Potresti chiederti come abbiamo accesso a `Vec` o `Box` ovunque
+    senza un `use` per importarli. È grazie al modulo `prelude` nella
+    libreria standard.
+
+    Sappi che nella libreria standard di Rust, tutto ciò che viene
+    esportato in `std::prelude::*` è automaticamente disponibile in ogni
+    parte di Rust. Questo è il caso di `Vec` e `Box`, ma anche di altri
+    (Option, Copy, ecc.).
+- title: Il Tuo Prelude Personale
+  content_markdown: >
+    Grazie al prelude della libreria standard, è comune che la tua
+    libreria abbia un proprio modulo prelude come punto di partenza, da
+    cui gli utenti possono importare tutte le strutture dati più comuni
+    necessarie per usare la tua libreria (es. `use
+    my_library::prelude::*`).
+
+
+    Non viene usato automaticamente nei programmi/librerie che usano il
+    tuo crate, ma è una buona convenzione da seguire, così le persone
+    sanno da dove iniziare.
+
+
+    Ferris dice: "Sii un buon rustacean e aiuta un altro granchio con un
+    buon prelude!"
+- title: Capitolo 9 - Conclusione
+  content_markdown: >
+    Ora hai qualche trucco nella manica quando si tratta di creare
+    applicazioni e librerie Rust pronte per il mondo. Non preoccuparti
+    di ricordare tutto. Man mano che la tua libreria cresce e viene
+    usata da altre persone, scoprirai cosa funziona meglio a ogni tappa.
+
+
+    Risorse:
+
+    - [Guidelines For Writing Rust
+    APIs](https://rust-lang.github.io/api-guidelines/)
