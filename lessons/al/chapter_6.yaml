@@ -1,0 +1,280 @@
+- title: Kapitulli 6 - Teksti
+  content_markdown: >
+    Tani që kuptojmë pak se si Rust e mendon kujtesën, jemi gati të
+    flasim për tekstin në mënyrë më të detajuar.
+
+
+    Rust kujdeset shumë për tekstin ndërkombëtar dhe çështjet në
+    nivel bajti që mund të mos jenë të njohura për ju nga gjuhë të
+    tjera. Megjithatë, Rust ka shumë mjete të shkëlqyera për të
+    menaxhuar këto çështje.
+- title: Literalet E Vargjeve
+  content_markdown: >
+    Literalet e vargjeve janë gjithmonë Unicode.
+
+
+    Lloji i literaleve të vargjeve është `&'static str`:
+
+
+    * `&` do të thotë se i referohet një vendi në kujtesë, dhe
+    mungesa e `&mut` do të thotë se përpiluesi nuk do të lejojë
+    modifikim
+
+    * `'static` do të thotë se të dhënat e vargut do të jenë të
+    disponueshme deri në fund të programit tonë (nuk lëshohet kurrë)
+
+    * `str` do të thotë se tregon drejt një sekuence bajtësh që
+    është gjithmonë **utf-8** e vlefshme
+
+
+    Detaje kujtese:
+
+    * Përpiluesi i Rust ka gjasa ta vendosë vargun tuaj në segmentin
+    e të dhënave të kujtesës së programit tuaj
+  code: |
+    fn main() {
+        let a: &'static str = "hi 🦀";
+        println!("{} {}", a, a.len());
+    }
+- title: Çfarë Është Utf-8
+  content_markdown: "Ndërsa më shumë gjuhë filluan të përdoreshin në kompjuterë, bota kishte nevojë të përfaqësonte më shumë karaktere teksti\nse sa lejonte ASCII (1 bajt lejonte vetëm 256 karaktere).\n\n**utf-8** u prezantua me një gjatësi të ndryshueshme prej 1-4 bajtësh, duke rritur ndjeshëm gamën e karaktereve të mundshme.\n\nNjë avantazh i karaktereve me përmasa të ndryshueshme është se teksti nuk ka bajte të panevojshme për karakteret shumë të zakonshme ASCII (që kërkojnë prapëseprapë vetëm 1 bajt në **utf-8**).\n\nNjë disavantazh i karaktereve me përmasa të ndryshueshme është se kërkimi i karaktereve nuk mund të bëhet më shpejt\n(në kohë konstante **O(1)**) me indeksim të thjeshtë (p.sh. `my_text[3]` për të marrë karakterin e 4-t). Është e mundur që\nkarakteret paraardhëse të kenë gjerësi të ndryshme, duke ndryshuar aty ku fillon në të vërtetë karakteri i 4-t brenda sekuencës së bajtëve.\n\nNë vend të kësaj duhet të iterojmë nëpër një sekuencë bajtësh **utf-8** për të kuptuar ku fillojnë në të vërtetë karakteret Unicode (në kohë lineare **O(n)**).\n\nFerris: \"Kryesisht jam thjesht i lumtur që kam **utf-8** për të përfaqësuar emojet e miqve të mi nënujorë.\"\n\n<span class=\"emoji\">\U0001F420\U0001F419\U0001F41F\U0001F42C\U0001F40B</span>\n"
+- title: Karakteret E Shpëtimit
+  content_markdown: >
+    Është e vështirë të përfaqësosh vizualisht disa karaktere, kështu
+    që **kodet e shpëtimit** (escape codes) na lejojnë të vendosim
+    një simbol në vendin e tyre.
+
+
+    Rust mbështet kodet e zakonshme të shpëtimit nga gjuhët e bazuara
+    në C:
+
+    * `\n` - rresht i ri
+
+    * `\r` - kthim karrocë
+
+    * `\t` - tabulator
+
+    * `\\` - vijë e pjerrët e kundërt
+
+    * `\0` - karakter null
+
+    * `\'` - thonjëz e vetme
+
+
+    Listën e plotë e gjeni
+    [këtu](https://doc.rust-lang.org/reference/tokens.html).
+  code: |
+    fn main() {
+        let a: &'static str = "Ferris says:\t\"hello\"";
+        println!("{}",a);
+    }
+- title: Literalet E Vargjeve Me Shumë Rreshta
+  content_markdown: |
+    Vargjet në Rust janë me shumë rreshta si parazgjedhje.
+
+    Përdorni `\` në fund të një rreshti nëse nuk doni një ndërprerje
+    rreshti.
+  code: |
+    fn main() {
+        let haiku: &'static str = "
+            I write, erase, rewrite
+            Erase again, and then
+            A poppy blooms.
+            - Tachibana Hokushi";
+        println!("{}", haiku);
+        
+        
+        println!("hello \
+        world") // notice that the spacing before w is ignored
+    }
+- title: Literalet E Vargjeve Të Papërpunuara
+  content_markdown: >
+    Vargjet e papërpunuara (raw strings) na lejojnë të shkruajmë një
+    sekuencë karakteresh fjalë për fjalë duke filluar me `r#"` dhe
+    duke përfunduar me `"#`. Kjo na lejon të fusim karaktere që
+    përndryshe mund të ngatërronin një varg normal si literale (si
+    thonjëzat e dyfishta dhe vijat e pjerrëta të kundërta).
+  code: |
+    fn main() {
+        let a: &'static str = r#"
+            <div class="advice">
+                Raw strings are useful for some situations.
+            </div>
+            "#;
+        println!("{}", a);
+    }
+- title: Literalet E Vargjeve Nga Skedarët
+  content_markdown: >
+    Nëse keni një tekst shumë të madh, konsideroni përdorimin e
+    makros `include_str!` për të përfshirë tekst nga skedarë lokalë
+    në programin tuaj:
+
+
+    ```rust
+
+    let hello_html = include_str!("hello.html");
+
+    ```
+- title: Fragmenti I Vargut
+  content_markdown: >
+    Një fragment vargu (string slice) është një referencë ndaj një
+    sekuence bajtësh në kujtesë që duhet të jetë gjithmonë utf-8 e
+    vlefshme.
+
+
+    Edhe një fragment (nën-fragment) i një fragmenti `str` duhet të
+    jetë utf-8 i vlefshëm.
+
+
+    Metoda të zakonshme të `&str`:
+
+    * `len` merr gjatësinë e literalit të vargut në bajte (jo numrin
+    e karaktereve).
+
+    * `starts_with`/`ends_with` për testime bazë.
+
+    * `is_empty` kthen `true` nëse gjatësia është zero.
+
+    * `find` kthen një `Option<usize>` të pozicionit të parë të një
+    teksti.
+  code: |
+    fn main() {
+        let a = "hi 🦀";
+        println!("{}", a.len());
+        let first_word = &a[0..2];
+        let second_word = &a[3..7];
+        // let half_crab = &a[3..5]; FAILS
+        // Rust does not accept slices of invalid unicode characters
+        println!("{} {}", first_word, second_word);
+    }
+- title: Karakteret (Chars)
+  content_markdown: >
+    Me kaq shumë vështirësi në punën me Unicode, Rust ofron një mënyrë
+    për të marrë një sekuencë bajtësh utf-8 si një vektor karakteresh
+    të tipit `char`.
+
+
+    Një `char` është gjithmonë 4 bajte i gjatë (duke lejuar kërkim
+    efikas të karaktereve individuale).
+  code: |
+    fn main() {
+        // collect the characters as a vector of char
+        let chars = "hi 🦀".chars().collect::<Vec<char>>();
+        println!("{}", chars.len()); // should be 4
+        // since chars are 4 bytes we can convert to u32
+        println!("{}", chars[3] as u32);
+    }
+- title: String
+  content_markdown: >
+    Një **String** është një struct që zotëron një sekuencë bajtësh
+    utf-8 në kujtesën grumbull.
+
+
+    Meqenëse kujtesa e tij ndodhet në grumbull, mund të zgjerohet,
+    modifikohet, etj., në mënyra që literalet e vargjeve nuk mund.
+
+
+    Metoda të zakonshme:
+
+
+    * `push_str` për të shtuar më shumë bajte utf-8 në fund të një
+    vargu.
+
+    * `replace` për të zëvendësuar sekuenca bajtësh utf-8 me të
+    tjera.
+
+    * `to_lowercase`/`to_uppercase` për ndryshime të shkronjave të
+    mëdha/vogla.
+
+    * `trim` për të prerë hapësirat.
+
+
+    Kur një String lëshohet, lëshohet gjithashtu edhe kujtesa e tij
+    grumbull.
+
+
+    `String` ka një operator `+` që zgjeron vargun me një `&str` dhe
+    kthen veten, por mund të mos jetë aq ergonomik sa do të
+    shpresonit.
+  code: |
+    fn main() {
+        let mut helloworld = String::from("hello");
+        helloworld.push_str(" world");
+        helloworld = helloworld + "!";
+        println!("{}", helloworld);
+    }
+- title: Teksti Si Parametër Funksioni
+  content_markdown: >
+    Literalet e vargjeve dhe vargjet zakonisht kalohen te funksionet
+    si fragment vargu. Kjo ofron shumë fleksibilitet për shumicën e
+    skenarëve ku në të vërtetë nuk keni nevojë të transferoni
+    pronësinë.
+  code: |
+    fn say_it_loud(msg:&str){
+        println!("{}!!!",msg.to_string().to_uppercase());
+    }
+
+    fn main() {
+        // say_it_loud can borrow &'static str as a &str
+        say_it_loud("hello");
+        // say_it_loud can also borrow String as a &str
+        say_it_loud(&String::from("goodbye"));
+    }
+- title: Ndërtimi I Vargjeve
+  content_markdown: |
+    `concat` dhe `join` janë dy mënyra të thjeshta por të fuqishme
+    për të ndërtuar vargje.
+  code: |
+    fn main() {
+        let helloworld = ["hello", " ", "world", "!"].concat();
+        let abc = ["a", "b", "c"].join(",");
+        println!("{}", helloworld);
+        println!("{}",abc);
+    }
+- title: Formatimi I Vargjeve
+  content_markdown: >
+    Makro-ja `format!` na lejon të krijojmë një varg duke përcaktuar
+    një varg të parametrizuar me vendmbajtës për ku dhe si duhet të
+    vendosen vlerat (p.sh. `{}`).
+
+
+    `format!` përdor të njëjtat vargje të parametrizuara si `println!`
+
+
+    Aftësitë e këtij funksioni janë shumë të gjera për fushëveprimin
+    e *Tour of Rust*; shikoni
+    [dokumentacionin](https://doc.rust-lang.org/std/fmt/) për më
+    shumë.
+  code: |
+    fn main() {
+        let a = 42;
+        let f = format!("secret to life: {}",a);
+        println!("{}",f);
+    }
+- title: Konvertimi I Vargjeve
+  content_markdown: |
+    Shumë lloje mund të konvertohen në varg duke përdorur
+    `to_string`.
+
+    Funksioni gjenerik `parse` mund të përdoret për të konvertuar
+    vargje ose literale vargu në një vlerë të tipizuar. Ky funksion
+    kthen një `Result` sepse mund të dështojë.
+  code: |
+    fn main() -> Result<(), std::num::ParseIntError> {
+        let a = 42;
+        let a_string = a.to_string();
+        let b = a_string.parse::<i32>()?;
+        println!("{} {}", a, b);
+        Ok(())
+    }
+- title: Kapitulli 6 - Përfundim
+  content_markdown: >
+    Tani i dini bazat e tekstit! Siç e keni parë, Unicode e bën punën
+    me tekstin pak më të ndërlikuar, por biblioteka standarde ka
+    shumë funksionalitet që e bën më të lehtë menaxhimin e tij.
+
+
+    Deri tani, kemi parë Rust kryesisht nga perspektiva e një
+    paradigme procedurale (d.m.th. vetëm funksione dhe të dhëna), por
+    tani është koha të flasim për traitet dhe aftësitë që hap
+    paradigma e orientuar drejt objekteve e Rust.

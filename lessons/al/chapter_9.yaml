@@ -1,0 +1,196 @@
+- title: Kapitulli 9 - Organizimi Dhe Struktura E Projektit
+  content_markdown: >
+    Deri tani të gjitha shembujt tanë të kodit kanë qenë në një skedar
+    të vetëm. Le të flasim se si kodi ynë mund të organizohet më mirë
+    dhe të ndahet me të tjerë!
+- title: Modulet
+  content_markdown: |
+    Çdo program apo bibliotekë Rust është një *crate*.
+
+    Çdo crate përbëhet nga një hierarki *modulesh*.
+
+    Çdo crate ka një modul rrënjë (root module).
+
+    Një modul mund të mbajë variabla globale, funksione, struct-e,
+    traite, apo edhe module të tjera!
+
+    Në Rust nuk ka një korrespondencë një-me-një mes skedarëve dhe
+    hierarkisë së pemës së moduleve. Duhet ta ndërtojmë pemën e
+    moduleve në mënyrë eksplicite, me dorë, në kodin tonë.
+- title: Shkrimi I Një Programi
+  content_markdown: |
+    Një program ka një modul rrënjë në një skedar të quajtur
+    `main.rs`.
+- title: Shkrimi I Një Biblioteke
+  content_markdown: |
+    Një bibliotekë ka një modul rrënjë në një skedar të quajtur
+    `lib.rs`.
+- title: Referimi I Moduleve Dhe Crate-ve Të Tjera
+  code: |
+    use std::f64::consts::PI;
+
+    fn main() {
+        println!("Welcome to the playground!");
+        println!("I would love a slice of {}!", PI);
+    }
+  content_markdown: >
+    Elementet brenda moduleve mund të referohen me shtegun e tyre të
+    plotë të modulit, `std::f64::consts::PI`.
+
+
+    Një mënyrë më e thjeshtë është fjala kyçe **use**. Na lejon të
+    specifikojmë elementë të veçantë nga modulet që duam t'i
+    përdorim në të gjithë kodin tonë, pa shtegun e plotë. Për
+    shembull, `use std::f64::consts::PI` më lejon të përdor thjesht
+    identifikuesin `PI` në funksionin tim main.
+
+
+    **std** është crate-i i **bibliotekës standarde** të Rust, e cila
+    është plot me struktura të dhënash dhe funksione të dobishme për
+    të ndërvepruar me sistemin tuaj operativ.
+
+
+    Një direktori e kërkueshme crate-esh të krijuara nga komuniteti
+    mund të gjendet në
+    [https://crates.io](https://crates.io/).
+- title: Referimi I Shumë Elementeve
+  content_markdown: |
+    Shumë elementë mund të referohen në një shteg të vetëm moduli
+    kështu:
+
+    ```rust
+    use std::f64::consts::{PI,TAU}
+    ```
+
+    Ferris nuk ha TAU, ai ha vetëm PI.
+- title: Krijimi I Moduleve
+  content_markdown: |
+    Kur mendojmë për kodin, zakonisht imagjinojmë një hierarki
+    skedarësh të organizuar në direktori. Rust ju lejon të krijoni
+    module të lidhura ngushtë me strukturën tuaj të skedarëve.
+
+    Ka dy mënyra në Rust për të deklaruar një modul. Për shembull, një
+    modul `foo` mund të përfaqësohet si:
+      * një skedar i quajtur `foo.rs`
+      * një direktori e quajtur `foo` me një skedar `mod.rs` brenda
+- title: Hierarkia E Moduleve
+  content_markdown: >
+    Një modul mund të varet nga një tjetër. Për të krijuar një
+    marrëdhënie mes një moduli dhe nën-modulit të tij, duhet të
+    shkruani në modulin prind:
+
+
+    ```rust
+
+    mod foo;
+
+    ```
+
+
+    Deklarata e mësipërme do të kërkojë një skedar të quajtur `foo.rs`
+    ose `foo/mod.rs`, dhe do të fusë përmbajtjen e tij brenda një
+    moduli të quajtur `foo`, nën këtë fushëveprim.
+- title: Moduli I Brendashkruar
+  content_markdown: >
+    Një nën-modul mund të vendoset direkt brenda kodit të një moduli
+    (inline).
+
+
+    Një përdorim shumë i zakonshëm i moduleve inline është krijimi i
+    unit teste. Krijojmë një modul inline që ekziston vetëm kur Rust
+    përdoret për testim!
+
+
+    ```
+
+    // This macro removes this inline module when Rust
+
+    // is not in test mode.
+
+    #[cfg(test)]
+
+    mod tests {
+        // Notice that we don't immediately get access to the
+        // parent module. We must be explicit.
+        use super::*;
+
+        ... tests go here ...
+    }
+
+    ```
+- title: Referencat E Brendshme Të Moduleve
+  content_markdown: >
+    Rust ka disa fjalë kyçe që mund t'i përdorni në shtegun tuaj
+    `use` për të gjetur shpejt modulin që dëshironi:
+
+
+    * `crate` - moduli rrënjë i crate-it tuaj
+
+    * `super` - moduli prind i modulit tuaj aktual
+
+    * `self` - moduli aktual
+- title: Eksportimi
+  content_markdown: >
+    Si parazgjedhje, anëtarët e një *moduli* nuk janë të aksesueshëm
+    jashtë modulit (as edhe nga modulet e tij fëmijë!). I bëjmë
+    anëtarët e një moduli të aksesueshëm duke përdorur fjalën kyçe
+    `pub`.
+
+
+    Si parazgjedhje, anëtarët e një *crate-i* nuk janë të aksesueshëm
+    jashtë crate-it. I bëjmë anëtarët e një crate-i të aksesueshëm
+    duke i shënuar si `pub` në *modulin rrënjë* të crate-it tuaj
+    (`lib.rs` ose `main.rs`).
+- title: Dukshmëria E Struct-eve
+  content_markdown: >
+    Ashtu si funksionet, edhe struct-et mund të deklarojnë çfarë duan
+    të ekspozojnë jashtë modulit të tyre duke përdorur `pub`.
+  code: |
+    // SeaCreature struct will be usable outside of our module
+    pub struct SeaCreature {
+        pub animal_type: String,
+        pub name: String,
+        pub arms: i32,
+        pub legs: i32,
+        // let's keep our weapon private
+        weapon: String,
+    }
+- title: Prelude
+  content_markdown: |
+    Mund të pyesni veten si kemi akses te `Vec` apo `Box` kudo pa
+    pasur nevojë për një `use` për t'i importuar. Kjo ndodh për shkak
+    të modulit `prelude` në bibliotekën standarde.
+
+    Dijeni se në bibliotekën standarde të Rust, gjithçka që
+    eksportohet te `std::prelude::*` është automatikisht e
+    disponueshme në çdo pjesë të Rust. Kjo vlen për `Vec` dhe `Box`
+    por edhe për të tjerë (Option, Copy, etj.).
+- title: Prelude-i Juaj Vetjak
+  content_markdown: >
+    Për shkak të prelude-it të bibliotekës standarde, është e
+    zakonshme që biblioteka juaj të ketë modulin e vet prelude si
+    pikënisje, nga ku përdoruesit duhet të importojnë të gjitha
+    strukturat më të zakonshme të të dhënave për të përdorur
+    bibliotekën tuaj (p.sh. `use my_library::prelude::*`).
+
+
+    Nuk përdoret automatikisht në programe/biblioteka që përdorin
+    crate-in tuaj, por është një konventë e mirë për ta ndjekur, në
+    mënyrë që njerëzit ta dinë ku të fillojnë.
+
+
+    Ferris thotë: "Ji një rustacean i mirë dhe ndihmo një gaforre
+    tjetër me një prelude të mirë!"
+- title: Kapitulli 9 - Përfundim
+  content_markdown: >
+    Tani keni disa truke në mëngë kur bëhet fjalë për krijimin e
+    aplikacioneve dhe bibliotekave Rust gati për botën. Mos u
+    shqetësoni për t'i mbajtur mend të gjitha. Ndërsa biblioteka juaj
+    rritet dhe përdoret nga njerëz të tjerë, do të zbuloni se çfarë
+    funksionon më mirë në çdo fazë.
+
+
+    Burime:
+
+    - [Guidelines For Writing Rust
+    APIs](https://rust-lang.github.io/api-guidelines/)
