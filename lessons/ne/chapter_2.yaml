@@ -1,0 +1,204 @@
+- title: Hoofdstuk 2 - Basis Controlestroom
+  content_markdown: >
+    In dit hoofdstuk bespreken we de basismethoden van controlestroom
+    in Rust.
+
+    Als u bekend bent met op C gebaseerde talen, zult u zich hier
+    meteen thuis voelen en misschien wel een of twee verrassingen
+    tegenkomen.
+- title: if/else if/else
+  content_markdown: >
+    Codevertakking in Rust is niet verrassend.
+
+
+    Voorwaarden hebben geen haakjes! Hadden we die ooit echt nodig?
+    Onze logica ziet er nu mooi en overzichtelijk uit.
+
+
+    Al uw gebruikelijke relationele en logische operatoren werken
+    nog steeds: `==`, `!=`, `<`, `>`, `<=`, `>=`, `!`, `||`, `&&`
+  code: |-
+    fn main() {
+        let x = 42;
+        if x < 42 {
+            println!("less than 42");
+        } else if x == 42 {
+            println!("is 42");
+        } else {
+            println!("greater than 42");
+        }
+    }
+- title: loop
+  content_markdown: |
+    Heeft u een oneindige lus nodig?
+
+    Rust maakt dat eenvoudig.
+
+    `break` beëindigt een lus wanneer u klaar bent.
+
+    `loop` heeft een geheim waar we binnenkort over praten.
+  code: |
+    fn main() {
+        let mut x = 0;
+        loop {
+            x += 1;
+            if x == 42 {
+                break;
+            }
+        }
+        println!("{}", x);
+    }
+- title: while
+  content_markdown: |
+    Met `while` kunt u eenvoudig een voorwaarde aan een lus
+    toevoegen.
+
+    Als de voorwaarde `false` oplevert, wordt de lus beëindigd.
+  code: |
+    fn main() {
+        let mut x = 0;
+        while x != 42 {
+            x += 1;
+        }
+        println!("x is {}", x);
+    }
+- title: for
+  content_markdown: >
+    De `for`-lus van Rust is een krachtige verbetering. Hij itereert
+    over waarden van elke expressie die evalueert naar een iterator.
+    Wat is een iterator? Een iterator is een object waaraan u kunt
+    vragen: "Wat is het volgende ding dat je hebt?" totdat er geen
+    dingen meer zijn.
+
+
+    We zullen dit in een later hoofdstuk verder verkennen, maar weet
+    voor nu dat Rust het eenvoudig maakt om iteratoren te creëren
+    die een reeks gehele getallen genereren.
+
+
+    De operator `..` creëert een iterator die getallen genereert
+    vanaf een beginnend getal tot, maar zonder het eindgetal.
+
+
+    Met de operator `..=` creëert u een iterator die getallen
+    genereert vanaf een beginnend getal tot en met het eindgetal.
+  code: |
+    fn main() {
+        for x in 0..5 {
+            println!("{}", x);
+        }
+
+        for x in 0..=5 {
+            println!("{}", x);
+        }
+    }
+- title: match
+  content_markdown: >
+    Mist u het switch-statement? Rust heeft een ongelooflijk nuttig
+    sleutelwoord om alle mogelijke voorwaarden van een waarde te
+    vergelijken en een codepad uit te voeren als er een
+    overeenkomst is. Laten we eens kijken hoe dit werkt voor
+    getallen. We hebben in latere hoofdstukken nog veel meer te
+    vertellen over het matchen van complexere gegevenspatronen, en
+    ik beloof u dat het de moeite waard zal zijn om te wachten.
+
+
+    `match` is uitputtend, wat betekent dat alle mogelijke gevallen
+    moeten worden afgehandeld.
+
+
+    Match gecombineerd met destructurering is verreweg een van de
+    meest voorkomende patronen die u overal in Rust zult
+    tegenkomen.
+  code: |
+    fn main() {
+        let x = 42;
+
+        match x {
+            0 => {
+                println!("found zero");
+            }
+            // we can match against multiple values
+            1 | 2 => {
+                println!("found 1 or 2!");
+            }
+            // we can match against ranges
+            3..=9 => {
+                println!("found a number 3 to 9 inclusively");
+            }
+            // we can bind the matched number to a variable
+            matched_num @ 10..=100 => {
+                println!("found {} number between 10 to 100!", matched_num);
+            }
+            // this is the default match that must exist if not all cases are handled
+            _ => {
+                println!("found something else!");
+            }
+        }
+    }
+- title: Waarden Teruggeven Vanuit Een Loop
+  content_markdown: |
+    `loop` kan `break` gebruiken om een waarde terug te geven.
+  code: |
+    fn main() {
+        let mut x = 0;
+        let v = loop {
+            x += 1;
+            if x == 13 {
+                break "found the 13";
+            }
+        };
+        println!("from loop: {}", v);
+    }
+- title: Waarden Teruggeven Vanuit Blokexpressies
+  content_markdown: >
+    `if`, `match`, functies en scope-blokken hebben allemaal een
+    unieke manier om waarden terug te geven in Rust.
+
+
+    Als de laatste instructie in een `if`-blok, `match`, functie of
+    scope-blok een expressie is zonder `;`, zal Rust die als een
+    waarde uit het blok teruggeven. Dit is een geweldige manier om
+    beknopte logica te creëren die een waarde teruggeeft die u in
+    een nieuwe variabele kunt plaatsen.
+
+
+    Merk op dat dit ook mogelijk maakt dat een `if`-statement
+    functioneert als een beknopte ternaire expressie.
+  code: |
+    fn example() -> i32 {
+        let x = 42;
+        // Rust's ternary expression
+        let v = if x < 42 { -1 } else { 1 };
+        println!("from if: {}", v);
+
+        let food = "hamburger";
+        let result = match food {
+            "hotdog" => "is hotdog",
+            // notice the braces are optional when its just a single return expression
+            _ => "is not hotdog",
+        };
+        println!("identifying food: {}", result);
+
+        let v = {
+            // This scope block lets us get a result without polluting function scope
+            let a = 1;
+            let b = 2;
+            a + b
+        };
+        println!("from block: {}", v);
+
+        // The idiomatic way to return a value in rust from a function at the end
+        v + 4
+    }
+
+    fn main() {
+        println!("from function: {}", example());
+    }
+- title: Hoofdstuk 2 - Conclusie
+  content_markdown: >
+    Ik hoop dat ik u een klein kijkje heb gegeven in de kracht van
+    Rust, zelfs in de meest basale taalkenmerken. We zullen dieper
+    ingaan op `for` en `match` naarmate we meer kennis opdoen die
+    hun mogelijkheden kan benutten. Hierna gaan we de basis
+    gegevensstructuren van Rust verkennen.

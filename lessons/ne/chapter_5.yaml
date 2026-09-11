@@ -1,0 +1,452 @@
+- title: Hoofdstuk 5 - Eigendom & Het Lenen Van Gegevens
+  content_markdown: >
+    Rust heeft een uniek paradigma voor het beheren van geheugen in
+    vergelijking met andere programmeertalen. We bekijken het gedrag
+    en de controles van de compiler één voor één, zodat het niet
+    overweldigend is. Het is belangrijk om te onthouden dat de
+    regels die we laten zien er uiteindelijk niet zijn om het u
+    moeilijk te maken, maar om u te helpen uw code minder
+    foutgevoelig te maken!
+- title: Eigendom
+  content_markdown: >
+    Het instantiëren van een type en het **binden** ervan aan een
+    variabelenaam creëert een geheugenbron die de Rust-compiler
+    gedurende de hele **levensduur** (lifetime) ervan zal
+    controleren. De gebonden variabele wordt de **eigenaar** (owner)
+    van de bron genoemd.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        // We instantiate structs and bind to variables
+        // to create memory resources
+        let foo = Foo { x: 42 };
+        // foo is the owner
+    }
+- title: Scope-Gebaseerd Beheer Van Bronnen
+  content_markdown: |
+    Rust gebruikt het einde van een scope als de plek waar een bron
+    wordt gedeconstrueerd en gedealloceerd.
+
+    De term voor deze deconstructie en deallocatie wordt **drop**
+    genoemd.
+
+    Geheugendetail:
+    * Rust heeft geen garbage collection.
+    * Dit wordt in C++ ook wel Resource Acquisition Is Initialization (RAII) genoemd.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        let foo_a = Foo { x: 42 };
+        let foo_b = Foo { x: 13 };
+
+        println!("{}", foo_a.x);
+
+        println!("{}", foo_b.x);
+        // foo_b is dropped here 
+        // foo_a is dropped here
+    }
+- title: Droppen Is Hiërarchisch
+  content_markdown: >
+    Wanneer een struct wordt gedropt, wordt eerst de struct zelf
+    gedropt, daarna worden de velden ervan één voor één gedropt,
+    enzovoort.
+
+
+    Geheugendetails:
+
+    * Door geheugen automatisch vrij te geven, helpt Rust ervoor te
+    zorgen dat er minder geheugenlekken zijn.
+
+    * Een geheugenbron kan slechts één keer worden gedropt.
+  code: |
+    struct Bar {
+        x: i32,
+    }
+
+    struct Foo {
+        bar: Bar,
+    }
+
+    fn main() {
+        let foo = Foo { bar: Bar { x: 42 } };
+        println!("{}", foo.bar.x);
+        // foo is dropped first
+        // then foo.bar is dropped
+    }
+- title: Eigendom Verplaatsen
+  content_markdown: >
+    Wanneer een eigenaar als argument aan een functie wordt gegeven,
+    wordt het eigendom verplaatst naar de parameter van de functie.
+
+
+    Na een **verplaatsing** (move) kan de variabele in de originele
+    functie niet meer worden gebruikt.
+
+
+    Geheugendetails:
+
+    * Tijdens een **verplaatsing** wordt het stackgeheugen van de
+    waarde van de eigenaar gekopieerd naar het stackgeheugen van de
+    parameter van de functieaanroep.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: Foo) {
+        println!("{}", f.x);
+        // f is dropped here
+    }
+
+    fn main() {
+        let foo = Foo { x: 42 };
+        // foo is moved to do_something
+        do_something(foo);
+        // foo can no longer be used
+    }
+- title: Eigendom Teruggeven
+  content_markdown: |
+    Eigendom kan ook door een functie worden teruggegeven.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something() -> Foo {
+        Foo { x: 42 }
+        // ownership is moved out
+    }
+
+    fn main() {
+        let foo = do_something();
+        // foo becomes the owner
+        // foo is dropped because of end of function scope
+    }
+- title: Eigendom Lenen Met Referenties
+  content_markdown: |
+    Met referenties kunnen we toegang tot een bron lenen met de
+    `&`-operator.
+
+    Referenties worden ook gedropt, net als elke andere bron.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        let foo = Foo { x: 42 };
+        let f = &foo;
+        println!("{}", f.x);
+        // f is dropped here
+        // foo is dropped here
+    }
+- title: Wijzigbaar Eigendom Lenen Met Referenties
+  content_markdown: >
+    We kunnen ook wijzigbare (mutable) toegang tot een bron lenen
+    met de `&mut`-operator.
+
+
+    Een eigenaar van een bron kan niet worden verplaatst of
+    gewijzigd terwijl deze wijzigbaar wordt geleend.
+
+
+    Geheugendetail:
+
+    * Rust voorkomt dat er twee manieren zijn om een waarde in
+    eigendom te wijzigen, omdat dit de mogelijkheid van een *data
+    race* zou introduceren.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: Foo) {
+        println!("{}", f.x);
+        // f is dropped here
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let f = &mut foo;
+
+        // FAILURE: do_something(foo) would fail because
+        // foo cannot be moved while mutably borrowed
+
+        // FAILURE: foo.x = 13; would fail here because
+        // foo is not modifiable while mutably borrowed
+
+        f.x = 13;
+        // f is dropped here because it's no longer used after this point
+        
+        println!("{}", foo.x);
+        
+        // this works now because all mutable references were dropped
+        foo.x = 7;
+        
+        // move foo's ownership to a function
+        do_something(foo);
+    }
+- title: Dereferentie
+  content_markdown: >
+    Met `&mut`-referenties kunt u de waarde van de eigenaar
+    instellen met de `*`-operator.
+
+
+    U kunt ook een kopie van een waarde in eigendom krijgen met de
+    `*`-operator (als de waarde kan worden gekopieerd - we
+    bespreken kopieerbare types in latere hoofdstukken).
+  code: |
+    fn main() {
+        let mut foo = 42;
+        let f = &mut foo;
+        let bar = *f; // get a copy of the owner's value
+        *f = 13;      // set the reference's owner's value
+        println!("{}", bar);
+        println!("{}", foo);
+    }
+- title: Omgaan Met Geleende Gegevens
+  content_markdown: >
+    De regels van Rust voor referenties kunnen wellicht het beste
+    als volgt worden samengevat:
+
+
+    * Rust staat slechts één wijzigbare referentie toe **of**
+    meerdere niet-wijzigbare referenties, **maar niet beide**.
+
+    * Een referentie mag nooit **langer leven** dan de eigenaar
+    ervan.
+
+
+    Dit is meestal geen probleem wanneer referenties aan functies
+    worden doorgegeven.
+
+
+    Geheugendetails:
+
+    * De eerste regel van referenties voorkomt data races. Wat is
+    een data race? Een data race treedt op wanneer het lezen van
+    gegevens mogelijk niet gesynchroniseerd is, doordat er
+    tegelijkertijd naar dezelfde gegevens wordt geschreven. Dit
+    gebeurt vaak bij multi-threaded programmeren.
+
+    * De tweede regel van referenties voorkomt misbruik van
+    referenties die verwijzen naar niet-bestaande gegevens (in C
+    dangling pointers genoemd).
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: &mut Foo) {
+        f.x += 1;
+        // mutable reference f is dropped here
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        do_something(&mut foo);
+        // because all mutable references are dropped within
+        // the function do_something, we can create another.
+        do_something(&mut foo);
+        // foo is dropped here
+    }
+- title: Referenties Van Referenties
+  content_markdown: |
+    Referenties kunnen zelfs worden gebruikt op delen van andere
+    referenties.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(a: &Foo) -> &i32 {
+        return &a.x;
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let x = &mut foo.x;
+        *x = 13;
+        // x is dropped here allow us to create a non-mutable reference
+        let y = do_something(&foo);
+        println!("{}", y);
+        // y is dropped here
+        // foo is dropped here
+    }
+- title: Expliciete Levensduren
+  content_markdown: >
+    Hoewel Rust het niet altijd in de code laat zien, begrijpt de
+    compiler de levensduur (lifetime) van elke variabele en zal
+    proberen te controleren dat een referentie nooit langer bestaat
+    dan de eigenaar ervan.
+
+
+    Functies kunnen expliciet zijn door de signatuur van de functie
+    te parametriseren met symbolen die helpen aangeven welke
+    parameters en retourwaarden dezelfde levensduur delen.
+
+
+    Levensduurspecificaties beginnen altijd met een `'` (bijv. `'a`,
+    `'b`, `'c`)
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    // the parameter foo and return value share the same lifetime
+    fn do_something<'a>(foo: &'a Foo) -> &'a i32 {
+        return &foo.x;
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let x = &mut foo.x;
+        *x = 13;
+        // x is dropped here, allowing us to create a non-mutable reference
+        let y = do_something(&foo);
+        println!("{}", y);
+        // y is dropped here
+        // foo is dropped here
+    }
+- title: Meerdere Levensduren
+  content_markdown: >
+    Met levensduurspecificaties kunnen we expliciet zijn in bepaalde
+    scenario's die de compiler niet zelf kan oplossen, door alle
+    levensduren van de onderdelen van een functiesignatuur te
+    onderscheiden.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    // foo_b and the return value share the same lifetime
+    // foo_a has an unrelated lifetime
+    fn do_something<'a, 'b>(foo_a: &'a Foo, foo_b: &'b Foo) -> &'b i32 {
+        println!("{}", foo_a.x);
+        println!("{}", foo_b.x);
+        return &foo_b.x;
+    }
+
+    fn main() {
+        let foo_a = Foo { x: 42 };
+        let foo_b = Foo { x: 12 };
+        let x = do_something(&foo_a, &foo_b);
+        // foo_a is dropped here because only foo_b's lifetime exist beyond here
+        println!("{}", x);
+        // x is dropped here
+        // foo_b is dropped here
+    }
+- title: Statische Levensduren
+  content_markdown: >
+    Een **statische** variabele is een geheugenbron die tijdens het
+    compileren wordt gecreëerd en die vanaf het begin tot het einde
+    van een programma bestaat. Het type ervan moet expliciet worden
+    opgegeven.
+
+
+    Een **statische levensduur** is een geheugenbron die onbeperkt
+    voortduurt tot het einde van een programma. Merk op dat volgens
+    deze definitie sommige bronnen met een statische levensduur ook
+    tijdens runtime kunnen worden gecreëerd.
+
+
+    Bronnen met een statische levensduur hebben een speciale
+    levensduurspecificatie, `'static`.
+
+
+    `'static`-bronnen worden nooit **gedropt**.
+
+
+    Als bronnen met een statische levensduur referenties bevatten,
+    moeten deze allemaal `'static` zijn (alles minder zou niet lang
+    genoeg leven).
+
+
+    Geheugendetail:
+
+
+    * Het wijzigen van statische variabelen is inherent gevaarlijk
+    omdat ze wereldwijd toegankelijk zijn om door iedereen te worden
+      gelezen, wat de mogelijkheid van een data race introduceert. We bespreken later de uitdagingen van globale gegevens.
+    * Rust staat het gebruik van `unsafe { ... }`-blokken toe om
+    bepaalde bewerkingen uit te voeren waarvoor de compiler geen
+    geheugengaranties kan geven. Het [<span
+    style="color:red; font-weight:
+    bold;">R̸͉̟͈͔̄͛̾̇͜U̶͓͖͋̅Ṡ̴͉͇̃̉̀T̵̻̻͔̟͉́͆Ơ̷̥̟̳̓͝N̶̨̼̹̲͛Ö̵̝͉̖̏̾̔M̶̡̠̺̠̐͜Î̷̛͓̣̃̐̏C̸̥̤̭̏͛̎͜O̶̧͚͖͔̊͗̇͠N̸͇̰̏̏̽̃</span>](https://doc.rust-lang.org/nomicon/)
+    zou niet losjes ter sprake moeten komen.
+  code: |
+    static PI: f64 = 3.1415;
+
+    fn main() {
+        // static variables can also be scoped to a function
+        static mut SECRET: &'static str = "swordfish";
+
+        // string literals have a 'static lifetime
+        let msg: &'static str = "Hello World!";
+        let p: &'static f64 = &PI;
+        println!("{} {}", msg, p);
+
+        // You can break some rules, but you must be explicit
+        unsafe {
+            // we can set SECRET to a string literal because it is also `static
+            SECRET = "abracadabra";
+            println!("{}", SECRET);
+        }
+    }
+- title: Levensduren In Gegevenstypes
+  content_markdown: >
+    Net als functies kunnen gegevenstypes worden geparametriseerd
+    met levensduurspecificaties voor hun leden.
+
+
+    Rust controleert dat de gegevensstructuur die de referenties
+    bevat nooit langer bestaat dan de eigenaars waarnaar de
+    referenties ervan verwijzen.
+
+
+    We kunnen geen structs hebben die rondlopen met referenties die
+    naar niets verwijzen!
+  code: |
+    struct Foo<'a> {
+        i:&'a i32
+    }
+
+    fn main() {
+        let x = 42;
+        let foo = Foo {
+            i: &x
+        };
+        println!("{}",foo.i);
+    }
+- title: Hoofdstuk 5 - Conclusie
+  content_markdown: >
+    Gefeliciteerd dat u het tot hier heeft gebracht! Ik weet dat het
+    veel is om te verwerken, maar u bent al goed op weg om een
+    Rustacean te worden. Hopelijk is het duidelijk hoe Rust als taal
+    probeert veel van deze veelvoorkomende uitdagingen in
+    systeemprogrammering op te lossen:
+
+
+    * Onbedoelde wijziging van bronnen
+
+    * Vergeten bronnen te deconstrueren
+
+    * Bronnen die per ongeluk twee keer worden gedeconstrueerd
+
+    * Het gebruik van bronnen nadat ze zijn gedeconstrueerd
+
+    * Data races veroorzaakt doordat er naar bronnen wordt
+    geschreven terwijl anderen ervan lezen
+
+    * Duidelijk zicht op delen van de code waar de compiler geen
+    garanties kan geven
+
+
+    In het volgende hoofdstuk passen we een deel van deze kennis toe
+    terwijl we bekijken hoe Rust met tekst omgaat.
