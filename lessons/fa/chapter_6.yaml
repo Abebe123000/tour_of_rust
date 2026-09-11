@@ -1,75 +1,76 @@
-- title: Chapter 6 - Text
+- title: فصل 6 - متن
   content_markdown: >
-    Now that we understand a bit how Rust thinks of memory, we are prepared to
-    talk about text in more detail.
+    حالا که یه‌کم فهمیدیم راست چطوری به حافظه فکر می‌کنه، آماده‌ایم
+    که با جزئیات بیشتری در مورد متن صحبت کنیم.
 
-    Rust cares a great deal about international text and byte level concerns you
-    might not be familiar with
 
-    from other languages. That said, Rust has many great tools for managing
-    those concerns.
-- title: String Literals
+    راست خیلی به متن بین‌المللی و مسائل سطح بایت که شاید از زبان‌های
+    دیگه باهاشون آشنا نباشی، اهمیت می‌ده. با این حال، راست ابزارهای
+    عالی زیادی برای مدیریت این مسائل داره.
+- title: رشته‌های لیترال (String Literals)
   content_markdown: >
-    String literals are always Unicode.
+    رشته‌های لیترال همیشه یونیکد هستن.
 
 
-    String literals type are `&'static str`:
+    نوع رشته‌های لیترال `&'static str‎` هست:
 
 
-    * `&` meaning that it's referring to a place in memory, and it lacks a
-    `&mut` meaning that the compiler will not allow modification
+    * `&` یعنی به یه جایی توی حافظه اشاره می‌کنه، و چون `&mut`
+    نداره، یعنی کامپایلر اجازه‌ی تغییرش رو نمی‌ده
 
-    * `'static` meaning the string data will be available till the end of our
-    program (it never drops)
+    * `'static` یعنی داده‌ی رشته تا پایان برنامه‌مون در دسترس می‌مونه
+    (هیچ‌وقت دراپ نمی‌شه)
 
-    * `str` means that it points to a sequence of bytes that are always valid
-    **utf-8**
+    * `str` یعنی به یه دنباله از بایت اشاره می‌کنه که همیشه
+    **utf-8** معتبره
 
 
-    Memory details:
+    جزئیات حافظه:
 
-    * The Rust compiler will likely put your string in the data segment of your
-    program memory
+    * کامپایلر راست احتمالاً رشته‌ت رو توی سگمنت داده‌ی حافظه‌ی
+    برنامه‌ت قرار می‌ده
   code: |
     fn main() {
         let a: &'static str = "hi 🦀";
         println!("{} {}", a, a.len());
     }
-- title: What is utf-8
-  content_markdown: "As more languages were used on computers, the world needed to represent more text characters\nthan ASCII allowed (1 byte only allowed 256 characters). \n\n**utf-8** was introduced with a variable byte length of 1-4 bytes greatly increasing the range of possible characters.\n\nAn advantage of variable sized characters is text did not have unnecessary bytes for very common ASCII (only requiring 1 byte still in **utf-8**).\n\nA downside of variable sized characters is that character lookup can no longer be done quickly \n(**O(1)** constant time) with a simple indexing (e.g. `my_text[3]` to get the 4th character). It's possible that the \npreceding characters could have variable widths, altering where the 4th character actually begins in the sequence of bytes.\n\nInstead we must iterate through a **utf-8** byte sequence to understand where the Unicode characters actually begin (**O(n)** linear time).\n\nFerris: \"I'm mostly just happy to have **utf-8** for representing emojis of my underwater friends.\"\n\n<span class=\"emoji\">\U0001F420\U0001F419\U0001F41F\U0001F42C\U0001F40B</span>\n"
-- title: Escaping Characters
+- title: utf-8 چیه
+  content_markdown: "همون‌طور که زبان‌های بیشتری روی کامپیوترها استفاده می‌شدن، دنیا نیاز داشت که کاراکترهای متنی بیشتری رو نسبت به چیزی که ASCII اجازه می‌داد نمایش بده (۱ بایت فقط اجازه‌ی ۲۵۶ کاراکتر رو می‌داد).\n\n**utf-8** با طول بایتی متغیر بین ۱ تا ۴ بایت معرفی شد و این کار بازه‌ی کاراکترهای ممکن رو خیلی زیاد کرد.\n\nیه مزیت کاراکترهای با اندازه‌ی متغیر اینه که متن برای کاراکترهای خیلی رایج ASCII بایت اضافه نداره (توی **utf-8** هم فقط ۱ بایت لازم دارن).\n\nیه عیب کاراکترهای با اندازه‌ی متغیر اینه که دیگه نمی‌شه جستجوی کاراکتر رو سریع\n(با زمان ثابت **O(1)**) و با یه ایندکس‌گذاری ساده انجام داد (مثلاً `my_text[3]` برای گرفتن کاراکتر چهارم). ممکنه\nکاراکترهای قبلی عرض متغیری داشته باشن و همین باعث بشه که کاراکتر چهارم واقعاً از کجای دنباله‌ی بایت‌ها شروع بشه، تغییر کنه.\n\nبه جاش باید روی یه دنباله‌ی بایت **utf-8** پیمایش کنیم تا بفهمیم کاراکترهای یونیکد واقعاً از کجا شروع می‌شن (با زمان خطی **O(n)**).\n\nفریس: «من بیشتر فقط خوشحالم که **utf-8** رو دارم تا بتونم ایموجی‌های دوستای زیردریاییم رو نمایش بدم.»\n\n<span class=\"emoji\">\U0001F420\U0001F419\U0001F41F\U0001F42C\U0001F40B</span>\n"
+- title: کاراکترهای Escape
   content_markdown: >
-    It's challenging to visually represent certain characters, so **escape
-    codes** allow us to put a symbol in their place.
+    نمایش بصری بعضی از کاراکترها سخته، پس **کدهای escape** بهمون
+    اجازه می‌دن یه نماد رو جای اونا بذاریم.
 
 
-    Rust supports the common escape codes from C-based languages:
+    راست از کدهای escape رایج زبان‌های بر پایه‌ی C پشتیبانی می‌کنه:
 
-    * `\n` - newline
+    * `\n` - خط جدید
 
     * `\r` - carriage return
 
-    * `\t` - tab
+    * `\t` - تب
 
-    * `\\` - backslash
+    * `\\` - بک‌اسلش
 
-    * `\0` - null
+    * `\0` - کاراکتر null
 
-    * `\'` - single-quote
+    * `\'` - تک‌کوتیشن
 
 
-    The complete list exists
-    [here](https://doc.rust-lang.org/reference/tokens.html).
+    لیست کامل رو
+    [اینجا](https://doc.rust-lang.org/reference/tokens.html) پیدا
+    می‌کنی.
   code: |
     fn main() {
         let a: &'static str = "Ferris says:\t\"hello\"";
         println!("{}",a);
     }
-- title: Multi-line String Literals
+- title: رشته‌های لیترال چندخطی
   content_markdown: |
-    Rust strings are multiline by default.
+    رشته‌های راست به‌طور پیش‌فرض چندخطی هستن.
 
-    Use a `\` at the end of a line if you don't want a line break.
+    اگه نمی‌خوای شکست خط داشته باشی، از یه `\` توی انتهای خط استفاده
+    کن.
   code: |
     fn main() {
         let haiku: &'static str = "
@@ -83,13 +84,13 @@
         println!("hello \
         world") // notice that the spacing before w is ignored
     }
-- title: Raw String Literals
+- title: رشته‌های لیترال خام (Raw)
   content_markdown: >
-    Raw strings allow us to write a sequence of characters verbatim by starting
-    with `r#"` and ending with `"#`. It lets us insert
-
-    characters that might otherwise confuse a normal string as literals (like
-    double quotes and backslashes).
+    رشته‌های خام (raw strings) بهمون اجازه می‌دن یه دنباله از
+    کاراکترها رو عیناً بنویسیم؛ فقط کافیه با `r#"‎` شروع کنیم و با
+    `"#‎` تموم کنیم. این کار بهمون اجازه می‌ده کاراکترهایی رو وارد
+    کنیم که در غیر این صورت ممکنه یه رشته‌ی معمولی رو با لیترال‌هاش
+    قاطی کنن (مثل کوتیشن دوتایی و بک‌اسلش).
   code: |
     fn main() {
         let a: &'static str = r#"
@@ -99,10 +100,10 @@
             "#;
         println!("{}", a);
     }
-- title: String Literals From Files
+- title: رشته‌های لیترال از فایل‌ها
   content_markdown: >
-    If you have some very large text, consider using the macro `include_str!` to
-    include text from local files in your program:
+    اگه یه متن خیلی بزرگ داری، استفاده از ماکروی `include_str!‎` رو
+    برای اضافه کردن متن از فایل‌های محلی به برنامه‌ت در نظر بگیر:
 
 
     ```rust
@@ -110,25 +111,26 @@
     let hello_html = include_str!("hello.html");
 
     ```
-- title: String Slice
+- title: اسلایس رشته
   content_markdown: >
-    A string slice is a reference to a sequence of bytes in memory that must
-    always be valid utf-8.
+    یه اسلایس رشته یه رفرنس به یه دنباله از بایت‌ها توی حافظه‌ست که
+    همیشه باید utf-8 معتبر باشه.
 
 
-    A string slice (a sub-slice) of a `str` slice, must also be valid utf-8.
+    یه اسلایس (یه ساب‌اسلایس) از یه اسلایس `str` هم باید utf-8
+    معتبر باشه.
 
 
-    Common methods of `&str`:
+    متدهای رایج `&str`:
 
-    * `len` gets the length of the string literal in bytes (not number of
-    characters).
+    * `len` طول رشته‌ی لیترال رو بر حسب بایت برمی‌گردونه (نه تعداد
+    کاراکتر).
 
-    *  `starts_with`/`ends_with` for basic testing.
+    * `starts_with`‎/`ends_with`‎ برای تست‌های ساده.
 
-    * `is_empty` returns true if zero length.
+    * `is_empty` اگه طول صفر باشه، true برمی‌گردونه.
 
-    * `find` returns an `Option<usize>` of the first position of some text.
+    * `find` یه `Option<usize>‎` از اولین موقعیت یه متن رو برمی‌گردونه.
   code: |
     fn main() {
         let a = "hi 🦀";
@@ -139,14 +141,15 @@
         // Rust does not accept slices of invalid unicode characters
         println!("{} {}", first_word, second_word);
     }
-- title: Chars
+- title: کاراکترها (Chars)
   content_markdown: >
-    With so much difficulty in working with Unicode, Rust offers a way to
-    retrieve a sequence of utf-8 bytes as a vector of characters of type `char`.
+    با توجه به سختی کار کردن با یونیکد، راست یه راهی به ما می‌ده که
+    یه دنباله از بایت‌های utf-8 رو به شکل یه وکتور از کاراکترهای نوع
+    `char` بگیریم.
 
 
-    A `char` is always 4 bytes long (allowing for efficient lookup of individual
-    characters).
+    یه `char` همیشه ۴ بایت طول داره (که جستجوی کارآمد کاراکترهای
+    منفرد رو ممکن می‌کنه).
   code: |
     fn main() {
         // collect the characters as a vector of char
@@ -157,30 +160,34 @@
     }
 - title: String
   content_markdown: >
-    A **String** is a struct that owns a sequence of utf-8 bytes in heap memory.
+    یه **String** یه struct هست که مالک یه دنباله از بایت‌های
+    utf-8 روی حافظه‌ی هیپه.
 
 
-    Because its memory is on the heap, it can be extended, modified, etc. in
-    ways string literals cannot.
+    چون حافظه‌ش روی هیپه، می‌شه اون رو گسترش داد، تغییرش داد، و غیره؛
+    کارهایی که با رشته‌های لیترال نمی‌شه انجام داد.
 
 
-    Common methods:
+    متدهای رایج:
 
 
-    * `push_str` to add more utf-8 bytes to the end of a string.
+    * `push_str` برای اضافه کردن بایت‌های utf-8 بیشتر به انتهای یه
+    رشته.
 
-    * `replace` to replace sequences of utf-8 bytes with others.
+    * `replace` برای جایگزین کردن دنباله‌های بایت utf-8 با دنباله‌ی
+    دیگه.
 
-    * `to_lowercase`/`to_uppercase` for case changes.
+    * `to_lowercase`‎/`to_uppercase`‎ برای تغییر حروف بزرگ/کوچک.
 
-    * `trim` for trimming space
-
-
-    When a String is dropped, its heap memory is also dropped.
+    * `trim` برای حذف فاصله‌های اضافه.
 
 
-    `String` has a `+` operator that extends the string with a `&str` and
-    returns itself, but it might not be as ergonomic as you hope for.
+    وقتی یه String دراپ می‌شه، حافظه‌ی هیپش هم دراپ می‌شه.
+
+
+    `String` یه عملگر `+‎` داره که رشته رو با یه `&str‎` گسترش می‌ده
+    و خودش رو برمی‌گردونه، ولی شاید به اندازه‌ای که امیدواری، ارگونومیک
+    نباشه.
   code: |
     fn main() {
         let mut helloworld = String::from("hello");
@@ -188,12 +195,11 @@
         helloworld = helloworld + "!";
         println!("{}", helloworld);
     }
-- title: Text As Function Parameters
+- title: متن به‌عنوان پارامتر تابع
   content_markdown: >
-    String literals and strings are generally passed around as a string slice to
-    functions. This offers a lot of flexibility for
-
-    most scenarios where you don't actually have to pass ownership.
+    رشته‌های لیترال و String ها معمولاً به‌عنوان یه اسلایس رشته به
+    تابع‌ها پاس داده می‌شن. این کار توی بیشتر سناریوهایی که واقعاً
+    لازم نیست مالکیت رو منتقل کنی، انعطاف‌پذیری زیادی می‌ده.
   code: |
     fn say_it_loud(msg:&str){
         println!("{}!!!",msg.to_string().to_uppercase());
@@ -205,9 +211,10 @@
         // say_it_loud can also borrow String as a &str
         say_it_loud(&String::from("goodbye"));
     }
-- title: Building Strings
+- title: ساختن رشته‌ها
   content_markdown: |
-    `concat` and `join` are two simple but powerful ways for building strings.
+    `concat` و `join` دو تا راه ساده ولی قدرتمند برای ساختن رشته‌ها
+    هستن.
   code: |
     fn main() {
         let helloworld = ["hello", " ", "world", "!"].concat();
@@ -215,31 +222,33 @@
         println!("{}", helloworld);
         println!("{}",abc);
     }
-- title: Formatting Strings
+- title: قالب‌بندی رشته‌ها
   content_markdown: >
-    The `format!` macro allows us to create a string by defining a parameterized
-    string with placeholders for where and how values should be placed (e.g.
-    `{}`).
+    ماکروی `format!‎` بهمون اجازه می‌ده با تعریف یه رشته‌ی
+    پارامتری‌شده با جای‌نگه‌دارهایی که مشخص می‌کنن مقدارها کجا و
+    چطوری باید قرار بگیرن (مثلاً `{}‎`)، یه رشته بسازیم.
 
 
-    `format!` uses the same parameterized strings as `println!`
+    `format!‎` از همون رشته‌های پارامتری‌شده‌ای استفاده می‌کنه که
+    `println!‎` استفاده می‌کنه.
 
 
-    The capabilities of this function are too large of scope for *Tour of Rust*;
-    check out the documentation [here](https://doc.rust-lang.org/std/fmt/).
+    قابلیت‌های این تابع خیلی گسترده‌تر از حوصله‌ی *تور راست* هستن؛
+    برای اطلاعات بیشتر
+    [مستندات](https://doc.rust-lang.org/std/fmt/) رو ببین.
   code: |
     fn main() {
         let a = 42;
         let f = format!("secret to life: {}",a);
         println!("{}",f);
     }
-- title: Converting Strings
+- title: تبدیل رشته‌ها
   content_markdown: |
-    Many types can be converted to a string using `to_string`.
+    خیلی از نوع‌ها رو می‌شه با `to_string` به یه رشته تبدیل کرد.
 
-    The generic function `parse` can be used to convert strings 
-    or string literals into a typed value. This function returns 
-    a `Result` because it could fail.
+    از تابع جنریک `parse` می‌شه برای تبدیل رشته‌ها یا رشته‌های لیترال
+    به یه مقدار تایپ‌شده استفاده کرد. این تابع یه `Result` برمی‌گردونه،
+    چون ممکنه شکست بخوره.
   code: |
     fn main() -> Result<(), std::num::ParseIntError> {
         let a = 42;
@@ -248,16 +257,14 @@
         println!("{} {}", a, b);
         Ok(())
     }
-- title: Chapter 6 - Conclusion
+- title: فصل 6 - جمع‌بندی
   content_markdown: >
-    Now you know the basics of text!  As you have seen, Unicode makes working
-    with text a bit tricky, but the standard library 
+    حالا مبانی متن رو می‌دونی! همون‌طور که دیدی، یونیکد کار کردن با
+    متن رو یه‌کم سخت‌تر می‌کنه، ولی کتابخونه‌ی استاندارد قابلیت‌های
+    زیادی داره که مدیریتش رو راحت می‌کنه.
 
-    has plenty of functionality to make it easy to manage.  
 
-
-    Up to now, we've mostly looked at Rust from the lens of a procedural
-    paradigm (i.e. just functions and data),
-
-    but it's time we now talk about traits and the capabilities unlocked by
-    Rust's object oriented paradigm.
+    تا الان بیشتر راست رو از دید یه پارادایم رویه‌ای (procedural)
+    نگاه کردیم (یعنی فقط تابع‌ها و داده‌ها)، ولی وقتشه که در مورد
+    trait ها و قابلیت‌هایی صحبت کنیم که پارادایم شیءگرای راست بازشون
+    می‌کنه.

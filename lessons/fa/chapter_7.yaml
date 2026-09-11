@@ -1,44 +1,39 @@
-- title: Chapter 7 - Object Oriented Programming
+- title: فصل 7 - برنامه‌نویسی شیءگرا
   content_markdown: >
-    Expressing ideas with functions is a proven way of representing behavior and
-    data (C 
-
-    has been doing it for decades!). Historically, computer science has found
-    other
-
-    useful expressive aggregations and abstractions for data. You may be
-    familiar with object oriented programming (OOP) as one
-
-    such way. In this chapter we'll explore the Rust programming language beyond
-    functions.
-- title: What Is OOP?
+    بیان ایده‌ها با تابع‌ها یه روش امتحان‌شده برای نمایش رفتار و داده‌ست
+    (C دهه‌هاست که این کار رو می‌کنه!). از نظر تاریخی، علوم کامپیوتر
+    راه‌های بیانی مفید دیگه‌ای هم برای تجمیع و انتزاع داده پیدا کرده.
+    شاید با برنامه‌نویسی شیءگرا (OOP) به‌عنوان یکی از این راه‌ها آشنا
+    باشی. توی این فصل، زبان راست رو فراتر از تابع‌ها بررسی می‌کنیم.
+- title: OOP چیه؟
   content_markdown: >
-    Object oriented programming roughly refers to programming languages that
-    have a number of iconic features:
+    برنامه‌نویسی شیءگرا تقریباً به زبان‌های برنامه‌نویسی‌ای اشاره
+    داره که چند تا ویژگی مشخص دارن:
 
-    * Encapsulation - Associating data and functions into the conceptual unit of
-    a single type called an *object*.
+    * کپسوله‌سازی (Encapsulation) - مرتبط کردن داده و تابع‌ها توی
+    یه واحد مفهومی از یه نوع واحد به اسم *شیء (object)*.
 
-    * Abstraction - Hiding data and function members to obfuscate implementation
-    details of an object.
+    * انتزاع (Abstraction) - پنهون کردن داده و اعضای تابعی برای
+    مبهم کردن جزئیات پیاده‌سازی یه شیء.
 
-    * Polymorphism - The ability to interacting with an object from different
-    functional perspectives.
+    * چندریختی (Polymorphism) - توانایی تعامل با شیءهایی از نوع‌های
+    مختلف از طریق یه رابط واحد.
 
-    * Inheritance - The ability to inherit data and behavior from other objects.
-- title: Rust Is Not OOP
+    * وراثت (Inheritance) - توانایی به ارث بردن داده و رفتار از
+    شیءهای دیگه.
+- title: راست OOP نیست
   content_markdown: >
-    Rust lacks inheritance of data and behavior in any meaningful way.
+    راست به‌شکل معناداری فاقد وراثت داده و رفتاره.
 
 
-    * Structs cannot inherit fields from a parent struct.
+    * struct ها نمی‌تونن فیلدها رو از یه struct والد به ارث ببرن.
 
-    * Structs cannot inherit functions from a parent struct.
+    * struct ها نمی‌تونن تابع‌ها رو از یه struct والد به ارث ببرن.
 
 
-    That said, Rust implements many programming language features, so that you
-    might not mind this lacking.
-- title: Encapsulation With Methods
+    با این حال، راست خیلی از ویژگی‌های زبان‌های برنامه‌نویسی رو
+    پیاده‌سازی کرده، پس شاید اصلاً به این کمبود اهمیتی ندی.
+- title: کپسوله‌سازی با متدها
   code: |
     struct SeaCreature {
         noise: String,
@@ -57,23 +52,25 @@
         println!("{}", creature.get_sound());
     }
   content_markdown: >
-    Rust supports the concept of an *object* that is a struct associated with
-    some functions (also known as *methods*).
+    راست از مفهوم *شیء (object)* پشتیبانی می‌کنه که یه struct مرتبط
+    با چند تا تابع (که بهشون *متد* هم می‌گن) هست.
 
 
-    The first parameter of any method must be a reference to the instance
-    associated with the method call (e.g. `instanceOfObj.foo()`). Rust uses:
+    اولین پارامتر هر متد باید یه رفرنس به نمونه‌ی (instance) مرتبط
+    با فراخوانی اون متد باشه (مثلاً `instanceOfObj.foo()‎`). راست
+    از این‌ها استفاده می‌کنه:
 
-    * `&self` - Immutable reference to the instance.
+    * `&self` - رفرنس immutable به نمونه.
 
-    * `&mut self` - Mutable reference to the instance.
+    * `&mut self` - رفرنس mutable به نمونه.
 
 
-    Methods are defined within an implementation block with keyword `impl`:
+    متدها توی یه بلوک پیاده‌سازی با کلیدواژه‌ی `impl` تعریف می‌شن:
+
 
     ```rust
 
-    impl MyStruct { 
+    impl MyStruct {
         ...
         fn foo(&self) {
             ...
@@ -81,7 +78,7 @@
     }
 
     ```
-- title: Abstraction With Selective Exposure
+- title: انتزاع با نمایش انتخابی
   code: |
     struct SeaCreature {
         pub name: String,
@@ -102,15 +99,16 @@
         println!("{}", creature.get_sound());
     }
   content_markdown: >
-    Rust can hide the inner workings of objects.
+    راست می‌تونه کارکرد داخلی شیءها رو پنهون کنه.
 
 
-    By default fields and methods are accessible only to the module they belong
-    to.
+    به‌طور پیش‌فرض، فیلدها و متدها فقط توی ماژولی که بهش تعلق دارن
+    قابل دسترسی هستن.
 
 
-    The `pub` keyword exposes struct fields and methods outside of the module.
-- title: Polymorphism With Traits
+    کلیدواژه‌ی `pub` فیلدها و متدهای struct رو بیرون از ماژول هم
+    قابل‌دسترس می‌کنه.
+- title: چندریختی با Trait ها
   code: |
     struct SeaCreature {
         pub name: String,
@@ -141,11 +139,11 @@
         creature.make_noise();
     }
   content_markdown: >
-    Rust supports polymorphism with traits. Traits allow us to associate a set
-    of methods with a struct type. 
+    راست از چندریختی با trait ها پشتیبانی می‌کنه. trait ها بهمون
+    اجازه می‌دن یه مجموعه از متدها رو با یه نوع struct مرتبط کنیم.
 
 
-    We first define the signatures of methods of a trait within:
+    اول امضای متدهای یه trait رو این‌طوری تعریف می‌کنیم:
 
 
     ```
@@ -158,28 +156,27 @@
     ```
 
 
-    When a struct implements a trait, it establishes a contract that allows us
-    to indirectly interact with the struct 
+    وقتی یه struct یه trait رو پیاده‌سازی می‌کنه، یه قرارداد برقرار
+    می‌شه که بهمون اجازه می‌ده به‌شکل غیرمستقیم از طریق نوع trait
+    (مثلاً `&dyn MyTrait`) با اون struct تعامل کنیم، بدون اینکه لازم
+    باشه نوع واقعیش رو بدونیم.
 
-    through the trait type (e.g. `&dyn MyTrait`) without having to know the real
-    type.
 
-
-    A struct's implemented traits methods are defined within an implementation
-    block:
+    متدهای trait که یه struct پیاده‌سازیشون کرده، توی یه بلوک
+    پیاده‌سازی تعریف می‌شن:
 
 
     ```rust
 
-    impl MyTrait for MyStruct { 
+    impl MyTrait for MyStruct {
         fn foo(&self) {
             ...
         }
-        ... 
+        ...
     }
 
     ```
-- title: Implemented Methods On Traits
+- title: متدهای پیاده‌سازی‌شده روی Trait ها
   code: |
     struct SeaCreature {
         pub name: String,
@@ -216,14 +213,13 @@
         creature.make_alot_of_noise();
     }
   content_markdown: >
-    Traits can have implemented methods.
+    trait ها می‌تونن متدهای پیاده‌سازی‌شده هم داشته باشن.
 
 
-    The functions have no direct access to the inner fields of a struct, but it
-    can 
-
-    be useful for sharing behavior between many trait implementors.
-- title: Trait Inheritance
+    این تابع‌ها دسترسی مستقیم به فیلدهای داخلی یه struct ندارن، ولی
+    می‌تونن برای به اشتراک گذاشتن رفتار بین پیاده‌سازهای مختلف یه
+    trait مفید باشن.
+- title: وراثت Trait ها
   code: |
     struct SeaCreature {
         pub name: String,
@@ -264,8 +260,8 @@
         creature.make_alot_of_noise();
     }
   content_markdown: |
-    Traits can inherit methods from other traits.
-- title: Dynamic vs Static Dispatch
+    trait ها می‌تونن متدها رو از trait های دیگه به ارث ببرن.
+- title: دیسپچ داینامیک در مقابل استاتیک
   code: |
     struct SeaCreature {
         pub name: String,
@@ -307,58 +303,61 @@
         dynamic_make_noise(&creature);
     }
   content_markdown: >
-    Methods are executed in two ways:
+    متدها به دو روش اجرا می‌شن:
 
-    * static dispatch - When the instance type is known, we have direct
-    knowledge of what function to call.
+    * دیسپچ استاتیک - وقتی نوع نمونه (instance) مشخصه، مستقیماً
+    می‌دونیم کدوم تابع رو صدا بزنیم.
 
-    * dynamic dispatch - When an instance type is not known, we must find out
-    some way of calling the correct function.
-
-
-    Trait types `&dyn MyTrait` give us the ability to work with instances of
-    objects indirectly using dynamic dispatch.
+    * دیسپچ داینامیک - وقتی نوع یه نمونه مشخص نیست، باید یه راهی
+    برای صدا زدن تابع درست پیدا کنیم.
 
 
-    When dynamic dispatch is used, Rust will encourage you to put `dyn` before
-    your trait type so people are aware.
+    نوع‌های trait مثل `&dyn MyTrait` بهمون این امکان رو می‌دن که
+    به‌شکل غیرمستقیم با نمونه‌های شیءها با استفاده از دیسپچ داینامیک
+    کار کنیم.
 
 
-    Memory details:
+    وقتی از دیسپچ داینامیک استفاده می‌شه، راست تشویقت می‌کنه که
+    `dyn` رو قبل از نوع trait ات بذاری تا بقیه هم متوجه بشن.
 
-    * Dynamic dispatch is slightly slower because of the pointer chasing to find
-    the real function call.
-- title: Trait Objects
+
+    جزئیات حافظه:
+
+    * دیسپچ داینامیک به خاطر دنبال کردن pointer برای پیدا کردن
+    فراخوانی واقعی تابع، یه‌کم کندتره.
+- title: شیءهای Trait
   content_markdown: >
-    When we pass an instance of an object to a parameter of type `&dyn MyTrait`
-    we pass what is called a *trait object*. 
+    وقتی یه نمونه از یه شیء رو به یه پارامتر از نوع `&dyn MyTrait`
+    پاس می‌دیم، چیزی رو پاس می‌دیم که بهش *شیء trait (trait object)*
+    می‌گن.
 
 
-    A trait object is what allows us to indirectly call the correct methods of
-    an instance. A trait object is a struct that holds the pointer of 
+    یه شیء trait چیزیه که بهمون اجازه می‌ده به‌شکل غیرمستقیم متدهای
+    درست یه نمونه رو صدا بزنیم. یه شیء trait یه struct هست که
+    pointer نمونه‌مون رو به همراه یه لیست از pointerهای تابع به
+    متدهای نمونه‌مون نگه می‌داره.
 
-    our instance with a list of function pointers to our instance's methods.
 
+    جزئیات حافظه:
 
-    Memory details:
-
-    * This list of functions is known in C++ as a *vtable*.
-- title: Handling Unsized Data
+    * این لیست از تابع‌ها توی ++C به اسم *vtable* شناخته می‌شه.
+- title: کار کردن با داده‌ی اندازه‌نامشخص
   content_markdown: >
-    Traits introduce an interesting challenge when we want to store them within
-    another struct. Traits obfuscate the original
+    trait ها وقتی می‌خوایم اونا رو داخل یه struct دیگه ذخیره کنیم،
+    یه چالش جالب ایجاد می‌کنن. trait ها struct اصلی رو مبهم می‌کنن،
+    پس اندازه‌ی اصلیش رو هم مبهم می‌کنن. مقدارهایی با اندازه‌ی
+    نامشخص که توی struct ها ذخیره می‌شن، توی راست به دو روش مدیریت
+    می‌شن:
 
-    struct thus it also obfuscates the original size. Unsized values being
-    stored in structs are handled in two ways in Rust:
 
+    * `generics` - استفاده از نوع‌های پارامتری‌شده، به‌شکل مؤثری
+    struct/تابع‌هایی با نوع‌های مشخص و در نتیجه اندازه‌های مشخص
+    می‌سازه.
 
-    * `generics` - Using parameterized types effectively create struct/functions
-    known types and thus known sizes.
-
-    * `indirection` - Putting instances on the heap gives us a level of
-    indirection that allow us to not have to worry about the size of the actual
-    type and just store a pointer to it. There are other ways as well!
-- title: Generic Functions
+    * `indirection` - گذاشتن نمونه‌ها روی هیپ، یه سطح از غیرمستقیم‌سازی
+    بهمون می‌ده که بهمون اجازه می‌ده نگران اندازه‌ی نوع واقعی نباشیم
+    و فقط یه pointer بهش ذخیره کنیم. راه‌های دیگه‌ای هم وجود داره!
+- title: تابع‌های جنریک
   code: |
     struct SeaCreature {
         pub name: String,
@@ -397,14 +396,13 @@
         generic_make_noise(&creature);
     }
   content_markdown: >
-    Generics in Rust work hand in hand with traits. When we describe a
-    parameterized type `T` we can constrain what types 
+    جنریک‌ها توی راست دست‌به‌دست با trait ها کار می‌کنن. وقتی یه
+    نوع پارامتری‌شده‌ی `T` رو توصیف می‌کنیم، می‌تونیم با لیست کردن
+    trait هایی که آرگومان باید پیاده‌سازی کنه، محدود کنیم که چه
+    نوع‌هایی می‌تونن به‌عنوان آرگومان استفاده بشن.
 
-    can be used as an argument by listing what required traits the argument must
-    implement.
 
-
-    In this example type `T` must implement trait `Foo`:
+    توی این مثال، نوع `T` باید trait به اسم `Foo` رو پیاده‌سازی کنه:
 
     ```rust
 
@@ -419,11 +417,11 @@
     ```
 
 
-    By using generics we create static typed functions at compile time that will
-    have known types and sizes, allowing us to
-
-    perform static dispatch and store as a sized value.
-- title: Generic Function Shorthand
+    با استفاده از جنریک‌ها، در زمان کامپایل تابع‌هایی با تایپ استاتیک
+    می‌سازیم که نوع‌ها و اندازه‌های مشخصی دارن و همین بهمون اجازه
+    می‌ده دیسپچ استاتیک انجام بدیم و اونا رو به‌عنوان یه مقدار با
+    اندازه‌ی مشخص ذخیره کنیم.
+- title: شکل خلاصه‌ی تابع‌های جنریک
   code: |
     struct SeaCreature {
         pub name: String,
@@ -460,7 +458,8 @@
         generic_make_noise(&creature);
     }
   content_markdown: |
-    Rust has a shorthand for expressing generics constrained by a trait:
+    راست یه شکل خلاصه هم برای بیان جنریک‌هایی که با یه trait محدود
+    شدن داره:
 
     ```rust
     fn my_function(foo: impl Foo) {
@@ -468,7 +467,7 @@
     }
     ```
 
-    This is equivalent to writing:
+    که معادل نوشتن این هست:
 
     ```rust
     fn my_function<T>(foo: T)
@@ -522,24 +521,20 @@
         }
     }
   content_markdown: >
-    `Box` is a data structure that allows us to move our data from the stack to
-    the heap.
+    `Box` یه ساختار داده‌ست که بهمون اجازه می‌ده داده‌مون رو از
+    پشته به هیپ منتقل کنیم.
 
 
-    `Box` is a struct known as a *smart pointer* that holds the pointer to our
-    data on the heap.
+    `Box` یه struct هست که به اسم *smart pointer* شناخته می‌شه و
+    pointer داده‌مون روی هیپ رو نگه می‌داره.
 
 
-    Because `Box` is a struct with a known size (because it just holds a
-    pointer), it is 
-
-    often used as a way to store a reference to something in a struct that must
-    know the size 
-
-    of its fields.
+    چون `Box` یه struct با اندازه‌ی مشخصه (چون فقط یه pointer نگه
+    می‌داره)، اغلب به‌عنوان یه راه برای ذخیره‌ی یه رفرنس به چیزی
+    توی یه struct که باید اندازه‌ی فیلدهاش رو بدونه، استفاده می‌شه.
 
 
-    `Box` is so common it can be used from anywhere:
+    `Box` اونقدر رایجه که می‌شه از هر جایی استفادش کرد:
 
 
     ```rust
@@ -547,10 +542,10 @@
     Box::new(Foo { ... })
 
     ```
-- title: Generic Structs Revisited
+- title: struct های جنریک، دوباره بررسی می‌کنیم
   content_markdown: >
-    Generic structs can also have their parameterized types constrained by
-    traits.
+    struct های جنریک هم می‌تونن نوع‌های پارامتری‌شده‌شون رو با trait
+    محدود کنن.
 
 
     ```rust
@@ -567,8 +562,8 @@
     ```
 
 
-    Generic structs have their parameterized type in their implementation
-    blocks:
+    struct های جنریک نوع پارامتری‌شده‌شون رو توی بلوک پیاده‌سازیشون
+    هم دارن:
 
 
     ```rust
@@ -578,25 +573,24 @@
     }
 
     ```
-- title: Chapter 7 - Conclusion
+- title: فصل 7 - جمع‌بندی
   content_markdown: >
-    We now have more language features at hand to represent our ideas clearly! 
-
-    Rust abstractions might be simple but they are powerful enough to make
-
-    working with code a joy. In this chapter, we caught a glimpse of smart
-    pointers
-
-    with `Box`. In the next chapter we'll learn about how smart pointers can
-    help us with other
-
-    specialized memory situations.
+    حالا ویژگی‌های زبانی بیشتری دست‌مونه تا ایده‌هامون رو واضح نشون
+    بدیم!
 
 
-    Resources:
+    شاید انتزاع‌های راست ساده باشن، ولی به‌اندازه‌ی کافی قدرتمندن که
+    کار کردن با کد رو لذت‌بخش کنن. توی این فصل، یه نگاه اجمالی به
+    smart pointer ها با `Box` انداختیم. توی فصل بعدی می‌بینیم که
+    smart pointer ها چطور می‌تونن توی موقعیت‌های تخصصی‌تر حافظه
+    کمکمون کنن.
+
+
+    منابع:
 
     * [Video - Object-oriented Programming in 7
     minutes](https://www.youtube.com/watch?v=pTB0EiLXUC8)
 
-    * [Article - "The faster you unlearn OOP, the better for you and your
+    * [Article - "The faster you unlearn OOP, the better for you and
+    your
     software"](https://dpc.pw/the-faster-you-unlearn-oop-the-better-for-you-and-your-software)

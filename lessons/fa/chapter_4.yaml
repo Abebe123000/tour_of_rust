@@ -1,28 +1,21 @@
-- title: Chapter 4 - Generic Types
+- title: فصل 4 - نوع‌های جنریک
   content_markdown: >
-    Generic types are incredibly important in Rust. They are used in the
-    representation 
-
-    of nullable values (i.e. variables which might not have a value yet), error
-    handling, 
-
-    collections, and more! In this section we will be learning about the
-    foundational generic types 
-
-    you will likely be using all the time.
-- title: What Are Generic Types?
+    نوع‌های جنریک توی راست فوق‌العاده مهمن. توی نمایش مقدارهای
+    nullable (یعنی متغیرهایی که هنوز شاید مقداری نداشته باشن)،
+    مدیریت خطا، مجموعه‌ها، و خیلی چیزهای دیگه استفاده می‌شن! توی
+    این بخش با نوع‌های جنریک بنیادی‌ای آشنا می‌شیم که احتمالاً همیشه
+    ازشون استفاده می‌کنی.
+- title: نوع‌های جنریک چی هستن؟
   content_markdown: >
-    Generic types allow us to partially define a `struct` or `enum`, enabling a
-    compiler to create a fully 
+    نوع‌های جنریک بهمون اجازه می‌دن یه `struct` یا `enum` رو به‌طور
+    ناقص تعریف کنیم و به کامپایلر اجازه بدیم که در زمان کامپایل، بر
+    اساس نحوه‌ی استفاده‌مون توی کد، یه نسخه‌ی کاملاً مشخص بسازه.
 
-    defined version at compile-time based off our code usage.
 
-
-    Rust generally can infer the final type by looking at our instantiation, but
-    if it needs help you 
-
-    can always be explicit using the `::<T>` operator, also known by the name
-    `turbofish` (he's a good friend of mine!).
+    راست معمولاً می‌تونه نوع نهایی رو با نگاه کردن به نحوه‌ی
+    نمونه‌سازی‌مون تشخیص بده، ولی اگه کمک لازم داشته باشه، همیشه
+    می‌تونی با عملگر `::<T>‎` صریح باشی؛ این عملگر با اسم `turbofish`
+    هم شناخته می‌شه (اون یکی از دوستای خوب منه!).
   code: |
     // A partially defined struct type
     struct BagOfHolding<T> {
@@ -48,28 +41,22 @@
             i32_bag.item, bool_bag.item, float_bag.item, bag_in_bag.item.item
         );
     }
-- title: Representing Nothing
+- title: نمایش هیچ‌چیز
   content_markdown: >
-    In other languages, the keyword `null` is used to represent an absence of a
-    value. It creates
-
-    difficulty in programming languages because it creates the possibility that
-    our program might fail 
-
-    when interacting with a variable/field.
+    توی زبان‌های دیگه، از کلیدواژه‌ی `null` برای نمایش نبود یه مقدار
+    استفاده می‌شه. این کار توی زبان‌های برنامه‌نویسی مشکل ایجاد
+    می‌کنه، چون این امکان رو به وجود میاره که برنامه‌مون وقتی با یه
+    متغیر یا فیلد کار می‌کنه، شکست بخوره.
 
 
-    Rust does not have `null`, but it is not ignorant of the importance of
-    representing nothing! 
+    راست `null` نداره، ولی از اهمیت نمایش هیچ‌چیز هم غافل نیست!
+    بیا یه نمایش ساده رو با یه ابزاری که از قبل می‌شناسیم در نظر
+    بگیریم.
 
-    Consider a naive representation using a tool we already know.
 
-
-    This pattern of providing a `None` alternative representation for one or
-    many alternate values is so 
-
-    common in Rust because of its lack of a `null` value. Generic types help
-    solve this challenge.
+    این الگوی ارائه‌ی یه نمایش جایگزین به اسم `None` برای یه مقدار
+    دیگه یا چند تا مقدار جایگزین، توی راست خیلی رایجه؛ چون راست
+    `null` نداره. نوع‌های جنریک کمک می‌کنن این چالش رو حل کنیم.
   code: |
     enum Item {
         Inventory(String),
@@ -82,10 +69,8 @@
     }
 - title: Option
   content_markdown: >
-    Rust has a built in generic enum called `Option` that allows us to represent
-    nullable values 
-
-    without using `null`.
+    راست یه enum جنریک توکار به اسم `Option` داره که بهمون اجازه
+    می‌ده مقدارهای nullable رو بدون استفاده از `null` نمایش بدیم.
 
 
     ```
@@ -98,8 +83,8 @@
     ```
 
 
-    This enum is so common, instances of the enum can be created anywhere with
-    the enum variants `Some` and `None`.
+    این enum اونقدر رایجه که می‌شه توی هر جایی، نمونه‌های این enum
+    رو با انواع `Some` و `None` ساخت.
   code: |
     // A partially defined struct type
     struct BagOfHolding<T> {
@@ -134,10 +119,9 @@
     }
 - title: Result
   content_markdown: >
-    Rust has a built in generic enum called `Result` that allows us to return a
-    value that has the possibility of failing.
-
-    It is the idiomatic way in which the language does error handling.
+    راست یه enum جنریک توکار به اسم `Result` هم داره که بهمون اجازه
+    می‌ده یه مقدار رو برگردونیم که امکان شکست خوردن داره. این روش
+    idiomatic این زبان برای مدیریت خطاست.
 
 
     ```
@@ -150,12 +134,12 @@
     ```
 
 
-    Note that our generics type has multiple *parameterized types* separated by
-    a comma.
+    توجه کن که نوع جنریکمون چند تا *پارامتر نوع* داره که با کاما از
+    هم جدا شدن.
 
 
-    This enum is so common, instances of the enum can be created anywhere with
-    the enum variants `Ok` and `Err`.
+    این enum هم اونقدر رایجه که می‌شه توی هر جایی، نمونه‌های این
+    enum رو با انواع `Ok` و `Err` ساخت.
   code: |
     fn do_something_that_might_fail(i:i32) -> Result<f32,String> {
         if i == 42 {
@@ -174,9 +158,9 @@
             Err(e) => println!("Error: {}",e),
         }
     }
-- title: Failable Main
+- title: Main شکست‌پذیر
   content_markdown: |
-    `main` has the capability of returning a `Result`!
+    `main` این قابلیت رو داره که یه `Result` برگردونه!
   code: |
     fn do_something_that_might_fail(i: i32) -> Result<f32, String> {
         if i == 42 {
@@ -204,10 +188,10 @@
         // to represent everything is fine
         Ok(())
     }
-- title: Graceful Error Handling
+- title: مدیریت زیبای خطا
   content_markdown: >
-    `Result` is so common that Rust has a powerful operator `?` for working with
-    them. These two statements are equivalent:
+    `Result` اونقدر رایجه که راست یه عملگر قدرتمند `?‎` برای کار
+    باهاش داره. این دو دستور با هم برابرن:
 
 
     ```
@@ -240,20 +224,20 @@
         println!("found {}", v);
         Ok(())
     }
-- title: Ugly Option/Result Handling
+- title: مدیریت زشت Option/Result
   content_markdown: >
-    Working with `Option`/`Result` can be tedious when you are just trying to
-    write some quick code.  Both `Option` and `Result` have a 
-
-    function called `unwrap` that can be useful for getting a value in a quick
-    and dirty manner.  `unwrap` will:
-     
-    1. Get the value inside Option/Result
-
-    2. If the enum is of type None/Err, `panic!`
+    کار کردن با `Option`/`Result` وقتی که فقط می‌خوای یه کد سریع
+    بنویسی می‌تونه خسته‌کننده باشه. هم `Option` و هم `Result` یه
+    تابع به اسم `unwrap` دارن که برای گرفتن یه مقدار به شکل سریع و
+    نه‌چندان تمیز مفیده. `unwrap`:
 
 
-    These two pieces of code are equivalent:
+    1. مقدار داخل Option/Result رو می‌گیره
+
+    2. اگه enum از نوع None/Err باشه، `panic!‎` می‌کنه
+
+
+    این دو تیکه کد با هم برابرن:
 
 
     ```
@@ -273,7 +257,7 @@
     ```
 
 
-    Similarly:
+    به همین ترتیب:
 
 
     ```
@@ -293,7 +277,8 @@
     ```
 
 
-    Be a good rustacean and properly use `match` when you can!
+    یه rustacean خوب باش و هر وقت که می‌تونی، درست و حسابی از
+    `match` استفاده کن!
   code: |
     fn do_something_that_might_fail(i: i32) -> Result<f32, String> {
         if i == 42 {
@@ -314,32 +299,29 @@
         
         Ok(())
     }
-- title: Vectors
+- title: وکتورها (Vectors)
   content_markdown: >
-    Some of the most useful generic types are collection types. A vector is a
-    variably sized list of items
-
-    represented by the struct `Vec`.
-
-
-    The macro `vec!` lets us easily create a vector rather than manually
-    constructing one.
+    بعضی از کاربردی‌ترین نوع‌های جنریک، نوع‌های مجموعه‌ای هستن. یه
+    وکتور یه لیست با اندازه‌ی متغیره از آیتم‌ها که با struct از نوع
+    `Vec` نمایش داده می‌شه.
 
 
-    `Vec` has the method `iter()` which creates an iterator from a vector,
-    allowing us to easily
-
-    put a vector into a `for` loop.
+    ماکروی `vec!‎` بهمون اجازه می‌ده به‌جای ساختن دستی یه وکتور، خیلی
+    راحت یکی بسازیم.
 
 
-    Memory Details:
+    `Vec` متد `iter()‎` رو داره که یه iterator از یه وکتور می‌سازه و
+    بهمون اجازه می‌ده به راحتی یه وکتور رو توی حلقه‌ی `for` بذاریم.
 
-    * `Vec` is a struct, but internally it contains a reference to a fixed list
-    of its items on the heap.
 
-    * A vector starts with a default capacity; when more items are added than it
-    has capacity for, it 
-      reallocates its data on the heap to have a new fixed list with large capacity.
+    جزئیات حافظه:
+
+    * `Vec` یه struct هست، ولی داخلش یه ارجاع (reference) به یه
+    لیست ثابت از آیتم‌هاش روی هیپ نگه می‌داره.
+
+    * یه وکتور با یه ظرفیت پیش‌فرض شروع می‌شه؛ وقتی آیتم‌های بیشتری
+    از ظرفیتش بهش اضافه بشن، داده‌هاش رو دوباره روی هیپ تخصیص می‌ده
+    تا یه لیست ثابت جدید با ظرفیت بزرگ‌تر داشته باشه.
   code: |
     fn main() {
         // We can be explicit with type
@@ -361,15 +343,11 @@
             println!("{}", word);
         }
     }
-- title: Chapter 4 - Conclusion
+- title: فصل 4 - جمع‌بندی
   content_markdown: >
-    In one chapter we've learned how much power generic types give us! Don't
-    worry if you don't 
-
-    know fully how to use everything, right now it's just good to be aware of
-    the major ideas you will
-
-    see again and again in code. Our functions are getting quite lengthy! In our
-    next chapter we will 
-
-    spend talk about an important concept in Rust: data ownership.
+    توی یه فصل یاد گرفتیم که نوع‌های جنریک چقدر قدرت بهمون می‌دن!
+    نگران نباش اگه هنوز کامل نمی‌دونی چطوری از همه چیز استفاده کنی؛
+    فعلاً همین بس که با ایده‌های اصلی‌ای که بارها و بارها توی کد
+    می‌بینیشون آشنا بشی. تابع‌هامون دارن نسبتاً طولانی می‌شن! توی
+    فصل بعدی در مورد یه مفهوم مهم توی راست صحبت می‌کنیم: مالکیت
+    داده (data ownership).

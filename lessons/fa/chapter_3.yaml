@@ -1,23 +1,20 @@
-- title: Chapter 3 - Basic Data Structure Types
+- title: فصل 3 - ساختارهای داده‌ی پایه
   content_markdown: >
-    It's time we explore beyond basic types! In this chapter we will look at the
-    most primitive 
-
-    data structures in Rust, paying close attention to their representations in
-    memory. I think 
-
-    you will enjoy how little Rust hides from you how things work.
-- title: Structures
+    وقتشه که از نوع‌های پایه فراتر بریم! توی این فصل به ابتدایی‌ترین
+    ساختارهای داده‌ی راست نگاه می‌کنیم و دقت می‌کنیم که چطوری توی
+    حافظه نمایش داده می‌شن. فکر کنم خوشت بیاد که راست چقدر کم چیزی
+    رو ازت در مورد نحوه‌ی کار کردن چیزها پنهون می‌کنه.
+- title: ساختارها (Structs)
   content_markdown: >
-    A `struct` is a collection of fields.
+    یه `struct` مجموعه‌ای از فیلدهاست.
 
 
-    A *field* is simply a data value associated with a data structure. Its value
-    can be of a primitive type or a data structure.
+    یه *فیلد* به سادگی یه مقدار داده‌ایه که به یه ساختار داده مرتبطه.
+    مقدارش می‌تونه یه نوع پایه باشه یا یه ساختار داده‌ی دیگه.
 
 
-    Its definition is like a blueprint for a compiler on how to layout the
-    fields in memory nearby each other.
+    تعریفش مثل یه نقشه برای کامپایلره که چطوری فیلدها رو کنار هم توی
+    حافظه بچینه.
   code: |-
     struct SeaCreature {
         // String is a struct
@@ -27,21 +24,21 @@
         legs: i32,
         weapon: String,
     }
-- title: Calling Methods
+- title: صدا زدن متدها
   content_markdown: >
-    Unlike functions, methods are functions associated with a specific data
-    type.
+    برخلاف تابع‌ها، متدها تابع‌هایی هستن که به یه نوع داده‌ی خاص
+    مرتبطن.
 
 
-    **static methods** — methods that belong to a type itself are called using
-    the `::` operator.
+    **متدهای static** — متدهایی که به خود نوع تعلق دارن، با عملگر
+    `::` صدا زده می‌شن.
 
 
-    **instance methods** — methods that belong to an instance of a type are
-    called using the `.` operator.
+    **متدهای instance** — متدهایی که به یه نمونه (instance) از یه
+    نوع تعلق دارن، با عملگر `.` صدا زده می‌شن.
 
 
-    We will talk more on making your own methods in future chapters.
+    توی فصل‌های بعدی بیشتر در مورد ساختن متدهای خودت صحبت می‌کنیم.
   code: |
     fn main() {
         // Using a static method to create an instance of String
@@ -49,57 +46,64 @@
         // Using a method on the instance
         println!("{} is {} characters long.", s, s.len());
     }
-- title: Memory
+- title: حافظه
   content_markdown: >
-    Rust programs have 3 memory regions where data is stored:
+    برنامه‌های راست ۳ ناحیه‌ی حافظه دارن که داده توشون ذخیره می‌شه:
 
-    * **data memory** - For data that is fixed in size and **static** (i.e.
-    always available through life of program). 
-      Consider the text in your program (e.g. "Hello World!"): This text's bytes are only ever read from one place 
-      and therefore can be stored in this region. Compilers make lots of optimizations 
-      with this kind of data, and they are generally considered very fast to use since
-      locations are known and fixed.
-    * **stack memory** - For data that is declared as variables within a
-    function. 
-      The location of this memory never changes for the duration of a function call; because of this compilers 
-      can optimize code so stack data is very fast to access. 
-    * **heap memory** - For data that is created while the application is
-    running. 
-      Data in this region may be added, moved, removed, resized, etc. Because of 
-      its dynamic nature it's generally considered slower to use, but it allows 
-      for much more creative usages of memory.  When data is added to this region we 
-      call it an **allocation**. When data is removed from this section we call it a 
-      **deallocation**.
-- title: Creating Data In Memory
+    * **حافظه‌ی داده (data memory)** - برای داده‌هایی با اندازه‌ی
+    ثابت که **static** هستن (یعنی همیشه در طول عمر برنامه در
+    دسترسن). متن توی برنامه‌ت رو در نظر بگیر (مثلاً "Hello World!"):
+    بایت‌های این متن فقط از یه جا خونده می‌شن، پس می‌شه توی این
+    ناحیه ذخیره‌شون کرد. کامپایلرها با این نوع داده بهینه‌سازی‌های
+    زیادی انجام می‌دن و معمولاً استفاده ازشون خیلی سریع در نظر گرفته
+    می‌شه، چون مکانشون مشخص و ثابته.
+
+    * **حافظه‌ی پشته (stack memory)** - برای داده‌هایی که به‌عنوان
+    متغیر داخل یه تابع تعریف می‌شن. مکان این حافظه در طول یه فراخوانی
+    تابع هیچ‌وقت عوض نمی‌شه؛ به همین خاطر کامپایلرها می‌تونن کد رو
+    طوری بهینه کنن که دسترسی به داده‌های پشته خیلی سریع باشه.
+
+    * **حافظه‌ی هیپ (heap memory)** - برای داده‌هایی که وقتی برنامه
+    داره اجرا می‌شه ساخته می‌شن. داده‌های این ناحیه ممکنه اضافه،
+    جابه‌جا، حذف، یا تغییر اندازه داده بشن و غیره. به خاطر ماهیت
+    پویاش، معمولاً استفاده ازش کندتر در نظر گرفته می‌شه، ولی
+    استفاده‌های خلاقانه‌تری از حافظه رو ممکن می‌کنه. وقتی داده‌ای به
+    این ناحیه اضافه بشه، بهش می‌گیم **تخصیص (allocation)**. وقتی
+    داده‌ای از این ناحیه حذف بشه، بهش می‌گیم **آزادسازی
+    (deallocation)**.
+- title: ساختن داده توی حافظه
   content_markdown: >
-    When we **instantiate** a **struct** in our code our program creates the
-    associated field data side by side in memory.
+    وقتی یه **struct** رو توی کدمون **نمونه‌سازی (instantiate)**
+    می‌کنیم، برنامه‌مون داده‌های فیلد مرتبط رو کنار هم توی حافظه
+    می‌سازه.
 
 
-    We instantiate by specifying all field values within 
+    نمونه‌سازی رو با مشخص کردن همه‌ی مقدارهای فیلد داخل
 
 
-    `StructName { ... }`.
+    `StructName { ... }‎`
 
 
-    Struct fields are accessed using a dot operator `.`.
+    انجام می‌دیم.
 
 
-    Memory details of our example:
+    به فیلدهای struct با عملگر نقطه‌ی `.` دسترسی پیدا می‌کنیم.
 
-    * The text inside the quotes is read only data (e.g. "ferris"), therefore it
-    is 
-      placed in the *data memory region*.
-    * The function call `String::from` creates a struct `String` that is placed
-    side 
-      by side with the fields of SeaCreature in the *stack*. A String represents text that can be changed 
-      and does this by:
-      1. Creating memory on the *heap* for the text where it can be modified
-      2. Storing a reference to that memory location on the *heap* and storing it in `String` 
-      struct (More on this in future lessons) 
-    * Finally our two friends *Ferris* and *Sarah* have data structures that
-    will always have
-      fixed locations in our program, so they are placed on the *stack*.
+
+    جزئیات حافظه‌ی مثالمون:
+
+    * متن داخل گیومه‌ها داده‌ی فقط‌خواندنیه (مثلاً "Ferris")، پس توی
+    *ناحیه‌ی حافظه‌ی داده* قرار می‌گیره.
+
+    * فراخوانی تابع `String::from` یه struct از نوع `String` می‌سازه
+    که کنار فیلدهای SeaCreature روی *پشته* قرار می‌گیره. یه String
+    نشون‌دهنده‌ی متنیه که می‌شه تغییرش داد و این کار رو این‌طوری
+    انجام می‌ده:
+      1. ساختن حافظه روی *هیپ* برای متن، جایی که می‌شه اون رو تغییر داد
+      2. ذخیره کردن یه ارجاع (reference) به اون مکان حافظه روی *هیپ* و ذخیره‌ی همون ارجاع توی struct از نوع `String`‎ (بیشتر در مورد این توی درس‌های بعدی)
+    * در نهایت، دو تا از دوستامون *Ferris* و *Sarah* ساختارهای
+    داده‌ای دارن که همیشه یه مکان ثابت توی برنامه‌مون خواهند داشت،
+    پس روی *پشته* قرار می‌گیرن.
   code: |
     struct SeaCreature {
         animal_type: String,
@@ -126,7 +130,7 @@
             name: String::from("Sarah"),
             arms: 8,
             legs: 0,
-            weapon: String::from("none"),
+            weapon: String::from("brain"),
         };
         
         println!(
@@ -138,9 +142,10 @@
             sarah.name, sarah.animal_type, sarah.arms, sarah.legs
         );
     }
-- title: Tuple-like Structs
+- title: ساختارهای شبیه تاپل
   content_markdown: |
-    For conciseness, you can create structs that are used like a tuple.
+    برای مختصر بودن، می‌تونی struct هایی بسازی که مثل تاپل استفاده
+    بشن.
   code: |
     struct Location(i32, i32);
 
@@ -149,30 +154,33 @@
         let loc = Location(42, 32);
         println!("{}, {}", loc.0, loc.1);
     }
-- title: Unit-like Structs
+- title: ساختارهای شبیه یونیت
   content_markdown: >
-    Structs do not have to have any fields at all.
+    اصلاً لازم نیست struct ها هیچ فیلدی داشته باشن.
 
 
-    As mentioned in Chapter 1 a *unit* is another word for an empty tuple `()`.
-    This is why this kind of struct is called *Unit-like*.
+    همون‌طور که توی فصل 1 گفته شد، یه *یونیت (unit)* یه کلمه‌ی دیگه
+    برای تاپل خالی `()‎` هست. به همین خاطره که به این نوع struct
+    میگن *شبیه یونیت (Unit-like)*.
 
 
-    This type of struct is rarely used.
+    از این نوع struct خیلی کم استفاده می‌شه.
   code: |
     struct Marker;
 
     fn main() {
         let _m = Marker;
     }
-- title: Enumerations
+- title: انامریشن‌ها (Enumerations)
   content_markdown: >
-    Enumerations allow you to create a new type that can have a value of several
-    tagged elements using the `enum` keyword.
+    انامریشن‌ها بهت اجازه می‌دن با کلیدواژه‌ی `enum`، یه نوع جدید
+    بسازی که می‌تونه مقدار یکی از چند تا عنصر برچسب‌دار رو داشته
+    باشه.
 
 
-    `match` helps ensure exhaustive handling of all possible enum values making
-    it a powerful tool in ensuring quality code.
+    `match` کمک می‌کنه که مدیریت همه‌ی مقدارهای ممکن یه enum رو
+    جامع انجام بدیم و همین باعث می‌شه ابزار قدرتمندی برای تضمین
+    کیفیت کد باشه.
   code: |
     #![allow(dead_code)] // this line prevents compiler warnings
 
@@ -202,36 +210,37 @@
 
         match ferris.species {
             Species::Crab => println!("{} is a crab",ferris.name),
-            Species::Octopus => println!("{} is a octopus",ferris.name),
+            Species::Octopus => println!("{} is an octopus",ferris.name),
             Species::Fish => println!("{} is a fish",ferris.name),
             Species::Clam => println!("{} is a clam",ferris.name),
         }
     }
-- title: Enumerations With Data
+- title: انامریشن‌ها با داده
   content_markdown: >
-    `enum` elements can also have one or more data types allowing them to behave
-    like *union* from C.
+    عناصر `enum` می‌تونن یک یا چند نوع داده هم داشته باشن، که بهشون
+    اجازه می‌ده مثل *union* توی C رفتار کنن.
 
 
-    When an `enum` is pattern matched using `match`, you can bind a variable
-    name to each data value.
+    وقتی یه `enum` با `match` مچ می‌شه، می‌تونی یه اسم متغیر رو به
+    هر مقدار داده مرتبط کنی.
 
 
-    Memory details of `enum`:
+    جزئیات حافظه‌ی `enum`:
 
-    * An enum data value will have a memory size equal to its largest element.
-    This allows for all potential values to fit in the same space of memory.
+    * مقدار داده‌ی یه enum اندازه‌ی حافظه‌ای برابر با بزرگ‌ترین
+    عنصرش خواهد داشت. این باعث می‌شه همه‌ی مقدارهای ممکن توی همون
+    فضای حافظه جا بشن.
 
-    * In addition to element data types (if any), each element also has a
-    numeric value that represents which tag it is.
+    * علاوه بر نوع داده‌ی هر عنصر (اگه داشته باشه)، هر عنصر یه مقدار
+    عددی هم داره که نشون می‌ده کدوم برچسب (tag) هست.
 
 
-    Other details:
+    جزئیات دیگه:
 
-    * Rust's `enum` is something also known as a *tagged union*.
+    * `enum` توی راست چیزیه که بهش *tagged union* هم می‌گن.
 
-    * The combining of types to make a new type is what people mean when they
-    say Rust has *algebraic types*.
+    * ترکیب کردن نوع‌ها برای ساختن یه نوع جدید همون چیزیه که آدم‌ها
+    وقتی می‌گن راست *نوع‌های جبری (algebraic types)* داره، منظورشونه.
   code: |-
     #![allow(dead_code)] // this line prevents compiler warnings
 
@@ -280,13 +289,11 @@
             _ => println!("ferris is some other animal"),
         }
     }
-- title: Chapter 3 - Conclusion
+- title: فصل 3 - جمع‌بندی
   content_markdown: >
-    How exciting! We now have the most basic tools for representing the form of
-    our ideas in code. Hopefully now we 
-
-    can see a glimmer of how Rust's fundamental operations work in harmony and
-    conciseness with its types.  Next up we will talk about 
-
-    a concept that gives our data types even more flexibility of representation:
-    *generics*.
+    چه هیجان‌انگیز! الان ابتدایی‌ترین ابزارها رو برای نمایش شکل
+    ایده‌هامون توی کد داریم. امیدواریم الان بشه یه پرتوی نور از این
+    دید که چطوری عملیات‌های بنیادی راست به شکل هماهنگ و مختصری با
+    نوع‌هاش کار می‌کنن. توی قسمت بعدی در مورد مفهومی صحبت می‌کنیم
+    که به نوع‌های داده‌مون انعطاف‌پذیری بیشتری توی نمایش می‌ده:
+    *جنریک‌ها (generics)*.

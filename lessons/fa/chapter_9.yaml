@@ -1,25 +1,29 @@
-- title: Chapter 9 - Project Organization and Structure
+- title: فصل 9 - سازمان‌دهی و ساختار پروژه
   content_markdown: >
-    So far all of our code examples have been a single file. Let's discuss how
-    our code can be better organized and shared by others!
-- title: Modules
+    تا الان همه‌ی مثال‌های کدمون توی یه فایل تنها بودن. بیاید در
+    مورد اینکه چطور می‌شه کدمون رو بهتر سازمان‌دهی کرد و با بقیه به
+    اشتراک گذاشت، صحبت کنیم!
+- title: ماژول‌ها
   content_markdown: |
-    Every Rust program or library is a *crate*.
+    هر برنامه یا کتابخونه‌ی راست یه *crate* هست.
 
-    Every crate is made of a hierarchy of *modules*.
+    هر crate از یه سلسله‌مراتب از *ماژول‌ها* تشکیل شده.
 
-    Every crate has a root module.
+    هر crate یه ماژول ریشه (root module) داره.
 
-    A module can hold global variables, functions, structs, traits or even other modules!
+    یه ماژول می‌تونه متغیرهای سراسری، تابع‌ها، struct ها، trait ها،
+    یا حتی ماژول‌های دیگه رو نگه‌داره!
 
-    In Rust there is not a 1 to 1 mapping of files to the module tree heirarchy. We must build the module tree explicitly by hand in our code.
-- title: Writing a Program
+    توی راست، یه تناظر یک‌به‌یک بین فایل‌ها و سلسله‌مراتب درخت ماژول
+    وجود نداره. باید درخت ماژول رو به‌شکل صریح و دستی توی کدمون
+    بسازیم.
+- title: نوشتن یه برنامه
   content_markdown: |
-    A program has a root module in a file called `main.rs`.
-- title: Writing a Library
+    یه برنامه یه ماژول ریشه توی یه فایل به اسم `main.rs` داره.
+- title: نوشتن یه کتابخونه
   content_markdown: |
-    A library has a root module in a file called `lib.rs`.
-- title: Referencing Other Modules and Crates
+    یه کتابخونه یه ماژول ریشه توی یه فایل به اسم `lib.rs` داره.
+- title: ارجاع به ماژول‌ها و Crate های دیگه
   code: |
     use std::f64::consts::PI;
 
@@ -28,51 +32,48 @@
         println!("I would love a slice of {}!", PI);
     }
   content_markdown: >
-    Items in modules can be referenced with their full module path
-    `std::f64::consts::PI`.
+    به آیتم‌های داخل ماژول‌ها می‌شه با مسیر کامل ماژولشون ارجاع داد؛
+    مثلاً `std::f64::consts::PI`.
 
 
-    A simpler way is the **use** keyword. It allows us to specify particular
-    items from modules we want
-
-    to use throughout our code without a full path. For instance `use
-    std::f64::consts::PI`
-
-    allows me to just use the identifier `PI` in my main function.
+    یه راه ساده‌تر، کلیدواژه‌ی **use** هست. این کلیدواژه بهمون اجازه
+    می‌ده آیتم‌های خاصی رو از ماژول‌هایی که می‌خوایم تو کل کدمون
+    استفاده کنیم بدون مسیر کامل مشخص کنیم. مثلاً `use
+    std::f64::consts::PI` بهم اجازه می‌ده توی تابع main فقط از
+    شناسه‌ی `PI` استفاده کنم.
 
 
-    **std** is the crate of the **standard library** of Rust which is full of
-    useful data
-
-    structures and functions for interacting with your operating system.
+    **std** همون crateِ **کتابخونه‌ی استاندارد** راست هست که پر از
+    ساختارهای داده و تابع‌های مفید برای تعامل با سیستم‌عاملته.
 
 
-    A searchable directory of crates created by the community can be found at
-    [https://crates.io](https://crates.io/).
-- title: Referencing Multiple Items
+    یه دایرکتوری قابل جستجو از crate هایی که توسط کامیونیتی ساخته
+    شدن رو می‌تونی توی
+    [https://crates.io](https://crates.io/) پیدا کنی.
+- title: ارجاع به چند آیتم
   content_markdown: |
-    Multiple items can be referenced in a single module path as so:
+    می‌شه چند تا آیتم رو توی یه مسیر ماژول این‌طوری ارجاع داد:
 
     ```rust
     use std::f64::consts::{PI,TAU}
     ```
 
-    Ferris doesn't eat TAU, he only eats PI.
-- title: Creating Modules
+    فریس TAU نمی‌خوره، فقط PI می‌خوره.
+- title: ساختن ماژول‌ها
   content_markdown: |
-    When we think of code, we usually imagine a hierarchy of files organized
-    in directories. Rust lets you create modules closely related to your file
-    structure.
+    وقتی به کد فکر می‌کنیم، معمولاً یه سلسله‌مراتب از فایل‌ها که توی
+    دایرکتوری‌ها سازمان‌دهی شدن رو تصور می‌کنیم. راست بهت اجازه
+    می‌ده ماژول‌هایی بسازی که خیلی به ساختار فایل‌هات مرتبط باشن.
 
-    There are two ways in Rust to declare a module. For example, a module
-    `foo` can be represented as:
-      * a file named `foo.rs`
-      * a directory named `foo` with a file `mod.rs` inside
-- title: Module Hierarchy
+    توی راست دو راه برای اعلام کردن یه ماژول وجود داره. مثلاً یه
+    ماژول به اسم `foo` رو می‌شه این‌طوری نمایش داد:
+      * یه فایل به اسم `foo.rs`
+      * یه دایرکتوری به اسم `foo` که یه فایل `mod.rs` توشه
+- title: سلسله‌مراتب ماژول
   content_markdown: >
-    A module can depend on another one. In order to establish a relationship
-
-    between a module and its sub-module, you must write in the parent module:
+    یه ماژول می‌تونه به یه ماژول دیگه وابسته باشه. برای برقرار کردن
+    یه رابطه بین یه ماژول و زیرماژولش، باید توی ماژول والد این‌طوری
+    بنویسی:
 
 
     ```rust
@@ -82,29 +83,30 @@
     ```
 
 
-    The declaration above  will look for a file named `foo.rs` or `foo/mod.rs`
-    and
-
-    will insert its contents inside a module named `foo` under this scope.
-- title: Inline Module
+    اعلام بالا دنبال یه فایل به اسم `foo.rs` یا `foo/mod.rs` می‌گرده
+    و محتواش رو داخل یه ماژول به اسم `foo`، زیر همین scope، درج
+    می‌کنه.
+- title: ماژول درون‌خطی (Inline)
   content_markdown: >
-    A sub-module can be directly inlined within a module's code.
+    یه زیرماژول رو می‌شه مستقیماً داخل کد یه ماژول درون‌خطی
+    (inline) کرد.
 
 
-    One very common use for inline modules is creating unit tests. We create an
-    inline module that only exists when Rust is used for testing!
+    یکی از رایج‌ترین استفاده‌ها از ماژول‌های inline، ساختن تست‌های
+    واحد (unit test) هست. یه ماژول inline می‌سازیم که فقط وقتی راست
+    برای تست استفاده می‌شه، وجود داره!
 
 
     ```
 
-    // This macro removes this inline module when Rust 
+    // This macro removes this inline module when Rust
 
     // is not in test mode.
 
     #[cfg(test)]
 
     mod tests {
-        // Notice that we don't immediately get access to the 
+        // Notice that we don't immediately get access to the
         // parent module. We must be explicit.
         use super::*;
 
@@ -112,33 +114,32 @@
     }
 
     ```
-- title: Internal Module Referencing
+- title: ارجاع داخلی ماژول‌ها
   content_markdown: >
-    Rust has several keywords you can use in your `use` path to quickly get
-    ahold of the module you want:
-      
-    * `crate` - the root module of your crate
+    راست چند تا کلیدواژه داره که می‌تونی توی مسیر `use`ـت استفاده
+    کنی تا سریع به ماژولی که می‌خوای برسی:
 
-    * `super` - the parent module of your current module
 
-    * `self` - the current module
-- title: Exporting
+    * `crate` - ماژول ریشه‌ی crate ات
+
+    * `super` - ماژول والد ماژول فعلیت
+
+    * `self` - ماژول فعلی
+- title: اکسپورت کردن
   content_markdown: >
-    By default members of a *module* are not accessible from outside of the
-    module (not even to its child modules!). We make members 
+    به‌طور پیش‌فرض، اعضای یه *ماژول* از بیرون ماژول قابل دسترسی
+    نیستن (حتی برای ماژول‌های فرزندش هم نیستن!). با کلیدواژه‌ی
+    `pub`، اعضای یه ماژول رو قابل‌دسترس می‌کنیم.
 
-    of a module accessible using the `pub` keyword.
 
-
-    By default members of a *crate* are not accessible outside of the crate. We
-    make members of
-
-    a crate accessible by marking them as `pub` in the *root module* of your
-    crate (`lib.rs` or `main.rs`).
-- title: Structure Visibility
+    به‌طور پیش‌فرض، اعضای یه *crate* هم بیرون از اون crate قابل
+    دسترسی نیستن. با علامت‌گذاری اونا به‌عنوان `pub` توی *ماژول
+    ریشه*ی crate ات (`lib.rs` یا `main.rs`)، اعضای یه crate رو
+    قابل‌دسترس می‌کنیم.
+- title: قابلیت دید Struct ها
   content_markdown: >
-    Just like functions, structures can declare what they want exposed outside
-    of their module using `pub`.
+    درست مثل تابع‌ها، struct ها هم می‌تونن با `pub` مشخص کنن که چی
+    رو می‌خوان بیرون از ماژولشون نمایش بدن.
   code: |
     // SeaCreature struct will be usable outside of our module
     pub struct SeaCreature {
@@ -151,40 +152,40 @@
     }
 - title: Prelude
   content_markdown: |
-    You might be wondering how we have access to `Vec` or `Box`
-    everywhere without a `use` to import them. It is because of the module
-    `prelude` in the standard library.
+    شاید برات سؤال شده باشه که چطور همه‌جا بدون `use` برای وارد
+    کردن، به `Vec` یا `Box` دسترسی داریم. دلیلش ماژول `prelude` توی
+    کتابخونه‌ی استانداردـه.
 
-    Know that in the Rust standard library anything that is exported in
-    `std::prelude::*` is automatically available to every part of Rust.
-    That is the case for `Vec` and `Box` but others as well (Option, Copy,
-    etc.).
-- title: Your Own Prelude
+    بدون که توی کتابخونه‌ی استاندارد راست، هر چیزی که توی
+    `std::prelude::*` اکسپورت بشه، به‌طور خودکار توی همه‌جای راست
+    در دسترسه. این برای `Vec` و `Box` صدق می‌کنه، و همین‌طور برای
+    بقیه (Option، Copy، و غیره).
+- title: Prelude خودت
   content_markdown: >
-    Because of standard library's prelude, it's common for your libary to have
-    its own prelude module as a starting point for 
-
-    where users should import all of the most common data structures for using
-    your library (e.g `use my_library::prelude::*`).
-
-    It doesn't automatically get used in programs/libraries that use your crate,
-    but it's a good convention to follow so people
-
-    know where to start.
+    به خاطر وجود prelude توی کتابخونه‌ی استاندارد، رایجه که
+    کتابخونه‌ی خودت هم یه ماژول prelude داشته باشه؛ به‌عنوان یه
+    نقطه‌ی شروع برای جایی که کاربرها باید رایج‌ترین ساختارهای داده
+    برای استفاده از کتابخونه‌ت رو ازش وارد کنن (مثلاً `use
+    my_library::prelude::*`).
 
 
-    Ferris says, "Be a good rustacean and help a fellow crab out with a good
-    prelude!"
-- title: Chapter 9 - Conclusion
+    این ماژول به‌طور خودکار توی برنامه‌ها/کتابخونه‌هایی که از
+    crate ات استفاده می‌کنن، استفاده نمی‌شه، ولی رعایتش یه قرارداد
+    خوبه تا مردم بدونن از کجا شروع کنن.
+
+
+    فریس می‌گه: «یه rustacean خوب باش و به یه خرچنگ دیگه با یه
+    prelude خوب کمک کن!»
+- title: فصل 9 - جمع‌بندی
   content_markdown: >
-    You now have a few tricks up your sleeve when it comes to creating Rust
-    applications and libraries ready for the world. Don't
+    الان چند تا ترفند توی چنته داری برای وقتی که می‌خوای برنامه‌ها و
+    کتابخونه‌های راست بسازی که آماده‌ی دنیای واقعی باشن. نگران به
+    خاطر سپردن همه‌ی اینا نباش. همون‌طور که کتابخونه‌ت رشد می‌کنه و
+    توسط بقیه استفاده می‌شه، خودت می‌فهمی که توی هر مرحله چی بهتر
+    جواب می‌ده.
 
-    worry about remembering it all. As your library grows and is used by other
-    people, you'll find what works best at each milestone.
 
-
-    Resources:
+    منابع:
 
     - [Guidelines For Writing Rust
     APIs](https://rust-lang.github.io/api-guidelines/)
