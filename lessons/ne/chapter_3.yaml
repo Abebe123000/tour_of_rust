@@ -1,0 +1,307 @@
+- title: Hoofdstuk 3 - Basis Gegevensstructuren
+  content_markdown: >
+    Het is tijd om verder te gaan dan de basisdatatypes! In dit
+    hoofdstuk bekijken we de meest primitieve gegevensstructuren in
+    Rust, waarbij we goed letten op hoe ze in het geheugen worden
+    weergegeven. Ik denk dat u het leuk zult vinden hoe weinig Rust
+    voor u verbergt over hoe dingen werken.
+- title: Structs
+  content_markdown: >
+    Een `struct` is een verzameling velden.
+
+
+    Een *veld* is simpelweg een gegevenswaarde die aan een
+    gegevensstructuur is gekoppeld. De waarde ervan kan een
+    primitief type zijn of een andere gegevensstructuur.
+
+
+    De definitie ervan is als een blauwdruk voor de compiler over
+    hoe de velden dicht bij elkaar in het geheugen moeten worden
+    geplaatst.
+  code: |-
+    struct SeaCreature {
+        // String is a struct
+        animal_type: String,
+        name: String,
+        arms: i32,
+        legs: i32,
+        weapon: String,
+    }
+- title: Methoden Aanroepen
+  content_markdown: >
+    In tegenstelling tot functies zijn methoden functies die
+    gekoppeld zijn aan een specifiek gegevenstype.
+
+
+    **statische methoden** — methoden die bij het type zelf horen,
+    worden aangeroepen met de `::`-operator.
+
+
+    **instantiemethoden** — methoden die bij een instantie van een
+    type horen, worden aangeroepen met de `.`-operator.
+
+
+    We zullen in latere hoofdstukken meer praten over het maken van
+    uw eigen methoden.
+  code: |
+    fn main() {
+        // Using a static method to create an instance of String
+        let s = String::from("Hello world!");
+        // Using a method on the instance
+        println!("{} is {} characters long.", s, s.len());
+    }
+- title: Geheugen
+  content_markdown: >
+    Rust-programma's hebben 3 geheugenregio's waar gegevens worden
+    opgeslagen:
+
+    * **datageheugen** - Voor gegevens met een vaste grootte die
+    **statisch** zijn (d.w.z. altijd beschikbaar gedurende de hele
+    levensduur van het programma). Denk aan de tekst in uw programma
+    (bijv. "Hello World!"): de bytes van deze tekst worden slechts
+    vanaf één plek gelezen en kunnen daarom in deze regio worden
+    opgeslagen. Compilers doen veel optimalisaties met dit soort
+    gegevens, en ze worden over het algemeen als zeer snel in gebruik
+    beschouwd omdat de locaties bekend en vast zijn.
+
+    * **stackgeheugen** - Voor gegevens die als variabelen binnen
+    een functie worden gedeclareerd. De locatie van dit geheugen
+    verandert nooit gedurende de duur van een functieaanroep;
+    hierdoor kunnen compilers code optimaliseren zodat stackgegevens
+    zeer snel toegankelijk zijn.
+
+    * **heapgeheugen** - Voor gegevens die worden gecreëerd terwijl
+    de applicatie draait. Gegevens in deze regio kunnen worden
+    toegevoegd, verplaatst, verwijderd, van grootte veranderd, enz.
+    Vanwege de dynamische aard ervan wordt het over het algemeen als
+    langzamer in gebruik beschouwd, maar het maakt veel creatievere
+    manieren van geheugengebruik mogelijk. Wanneer gegevens aan deze
+    regio worden toegevoegd, noemen we dit een **allocatie**. Wanneer
+    gegevens uit deze regio worden verwijderd, noemen we dit een
+    **deallocatie**.
+- title: Gegevens Creëren In Het Geheugen
+  content_markdown: >
+    Wanneer we een **struct** in onze code **instantiëren**, creëert
+    ons programma de bijbehorende veldgegevens naast elkaar in het
+    geheugen.
+
+
+    We instantiëren door alle veldwaarden op te geven binnen
+
+
+    `StructNaam { ... }`.
+
+
+    Struct-velden worden benaderd met een puntoperator `.`.
+
+
+    Geheugendetails van ons voorbeeld:
+
+    * De tekst tussen de aanhalingstekens is alleen-lezen data
+    (bijv. "Ferris"), en wordt daarom geplaatst in de *datageheugen
+    regio*.
+
+    * De functieaanroep `String::from` creëert een `String`-struct
+    die naast de velden van SeaCreature op de *stack* wordt
+    geplaatst. Een String vertegenwoordigt tekst die kan worden
+    gewijzigd en doet dit door:
+      1. Geheugen op de *heap* te creëren voor de tekst waar het kan worden gewijzigd
+      2. Een referentie naar die geheugenlocatie op de *heap* op te slaan en deze op te slaan in de `String`-struct (meer hierover in latere lessen)
+    * Ten slotte hebben onze twee vrienden *Ferris* en *Sarah*
+    gegevensstructuren die altijd een vaste locatie in ons programma
+    zullen hebben, dus ze worden op de *stack* geplaatst.
+  code: |
+    struct SeaCreature {
+        animal_type: String,
+        name: String,
+        arms: i32,
+        legs: i32,
+        weapon: String,
+    }
+
+    fn main() {
+        // SeaCreature's data is on stack
+        let ferris = SeaCreature {
+            // String struct is also on stack,
+            // but holds a reference to data on heap
+            animal_type: String::from("crab"),
+            name: String::from("Ferris"),
+            arms: 2,
+            legs: 4,
+            weapon: String::from("claw"),
+        };
+
+        let sarah = SeaCreature {
+            animal_type: String::from("octopus"),
+            name: String::from("Sarah"),
+            arms: 8,
+            legs: 0,
+            weapon: String::from("brain"),
+        };
+        
+        println!(
+            "{} is a {}. They have {} arms, {} legs, and a {} weapon",
+            ferris.name, ferris.animal_type, ferris.arms, ferris.legs, ferris.weapon
+        );
+        println!(
+            "{} is a {}. They have {} arms, and {} legs. They have no weapon..",
+            sarah.name, sarah.animal_type, sarah.arms, sarah.legs
+        );
+    }
+- title: Tuple-achtige Structs
+  content_markdown: |
+    Voor beknoptheid kunt u structs maken die worden gebruikt als
+    een tuple.
+  code: |
+    struct Location(i32, i32);
+
+    fn main() {
+        // This is still a struct on a stack
+        let loc = Location(42, 32);
+        println!("{}, {}", loc.0, loc.1);
+    }
+- title: Unit-achtige Structs
+  content_markdown: >
+    Structs hoeven helemaal geen velden te hebben.
+
+
+    Zoals vermeld in Hoofdstuk 1, is een *unit* een ander woord voor
+    een lege tuple `()`. Dit is de reden waarom dit soort struct
+    *Unit-achtig* wordt genoemd.
+
+
+    Dit type struct wordt zelden gebruikt.
+  code: |
+    struct Marker;
+
+    fn main() {
+        let _m = Marker;
+    }
+- title: Enums
+  content_markdown: >
+    Met enums kunt u een nieuw type creëren dat een waarde kan hebben
+    van verschillende gelabelde elementen, met het sleutelwoord
+    `enum`.
+
+
+    `match` helpt ervoor te zorgen dat alle mogelijke enum-waarden
+    uitputtend worden afgehandeld, wat het een krachtig hulpmiddel
+    maakt om kwaliteitscode te garanderen.
+  code: |
+    #![allow(dead_code)] // this line prevents compiler warnings
+
+    enum Species {
+        Crab,
+        Octopus,
+        Fish,
+        Clam
+    }
+
+    struct SeaCreature {
+        species: Species,
+        name: String,
+        arms: i32,
+        legs: i32,
+        weapon: String,
+    }
+
+    fn main() {
+        let ferris = SeaCreature {
+            species: Species::Crab,
+            name: String::from("Ferris"),
+            arms: 2,
+            legs: 4,
+            weapon: String::from("claw"),
+        };
+
+        match ferris.species {
+            Species::Crab => println!("{} is a crab",ferris.name),
+            Species::Octopus => println!("{} is an octopus",ferris.name),
+            Species::Fish => println!("{} is a fish",ferris.name),
+            Species::Clam => println!("{} is a clam",ferris.name),
+        }
+    }
+- title: Enums Met Gegevens
+  content_markdown: >
+    `enum`-elementen kunnen ook een of meer gegevenstypes hebben,
+    waardoor ze zich kunnen gedragen als een *union* uit C.
+
+
+    Wanneer een `enum` wordt gematcht met `match`, kunt u een
+    variabelenaam aan elke gegevenswaarde koppelen.
+
+
+    Geheugendetails van `enum`:
+
+    * Een enum-gegevenswaarde heeft een geheugengrootte die gelijk
+    is aan het grootste element ervan. Dit maakt het mogelijk dat
+    alle potentiële waarden in dezelfde geheugenruimte passen.
+
+    * Naast de gegevenstypes van het element (indien aanwezig),
+    heeft elk element ook een numerieke waarde die aangeeft om welk
+    label het gaat.
+
+
+    Andere details:
+
+    * De `enum` van Rust staat ook bekend als een *tagged union*.
+
+    * Het combineren van types om een nieuw type te maken is wat men
+    bedoelt wanneer men zegt dat Rust *algebraïsche types* heeft.
+  code: |-
+    #![allow(dead_code)] // this line prevents compiler warnings
+
+    enum Species { Crab, Octopus, Fish, Clam }
+    enum PoisonType { Acidic, Painful, Lethal }
+    enum Size { Big, Small }
+    enum Weapon {
+        Claw(i32, Size),
+        Poison(PoisonType),
+        None
+    }
+
+    struct SeaCreature {
+        species: Species,
+        name: String,
+        arms: i32,
+        legs: i32,
+        weapon: Weapon,
+    }
+
+    fn main() {
+        // SeaCreature's data is on stack
+        let ferris = SeaCreature {
+            // String struct is also on stack,
+            // but holds a reference to data on heap
+            species: Species::Crab,
+            name: String::from("Ferris"),
+            arms: 2,
+            legs: 4,
+            weapon: Weapon::Claw(2, Size::Small),
+        };
+
+        match ferris.species {
+            Species::Crab => {
+                match ferris.weapon {
+                    Weapon::Claw(num_claws,size) => {
+                        let size_description = match size {
+                            Size::Big => "big",
+                            Size::Small => "small"
+                        };
+                        println!("ferris is a crab with {} {} claws", num_claws, size_description)
+                    },
+                    _ => println!("ferris is a crab with some other weapon")
+                }
+            },
+            _ => println!("ferris is some other animal"),
+        }
+    }
+- title: Hoofdstuk 3 - Conclusie
+  content_markdown: >
+    Wat spannend! We hebben nu de meest basale hulpmiddelen om de
+    vorm van onze ideeën in code weer te geven. Hopelijk kunnen we
+    nu een glimp opvangen van hoe de fundamentele bewerkingen van
+    Rust harmonieus en beknopt samenwerken met de types ervan.
+    Hierna gaan we het hebben over een concept dat onze
+    gegevenstypes nog meer flexibiliteit in weergave geeft:
+    *generics*.

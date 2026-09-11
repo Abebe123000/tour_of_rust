@@ -1,0 +1,377 @@
+- title: Hoofdstuk 4 - Generieke Types
+  content_markdown: >
+    Generieke types zijn ongelooflijk belangrijk in Rust. Ze worden
+    gebruikt bij het weergeven van mogelijk lege waarden (d.w.z.
+    variabelen die mogelijk nog geen waarde hebben), foutafhandeling,
+    verzamelingen, en meer! In dit onderdeel leren we de basis van
+    generics, die u waarschijnlijk voortdurend zult gebruiken.
+- title: Wat Zijn Generieke Types?
+  content_markdown: >
+    Met generieke types kunnen we een `struct` of `enum` gedeeltelijk
+    definiëren, waardoor de compiler een volledig gedefinieerde
+    versie kan creëren op basis van hoe we het in onze code
+    gebruiken.
+
+
+    Rust kan meestal het uiteindelijke type afleiden op basis van ons
+    gebruik, maar als het hulp nodig heeft, kunt u altijd expliciet
+    zijn met de operator `::<T>`, ook wel bekend als `turbofish`
+    (een oude vriend van mij).
+  code: |
+    // A partially defined struct type
+    struct BagOfHolding<T> {
+        item: T,
+    }
+
+    fn main() {
+        // Note: by using generic types here, we create compile-time created types. 
+        // Turbofish lets us be explicit.
+        let i32_bag = BagOfHolding::<i32> { item: 42 };
+        let bool_bag = BagOfHolding::<bool> { item: true };
+        
+        // Rust can infer types for generics too!
+        let float_bag = BagOfHolding { item: 3.14 };
+        
+        // Note: never put a bag of holding in a bag of holding in real life
+        let bag_in_bag = BagOfHolding {
+            item: BagOfHolding { item: "boom!" },
+        };
+
+        println!(
+            "{} {} {} {}",
+            i32_bag.item, bool_bag.item, float_bag.item, bag_in_bag.item.item
+        );
+    }
+- title: Niets Weergeven
+  content_markdown: >
+    In andere talen wordt het sleutelwoord `null` gebruikt om de
+    afwezigheid van een waarde weer te geven. Dit veroorzaakt vaak
+    problemen, omdat het de mogelijkheid opent dat ons programma
+    faalt wanneer het uiteindelijk interageert met een variabele of
+    veld zonder waarde.
+
+
+    Rust heeft geen `null`, maar negeert niet het belang van het
+    kunnen weergeven van het concept *"geen waarde"*.
+
+
+    Overweeg een eenvoudige weergave die gebruikmaakt van een
+    hulpmiddel dat we al kennen.
+
+
+    Het patroon van het opnemen van een alternatieve `None`-waarde
+    tussen een of meer andere mogelijkheden is heel gebruikelijk in
+    Rust, juist vanwege het ontbreken van `null`. Generieke types
+    helpen deze uitdaging op te lossen.
+  code: |
+    enum Item {
+        Inventory(String),
+        // None represents the absence of an item
+        None,
+    }
+
+    struct BagOfHolding {
+        item: Item,
+    }
+- title: Option
+  content_markdown: >
+    Rust heeft een ingebouwde generieke enum genaamd `Option`
+    waarmee we mogelijk lege waarden kunnen weergeven zonder `null`.
+
+
+    ```
+
+    enum Option<T> {
+        None,
+        Some(T),
+    }
+
+    ```
+
+
+    Deze enum is zo gebruikelijk dat we overal instanties van dit
+    type kunnen maken met de varianten `Some` en `None`.
+  code: |
+    // A partially defined struct type
+    struct BagOfHolding<T> {
+        // Our parameter type T can be handed to others
+        item: Option<T>,
+    }
+
+    fn main() {
+        // Note: A bag for i32, holding nothing! We have to specify the type
+        // because otherwise Rust would not know what type of bag it is.
+        let i32_bag = BagOfHolding::<i32> { item: None };
+
+        if i32_bag.item.is_none() {
+            println!("there's nothing in the bag!")
+        } else {
+            println!("there's something in the bag!")
+        }
+
+        let i32_bag = BagOfHolding::<i32> { item: Some(42) };
+
+        if i32_bag.item.is_some() {
+            println!("there's something in the bag!")
+        } else {
+            println!("there's nothing in the bag!")
+        }
+
+        // match lets us deconstruct Option elegantly and ensure we handle all cases!
+        match i32_bag.item {
+            Some(v) => println!("found {} in bag!", v),
+            None => println!("found nothing"),
+        }
+    }
+- title: Result
+  content_markdown: >
+    Rust heeft ook een ingebouwde generieke enum genaamd `Result`
+    waarmee we een resultaat kunnen teruggeven dat mogelijk kan
+    falen. Dit is de idiomatische manier waarop de taal fouten
+    afhandelt.
+
+
+    ```
+
+    enum Result<T, E> {
+        Ok(T),
+        Err(E),
+    }
+
+    ```
+
+
+    Merk op dat ons generieke type nu meerdere *typeparameters*
+    heeft (`<T, E>`), gescheiden door een komma.
+
+
+    Deze enum is ook heel gebruikelijk, dus we kunnen overal
+    instanties van dit type maken met de varianten `Ok` en `Err`.
+  code: |
+    fn do_something_that_might_fail(i:i32) -> Result<f32,String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("this is not the right number"))   
+        }
+    }
+
+    fn main() {
+        let result = do_something_that_might_fail(12);
+
+        // match lets us deconstruct Result elegantly and ensure we handle all cases!
+        match result {
+            Ok(v) => println!("found {}", v),
+            Err(e) => println!("Error: {}",e),
+        }
+    }
+- title: Een Main Die Kan Falen
+  content_markdown: |
+    `main` heeft de mogelijkheid om een `Result` terug te geven!
+    (`Option` kan niet, ik heb het geprobeerd.)
+  code: |
+    fn do_something_that_might_fail(i: i32) -> Result<f32, String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("this is not the right number"))
+        }
+    }
+
+    // Main returns no value, but could return an error!
+    fn main() -> Result<(), String> {
+        let result = do_something_that_might_fail(12);
+
+        match result {
+            Ok(v) => println!("found {}", v),
+            Err(_e) => {
+                // handle this error gracefully
+                
+                // return a new error from main that said what happened!
+                return Err(String::from("something went wrong in main!"));
+            }
+        }
+
+        // Notice we use a unit value inside a Result Ok
+        // to represent everything is fine
+        Ok(())
+    }
+- title: Elegante Foutafhandeling
+  content_markdown: >
+    De mogelijk falende gegevenstypes `Result` en `Option` zijn zo
+    gebruikelijk dat Rust ons een veelzijdige en krachtige operator
+    geeft om ermee te werken: `?`. Deze twee stukken code zijn
+    equivalent:
+
+
+    ```
+
+    do_something_that_might_fail()?
+
+    ```
+
+
+    ```
+
+    match do_something_that_might_fail() {
+        Ok(v) => v,
+        Err(e) => return Err(e),
+    }
+
+    ```
+
+
+    Hetzelfde geldt ook voor `Option`.
+  code: |
+    fn do_something_that_might_fail(i: i32) -> Result<f32, String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("this is not the right number"))
+        }
+    }
+
+    fn main() -> Result<(), String> {
+        // Look at how much code we saved!
+        let v = do_something_that_might_fail(42)?;
+        println!("found {}", v);
+        Ok(())
+    }
+- title: Ruwe Afhandeling Van Option En Result
+  content_markdown: >
+    Voor snel en informeel schrijven van code kan werken met
+    `Option`/`Result` vervelend worden. Beide types hebben een
+    functie genaamd `unwrap` die nuttig is om zonder veel omhaal een
+    waarde te krijgen. Deze functie:
+
+
+    1. Haalt de waarde op die zich in Option/Result bevindt
+
+    2. Als er geen dergelijke waarde wordt gevonden, stopt het het
+    hele programma met behulp van de macro `panic!`.
+
+
+    Deze twee stukken code zijn equivalent:
+
+
+    ```
+
+    my_option.unwrap()
+
+    ```
+
+
+    ```
+
+    match my_option {
+        Some(v) => v,
+        None => panic!("some error message generated by Rust!"),
+    }
+
+    ```
+
+
+    Op vergelijkbare wijze:
+
+
+    ```
+
+    my_result.unwrap()
+
+    ```
+
+
+    ```
+
+    match my_result {
+        Ok(v) => v,
+        Err(e) => panic!("some error message generated by Rust!"),
+    }
+
+    ```
+
+
+    Het is altijd veel beter om mogelijkheden te gebruiken die het
+    programma laten doorgaan, zelfs als er een fout is opgetreden,
+    zoals `match` en `?`. Er zijn ook handigere opties, zoals
+    `unwrap_or` of `map` en `and_then`. Zorg er dus voor dat u
+    `unwrap` zo weinig mogelijk gebruikt!
+  code: |
+    fn do_something_that_might_fail(i: i32) -> Result<f32, String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("this is not the right number"))
+        }
+    }
+
+    fn main() -> Result<(), String> {
+        // concise but assumptive and gets ugly fast
+        let v = do_something_that_might_fail(42).unwrap();
+        println!("found {}", v);
+        
+        // this will panic!
+        let v = do_something_that_might_fail(1).unwrap();
+        println!("found {}", v);
+        
+        Ok(())
+    }
+- title: Vectoren
+  content_markdown: >
+    Enkele van de nuttigste generieke types zijn de zogenaamde
+    "verzamelingstypes". Een vector is bijvoorbeeld een lijst van
+    willekeurige lengte met soortgelijke waarden, weergegeven door de
+    struct `Vec`.
+
+
+    Met de macro `vec!` kunnen we eenvoudig een vector vullen, in
+    plaats van dit element voor element handmatig te doen.
+
+
+    Vectoren hebben de methode `iter()`, die een vector omzet in een
+    iterator, waardoor we hem eenvoudig kunnen gebruiken in een
+    `for`-lus.
+
+
+    Geheugendetails:
+
+    * Een vector is een struct, en wordt op de stack opgeslagen; de
+    *inhoud* van een vector wordt echter op de heap opgeslagen zodat
+    deze in lengte kan groeien. De stack bewaart de referentie naar
+    die heapgeheugenlocatie.
+
+    * Een vector begint met een standaardcapaciteit. Wanneer er meer
+    elementen worden toegevoegd dan deze capaciteit toestaat,
+    herallocateert hij de gegevens op de heap om een nieuwe
+    beschikbare ruimte met een grotere capaciteit te hebben,
+    meestal het dubbele.
+  code: |
+    fn main() {
+        // We can be explicit with type
+        let mut i32_vec = Vec::<i32>::new(); // turbofish <3
+        i32_vec.push(1);
+        i32_vec.push(2);
+        i32_vec.push(3);
+
+        // But look how clever Rust is about determining the type automatically
+        let mut float_vec = Vec::new();
+        float_vec.push(1.3);
+        float_vec.push(2.3);
+        float_vec.push(3.4);
+
+        // That's a beautiful macro!
+        let string_vec = vec![String::from("Hello"), String::from("World")];
+
+        for word in string_vec.iter() {
+            println!("{}", word);
+        }
+    }
+- title: Hoofdstuk 4 - Conclusie
+  content_markdown: >
+    In één hoofdstuk hebben we geleerd hoe krachtig generieke types
+    zijn! Maak u geen zorgen als u nog niet helemaal begrijpt hoe u
+    ze allemaal moet gebruiken; voor nu is het voldoende om te weten
+    dat ze bestaan, want u zult ze steeds vaker tegenkomen naarmate u
+    meer code leest. Onze functies zijn behoorlijk lang beginnen te
+    worden! In het volgende hoofdstuk bespreken we een belangrijk
+    concept in Rust: eigendom van gegevens.

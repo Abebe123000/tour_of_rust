@@ -1,0 +1,614 @@
+- title: Hoofdstuk 7 - Objectgeoriënteerd Programmeren
+  content_markdown: >
+    Het uitdrukken van ideeën via functies is een bewezen manier om
+    gedrag en gegevens weer te geven (C doet dit al tientallen
+    jaren!). Historisch gezien heeft de informatica andere nuttige,
+    expressieve manieren gevonden om gegevens te aggregeren en te
+    abstraheren. Misschien kent u objectgeoriënteerd programmeren
+    (OOP) als een van deze manieren. In dit hoofdstuk verkennen we
+    wat Rust te bieden heeft naast gewone functies.
+- title: Wat Is OOP?
+  content_markdown: >
+    Objectgeoriënteerd programmeren verwijst grofweg naar
+    programmeertalen die een reeks kenmerkende eigenschappen hebben:
+
+
+    * Inkapseling (Encapsulation) - Het samenvoegen van gegevens en
+    functies in de conceptuele eenheid van een enkel type, genaamd
+    een *object*.
+
+    * Abstractie (Abstraction) - Het verbergen van gegevens en
+    functieleden om implementatiedetails van een object te
+    versluieren.
+
+    * Polymorfisme (Polymorphism) - Het vermogen om met een object om
+    te gaan vanuit verschillende functionele perspectieven.
+
+    * Overerving (Inheritance) - Het vermogen om gegevens en gedrag
+    van andere objecten over te erven.
+- title: Rust Is Geen OOP
+  content_markdown: >
+    Rust mist overerving van gegevens en gedrag op een betekenisvolle
+    manier.
+
+
+    * Structs kunnen geen velden overerven van een ouder-struct.
+
+    * Structs kunnen geen functies overerven van een ouder-struct.
+
+
+    Rust implementeert echter veel andere taalkenmerken, dus u merkt
+    dit gemis misschien niet eens op.
+- title: Inkapseling Met Methoden
+  code: |
+    struct SeaCreature {
+        noise: String,
+    }
+
+    impl SeaCreature {
+        fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            noise: String::from("blub"),
+        };
+        println!("{}", creature.get_sound());
+    }
+  content_markdown: >
+    Rust ondersteunt het concept van een *object*, dat wil zeggen een
+    struct die gekoppeld is aan enkele functies (ook bekend als
+    *methoden*).
+
+
+    De eerste parameter van elke methode moet een referentie zijn
+    naar de instantie die gekoppeld is aan de methode-aanroep (bijv.
+    `instanceOfObj.foo()`). Rust gebruikt:
+
+    * `&self` - Niet-wijzigbare (immutable) referentie naar de
+    instantie.
+
+    * `&mut self` - Wijzigbare (mutable) referentie naar de
+    instantie.
+
+
+    Methoden worden gedefinieerd binnen een implementatieblok met
+    het sleutelwoord `impl`:
+
+
+    ```rust
+
+    impl MyStruct {
+        ...
+        fn foo(&self) {
+            ...
+        }
+    }
+
+    ```
+- title: Abstractie Met Selectieve Blootstelling
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        println!("{}", creature.get_sound());
+    }
+  content_markdown: >
+    Rust kan de interne werking van objecten verbergen.
+
+
+    Standaard zijn velden en methoden alleen toegankelijk vanuit de
+    module waartoe ze behoren.
+
+
+    Het sleutelwoord `pub` maakt de velden en methoden van een struct
+    ook buiten de module toegankelijk.
+- title: Polymorfisme Met Traits
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        creature.make_noise();
+    }
+  content_markdown: >
+    Rust ondersteunt polymorfisme met traits. Traits stellen ons in
+    staat om een set methoden te koppelen aan een struct-type.
+
+
+    Eerst definiëren we de signaturen van de methoden van een trait:
+
+
+    ```
+
+    trait MyTrait {
+        fn foo(&self);
+        ...
+    }
+
+    ```
+
+
+    Wanneer een struct een trait implementeert, ontstaat er een
+    contract dat ons in staat stelt om indirect met de struct te
+    interageren via het trait-type (bijv. `&dyn MyTrait`), zonder het
+    daadwerkelijke type te hoeven kennen.
+
+
+    De trait-methoden die door een struct worden geïmplementeerd,
+    worden gedefinieerd binnen een implementatieblok:
+
+
+    ```rust
+
+    impl MyTrait for MyStruct {
+        fn foo(&self) {
+            ...
+        }
+        ...
+    }
+
+    ```
+- title: Geïmplementeerde Methoden Op Traits
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+        
+        fn make_alot_of_noise(&self){
+            self.make_noise();
+            self.make_noise();
+            self.make_noise();
+        }
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        creature.make_alot_of_noise();
+    }
+  content_markdown: >
+    Traits kunnen geïmplementeerde methoden hebben.
+
+
+    Deze functies hebben geen directe toegang tot de interne velden
+    van een struct, maar kunnen nuttig zijn om gedrag te delen tussen
+    veel implementeerders van een trait.
+- title: Trait-Overerving
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    trait LoudNoiseMaker: NoiseMaker {
+        fn make_alot_of_noise(&self) {
+            self.make_noise();
+            self.make_noise();
+            self.make_noise();
+        }
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    impl LoudNoiseMaker for SeaCreature {}
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        creature.make_alot_of_noise();
+    }
+  content_markdown: |
+    Traits kunnen methoden overerven van andere traits.
+- title: Dynamische Versus Statische Dispatch
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    fn static_make_noise(creature: &SeaCreature) {
+        // we know the real type
+        creature.make_noise();
+    }
+
+    fn dynamic_make_noise(noise_maker: &dyn NoiseMaker) {
+        // we don't know the real type
+        noise_maker.make_noise();
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        static_make_noise(&creature);
+        dynamic_make_noise(&creature);
+    }
+  content_markdown: >
+    Methoden worden op twee manieren uitgevoerd:
+
+    * statische dispatch - Wanneer het type van de instantie bekend
+    is, weten we direct welke functie moet worden aangeroepen.
+
+    * dynamische dispatch - Wanneer het type van een instantie niet
+    bekend is, moeten we een manier vinden om de juiste functie aan
+    te roepen.
+
+
+    Trait-types zoals `&dyn MyTrait` geven ons de mogelijkheid om
+    indirect met instanties van objecten te werken met behulp van
+    dynamische dispatch.
+
+
+    Wanneer dynamische dispatch wordt gebruikt, moedigt Rust u aan om
+    `dyn` voor uw trait-type te zetten, zodat anderen zich daarvan
+    bewust zijn.
+
+
+    Geheugendetails:
+
+    * Dynamische dispatch is iets langzamer, vanwege het volgen van
+    pointers dat nodig is om de daadwerkelijke functieaanroep te
+    vinden.
+- title: Trait-Objecten
+  content_markdown: >
+    Wanneer we een instantie van een object doorgeven aan een
+    parameter van het type `&dyn MyTrait`, geven we door wat een
+    *trait-object* wordt genoemd.
+
+
+    Een trait-object is wat ons in staat stelt om indirect de juiste
+    methoden van een instantie aan te roepen. Een trait-object is een
+    struct die de pointer naar onze instantie bevat, samen met een
+    lijst van functiepointers naar de methoden van onze instantie.
+
+
+    Geheugendetails:
+
+    * Deze lijst van functies staat in C++ bekend als een *vtable*.
+- title: Omgaan Met Gegevens Van Onbekende Grootte
+  content_markdown: >
+    Traits vormen een interessante uitdaging wanneer we ze binnen een
+    andere struct willen opslaan. Traits verbergen de oorspronkelijke
+    struct, en daarmee ook de oorspronkelijke grootte ervan. Waarden
+    van onbekende grootte die in structs worden opgeslagen, worden in
+    Rust op twee manieren behandeld:
+
+
+    * `generics` (generieken) - Het gebruik van geparametriseerde
+    types creëert effectief structs/functies met bekende types, en
+    dus bekende groottes.
+
+    * `indirection` (indirectie) - Het plaatsen van instanties op de
+    heap geeft ons een niveau van indirectie waardoor we ons geen
+    zorgen hoeven te maken over de grootte van het daadwerkelijke
+    type, en in plaats daarvan slaan we slechts een pointer ernaar
+    op. Er zijn ook andere manieren!
+- title: Generieke Functies
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    fn generic_make_noise<T>(creature: &T)
+    where
+        T: NoiseMaker,
+    {
+        // we know the real type at compile-time
+        creature.make_noise();
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        generic_make_noise(&creature);
+    }
+  content_markdown: >
+    Generieken werken in Rust hand in hand met traits. Wanneer we een
+    geparametriseerd type `T` beschrijven, kunnen we beperken welke
+    types als argument kunnen worden gebruikt, door aan te geven
+    welke traits het argument moet implementeren.
+
+
+    In dit voorbeeld moet het type `T` `Foo` implementeren:
+
+    ```rust
+
+    fn my_function<T>(foo: T)
+
+    where
+        T:Foo
+    {
+        ...
+    }
+
+    ```
+
+
+    Door generieken te gebruiken, creëren we tijdens het compileren
+    statisch getypeerde functies met bekende types en groottes,
+    waardoor we statische dispatch kunnen uitvoeren en ze kunnen
+    opslaan als een waarde van bekende grootte.
+- title: Afkorting Voor Generieke Functies
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    fn generic_make_noise(creature: &impl NoiseMaker)
+    {
+        // we know the real type at compile-time
+        creature.make_noise();
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        generic_make_noise(&creature);
+    }
+  content_markdown: |
+    Rust heeft een afkorting om generieken uit te drukken die door
+    een trait worden beperkt:
+
+    ```rust
+    fn my_function(foo: impl Foo) {
+        ...
+    }
+    ```
+
+    Dit is gelijk aan:
+
+    ```rust
+    fn my_function<T>(foo: T)
+    where
+        T:Foo
+    {
+        ...
+    }
+    ```
+- title: Box
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    struct Ocean {
+        animals: Vec<Box<dyn NoiseMaker>>,
+    }
+
+    fn main() {
+        let ferris = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        let sarah = SeaCreature {
+            name: String::from("Sarah"),
+            noise: String::from("swish"),
+        };
+        let ocean = Ocean {
+            animals: vec![Box::new(ferris), Box::new(sarah)],
+        };
+        for a in ocean.animals.iter() {
+            a.make_noise();
+        }
+    }
+  content_markdown: >
+    `Box` is een gegevensstructuur waarmee we onze gegevens van de
+    stack naar de heap kunnen verplaatsen.
+
+
+    Door dereferentie kunnen we de op de heap gealloceerde gegevens
+    ergonomisch gebruiken, alsof het het oorspronkelijke type was.
+
+
+    Omdat `Box` een struct van bekende grootte is (aangezien deze
+    slechts een pointer bevat), wordt het vaak gebruikt als een
+    manier om een referentie naar iets op te slaan binnen een struct
+    die de grootte van zijn velden moet kennen.
+
+
+    `Box` is zo gebruikelijk dat het overal vandaan kan worden
+    gebruikt:
+
+
+    ```rust
+
+    Box::new(Foo { ... })
+
+    ```
+- title: Generieke Structs Opnieuw Bekeken
+  content_markdown: >
+    Generieke structs kunnen ook hun geparametriseerde types laten
+    beperken door traits.
+
+
+    ```rust
+
+    struct MyStruct<T>
+
+    where
+        T: MyTrait
+    {
+        foo: T
+        ...
+    }
+
+    ```
+
+
+    Generieke structs dragen hun geparametriseerde type ook mee in
+    hun implementatieblok:
+
+
+    ```rust
+
+    impl<T> MyStruct<T> {
+        ...
+    }
+
+    ```
+- title: Hoofdstuk 7 - Conclusie
+  content_markdown: >
+    We hebben nu meer taalkenmerken tot onze beschikking om onze
+    ideeën duidelijk weer te geven!
+
+
+    De abstracties van Rust zijn misschien eenvoudig, maar ze zijn
+    krachtig genoeg om het werken met code een genoegen te maken. In
+    dit hoofdstuk hebben we een korte blik geworpen op smart pointers
+    met `Box`. In het volgende hoofdstuk leren we hoe smart pointers
+    ons kunnen helpen in andere, meer gespecialiseerde
+    geheugensituaties.
+
+
+    Bronnen:
+
+    * [Video - Object-oriented Programming in 7
+    minutes](https://www.youtube.com/watch?v=pTB0EiLXUC8)
+
+    * [Artikel - "The faster you unlearn OOP, the better for you and
+    your
+    software"](https://dpc.pw/the-faster-you-unlearn-oop-the-better-for-you-and-your-software)

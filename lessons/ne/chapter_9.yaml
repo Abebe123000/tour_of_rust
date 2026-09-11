@@ -1,0 +1,197 @@
+- title: Hoofdstuk 9 - Projectorganisatie En -Structuur
+  content_markdown: >
+    Tot nu toe stonden al onze codevoorbeelden in één enkel bestand.
+    Laten we bespreken hoe onze code beter georganiseerd en met
+    anderen gedeeld kan worden!
+- title: Modules
+  content_markdown: |
+    Elk Rust-programma of elke bibliotheek is een *crate*.
+
+    Elke crate bestaat uit een hiërarchie van *modules*.
+
+    Elke crate heeft een rootmodule.
+
+    Een module kan globale variabelen, functies, structs, traits, of
+    zelfs andere modules bevatten!
+
+    In Rust is er geen één-op-één mapping van bestanden naar de
+    moduleboomhiërarchie. We moeten de moduleboom expliciet met de
+    hand opbouwen in onze code.
+- title: Een Programma Schrijven
+  content_markdown: |
+    Een programma heeft een rootmodule in een bestand genaamd
+    `main.rs`.
+- title: Een Bibliotheek Schrijven
+  content_markdown: |
+    Een bibliotheek heeft een rootmodule in een bestand genaamd
+    `lib.rs`.
+- title: Verwijzen Naar Andere Modules En Crates
+  code: |
+    use std::f64::consts::PI;
+
+    fn main() {
+        println!("Welcome to the playground!");
+        println!("I would love a slice of {}!", PI);
+    }
+  content_markdown: >
+    Items in modules kunnen worden aangeroepen met hun volledige
+    modulepad `std::f64::consts::PI`.
+
+
+    Een eenvoudigere manier is het sleutelwoord **use**. Hiermee
+    kunnen we specifieke items uit modules opgeven die we in onze
+    hele code willen gebruiken zonder volledig pad. Bijvoorbeeld,
+    `use std::f64::consts::PI` stelt mij in staat om gewoon de
+    identifier `PI` in mijn main-functie te gebruiken.
+
+
+    **std** is de crate van de **standaardbibliotheek** van Rust,
+    die vol staat met nuttige gegevensstructuren en functies om met
+    uw besturingssysteem te interageren.
+
+
+    Een doorzoekbare directory van crates die door de community zijn
+    gemaakt, vindt u op
+    [https://crates.io](https://crates.io/).
+- title: Verwijzen Naar Meerdere Items
+  content_markdown: |
+    Meerdere items kunnen in één modulepad worden aangeroepen, zoals
+    hier:
+
+    ```rust
+    use std::f64::consts::{PI,TAU}
+    ```
+
+    Ferris eet geen TAU, hij eet alleen PI.
+- title: Modules Maken
+  content_markdown: |
+    Wanneer we aan code denken, stellen we ons meestal een
+    bestandshiërarchie voor die in mappen is georganiseerd. Rust
+    laat u modules maken die nauw verbonden zijn met uw
+    bestandsstructuur.
+
+    Er zijn twee manieren in Rust om een module te declareren.
+    Bijvoorbeeld, een module `foo` kan worden weergegeven als:
+      * een bestand genaamd `foo.rs`
+      * een map genaamd `foo` met daarin een bestand `mod.rs`
+- title: Modulehiërarchie
+  content_markdown: >
+    Een module kan afhankelijk zijn van een andere. Om een relatie
+    tussen een module en zijn submodule tot stand te brengen, moet u
+    in de bovenliggende module het volgende schrijven:
+
+
+    ```rust
+
+    mod foo;
+
+    ```
+
+
+    De bovenstaande declaratie zoekt naar een bestand genaamd
+    `foo.rs` of `foo/mod.rs`, en voegt de inhoud ervan in binnen een
+    module genaamd `foo`, onder deze scope.
+- title: Inline Module
+  content_markdown: >
+    Een submodule kan direct inline worden geplaatst binnen de code
+    van een module.
+
+
+    Een heel gebruikelijk gebruik van inline modules is het maken van
+    unit tests. We maken een inline module die alleen bestaat wanneer
+    Rust wordt gebruikt voor testen!
+
+
+    ```
+
+    // This macro removes this inline module when Rust
+
+    // is not in test mode.
+
+    #[cfg(test)]
+
+    mod tests {
+        // Notice that we don't immediately get access to the
+        // parent module. We must be explicit.
+        use super::*;
+
+        ... tests go here ...
+    }
+
+    ```
+- title: Interne Moduleverwijzingen
+  content_markdown: >
+    Rust heeft verschillende sleutelwoorden die u in uw `use`-pad kunt
+    gebruiken om snel de gewenste module te vinden:
+
+
+    * `crate` - de rootmodule van uw crate
+
+    * `super` - de bovenliggende module van uw huidige module
+
+    * `self` - de huidige module
+- title: Exporteren
+  content_markdown: >
+    Standaard zijn leden van een *module* niet toegankelijk van
+    buiten de module (zelfs niet vanuit de submodules ervan!). We
+    maken leden van een module toegankelijk met het sleutelwoord
+    `pub`.
+
+
+    Standaard zijn leden van een *crate* niet toegankelijk buiten de
+    crate. We maken leden van een crate toegankelijk door ze als
+    `pub` te markeren in de *rootmodule* van uw crate (`lib.rs` of
+    `main.rs`).
+- title: Zichtbaarheid Van Structs
+  content_markdown: >
+    Net als functies kunnen structs declareren wat ze buiten hun
+    module willen blootstellen met `pub`.
+  code: |
+    // SeaCreature struct will be usable outside of our module
+    pub struct SeaCreature {
+        pub animal_type: String,
+        pub name: String,
+        pub arms: i32,
+        pub legs: i32,
+        // let's keep our weapon private
+        weapon: String,
+    }
+- title: Prelude
+  content_markdown: |
+    U vraagt zich misschien af hoe we overal toegang hebben tot
+    `Vec` of `Box` zonder een `use` om ze te importeren. Dit komt
+    door de module `prelude` in de standaardbibliotheek.
+
+    Weet dat in de Rust-standaardbibliotheek alles wat wordt
+    geëxporteerd in `std::prelude::*` automatisch beschikbaar is in
+    elk deel van Rust. Dat is het geval voor `Vec` en `Box`, maar
+    ook voor andere (Option, Copy, enz.).
+- title: Uw Eigen Prelude
+  content_markdown: >
+    Vanwege de prelude van de standaardbibliotheek is het
+    gebruikelijk dat uw bibliotheek zijn eigen prelude-module heeft
+    als startpunt van waaruit gebruikers alle meest voorkomende
+    gegevensstructuren moeten importeren om uw bibliotheek te
+    gebruiken (bijv. `use my_library::prelude::*`).
+
+
+    Het wordt niet automatisch gebruikt in programma's/bibliotheken
+    die uw crate gebruiken, maar het is een goede conventie om te
+    volgen, zodat mensen weten waar ze moeten beginnen.
+
+
+    Ferris zegt: "Wees een goede rustacean en help een medekrab met
+    een goede prelude!"
+- title: Hoofdstuk 9 - Conclusie
+  content_markdown: >
+    U heeft nu een paar trucjes in petto als het gaat om het maken
+    van Rust-applicaties en -bibliotheken die klaar zijn voor de
+    wereld. Maak u geen zorgen over het onthouden van alles.
+    Naarmate uw bibliotheek groeit en door anderen wordt gebruikt,
+    ontdekt u wat het beste werkt bij elke mijlpaal.
+
+
+    Bronnen:
+
+    - [Guidelines For Writing Rust
+    APIs](https://rust-lang.github.io/api-guidelines/)

@@ -1,0 +1,280 @@
+- title: Hoofdstuk 6 - Tekst
+  content_markdown: >
+    Nu we een beetje begrijpen hoe Rust over geheugen denkt, zijn we
+    klaar om uitgebreider over tekst te praten.
+
+
+    Rust hecht veel waarde aan internationale tekst en byte-niveau
+    kwesties waarmee u mogelijk niet bekend bent vanuit andere talen.
+    Toch heeft Rust veel geweldige hulpmiddelen om deze kwesties te
+    beheren.
+- title: String-Literals
+  content_markdown: >
+    String-literals zijn altijd Unicode.
+
+
+    Het type van string-literals is `&'static str`:
+
+
+    * `&` betekent dat het verwijst naar een plek in het geheugen,
+    en het ontbreken van `&mut` betekent dat de compiler geen
+    wijziging zal toestaan
+
+    * `'static` betekent dat de stringgegevens beschikbaar blijven
+    tot het einde van ons programma (het wordt nooit gedropt)
+
+    * `str` betekent dat het verwijst naar een reeks bytes die altijd
+    geldige **utf-8** is
+
+
+    Geheugendetails:
+
+    * De Rust-compiler zal uw string waarschijnlijk in het
+    datasegment van het geheugen van uw programma plaatsen
+  code: |
+    fn main() {
+        let a: &'static str = "hi 🦀";
+        println!("{} {}", a, a.len());
+    }
+- title: Wat Is Utf-8
+  content_markdown: "Naarmate meer talen op computers werden gebruikt, had de wereld een manier nodig om meer tekstkarakters weer te geven\ndan ASCII toestond (1 byte stond slechts 256 karakters toe).\n\n**utf-8** werd geïntroduceerd met een variabele bytelengte van 1-4 bytes, waardoor het bereik van mogelijke karakters aanzienlijk werd vergroot.\n\nEen voordeel van karakters met variabele grootte is dat tekst geen onnodige bytes heeft voor zeer gebruikelijke ASCII-karakters (die nog steeds slechts 1 byte vereisen in **utf-8**).\n\nEen nadeel van karakters met variabele grootte is dat het opzoeken van karakters niet langer snel kan worden gedaan\n(in constante tijd **O(1)**) met eenvoudige indexering (bijv. `my_text[3]` om het 4e karakter te krijgen). Het is mogelijk dat\nde voorgaande karakters variabele breedtes hebben, waardoor verandert waar het 4e karakter daadwerkelijk begint in de bytereeks.\n\nIn plaats daarvan moeten we door een **utf-8**-bytereeks itereren om te begrijpen waar de Unicode-karakters daadwerkelijk beginnen (in lineaire tijd **O(n)**).\n\nFerris: \"Ik ben vooral gewoon blij dat ik **utf-8** heb om emoji's van mijn onderwatervrienden weer te geven.\"\n\n<span class=\"emoji\">\U0001F420\U0001F419\U0001F41F\U0001F42C\U0001F40B</span>\n"
+- title: Escape-Tekens
+  content_markdown: >
+    Het is lastig om bepaalde tekens visueel weer te geven, dus met
+    **escape-codes** kunnen we een symbool op hun plaats zetten.
+
+
+    Rust ondersteunt de gebruikelijke escape-codes uit op C
+    gebaseerde talen:
+
+    * `\n` - nieuwe regel
+
+    * `\r` - carriage return
+
+    * `\t` - tab
+
+    * `\\` - backslash
+
+    * `\0` - null
+
+    * `\'` - enkel aanhalingsteken
+
+
+    De volledige lijst vindt u
+    [hier](https://doc.rust-lang.org/reference/tokens.html).
+  code: |
+    fn main() {
+        let a: &'static str = "Ferris says:\t\"hello\"";
+        println!("{}",a);
+    }
+- title: String-Literals Met Meerdere Regels
+  content_markdown: |
+    Rust-strings zijn standaard meerregelig.
+
+    Gebruik een `\` aan het einde van een regel als u geen
+    regeleinde wilt.
+  code: |
+    fn main() {
+        let haiku: &'static str = "
+            I write, erase, rewrite
+            Erase again, and then
+            A poppy blooms.
+            - Tachibana Hokushi";
+        println!("{}", haiku);
+        
+        
+        println!("hello \
+        world") // notice that the spacing before w is ignored
+    }
+- title: Ruwe String-Literals
+  content_markdown: >
+    Met ruwe strings (raw strings) kunnen we een reeks tekens
+    letterlijk schrijven door te beginnen met `r#"` en te eindigen
+    met `"#`. Hiermee kunnen we tekens invoegen die anders een
+    normale string als literals zouden kunnen verwarren (zoals
+    dubbele aanhalingstekens en backslashes).
+  code: |
+    fn main() {
+        let a: &'static str = r#"
+            <div class="advice">
+                Raw strings are useful for some situations.
+            </div>
+            "#;
+        println!("{}", a);
+    }
+- title: String-Literals Uit Bestanden
+  content_markdown: >
+    Als u zeer grote tekst heeft, overweeg dan de macro `include_str!`
+    te gebruiken om tekst uit lokale bestanden in uw programma op te
+    nemen:
+
+
+    ```rust
+
+    let hello_html = include_str!("hello.html");
+
+    ```
+- title: String Slice
+  content_markdown: >
+    Een string slice is een referentie naar een reeks bytes in het
+    geheugen die altijd geldige utf-8 moet zijn.
+
+
+    Een slice (een sub-slice) van een `str`-slice moet ook geldige
+    utf-8 zijn.
+
+
+    Gebruikelijke methoden van `&str`:
+
+    * `len` geeft de lengte van de string-literal in bytes (niet het
+    aantal karakters).
+
+    * `starts_with`/`ends_with` voor eenvoudige tests.
+
+    * `is_empty` geeft `true` terug als de lengte nul is.
+
+    * `find` geeft een `Option<usize>` terug van de eerste positie
+    van bepaalde tekst.
+  code: |
+    fn main() {
+        let a = "hi 🦀";
+        println!("{}", a.len());
+        let first_word = &a[0..2];
+        let second_word = &a[3..7];
+        // let half_crab = &a[3..5]; FAILS
+        // Rust does not accept slices of invalid unicode characters
+        println!("{} {}", first_word, second_word);
+    }
+- title: Chars
+  content_markdown: >
+    Vanwege de moeilijkheid van het werken met Unicode biedt Rust een
+    manier om een reeks utf-8-bytes op te halen als een vector van
+    karakters van het type `char`.
+
+
+    Een `char` is altijd 4 bytes lang (waardoor efficiënt opzoeken
+    van individuele karakters mogelijk is).
+  code: |
+    fn main() {
+        // collect the characters as a vector of char
+        let chars = "hi 🦀".chars().collect::<Vec<char>>();
+        println!("{}", chars.len()); // should be 4
+        // since chars are 4 bytes we can convert to u32
+        println!("{}", chars[3] as u32);
+    }
+- title: String
+  content_markdown: >
+    Een **String** is een struct die een reeks utf-8-bytes bezit in
+    het heapgeheugen.
+
+
+    Omdat het geheugen ervan op de heap staat, kan het worden
+    uitgebreid, gewijzigd, enz., op manieren die string-literals
+    niet kunnen.
+
+
+    Gebruikelijke methoden:
+
+
+    * `push_str` om meer utf-8-bytes aan het einde van een string toe
+    te voegen.
+
+    * `replace` om reeksen utf-8-bytes door andere te vervangen.
+
+    * `to_lowercase`/`to_uppercase` voor wijzigingen in hoofd-/
+    kleine letters.
+
+    * `trim` om spaties te verwijderen.
+
+
+    Wanneer een String wordt gedropt, wordt ook het heapgeheugen
+    ervan gedropt.
+
+
+    `String` heeft een `+`-operator die de string uitbreidt met een
+    `&str` en zichzelf teruggeeft, maar dit is mogelijk niet zo
+    ergonomisch als u zou hopen.
+  code: |
+    fn main() {
+        let mut helloworld = String::from("hello");
+        helloworld.push_str(" world");
+        helloworld = helloworld + "!";
+        println!("{}", helloworld);
+    }
+- title: Tekst Als Functieparameter
+  content_markdown: >
+    String-literals en strings worden meestal als string slice aan
+    functies doorgegeven. Dit biedt veel flexibiliteit voor de meeste
+    scenario's waarin u eigenlijk geen eigendom hoeft over te dragen.
+  code: |
+    fn say_it_loud(msg:&str){
+        println!("{}!!!",msg.to_string().to_uppercase());
+    }
+
+    fn main() {
+        // say_it_loud can borrow &'static str as a &str
+        say_it_loud("hello");
+        // say_it_loud can also borrow String as a &str
+        say_it_loud(&String::from("goodbye"));
+    }
+- title: Strings Bouwen
+  content_markdown: |
+    `concat` en `join` zijn twee eenvoudige maar krachtige manieren
+    om strings te bouwen.
+  code: |
+    fn main() {
+        let helloworld = ["hello", " ", "world", "!"].concat();
+        let abc = ["a", "b", "c"].join(",");
+        println!("{}", helloworld);
+        println!("{}",abc);
+    }
+- title: Strings Formatteren
+  content_markdown: >
+    Met de macro `format!` kunnen we een string maken door een
+    geparametriseerde string te definiëren met plaatshouders voor
+    waar en hoe waarden geplaatst moeten worden (bijv. `{}`).
+
+
+    `format!` gebruikt dezelfde geparametriseerde strings als
+    `println!`
+
+
+    De mogelijkheden van deze functie zijn te uitgebreid voor de
+    scope van *Tour of Rust*; bekijk de
+    [documentatie](https://doc.rust-lang.org/std/fmt/) voor meer
+    informatie.
+  code: |
+    fn main() {
+        let a = 42;
+        let f = format!("secret to life: {}",a);
+        println!("{}",f);
+    }
+- title: Strings Converteren
+  content_markdown: |
+    Veel types kunnen worden geconverteerd naar een string met
+    `to_string`.
+
+    De generieke functie `parse` kan worden gebruikt om strings of
+    string-literals te converteren naar een getypeerde waarde. Deze
+    functie geeft een `Result` terug omdat het kan mislukken.
+  code: |
+    fn main() -> Result<(), std::num::ParseIntError> {
+        let a = 42;
+        let a_string = a.to_string();
+        let b = a_string.parse::<i32>()?;
+        println!("{} {}", a, b);
+        Ok(())
+    }
+- title: Hoofdstuk 6 - Conclusie
+  content_markdown: >
+    Nu kent u de basisprincipes van tekst! Zoals u heeft gezien,
+    maakt Unicode het werken met tekst een beetje ingewikkelder, maar
+    de standaardbibliotheek biedt volop functionaliteit om het
+    eenvoudig te beheren.
+
+
+    Tot nu toe hebben we Rust vooral bekeken vanuit het perspectief
+    van een procedureel paradigma (d.w.z. alleen functies en
+    gegevens), maar het is tijd om te praten over traits en de
+    mogelijkheden die het objectgeoriënteerde paradigma van Rust
+    ontsluit.
