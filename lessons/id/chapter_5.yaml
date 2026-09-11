@@ -1,0 +1,447 @@
+- title: Bab 5 - Kepemilikan & Peminjaman Data
+  content_markdown: >
+    Rust mempunyai paradigma yang unik untuk mengelola memori
+    dibandingkan bahasa pemrograman lain. Kita akan melihat perilaku
+    dan verifikasi kompiler satu per satu agar tidak membingungkan.
+    Penting untuk diingat bahwa pada akhirnya aturan yang kita
+    tunjukkan tidak ada untuk mempersulit hidupmu, tetapi untuk
+    membantumu membuat kode yang lebih sedikit rentan terhadap error!
+- title: Kepemilikan
+  content_markdown: >
+    Menginstansiasi sebuah tipe dan **mengikatnya** ke sebuah nama
+    variabel membuat sebuah sumber daya memori yang akan diverifikasi
+    oleh kompiler Rust sepanjang **masa hidupnya** (lifetime). Variabel
+    yang terikat disebut **pemilik** (owner) dari sumber daya
+    tersebut.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        // We instantiate structs and bind to variables
+        // to create memory resources
+        let foo = Foo { x: 42 };
+        // foo is the owner
+    }
+- title: Manajemen Sumber Daya Berbasis Scope
+  content_markdown: |
+    Rust menggunakan akhir dari sebuah scope sebagai tempat untuk
+    mendekonstruksi dan mendealokasikan sebuah sumber daya.
+
+    Istilah untuk dekonstruksi dan dealokasi ini disebut **drop**.
+
+    Detail memori:
+    * Rust tidak mempunyai garbage collection.
+    * Ini juga disebut Resource Acquisition Is Initialization (RAII) di C++.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        let foo_a = Foo { x: 42 };
+        let foo_b = Foo { x: 13 };
+
+        println!("{}", foo_a.x);
+
+        println!("{}", foo_b.x);
+        // foo_b is dropped here 
+        // foo_a is dropped here
+    }
+- title: Drop Bersifat Hierarkis
+  content_markdown: >
+    Ketika sebuah struct di-drop, struct itu sendiri di-drop terlebih
+    dahulu, kemudian field-fieldnya di-drop satu per satu, dan
+    seterusnya.
+
+
+    Detail memori:
+
+    * Dengan membebaskan memori secara otomatis, Rust membantu
+    memastikan lebih sedikit kebocoran memori.
+
+    * Sebuah sumber daya memori hanya dapat di-drop satu kali.
+  code: |
+    struct Bar {
+        x: i32,
+    }
+
+    struct Foo {
+        bar: Bar,
+    }
+
+    fn main() {
+        let foo = Foo { bar: Bar { x: 42 } };
+        println!("{}", foo.bar.x);
+        // foo is dropped first
+        // then foo.bar is dropped
+    }
+- title: Memindahkan Kepemilikan
+  content_markdown: >
+    Ketika seorang pemilik diberikan sebagai argumen ke sebuah fungsi,
+    kepemilikan dipindahkan ke parameter fungsi tersebut.
+
+
+    Setelah sebuah **pemindahan** (move), variabel di fungsi asal
+    tidak dapat lagi digunakan.
+
+
+    Detail memori:
+
+    * Selama sebuah **pemindahan**, memori stack dari nilai pemilik
+    disalin ke memori stack parameter pemanggilan fungsi.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: Foo) {
+        println!("{}", f.x);
+        // f is dropped here
+    }
+
+    fn main() {
+        let foo = Foo { x: 42 };
+        // foo is moved to do_something
+        do_something(foo);
+        // foo can no longer be used
+    }
+- title: Mengembalikan Kepemilikan
+  content_markdown: |
+    Kepemilikan juga dapat dikembalikan dari sebuah fungsi.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something() -> Foo {
+        Foo { x: 42 }
+        // ownership is moved out
+    }
+
+    fn main() {
+        let foo = do_something();
+        // foo becomes the owner
+        // foo is dropped because of end of function scope
+    }
+- title: Meminjam Kepemilikan Dengan Referensi
+  content_markdown: |
+    Referensi memungkinkan kita meminjam akses ke sebuah sumber daya
+    dengan operator `&`.
+
+    Referensi juga di-drop seperti sumber daya lainnya.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        let foo = Foo { x: 42 };
+        let f = &foo;
+        println!("{}", f.x);
+        // f is dropped here
+        // foo is dropped here
+    }
+- title: Meminjam Kepemilikan Mutable Dengan Referensi
+  content_markdown: >
+    Kita juga dapat meminjam akses mutable ke sebuah sumber daya
+    dengan operator `&mut`.
+
+
+    Seorang pemilik sumber daya tidak dapat dipindahkan atau diubah
+    selama dipinjam secara mutable.
+
+
+    Detail memori:
+
+    * Rust mencegah adanya dua cara untuk mengubah sebuah nilai milik
+    seseorang karena hal ini memperkenalkan kemungkinan *data race*.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: Foo) {
+        println!("{}", f.x);
+        // f is dropped here
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let f = &mut foo;
+
+        // FAILURE: do_something(foo) would fail because
+        // foo cannot be moved while mutably borrowed
+
+        // FAILURE: foo.x = 13; would fail here because
+        // foo is not modifiable while mutably borrowed
+
+        f.x = 13;
+        // f is dropped here because it's no longer used after this point
+        
+        println!("{}", foo.x);
+        
+        // this works now because all mutable references were dropped
+        foo.x = 7;
+        
+        // move foo's ownership to a function
+        do_something(foo);
+    }
+- title: Dereferensiasi
+  content_markdown: >
+    Dengan menggunakan referensi `&mut`, kamu dapat mengatur nilai
+    pemilik menggunakan operator `*`.
+
+
+    Kamu juga dapat memperoleh salinan dari sebuah nilai milik
+    seseorang menggunakan operator `*` (jika nilainya dapat disalin -
+    kita akan membahas tipe yang dapat disalin di bab-bab selanjutnya).
+  code: |
+    fn main() {
+        let mut foo = 42;
+        let f = &mut foo;
+        let bar = *f; // get a copy of the owner's value
+        *f = 13;      // set the reference's owner's value
+        println!("{}", bar);
+        println!("{}", foo);
+    }
+- title: Mengelola Data Yang Dipinjam
+  content_markdown: >
+    Aturan Rust untuk referensi mungkin paling baik diringkas sebagai
+    berikut:
+
+
+    * Rust hanya memperbolehkan adanya satu referensi mutable **atau**
+    banyak referensi non-mutable, **tetapi tidak keduanya**.
+
+    * Sebuah referensi tidak boleh pernah **hidup lebih lama** dari
+    pemiliknya.
+
+
+    Ini biasanya bukan masalah ketika mengoper referensi ke fungsi-
+    fungsi.
+
+
+    Detail memori:
+
+    * Aturan pertama dari referensi mencegah data race. Apa itu data
+    race? Sebuah data race terjadi ketika pembacaan data mempunyai
+    kemungkinan untuk tidak sinkron karena adanya penulis pada data
+    yang sama pada saat bersamaan. Ini sering terjadi dalam
+    pemrograman multi-thread.
+
+    * Aturan kedua dari referensi mencegah penyalahgunaan referensi
+    yang menunjuk ke data yang tidak ada (disebut dangling pointer di
+    C).
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: &mut Foo) {
+        f.x += 1;
+        // mutable reference f is dropped here
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        do_something(&mut foo);
+        // because all mutable references are dropped within
+        // the function do_something, we can create another.
+        do_something(&mut foo);
+        // foo is dropped here
+    }
+- title: Referensi Dari Referensi
+  content_markdown: |
+    Referensi bahkan dapat digunakan pada bagian dari referensi lain.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(a: &Foo) -> &i32 {
+        return &a.x;
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let x = &mut foo.x;
+        *x = 13;
+        // x is dropped here allow us to create a non-mutable reference
+        let y = do_something(&foo);
+        println!("{}", y);
+        // y is dropped here
+        // foo is dropped here
+    }
+- title: Lifetime Eksplisit
+  content_markdown: >
+    Meskipun Rust tidak selalu menunjukkannya di dalam kode, kompiler
+    memahami lifetime dari setiap variabel dan akan berusaha
+    memverifikasi bahwa sebuah referensi tidak pernah ada lebih lama
+    dari pemiliknya.
+
+
+    Fungsi dapat menjadi eksplisit dengan memparameterisasi tanda
+    tangan fungsi dengan simbol-simbol yang membantu mengidentifikasi
+    parameter dan nilai kembalian mana yang berbagi lifetime yang
+    sama.
+
+
+    Penentu lifetime selalu dimulai dengan `'` (contoh `'a`, `'b`,
+    `'c`)
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    // the parameter foo and return value share the same lifetime
+    fn do_something<'a>(foo: &'a Foo) -> &'a i32 {
+        return &foo.x;
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let x = &mut foo.x;
+        *x = 13;
+        // x is dropped here, allowing us to create a non-mutable reference
+        let y = do_something(&foo);
+        println!("{}", y);
+        // y is dropped here
+        // foo is dropped here
+    }
+- title: Lifetime Ganda
+  content_markdown: >
+    Penentu lifetime memungkinkan kita untuk menjadi eksplisit dengan
+    skenario tertentu yang tidak dapat diselesaikan sendiri oleh
+    kompiler, dengan membedakan semua lifetime dari komponen tanda
+    tangan fungsi.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    // foo_b and the return value share the same lifetime
+    // foo_a has an unrelated lifetime
+    fn do_something<'a, 'b>(foo_a: &'a Foo, foo_b: &'b Foo) -> &'b i32 {
+        println!("{}", foo_a.x);
+        println!("{}", foo_b.x);
+        return &foo_b.x;
+    }
+
+    fn main() {
+        let foo_a = Foo { x: 42 };
+        let foo_b = Foo { x: 12 };
+        let x = do_something(&foo_a, &foo_b);
+        // foo_a is dropped here because only foo_b's lifetime exist beyond here
+        println!("{}", x);
+        // x is dropped here
+        // foo_b is dropped here
+    }
+- title: Lifetime Statis
+  content_markdown: >
+    Sebuah variabel **statis** adalah sebuah sumber daya memori yang
+    dibuat pada saat kompilasi yang ada sepanjang program berjalan,
+    dari awal hingga akhir. Tipenya harus ditentukan secara eksplisit.
+
+
+    Sebuah **lifetime statis** adalah sebuah sumber daya memori yang
+    bertahan tanpa batas hingga akhir sebuah program. Perhatikan bahwa
+    menurut definisi ini, beberapa sumber daya dengan lifetime statis
+    dapat dibuat pada saat runtime.
+
+
+    Sumber daya dengan lifetime statis mempunyai penentu lifetime
+    khusus `'static`.
+
+
+    Sumber daya `'static` tidak akan pernah **di-drop**.
+
+
+    Jika sumber daya lifetime statis mengandung referensi, referensi
+    tersebut harus semuanya `'static` (apapun yang kurang dari itu
+    tidak akan hidup cukup lama).
+
+
+    Detail memori:
+
+
+    * Mengubah variabel statis pada dasarnya berbahaya karena mereka
+    dapat diakses secara global untuk dibaca oleh siapa saja,
+      memperkenalkan kemungkinan data race. Kita akan membahas tantangan data global nanti.
+    * Rust memperbolehkan penggunaan blok `unsafe { ... }` untuk
+    melakukan beberapa operasi yang tidak dapat dijamin memorinya oleh
+    kompiler. [<span
+    style="color:red; font-weight:
+    bold;">R̸͉̟͈͔̄͛̾̇͜U̶͓͖͋̅Ṡ̴͉͇̃̉̀T̵̻̻͔̟͉́͆Ơ̷̥̟̳̓͝N̶̨̼̹̲͛Ö̵̝͉̖̏̾̔M̶̡̠̺̠̐͜Î̷̛͓̣̃̐̏C̸̥̤̭̏͛̎͜O̶̧͚͖͔̊͗̇͠N̸͇̰̏̏̽̃</span>](https://doc.rust-lang.org/nomicon/)
+    ini sebaiknya tidak dibicarakan dengan santai.
+  code: |
+    static PI: f64 = 3.1415;
+
+    fn main() {
+        // static variables can also be scoped to a function
+        static mut SECRET: &'static str = "swordfish";
+
+        // string literals have a 'static lifetime
+        let msg: &'static str = "Hello World!";
+        let p: &'static f64 = &PI;
+        println!("{} {}", msg, p);
+
+        // You can break some rules, but you must be explicit
+        unsafe {
+            // we can set SECRET to a string literal because it is also `static
+            SECRET = "abracadabra";
+            println!("{}", SECRET);
+        }
+    }
+- title: Lifetime Di Dalam Tipe Data
+  content_markdown: >
+    Sama seperti fungsi, tipe data dapat diparameterisasi dengan
+    penentu lifetime untuk anggota-anggotanya.
+
+
+    Rust memverifikasi bahwa struktur data yang mengandung referensi
+    tidak pernah bertahan lebih lama dari pemilik yang ditunjuk oleh
+    referensinya.
+
+
+    Kita tidak bisa mempunyai struct yang berkeliaran dengan referensi
+    yang menunjuk ke ketiadaan!
+  code: |
+    struct Foo<'a> {
+        i:&'a i32
+    }
+
+    fn main() {
+        let x = 42;
+        let foo = Foo {
+            i: &x
+        };
+        println!("{}",foo.i);
+    }
+- title: Bab 5 - Kesimpulan
+  content_markdown: >
+    Wah, selamat karena kamu telah berhasil sampai sejauh ini! Saya
+    tahu ini banyak untuk dicerna, tetapi kamu sudah berada di jalan
+    yang baik untuk menjadi seorang Rustacean. Semoga sudah jelas
+    bagaimana Rust sebagai bahasa bertujuan untuk memecahkan banyak
+    tantangan umum ini dalam pemrograman sistem:
+
+
+    * Modifikasi sumber daya yang tidak disengaja
+
+    * Lupa mendekonstruksi sumber daya
+
+    * Sumber daya yang secara tidak sengaja didekonstruksi dua kali
+
+    * Menggunakan sumber daya setelah didekonstruksi
+
+    * Data race yang disebabkan oleh penulisan ke sumber daya
+    sementara yang lain membaca dari sumber daya tersebut
+
+    * Melihat dengan jelas area kode dimana kompiler tidak dapat
+    memberikan jaminan
+
+
+    Di bab selanjutnya kita akan menerapkan sebagian dari pengetahuan
+    ini saat kita melihat bagaimana Rust menangani teks.

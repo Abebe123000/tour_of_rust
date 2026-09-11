@@ -1,0 +1,611 @@
+- title: Bab 7 - Pemrograman Berorientasi Objek
+  content_markdown: >
+    Mengekspresikan ide melalui fungsi adalah cara yang telah terbukti
+    untuk merepresentasikan perilaku dan data (C telah melakukannya
+    selama beberapa dekade!). Secara historis, ilmu komputer telah
+    menemukan cara lain yang berguna dan ekspresif untuk
+    mengagregasikan dan mengabstraksi data. Mungkin kamu mengenal
+    pemrograman berorientasi objek (OOP) sebagai salah satu cara
+    tersebut. Di bab ini kita akan menjelajahi apa yang ditawarkan
+    Rust di luar fungsi biasa.
+- title: Apa Itu OOP?
+  content_markdown: >
+    Pemrograman berorientasi objek secara garis besar merujuk pada
+    bahasa pemrograman yang mempunyai serangkaian ciri khas:
+
+
+    * Enkapsulasi (Encapsulation) - Menggabungkan data dan fungsi ke
+    dalam unit konseptual dari sebuah tipe tunggal, yang disebut
+    *objek*.
+
+    * Abstraksi (Abstraction) - Menyembunyikan data dan anggota fungsi
+    untuk mengaburkan detail implementasi dari sebuah objek.
+
+    * Polimorfisme (Polymorphism) - Kemampuan untuk berinteraksi
+    dengan sebuah objek dari berbagai sudut pandang fungsional.
+
+    * Pewarisan (Inheritance) - Kemampuan untuk mewarisi data dan
+    perilaku dari objek lain.
+- title: Rust Bukan OOP
+  content_markdown: >
+    Rust tidak mempunyai pewarisan data dan perilaku secara berarti.
+
+
+    * Struct tidak dapat mewarisi field dari sebuah struct induk.
+
+    * Struct tidak dapat mewarisi fungsi dari sebuah struct induk.
+
+
+    Meski begitu, Rust mengimplementasikan banyak fitur bahasa lain,
+    jadi kamu mungkin bahkan tidak menyadari kekurangan ini.
+- title: Enkapsulasi Dengan Method
+  code: |
+    struct SeaCreature {
+        noise: String,
+    }
+
+    impl SeaCreature {
+        fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            noise: String::from("blub"),
+        };
+        println!("{}", creature.get_sound());
+    }
+  content_markdown: >
+    Rust mendukung konsep sebuah *objek*, yaitu sebuah struct yang
+    diasosiasikan dengan beberapa fungsi (juga dikenal sebagai
+    *method*).
+
+
+    Parameter pertama dari setiap method harus berupa referensi ke
+    instance yang diasosiasikan dengan pemanggilan method tersebut
+    (contoh `instanceOfObj.foo()`). Rust menggunakan:
+
+    * `&self` - Referensi immutable ke instance.
+
+    * `&mut self` - Referensi mutable ke instance.
+
+
+    Method didefinisikan di dalam sebuah blok implementasi dengan
+    kata kunci `impl`:
+
+
+    ```rust
+
+    impl MyStruct {
+        ...
+        fn foo(&self) {
+            ...
+        }
+    }
+
+    ```
+- title: Abstraksi Dengan Eksposur Selektif
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        println!("{}", creature.get_sound());
+    }
+  content_markdown: >
+    Rust dapat menyembunyikan mekanisme internal dari objek.
+
+
+    Secara bawaan, field dan method hanya dapat diakses oleh modul
+    tempat mereka berada.
+
+
+    Kata kunci `pub` membuat field dan method sebuah struct dapat
+    diakses juga di luar modul.
+- title: Polimorfisme Dengan Trait
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        creature.make_noise();
+    }
+  content_markdown: >
+    Rust mendukung polimorfisme dengan trait. Trait memungkinkan kita
+    mengasosiasikan sekumpulan method dengan sebuah tipe struct.
+
+
+    Pertama kita mendefinisikan tanda tangan method dari sebuah
+    trait:
+
+
+    ```
+
+    trait MyTrait {
+        fn foo(&self);
+        ...
+    }
+
+    ```
+
+
+    Ketika sebuah struct mengimplementasikan sebuah trait, ini
+    membangun sebuah kontrak yang memungkinkan kita berinteraksi
+    secara tidak langsung dengan struct tersebut melalui tipe trait
+    (contoh `&dyn MyTrait`), tanpa perlu mengetahui tipe sebenarnya.
+
+
+    Method trait yang diimplementasikan oleh sebuah struct
+    didefinisikan di dalam sebuah blok implementasi:
+
+
+    ```rust
+
+    impl MyTrait for MyStruct {
+        fn foo(&self) {
+            ...
+        }
+        ...
+    }
+
+    ```
+- title: Method Yang Diimplementasikan Pada Trait
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+        
+        fn make_alot_of_noise(&self){
+            self.make_noise();
+            self.make_noise();
+            self.make_noise();
+        }
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        creature.make_alot_of_noise();
+    }
+  content_markdown: >
+    Trait dapat mempunyai method yang diimplementasikan.
+
+
+    Fungsi-fungsi ini tidak mempunyai akses langsung ke field internal
+    dari sebuah struct, tetapi dapat berguna untuk berbagi perilaku
+    di antara banyak pengimplementasi sebuah trait.
+- title: Pewarisan Trait
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    trait LoudNoiseMaker: NoiseMaker {
+        fn make_alot_of_noise(&self) {
+            self.make_noise();
+            self.make_noise();
+            self.make_noise();
+        }
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    impl LoudNoiseMaker for SeaCreature {}
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        creature.make_alot_of_noise();
+    }
+  content_markdown: |
+    Trait dapat mewarisi method dari trait lain.
+- title: Dispatch Dinamis Vs Statis
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    fn static_make_noise(creature: &SeaCreature) {
+        // we know the real type
+        creature.make_noise();
+    }
+
+    fn dynamic_make_noise(noise_maker: &dyn NoiseMaker) {
+        // we don't know the real type
+        noise_maker.make_noise();
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        static_make_noise(&creature);
+        dynamic_make_noise(&creature);
+    }
+  content_markdown: >
+    Method dijalankan dengan dua cara:
+
+    * dispatch statis - Ketika tipe instance diketahui, kita langsung
+    tahu fungsi mana yang harus dipanggil.
+
+    * dispatch dinamis - Ketika tipe sebuah instance tidak diketahui,
+    kita harus mencari cara untuk memanggil fungsi yang tepat.
+
+
+    Tipe trait seperti `&dyn MyTrait` memberi kita kemampuan untuk
+    bekerja secara tidak langsung dengan instance objek menggunakan
+    dispatch dinamis.
+
+
+    Ketika dispatch dinamis digunakan, Rust mendorongmu untuk
+    menempatkan `dyn` sebelum tipe trait-mu agar orang lain
+    menyadarinya.
+
+
+    Detail memori:
+
+    * Dispatch dinamis sedikit lebih lambat, karena adanya penelusuran
+    pointer yang diperlukan untuk menemukan pemanggilan fungsi yang
+    sebenarnya.
+- title: Trait Object
+  content_markdown: >
+    Ketika kita mengoper sebuah instance dari sebuah objek ke sebuah
+    parameter bertipe `&dyn MyTrait`, kita mengoper apa yang disebut
+    *trait object*.
+
+
+    Sebuah trait object adalah apa yang memungkinkan kita memanggil
+    secara tidak langsung method yang tepat dari sebuah instance.
+    Sebuah trait object adalah sebuah struct yang menyimpan pointer ke
+    instance kita bersama dengan daftar pointer fungsi ke method dari
+    instance kita.
+
+
+    Detail memori:
+
+    * Daftar fungsi ini dikenal di C++ sebagai *vtable*.
+- title: Menangani Data Dengan Ukuran Yang Tidak Diketahui
+  content_markdown: >
+    Trait menghadirkan tantangan menarik ketika kita ingin
+    menyimpannya di dalam struct lain. Trait menyembunyikan struct
+    aslinya, dan dengan begitu juga ukuran aslinya. Nilai dengan
+    ukuran yang tidak diketahui yang disimpan di dalam struct ditangani
+    di Rust dengan dua cara:
+
+
+    * `generics` (generik) - Menggunakan tipe terparameterisasi secara
+    efektif membuat struct/fungsi dengan tipe yang diketahui, dan
+    dengan begitu ukuran yang diketahui.
+
+    * `indirection` (indireksi) - Menempatkan instance di heap
+    memberi kita satu lapisan indireksi di mana kita tidak perlu
+    khawatir tentang ukuran tipe sebenarnya, dan sebagai gantinya kita
+    hanya menyimpan sebuah pointer ke sana. Ada juga cara lainnya!
+- title: Fungsi Generik
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    fn generic_make_noise<T>(creature: &T)
+    where
+        T: NoiseMaker,
+    {
+        // we know the real type at compile-time
+        creature.make_noise();
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        generic_make_noise(&creature);
+    }
+  content_markdown: >
+    Generik di Rust bekerja beriringan dengan trait. Ketika kita
+    mendeskripsikan sebuah tipe terparameterisasi `T`, kita dapat
+    membatasi tipe apa saja yang dapat digunakan sebagai argumen,
+    dengan mendaftar trait apa yang harus diimplementasikan oleh
+    argumen tersebut.
+
+
+    Di contoh ini, tipe `T` harus mengimplementasikan `Foo`:
+
+    ```rust
+
+    fn my_function<T>(foo: T)
+
+    where
+        T:Foo
+    {
+        ...
+    }
+
+    ```
+
+
+    Dengan menggunakan generik, kita membuat fungsi bertipe statis
+    pada saat kompilasi dengan tipe dan ukuran yang diketahui, yang
+    memungkinkan kita melakukan dispatch statis dan menyimpannya
+    sebagai nilai berukuran diketahui.
+- title: Singkatan Fungsi Generik
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    fn generic_make_noise(creature: &impl NoiseMaker)
+    {
+        // we know the real type at compile-time
+        creature.make_noise();
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        generic_make_noise(&creature);
+    }
+  content_markdown: |
+    Rust mempunyai singkatan untuk mengekspresikan generik yang
+    dibatasi oleh sebuah trait:
+
+    ```rust
+    fn my_function(foo: impl Foo) {
+        ...
+    }
+    ```
+
+    Ini setara dengan:
+
+    ```rust
+    fn my_function<T>(foo: T)
+    where
+        T:Foo
+    {
+        ...
+    }
+    ```
+- title: Box
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    struct Ocean {
+        animals: Vec<Box<dyn NoiseMaker>>,
+    }
+
+    fn main() {
+        let ferris = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        let sarah = SeaCreature {
+            name: String::from("Sarah"),
+            noise: String::from("swish"),
+        };
+        let ocean = Ocean {
+            animals: vec![Box::new(ferris), Box::new(sarah)],
+        };
+        for a in ocean.animals.iter() {
+            a.make_noise();
+        }
+    }
+  content_markdown: >
+    `Box` adalah sebuah struktur data yang memungkinkan kita
+    memindahkan data kita dari stack ke heap.
+
+
+    Mendereferensikannya memungkinkan kita menggunakan data yang
+    dialokasikan di heap secara ergonomis, seolah-olah itu adalah
+    tipe aslinya.
+
+
+    Karena `Box` adalah sebuah struct dengan ukuran yang diketahui
+    (karena ia hanya menyimpan sebuah pointer), ia sering digunakan
+    sebagai cara untuk menyimpan sebuah referensi ke sesuatu di dalam
+    sebuah struct yang perlu mengetahui ukuran field-fieldnya.
+
+
+    `Box` begitu umum sehingga dapat digunakan dari mana saja:
+
+
+    ```rust
+
+    Box::new(Foo { ... })
+
+    ```
+- title: Struct Generik Ditinjau Kembali
+  content_markdown: >
+    Struct generik juga dapat mempunyai tipe terparameterisasi mereka
+    sendiri yang dibatasi oleh trait.
+
+
+    ```rust
+
+    struct MyStruct<T>
+
+    where
+        T: MyTrait
+    {
+        foo: T
+        ...
+    }
+
+    ```
+
+
+    Struct generik membawa tipe terparameterisasi mereka juga di
+    dalam blok implementasi mereka:
+
+
+    ```rust
+
+    impl<T> MyStruct<T> {
+        ...
+    }
+
+    ```
+- title: Bab 7 - Kesimpulan
+  content_markdown: >
+    Sekarang kita mempunyai lebih banyak fitur bahasa yang tersedia
+    untuk merepresentasikan ide-ide kita dengan jelas!
+
+
+    Abstraksi Rust mungkin sederhana, tetapi cukup ampuh untuk membuat
+    bekerja dengan kode menjadi menyenangkan. Di bab ini kita telah
+    melihat sekilas smart pointer dengan `Box`. Di bab selanjutnya
+    kita akan mempelajari bagaimana smart pointer dapat membantu kita
+    dalam situasi memori lain yang lebih terspesialisasi.
+
+
+    Sumber:
+
+    * [Video - Object-oriented Programming in 7
+    minutes](https://www.youtube.com/watch?v=pTB0EiLXUC8)
+
+    * [Artikel - "The faster you unlearn OOP, the better for you and
+    your
+    software"](https://dpc.pw/the-faster-you-unlearn-oop-the-better-for-you-and-your-software)

@@ -1,0 +1,376 @@
+- title: Bab 4 - Tipe Generik
+  content_markdown: >
+    Tipe generik sangatlah penting di Rust. Mereka digunakan dalam
+    representasi nilai yang mungkin nihil (yaitu variabel yang mungkin
+    belum mempunyai nilai), penanganan error, koleksi, dan banyak lagi!
+    Di bagian ini kita akan mempelajari dasar-dasar generik yang
+    kemungkinan besar akan sering kamu gunakan.
+- title: Apa Itu Tipe Generik?
+  content_markdown: >
+    Tipe generik memungkinkan kita untuk mendefinisikan sebagian dari
+    sebuah `struct` atau `enum`, membiarkan kompiler membuat versi yang
+    terdefinisi secara lengkap berdasarkan bagaimana kita
+    menggunakannya di dalam kode.
+
+
+    Rust umumnya dapat menyimpulkan tipe akhir berdasarkan penggunaan
+    kita, tetapi jika ia membutuhkan bantuan, kamu selalu dapat
+    eksplisit dengan menggunakan operator `::<T>`, yang juga dikenal
+    dengan nama `turbofish` (teman lama saya).
+  code: |
+    // A partially defined struct type
+    struct BagOfHolding<T> {
+        item: T,
+    }
+
+    fn main() {
+        // Note: by using generic types here, we create compile-time created types. 
+        // Turbofish lets us be explicit.
+        let i32_bag = BagOfHolding::<i32> { item: 42 };
+        let bool_bag = BagOfHolding::<bool> { item: true };
+        
+        // Rust can infer types for generics too!
+        let float_bag = BagOfHolding { item: 3.14 };
+        
+        // Note: never put a bag of holding in a bag of holding in real life
+        let bag_in_bag = BagOfHolding {
+            item: BagOfHolding { item: "boom!" },
+        };
+
+        println!(
+            "{} {} {} {}",
+            i32_bag.item, bool_bag.item, float_bag.item, bag_in_bag.item.item
+        );
+    }
+- title: Merepresentasikan Ketiadaan
+  content_markdown: >
+    Di bahasa pemrograman lain, kata kunci `null` digunakan untuk
+    merepresentasikan ketiadaan sebuah nilai. Ini sering menimbulkan
+    kesulitan, karena membuka kemungkinan program kita gagal karena
+    suatu saat berinteraksi dengan variabel atau field tanpa nilai
+    apapun.
+
+
+    Rust tidak mempunyai `null`, tetapi tidak mengabaikan pentingnya
+    dapat merepresentasikan konsep *"tidak ada nilai"*.
+
+
+    Pertimbangkan representasi sederhana yang menggunakan alat yang
+    sudah kita kenal.
+
+
+    Pola menyertakan sebuah nilai alternatif `None` di antara satu atau
+    lebih kemungkinan lain sangatlah umum di Rust karena ketiadaan
+    `null`. Tipe generik membantu memecahkan tantangan ini.
+  code: |
+    enum Item {
+        Inventory(String),
+        // None represents the absence of an item
+        None,
+    }
+
+    struct BagOfHolding {
+        item: Item,
+    }
+- title: Option
+  content_markdown: >
+    Rust mempunyai enum generik bawaan bernama `Option` yang
+    memungkinkan kita merepresentasikan nilai yang mungkin nihil tanpa
+    `null`.
+
+
+    ```
+
+    enum Option<T> {
+        None,
+        Some(T),
+    }
+
+    ```
+
+
+    Enum ini sangat umum, sehingga kita dapat membuat instance dari
+    tipe ini dimana saja dengan varian `Some` dan `None`.
+  code: |
+    // A partially defined struct type
+    struct BagOfHolding<T> {
+        // Our parameter type T can be handed to others
+        item: Option<T>,
+    }
+
+    fn main() {
+        // Note: A bag for i32, holding nothing! We have to specify the type
+        // because otherwise Rust would not know what type of bag it is.
+        let i32_bag = BagOfHolding::<i32> { item: None };
+
+        if i32_bag.item.is_none() {
+            println!("there's nothing in the bag!")
+        } else {
+            println!("there's something in the bag!")
+        }
+
+        let i32_bag = BagOfHolding::<i32> { item: Some(42) };
+
+        if i32_bag.item.is_some() {
+            println!("there's something in the bag!")
+        } else {
+            println!("there's nothing in the bag!")
+        }
+
+        // match lets us deconstruct Option elegantly and ensure we handle all cases!
+        match i32_bag.item {
+            Some(v) => println!("found {} in bag!", v),
+            None => println!("found nothing"),
+        }
+    }
+- title: Result
+  content_markdown: >
+    Rust mempunyai enum generik bawaan bernama `Result` yang
+    memungkinkan kita mengembalikan sebuah hasil yang mempunyai
+    kemungkinan untuk gagal. Ini adalah cara idiomatis bahasa ini
+    menangani error.
+
+
+    ```
+
+    enum Result<T, E> {
+        Ok(T),
+        Err(E),
+    }
+
+    ```
+
+
+    Perhatikan bahwa tipe generik kita sekarang mempunyai beberapa
+    *tipe parameter* (`<T, E>`), dipisahkan dengan koma.
+
+
+    Enum ini juga sangat umum, sehingga kita dapat membuat instance
+    dari tipe ini dimana saja dengan varian `Ok` dan `Err`.
+  code: |
+    fn do_something_that_might_fail(i:i32) -> Result<f32,String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("this is not the right number"))   
+        }
+    }
+
+    fn main() {
+        let result = do_something_that_might_fail(12);
+
+        // match lets us deconstruct Result elegantly and ensure we handle all cases!
+        match result {
+            Ok(v) => println!("found {}", v),
+            Err(e) => println!("Error: {}",e),
+        }
+    }
+- title: Main Yang Mungkin Gagal
+  content_markdown: |
+    `main` mempunyai kemampuan untuk mengembalikan sebuah `Result`!
+    (`Option` tidak bisa, saya sudah mencobanya)
+  code: |
+    fn do_something_that_might_fail(i: i32) -> Result<f32, String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("this is not the right number"))
+        }
+    }
+
+    // Main returns no value, but could return an error!
+    fn main() -> Result<(), String> {
+        let result = do_something_that_might_fail(12);
+
+        match result {
+            Ok(v) => println!("found {}", v),
+            Err(_e) => {
+                // handle this error gracefully
+                
+                // return a new error from main that said what happened!
+                return Err(String::from("something went wrong in main!"));
+            }
+        }
+
+        // Notice we use a unit value inside a Result Ok
+        // to represent everything is fine
+        Ok(())
+    }
+- title: Menangani Error Dengan Elegan
+  content_markdown: >
+    Tipe data yang mungkin gagal, `Result` dan `Option`, sangatlah umum
+    sehingga Rust memberi kita sebuah operator yang serbaguna dan
+    ampuh untuk bekerja dengannya: `?`. Kedua potongan kode berikut ini
+    setara:
+
+
+    ```
+
+    do_something_that_might_fail()?
+
+    ```
+
+
+    ```
+
+    match do_something_that_might_fail() {
+        Ok(v) => v,
+        Err(e) => return Err(e),
+    }
+
+    ```
+
+
+    Hal yang sama juga berlaku untuk `Option`.
+  code: |
+    fn do_something_that_might_fail(i: i32) -> Result<f32, String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("this is not the right number"))
+        }
+    }
+
+    fn main() -> Result<(), String> {
+        // Look at how much code we saved!
+        let v = do_something_that_might_fail(42)?;
+        println!("found {}", v);
+        Ok(())
+    }
+- title: Menangani Option Dan Result Secara Kasar
+  content_markdown: >
+    Untuk penulisan kode yang cepat dan kotor, bekerja dengan
+    `Option`/`Result` bisa menjadi membosankan. Kedua tipe tersebut
+    mempunyai sebuah fungsi bernama `unwrap` yang berguna untuk
+    mendapatkan sebuah nilai tanpa banyak basa-basi. Fungsi ini:
+
+
+    1. Mengambil nilai yang terkandung di dalam Option/Result
+
+    2. Jika tidak menemukan nilai seperti itu, menghentikan seluruh
+    program menggunakan macro `panic!`.
+
+
+    Kedua potongan kode berikut ini setara:
+
+
+    ```
+
+    my_option.unwrap()
+
+    ```
+
+
+    ```
+
+    match my_option {
+        Some(v) => v,
+        None => panic!("some error message generated by Rust!"),
+    }
+
+    ```
+
+
+    Begitu juga dengan:
+
+
+    ```
+
+    my_result.unwrap()
+
+    ```
+
+
+    ```
+
+    match my_result {
+        Ok(v) => v,
+        Err(e) => panic!("some error message generated by Rust!"),
+    }
+
+    ```
+
+
+    Selalu lebih baik untuk menggunakan kemampuan yang memperbolehkan
+    program tetap berjalan meskipun terjadi error, seperti `match` dan
+    `?`. Ada juga pilihan yang lebih nyaman, seperti `unwrap_or` atau
+    `map` dan `and_then`. Jadi pastikan untuk menggunakan `unwrap`
+    sesedikit mungkin!
+  code: |
+    fn do_something_that_might_fail(i: i32) -> Result<f32, String> {
+        if i == 42 {
+            Ok(13.0)
+        } else {
+            Err(String::from("this is not the right number"))
+        }
+    }
+
+    fn main() -> Result<(), String> {
+        // concise but assumptive and gets ugly fast
+        let v = do_something_that_might_fail(42).unwrap();
+        println!("found {}", v);
+        
+        // this will panic!
+        let v = do_something_that_might_fail(1).unwrap();
+        println!("found {}", v);
+        
+        Ok(())
+    }
+- title: Vector
+  content_markdown: >
+    Beberapa tipe generik paling berguna adalah apa yang disebut "tipe
+    koleksi". Sebagai contoh, sebuah vector adalah daftar dengan
+    panjang bebas dari nilai-nilai serupa, direpresentasikan oleh
+    struct `Vec`.
+
+
+    Macro `vec!` memungkinkan kita untuk dengan mudah membuat sebuah
+    vector, alih-alih membuatnya secara manual satu per satu.
+
+
+    Vector mempunyai method `iter()` yang mengubah sebuah vector
+    menjadi iterator, memungkinkan kita untuk dengan mudah
+    menggunakannya di dalam loop `for`.
+
+
+    Detail memori:
+
+    * Vector adalah sebuah struct, dan disimpan di stack; *isi* dari
+    sebuah vector disimpan di heap sehingga dapat bertambah panjang.
+    Stack menyimpan referensi ke lokasi memori heap tersebut.
+
+    * Sebuah vector dimulai dengan kapasitas bawaan. Ketika lebih
+    banyak elemen ditambahkan daripada kapasitas ini, ia
+    mengalokasikan ulang data di heap agar mempunyai ruang baru yang
+    tersedia dengan kapasitas yang lebih besar, umumnya dua kali
+    lipat.
+  code: |
+    fn main() {
+        // We can be explicit with type
+        let mut i32_vec = Vec::<i32>::new(); // turbofish <3
+        i32_vec.push(1);
+        i32_vec.push(2);
+        i32_vec.push(3);
+
+        // But look how clever Rust is about determining the type automatically
+        let mut float_vec = Vec::new();
+        float_vec.push(1.3);
+        float_vec.push(2.3);
+        float_vec.push(3.4);
+
+        // That's a beautiful macro!
+        let string_vec = vec![String::from("Hello"), String::from("World")];
+
+        for word in string_vec.iter() {
+            println!("{}", word);
+        }
+    }
+- title: Bab 4 - Kesimpulan
+  content_markdown: >
+    Dalam satu bab kita telah mempelajari betapa hebatnya tipe generik!
+    Jangan khawatir jika kamu belum sepenuhnya memahami cara
+    menggunakan semuanya, untuk saat ini cukup ketahui bahwa mereka
+    ada, karena kamu akan semakin sering menemuinya seiring kamu
+    membaca kode. Fungsi kita mulai menjadi cukup panjang! Di bab
+    selanjutnya kita akan membahas sebuah konsep penting di Rust:
+    kepemilikan data.

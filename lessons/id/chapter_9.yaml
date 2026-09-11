@@ -1,0 +1,200 @@
+- title: Bab 9 - Organisasi Dan Struktur Proyek
+  content_markdown: >
+    Sejauh ini semua contoh kode kita berada dalam satu file tunggal.
+    Mari kita bahas bagaimana kode kita dapat diorganisasi dengan
+    lebih baik dan dibagikan dengan orang lain!
+- title: Modul
+  content_markdown: |
+    Setiap program atau pustaka Rust adalah sebuah *crate*.
+
+    Setiap crate terdiri dari sebuah hierarki *modul*.
+
+    Setiap crate mempunyai sebuah modul akar (root module).
+
+    Sebuah modul dapat menyimpan variabel global, fungsi, struct,
+    trait, atau bahkan modul lain!
+
+    Di Rust tidak ada pemetaan satu-ke-satu antara file dan hierarki
+    pohon modul. Kita harus membangun pohon modul secara eksplisit,
+    dengan tangan, di dalam kode kita.
+- title: Menulis Sebuah Program
+  content_markdown: |
+    Sebuah program mempunyai modul akar di dalam sebuah file bernama
+    `main.rs`.
+- title: Menulis Sebuah Pustaka
+  content_markdown: |
+    Sebuah pustaka mempunyai modul akar di dalam sebuah file bernama
+    `lib.rs`.
+- title: Merujuk Modul Dan Crate Lain
+  code: |
+    use std::f64::consts::PI;
+
+    fn main() {
+        println!("Welcome to the playground!");
+        println!("I would love a slice of {}!", PI);
+    }
+  content_markdown: >
+    Item di dalam modul dapat dirujuk dengan path lengkapnya,
+    `std::f64::consts::PI`.
+
+
+    Cara yang lebih sederhana adalah kata kunci **use**. Ini
+    memungkinkan kita menentukan item tertentu dari modul yang ingin
+    kita gunakan di seluruh kode kita tanpa path lengkap. Sebagai
+    contoh, `use std::f64::consts::PI` memungkinkan saya hanya
+    menggunakan identifier `PI` di dalam fungsi main saya.
+
+
+    **std** adalah crate dari **pustaka standar** Rust yang penuh
+    dengan struktur data dan fungsi yang berguna untuk berinteraksi
+    dengan sistem operasimu.
+
+
+    Sebuah direktori crate yang dapat dicari yang dibuat oleh komunitas
+    dapat ditemukan di
+    [https://crates.io](https://crates.io/).
+- title: Merujuk Banyak Item
+  content_markdown: |
+    Banyak item dapat dirujuk dalam satu path modul tunggal seperti
+    ini:
+
+    ```rust
+    use std::f64::consts::{PI,TAU}
+    ```
+
+    Ferris tidak memakan TAU, ia hanya memakan PI.
+- title: Membuat Modul
+  content_markdown: |
+    Ketika kita memikirkan kode, kita biasanya membayangkan sebuah
+    hierarki file yang diorganisasi dalam direktori. Rust
+    memungkinkanmu membuat modul yang terkait erat dengan struktur
+    filemu.
+
+    Ada dua cara di Rust untuk mendeklarasikan sebuah modul. Sebagai
+    contoh, sebuah modul `foo` dapat direpresentasikan sebagai:
+      * sebuah file bernama `foo.rs`
+      * sebuah direktori bernama `foo` dengan sebuah file `mod.rs` di
+        dalamnya
+- title: Hierarki Modul
+  content_markdown: >
+    Sebuah modul dapat bergantung pada modul lain. Untuk membangun
+    sebuah hubungan antara sebuah modul dan sub-modulnya, kamu harus
+    menulis di modul induk:
+
+
+    ```rust
+
+    mod foo;
+
+    ```
+
+
+    Deklarasi di atas akan mencari sebuah file bernama `foo.rs` atau
+    `foo/mod.rs` dan akan memasukkan isinya ke dalam sebuah modul
+    bernama `foo` di bawah scope ini.
+- title: Modul Inline
+  content_markdown: >
+    Sebuah sub-modul dapat langsung disisipkan (inline) di dalam kode
+    sebuah modul.
+
+
+    Salah satu penggunaan modul inline yang sangat umum adalah
+    membuat unit test. Kita membuat sebuah modul inline yang hanya
+    ada ketika Rust digunakan untuk pengujian!
+
+
+    ```
+
+    // This macro removes this inline module when Rust
+
+    // is not in test mode.
+
+    #[cfg(test)]
+
+    mod tests {
+        // Notice that we don't immediately get access to the
+        // parent module. We must be explicit.
+        use super::*;
+
+        ... tests go here ...
+    }
+
+    ```
+- title: Referensi Modul Internal
+  content_markdown: >
+    Rust mempunyai beberapa kata kunci yang dapat kamu gunakan di
+    dalam path `use`-mu untuk dengan cepat mendapatkan modul yang kamu
+    inginkan:
+
+
+    * `crate` - modul akar dari crate-mu
+
+    * `super` - modul induk dari modulmu saat ini
+
+    * `self` - modul saat ini
+- title: Ekspor
+  content_markdown: >
+    Secara bawaan, anggota dari sebuah *modul* tidak dapat diakses
+    dari luar modul tersebut (bahkan dari modul turunannya!). Kita
+    membuat anggota sebuah modul dapat diakses menggunakan kata kunci
+    `pub`.
+
+
+    Secara bawaan, anggota dari sebuah *crate* tidak dapat diakses di
+    luar crate tersebut. Kita membuat anggota sebuah crate dapat
+    diakses dengan menandainya sebagai `pub` di dalam *modul akar*
+    crate-mu (`lib.rs` atau `main.rs`).
+- title: Visibilitas Struct
+  content_markdown: >
+    Sama seperti fungsi, struct dapat mendeklarasikan apa yang mereka
+    ingin ekspos di luar modulnya menggunakan `pub`.
+  code: |
+    // SeaCreature struct will be usable outside of our module
+    pub struct SeaCreature {
+        pub animal_type: String,
+        pub name: String,
+        pub arms: i32,
+        pub legs: i32,
+        // let's keep our weapon private
+        weapon: String,
+    }
+- title: Prelude
+  content_markdown: |
+    Kamu mungkin bertanya-tanya bagaimana kita mempunyai akses ke
+    `Vec` atau `Box` di mana saja tanpa sebuah `use` untuk
+    mengimpornya. Ini karena adanya modul `prelude` di pustaka
+    standar.
+
+    Ketahuilah bahwa di pustaka standar Rust, apapun yang diekspor di
+    `std::prelude::*` secara otomatis tersedia di setiap bagian Rust.
+    Itu berlaku untuk `Vec` dan `Box` tetapi juga yang lain (Option,
+    Copy, dsb.).
+- title: Prelude Milikmu Sendiri
+  content_markdown: >
+    Karena adanya prelude pustaka standar, adalah umum bagi
+    pustakamu untuk mempunyai modul prelude-nya sendiri sebagai titik
+    awal untuk di mana pengguna seharusnya mengimpor semua struktur
+    data paling umum untuk menggunakan pustakamu (contoh `use
+    my_library::prelude::*`).
+
+
+    Ini tidak digunakan secara otomatis di program/pustaka yang
+    menggunakan crate-mu, tetapi ini adalah konvensi yang baik untuk
+    diikuti agar orang tahu dari mana harus memulai.
+
+
+    Ferris berkata, "Jadilah rustacean yang baik dan bantu sesama
+    kepiting dengan prelude yang baik!"
+- title: Bab 9 - Kesimpulan
+  content_markdown: >
+    Sekarang kamu mempunyai beberapa trik di lenganmu ketika berbicara
+    tentang membuat aplikasi dan pustaka Rust yang siap untuk dunia.
+    Jangan khawatir untuk mengingat semuanya. Seiring pustakamu
+    berkembang dan digunakan oleh orang lain, kamu akan menemukan apa
+    yang bekerja paling baik di setiap tonggak pencapaian.
+
+
+    Sumber:
+
+    - [Guidelines For Writing Rust
+    APIs](https://rust-lang.github.io/api-guidelines/)
