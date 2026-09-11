@@ -1,20 +1,16 @@
-- title: Chapter 5 - Ownership & Borrowing Data
+- title: فصل 5 - مالکیت و قرض گرفتن داده
   content_markdown: >
-    Rust has a unique paradigm for managing memory compared to other programming
-    languages. We're going to look at
-
-    the behaviors and validations of the compiler one by one so it's not
-    overwhelming. It's important to remember that 
-
-    ultimately the rules we show don't exist to make your life hard, but to help
-    you make your code less error-prone!
-- title: Ownership
+    راست در مقایسه با بقیه‌ی زبان‌های برنامه‌نویسی، یه پارادایم
+    منحصربه‌فرد برای مدیریت حافظه داره. می‌ریم سراغ رفتارها و
+    اعتبارسنجی‌های کامپایلر یکی‌یکی، تا زیاد سنگین نباشه. مهمه که
+    یادت باشه، در نهایت قوانینی که نشونت می‌دیم برای سخت کردن زندگیت
+    نیستن، بلکه برای این هستن که کمکت کنن کدت کمتر مستعد خطا باشه!
+- title: مالکیت (Ownership)
   content_markdown: >
-    Instantiating a type and **binding** it to a variable name creates a memory
-    resource that the Rust compiler will validate
-
-    through its whole **lifetime**.  The bound variable is called the resource's
-    **owner**.
+    نمونه‌سازی یه نوع و **بایند کردنش** به یه اسم متغیر، یه منبع
+    حافظه می‌سازه که کامپایلر راست در طول کل **طول عمرش (lifetime)**
+    اعتبارسنجیش می‌کنه. متغیر بایند شده رو **مالک (owner)** اون منبع
+    می‌گن.
   code: |
     struct Foo {
         x: i32,
@@ -26,15 +22,16 @@
         let foo = Foo { x: 42 };
         // foo is the owner
     }
-- title: Scope-Based Resource Management
+- title: مدیریت منابع بر اساس Scope
   content_markdown: |
-    Rust uses the end of scope as the place to deconstruct and deallocate a resource.
+    راست از پایان یه scope به‌عنوان جایی برای واسازی (deconstruct)
+    و آزادسازی یه منبع استفاده می‌کنه.
 
-    The term for this deconstruction and deallocation is called a **drop**.
+    به این واسازی و آزادسازی، **drop** می‌گن.
 
-    Memory detail:
-    * Rust does not have garbage collection.
-    * This is also called Resource Acquisition Is Initialization ( RAII ) in C++.
+    جزئیات حافظه:
+    * راست garbage collection نداره.
+    * توی ++C به این کار Resource Acquisition Is Initialization (RAII) هم می‌گن.
   code: |
     struct Foo {
         x: i32,
@@ -50,18 +47,18 @@
         // foo_b is dropped here 
         // foo_a is dropped here
     }
-- title: Dropping is Hierarchical
+- title: دراپ شدن سلسله‌مراتبیه
   content_markdown: >
-    When a struct is dropped, the struct itself is dropped first, then its
-    children are dropped individually, and so on.
+    وقتی یه struct دراپ می‌شه، اول خود struct دراپ می‌شه، بعدش
+    فرزندهاش تک‌تک دراپ می‌شن، و همین‌طور ادامه پیدا می‌کنه.
 
 
-    Memory Details:
+    جزئیات حافظه:
 
-    * By automatically freeing memory Rust helps ensure that there are fewer
-    memory leaks.
+    * با آزاد کردن خودکار حافظه، راست کمک می‌کنه که نشتی حافظه
+    کمتری داشته باشیم.
 
-    * Memory resources can only be dropped once.
+    * یه منبع حافظه فقط یه بار می‌تونه دراپ بشه.
   code: |
     struct Bar {
         x: i32,
@@ -77,20 +74,20 @@
         // foo is dropped first
         // then foo.bar is dropped
     }
-- title: Moving Ownership
+- title: جابه‌جا کردن مالکیت
   content_markdown: >
-    When an owner is passed as an argument to a function, ownership is moved to
-    the function parameter.
+    وقتی یه مالک به‌عنوان آرگومان به یه تابع پاس داده می‌شه، مالکیت
+    به پارامتر اون تابع منتقل می‌شه.
 
 
-    After a **move** the variable in the original function can no longer be
-    used.
+    بعد از یه **move (جابه‌جایی)**، دیگه نمی‌شه از متغیر توی تابع
+    اصلی استفاده کرد.
 
 
-    Memory details:
+    جزئیات حافظه:
 
-    * During a **move** the stack memory of the owners value is copied to the
-    function call's parameter stack memory.
+    * توی یه **move**، حافظه‌ی پشته‌ی مقدار مالک، توی حافظه‌ی پشته‌ی
+    پارامترِ فراخوانی تابع کپی می‌شه.
   code: |
     struct Foo {
         x: i32,
@@ -107,9 +104,9 @@
         do_something(foo);
         // foo can no longer be used
     }
-- title: Returning Ownership
+- title: برگردوندن مالکیت
   content_markdown: |
-    Ownership can also be returned from a function.
+    مالکیت رو هم می‌شه از یه تابع برگردوند.
   code: |
     struct Foo {
         x: i32,
@@ -125,11 +122,12 @@
         // foo becomes the owner
         // foo is dropped because of end of function scope
     }
-- title: Borrowing Ownership with References
+- title: قرض گرفتن مالکیت با رفرنس‌ها
   content_markdown: |
-    References allow us borrow access to a resource with the `&` operator.
+    رفرنس‌ها بهمون اجازه می‌دن با عملگر `&` دسترسی به یه منبع رو
+    قرض بگیریم.
 
-    References are also dropped like other resources.
+    رفرنس‌ها هم مثل بقیه‌ی منابع دراپ می‌شن.
   code: |
     struct Foo {
         x: i32,
@@ -142,18 +140,21 @@
         // f is dropped here
         // foo is dropped here
     }
-- title: Borrowing Mutable Ownership with References
+- title: قرض گرفتن مالکیت قابل تغییر با رفرنس‌ها
   content_markdown: >
-    We can also borrow mutable access to a resource with the `&mut` operator.
+    می‌تونیم با عملگر `&mut` دسترسی قابل تغییر (mutable) به یه منبع
+    رو هم قرض بگیریم.
 
 
-    A resource owner cannot be moved or modified while mutably borrowed.
+    مالک یه منبع، تا وقتی که به‌شکل mutable قرض داده شده، نه می‌شه
+    جابه‌جاش کرد و نه می‌شه تغییرش داد.
 
 
-    Memory detail:
+    جزئیات حافظه:
 
-    * Rust prevents having two ways to mutate an owned value because it
-    introduces the possibility of a data race.
+    * راست جلوی این رو می‌گیره که دو تا راه برای تغییر یه مقدار
+    مالکیت‌دار وجود داشته باشه، چون این کار امکان data race رو به
+    وجود میاره.
   code: |
     struct Foo {
         x: i32,
@@ -175,24 +176,25 @@
         // foo is not modifiable while mutably borrowed
 
         f.x = 13;
-        // f is dropped here because its no longer used after this point
+        // f is dropped here because it's no longer used after this point
         
         println!("{}", foo.x);
         
-        // this works now because there all mutable references were dropped
+        // this works now because all mutable references were dropped
         foo.x = 7;
         
         // move foo's ownership to a function
         do_something(foo);
     }
-- title: Dereferencing
+- title: دیرفرنس کردن (Dereferencing)
   content_markdown: >
-    Using `&mut` references, you can set the owner's value using the `*`
-    operator.
+    با استفاده از رفرنس‌های `&mut`، می‌تونی با عملگر `*` مقدار مالک
+    رو تنظیم کنی.
 
 
-    You can also get a copy of owned value using the `*` operator (if the value
-    can be copied - we will discuss copyable types in later chapters).
+    همچنین می‌تونی با عملگر `*` یه کپی از یه مقدار مالکیت‌دار بگیری
+    (اگه مقدار قابل کپی باشه - در مورد نوع‌های قابل کپی توی فصل‌های
+    بعدی صحبت می‌کنیم).
   code: |
     fn main() {
         let mut foo = 42;
@@ -202,30 +204,32 @@
         println!("{}", bar);
         println!("{}", foo);
     }
-- title: Passing Around Borrowed Data
+- title: کار کردن با داده‌ی قرض‌گرفته‌شده
   content_markdown: >
-    Rust's rules for references might best be summarized by:
+    شاید بشه قوانین راست برای رفرنس‌ها رو این‌طوری خلاصه کرد:
 
 
-    * Rust only allows there to be one mutable reference **or** multiple
-    non-mutable references **but not both**.
+    * راست فقط اجازه می‌ده یا یه رفرنس mutable داشته باشیم **یا** چند
+    تا رفرنس non-mutable، **ولی نه هر دو با هم**.
 
-    * A reference must never **live longer** than its owner.
-
-
-    This doesn't tend to be a problem when passing around references to
-    functions.
+    * یه رفرنس هیچ‌وقت نباید از مالکش **عمر بیشتری داشته باشه**.
 
 
-    Memory details:
+    این معمولاً وقتی که رفرنس‌ها رو به تابع‌ها پاس می‌دیم، مشکلی
+    ایجاد نمی‌کنه.
 
-    * The first rule of references prevents data races. What's a data race? A
-    data race when reading from data has the possibility of being out of sync
-    due to the existence of a writer to the data at the same time. This happens
-    often in multi-threaded programming.
 
-    * The second rule of references prevents the misuse of references that refer
-    to non-existent data (called dangling pointers in C).
+    جزئیات حافظه:
+
+    * قانون اول رفرنس‌ها جلوی data race رو می‌گیره. data race چیه؟
+    وقتی که خوندن از داده امکان داره خارج از سینک باشه، چون یه
+    نویسنده هم‌زمان روی همون داده داره می‌نویسه، یه data race اتفاق
+    میفته. این توی برنامه‌نویسی چندنخی (multi-threaded) خیلی پیش
+    میاد.
+
+    * قانون دوم رفرنس‌ها جلوی سوءاستفاده از رفرنس‌هایی رو می‌گیره
+    که به داده‌ای اشاره می‌کنن که دیگه وجود نداره (توی C بهشون
+    dangling pointer می‌گن).
   code: |
     struct Foo {
         x: i32,
@@ -240,13 +244,14 @@
         let mut foo = Foo { x: 42 };
         do_something(&mut foo);
         // because all mutable references are dropped within
-        // the function do_something. We can create another.
+        // the function do_something, we can create another.
         do_something(&mut foo);
         // foo is dropped here
     }
-- title: References Of References
+- title: رفرنس‌های رفرنس‌ها
   content_markdown: |
-    References can even be used on pieces of references.
+    حتی می‌شه از رفرنس‌ها روی بخش‌هایی از رفرنس‌های دیگه هم استفاده
+    کرد.
   code: |
     struct Foo {
         x: i32,
@@ -266,21 +271,20 @@
         // y is dropped here
         // foo is dropped here
     }
-- title: Explicit Lifetimes
+- title: طول عمرهای صریح
   content_markdown: >
-    Even though Rust doesn't always show it in code, the compiler understands
-    the lifetime of every variable and will attempt
-
-    to validate that a reference never exists longer than its owner.
-
-
-    Functions can be explicit by parameterizing the function signature with
-    symbols that help identify 
-
-    which parameters and return values share the same lifetime.
+    با اینکه راست همیشه توی کد نشونش نمی‌ده، کامپایلر طول عمر
+    (lifetime) هر متغیر رو می‌فهمه و سعی می‌کنه مطمئن بشه که یه
+    رفرنس هیچ‌وقت از مالکش عمر بیشتری نداره.
 
 
-    Lifetime specifiers always start with a `'` (e.g. `'a`, `'b`, `'c`)
+    تابع‌ها می‌تونن با پارامتری کردن امضای تابع با نمادهایی که کمک
+    می‌کنن مشخص بشه کدوم پارامترها و مقدارهای بازگشتی طول عمر
+    یکسانی دارن، صریح بشن.
+
+
+    مشخص‌کننده‌های طول عمر همیشه با `'` شروع می‌شن (مثلاً `'a`، `'b`،
+    `'c`)
   code: |
     struct Foo {
         x: i32,
@@ -295,18 +299,17 @@
         let mut foo = Foo { x: 42 };
         let x = &mut foo.x;
         *x = 13;
-        // x is dropped here allow us to create a non-mutable reference
+        // x is dropped here, allowing us to create a non-mutable reference
         let y = do_something(&foo);
         println!("{}", y);
         // y is dropped here
         // foo is dropped here
     }
-- title: Multiple Lifetimes
+- title: طول عمرهای چندگانه
   content_markdown: >
-    Lifetime specifiers allow us to be explicit with certain scenarios the
-    compiler cannot resolve itself 
-
-    by distinguishing all of a function signature component's lifetimes.
+    مشخص‌کننده‌های طول عمر بهمون اجازه می‌دن توی بعضی سناریوها که
+    کامپایلر خودش نمی‌تونه حلشون کنه، با متمایز کردن طول عمر همه‌ی
+    اجزای امضای یه تابع، صریح باشیم.
   code: |
     struct Foo {
         x: i32,
@@ -329,41 +332,43 @@
         // x is dropped here
         // foo_b is dropped here
     }
-- title: Static Lifetimes
+- title: طول عمرهای Static
   content_markdown: >
-    A **static** variable is a memory resource created at compile-time that
-    exists through a program start to 
-
-    finish. They must have their types explicitly specified.
-
-
-    A **static lifetime** is a memory resource that lasts indefinitely to the
-    end of a program.  Note that by this definition
-
-    some static lifetime resources can be created at runtime.
+    یه متغیر **static** یه منبع حافظه‌ست که در زمان کامپایل ساخته
+    می‌شه و از شروع تا پایان یه برنامه وجود داره. نوعشون باید صریح
+    مشخص بشه.
 
 
-    Resources with static lifetimes have a special lifetime specifier `'static`.
+    یه **طول عمر static** یه منبع حافظه‌ست که تا پایان یه برنامه به
+    شکل نامحدود باقی می‌مونه. توجه کن که طبق این تعریف، بعضی از
+    منابع با طول عمر static می‌تونن در زمان اجرا هم ساخته بشن.
 
 
-    `'static` resources will never **drop**.
+    منابعی که طول عمر static دارن، یه مشخص‌کننده‌ی طول عمر خاص به
+    اسم `'static` دارن.
 
 
-    If static lifetime resources contain references they must all be `'static`
-    (anything less would not live long enough).
+    منابع `'static` هیچ‌وقت **دراپ** نمی‌شن.
 
 
-    Memory detail:
+    اگه منابع با طول عمر static شامل رفرنس باشن، همه‌شون باید
+    `'static` باشن (هر چیز کمتر از این، به‌اندازه‌ی کافی عمر
+    نمی‌کنه).
 
 
-    * Modifying static variables is inherently dangerous because they are
-    globally accessable to be read from by anyone
-      introducing the possibility of a data race. We'll talk about the challenges of global data later.
-    * Rust allows the use of `unsafe { ... }` blocks to perform some operations
-    that the compiler cannot make memory guarantees about. The [<span
+    جزئیات حافظه:
+
+
+    * تغییر دادن متغیرهای static ذاتاً خطرناکه، چون این متغیرها
+    به‌شکل سراسری برای همه قابل خوندنن و همین امکان یه data race رو
+    به وجود میاره. بعداً در مورد چالش‌های داده‌ی سراسری صحبت
+    می‌کنیم.
+    * راست اجازه می‌ده از بلوک‌های `unsafe { ... }‎` برای انجام بعضی
+    عملیات‌هایی استفاده کنیم که کامپایلر نمی‌تونه در موردشون تضمین
+    حافظه‌ای بده. نباید سرسری در مورد [<span
     style="color:red; font-weight:
     bold;">R̸͉̟͈͔̄͛̾̇͜U̶͓͖͋̅Ṡ̴͉͇̃̉̀T̵̻̻͔̟͉́͆Ơ̷̥̟̳̓͝N̶̨̼̹̲͛Ö̵̝͉̖̏̾̔M̶̡̠̺̠̐͜Î̷̛͓̣̃̐̏C̸̥̤̭̏͛̎͜O̶̧͚͖͔̊͗̇͠N̸͇̰̏̏̽̃</span>](https://doc.rust-lang.org/nomicon/)
-    should not be talked about casually.
+    حرف زد.
   code: |
     static PI: f64 = 3.1415;
 
@@ -383,18 +388,19 @@
             println!("{}", SECRET);
         }
     }
-- title: Lifetimes In Data Types
+- title: طول عمر توی نوع‌های داده
   content_markdown: >
-    Similarly to functions, data types can be parameterized with lifetime
-    specifiers of its members.
+    شبیه تابع‌ها، نوع‌های داده هم می‌تونن با مشخص‌کننده‌های طول عمر
+    اعضاشون پارامتری بشن.
 
 
-    Rust validates that the containing data structure of the references never
-    lasts longer than the owners its references point to.
+    راست اعتبارسنجی می‌کنه که ساختار داده‌ای که رفرنس‌ها رو نگه
+    می‌داره، هیچ‌وقت از مالک‌هایی که رفرنس‌هاش بهشون اشاره می‌کنن،
+    عمر بیشتری نداشته باشه.
 
 
-    We can't have structs running around with references pointing to
-    nothingness!
+    نمی‌تونیم struct هایی داشته باشیم که با رفرنس‌هایی که به هیچ‌جا
+    اشاره می‌کنن، دور و بر بچرخن!
   code: |
     struct Foo<'a> {
         i:&'a i32
@@ -407,30 +413,29 @@
         };
         println!("{}",foo.i);
     }
-- title: Chapter 5 - Conclusion
+- title: فصل 5 - جمع‌بندی
   content_markdown: >
-    Whew, congrats for making it through! I know it's a lot to take in, but you
-    are well
-
-    under way to becoming a Rustacean. Hopefully it's clear how Rust as a
-    language aims to 
-
-    solve many of these common challenges in systems programming:
+    وای، تبریک می‌گم که تا اینجا اومدی! می‌دونم که اطلاعات زیادیه که
+    باید هضمشون کنی، ولی داری خوب پیش می‌ری تا یه Rustacean بشی.
+    امیدواریم روشن شده باشه که راست به‌عنوان یه زبان چطوری سعی
+    می‌کنه خیلی از این چالش‌های رایج توی برنامه‌نویسی سیستمی رو حل
+    کنه:
 
 
-    * Unintentional modification of resources
+    * تغییر ناخواسته‌ی منابع
 
-    * Forgetting to deconstruct resources 
+    * فراموش کردن واسازی منابع
 
-    * Resources accidentally being deconstructed twice
+    * منابعی که تصادفاً دو بار واسازی می‌شن
 
-    * Using resources after they have been deconstructed 
+    * استفاده از منابع بعد از اینکه واسازی شدن
 
-    * Data races caused by writing to resources while others are reading from
-    resources 
+    * data race هایی که به خاطر نوشتن روی منابع در حالی که بقیه دارن
+    ازشون می‌خونن، اتفاق میفتن
 
-    * Seeing clearly areas of the code where the compiler can’t make guarantees
+    * دیدن واضح بخش‌هایی از کد که کامپایلر نمی‌تونه در موردشون تضمین
+    بده
 
 
-    In the next chapter we'll apply some of this knowledge as we look at how
-    Rust handles text.
+    توی فصل بعدی بخشی از این دونسته‌ها رو به کار می‌گیریم و می‌بینیم
+    که راست چطوری با متن سر و کار داره.

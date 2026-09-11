@@ -1,28 +1,25 @@
-- title: Chapter 1 - The Basics
+- title: فصل 1 - مبانی
   content_markdown: >
-    In this first chapter we're going to be exploring the very basics
-
-    with functions, variables, and the most primitive types. Glad to have you on
-    board!
+    توی این فصل اول، می‌ریم سراغ ابتدایی‌ترین مفاهیم راست: تابع‌ها،
+    متغیرها و ساده‌ترین نوع‌های داده‌ای. خوشحالیم که همراه ما هستی!
 
 
-    Also! In case you are wondering who this adorable crab who is speaking to
-    you is, I am **Ferris**,
-
-    the unofficial mascot for the Rust programming language. Nice to meet you.
-- title: The Rust Playground
+    راستی، اگه داری فکر می‌کنی این خرچنگ بامزه که داره باهات حرف
+    می‌زنه کیه، من **Ferris** هستم، ماسکوت غیررسمی زبان برنامه‌نویسی
+    راست. از آشناییت خوشحالم.
+- title: زمین بازی راست
   code: |
     fn main() {
         println!("Welcome to the playground! You can modify the code in here.");
     }
   content_markdown: >
-    This tour uses an interactive coding tool from [Rust
-    Playground](https://play.rust-lang.org).
+    این تور از یک ابزار کدنویسی تعاملی به اسم [Rust
+    Playground](https://play.rust-lang.org) استفاده می‌کنه.
 
 
-    It's a great way to play around with Rust and show others your creativity
-    and challenges!
-- title: Variables
+    این ابزار راه خوبیه برای بازی کردن با راست و نشون دادن خلاقیت و
+    چالش‌هات به بقیه!
+- title: متغیرها
   code: |
     fn main() {
         // rust infers the type of x
@@ -39,24 +36,21 @@
         println!("{}", x);
     }
   content_markdown: >
-    Variables are declared using the **let** keyword.
+    متغیرها با کلیدواژه‌ی **let** تعریف می‌شن.
 
 
-    When assigning a value, Rust will be able to infer the type of your variable
-    99% of
-
-    the time. If it cannot you may add the type to your variable declaration.
-
-
-    Notice how we can assign to the same variable name multiple times. This is
-    called variable
-
-    shadowing and the type can be changed for subsequent references to that
-    name.
+    وقتی داری یه مقدار به متغیر می‌دی، راست ۹۹٪ مواقع می‌تونه نوع
+    متغیرت رو خودش تشخیص بده. اگه نتونه، می‌تونی نوعش رو توی تعریف
+    متغیر مشخص کنی.
 
 
-    Variable names are always in `snake_case`.
-- title: Changing Variables
+    توجه کن که می‌تونیم چند بار به یه اسم متغیر یکسان مقدار بدیم. به
+    این کار میگن سایه‌اندازی متغیر (variable shadowing) و نوع متغیر
+    می‌تونه برای ارجاع‌های بعدی به اون اسم عوض بشه.
+
+
+    اسم متغیرها همیشه به شکل `snake_case` نوشته می‌شن.
+- title: تغییر دادن متغیرها
   code: |
     fn main() {
         let mut x = 42;
@@ -65,76 +59,79 @@
         println!("{}", x);
     }
   content_markdown: >
-    Rust cares a great deal about what variables are modifiable. Values
-
-    fall into two types:
-
-
-    * **mutable** - the compiler will allow the variable to be written to and
-    read from.
-
-    * **immutable** - the compiler will only allow the variable to be read from.
+    راست خیلی به این موضوع اهمیت می‌ده که کدوم متغیرها قابل تغییرن.
+    مقدارها به دو دسته تقسیم می‌شن:
 
 
-    Mutable values are denoted with a **mut** keyword.
+    * **mutable (قابل تغییر)** - کامپایلر اجازه می‌ده که هم توی
+    متغیر بنویسیم و هم ازش بخونیم.
+
+    * **immutable (غیرقابل تغییر)** - کامپایلر فقط اجازه‌ی خوندن از
+    متغیر رو می‌ده.
 
 
-    We will have more to say on this concept later, but for now just keep an eye
-    out for this keyword.
-- title: Basic Types
+    مقدارهای قابل تغییر با کلیدواژه‌ی **mut** مشخص می‌شن.
+
+
+    بعداً بیشتر در مورد این مفهوم صحبت می‌کنیم، ولی فعلاً فقط حواست
+    به این کلیدواژه باشه.
+- title: نوع‌های پایه
   code: |
     fn main() {
         let x = 12; // by default this is i32
         let a = 12u8;
         let b = 4.3; // by default this is f64
         let c = 4.3f32;
+        let d = 'r'; // unicode character
+        let ferris = '🦀'; // also a unicode character
         let bv = true;
         let t = (13, false);
         let sentence = "hello world!";
         println!(
-            "{} {} {} {} {} {} {} {}",
-            x, a, b, c, bv, t.0, t.1, sentence
+            "{} {} {} {} {} {} {} {} {} {}",
+            x, a, b, c, d, ferris, bv, t.0, t.1, sentence
         );
     }
   content_markdown: >
-    Rust has a variety of familiar types:
+    راست انواع مختلفی از نوع‌های آشنا داره:
 
 
-    * booleans - `bool` for representing true/false
+    * بولین (boolean) - `bool` برای نمایش درست/نادرست
 
-    * unsigned integers - `u8` `u16` `u32` `u64` `u128` for representing
-    positive whole numbers
+    * عدد صحیح بدون علامت - `u8` `u16` `u32` `u64` `u128` برای نمایش
+    عددهای صحیح نامنفی
 
-    * signed integers - `i8` `i16` `i32` `i64` `i128` for representing
-    positive/negative whole numbers
+    * عدد صحیح با علامت - `i8` `i16` `i32` `i64` `i128` برای نمایش
+    عددهای صحیح
 
-    * pointer sized integers - `usize` `isize` for representing indexes
+    * عدد صحیح به اندازه‌ی pointer - `usize` `isize` برای نمایش
+    ایندکس‌ها و اندازه‌ی چیزها توی حافظه
 
-    and sizes of things in memory
+    * اعشاری - `f32` `f64`
 
-    * floating point - `f32` `f64`
+    * کاراکتر - `char` برای نمایش یک کاراکتر یونیکد
 
-    * tuple - `(value, value, ...)` for passing fixed sequences of values on the
-    stack
+    * تاپل (tuple) - `(value, value, ...)‎` برای عبور دادن دنباله‌ای
+    ثابت از مقدارها روی پشته (stack)
 
-    * arrays - `[value, value, ...]` a collection of similar elements with fixed
-    length known at compile time
+    * آرایه - `[value, value, ...]‎` مجموعه‌ای از عناصر مشابه با
+    طول ثابتی که در زمان کامپایل مشخصه
 
-    * slices - a collection of similar elements with length known at runtime
+    * اسلایس (slice) - مجموعه‌ای از عناصر مشابه با طولی که در زمان
+    اجرا مشخص می‌شه
 
-    * `str`(string slice) - text with a length known at runtime
-
-
-    Text might be more complex than you are used to in other languages;
-
-    since Rust is a system programming language, it cares about memory 
-
-    issues you might not be used to. We will be going into this in detail later.
+    * `str`‎ (اسلایس رشته) - متنی با طولی که در زمان اجرا مشخص می‌شه
 
 
-    Numeric types can be explicitly specified by appending the type to the end
-    of the number (e.g. `13u32`, `2u8`).
-- title: Basic Type Conversion
+    ممکنه متن پیچیده‌تر از چیزی باشه که توی زبان‌های دیگه بهش عادت
+    داری؛ چون راست یه زبان برنامه‌نویسی سیستمی‌ـه، به مسائل حافظه‌ای
+    که شاید بهشون عادت نداشته باشی اهمیت می‌ده. بعداً با جزئیات بیشتر
+    بهش می‌پردازیم.
+
+
+    نوع‌های عددی رو می‌شه با اضافه کردن نوع به انتهای عدد به‌صورت
+    صریح مشخص کرد (مثلاً `13u32`، `2u8`).
+- title: تبدیل نوع پایه
   code: |
     fn main() {
         let a = 13u8;
@@ -146,16 +143,13 @@
         println!("{}", t as u8);
     }
   content_markdown: >
-    Rust requires explicitness when it comes to numeric types. One cannot
-
-    use a `u8` for a `u32` casually without
-
-    error.
+    راست وقتی پای نوع‌های عددی وسط میاد، به وضوح داشتن نیاز داره.
+    نمی‌شه یه `u8` رو همینطوری بدون خطا به‌جای `u32` استفاده کرد.
 
 
-    Luckily Rust makes numeric type conversions very easy with the **as**
-    keyword.
-- title: Constants
+    خوشبختانه راست تبدیل نوع‌های عددی رو با کلیدواژه‌ی **as** خیلی
+    ساده می‌کنه.
+- title: ثابت‌ها
   code: |
     const PI: f32 = 3.14159;
 
@@ -166,21 +160,18 @@
         );
     }
   content_markdown: >
-    Constants allow us to specify a common value that's used throughout
-
-    our code many times efficiently.  Instead of copying values like variables
-
-    where they are used, constants directly replace the text identifier where
-    they
-
-    are used with their value at compile time.
+    ثابت‌ها به ما اجازه می‌دن یه مقدار مشترک رو که چندین بار توی کد
+    استفاده می‌شه، به شکل کارآمدی مشخص کنیم. برخلاف متغیرها که هر بار
+    مقدارشون کپی می‌شه، ثابت‌ها مستقیماً شناسه‌ی متنی رو در همون
+    نقطه‌ای که استفاده می‌شن، در زمان کامپایل با مقدارشون جایگزین
+    می‌کنن.
 
 
-    Unlike variables, constants must always have explicit types.
+    برخلاف متغیرها، ثابت‌ها همیشه باید نوع صریح داشته باشن.
 
 
-    Constant names are always in `SCREAMING_SNAKE_CASE`.
-- title: Arrays
+    اسم ثابت‌ها همیشه به شکل `SCREAMING_SNAKE_CASE` نوشته می‌شه.
+- title: آرایه‌ها
   code: |
     fn main() {
         let nums: [i32; 3] = [1, 2, 3];
@@ -188,37 +179,55 @@
         println!("{}", nums[1]);
     }
   content_markdown: >
-    An *array* is a fixed length collection of data elements all of the same
-    type.
+    یه *آرایه* مجموعه‌ای با طول ثابت از عناصر داده‌ایه که همه از یک
+    نوع هستن.
 
 
-    The data type for an *array* is `[T;N]` where T is the elements' type, and N
-    is the fixed length known at compile-time.
+    نوع داده‌ای یه *آرایه* به شکل `[T;N]‎` نوشته می‌شه که توش T نوع
+    عناصره و N طول ثابتیه که در زمان کامپایل مشخصه.
 
 
-    Individual elements can be retrieved with the `[x]` operator where *x* is a
-    *usize* index (starting at 0) of the element you want.
-- title: Functions
+    به تک‌تک عناصر می‌شه با عملگر `[x]‎` دسترسی پیدا کرد؛ جایی که *x*
+    یه ایندکس از نوع *usize* هست (که از 0 شروع می‌شه) و مربوط به
+    عنصری‌ه که می‌خوای.
+
+
+    مجموعه‌هایی با طول پویا، که اغلب بهشون آرایه‌ی پویا یا متغیر
+    می‌گن، توی یه فصل بعدی به اسم **وکتورها (Vectors)** معرفی می‌شن.
+- title: تابع‌ها
   code: |
     fn add(x: i32, y: i32) -> i32 {
         return x + y;
     }
 
+    fn subtract(x: i32, y: i32) -> i32 {
+        x - y
+    }
+
     fn main() {
-        println!("{}", add(42, 13));
+        println!("42 + 13 = {}", add(42, 13));
+        println!("42 - 13 = {}", subtract(42, 13));
     }
   content_markdown: >
-    A function has zero or more parameters.
+    یه تابع صفر یا چند پارامتر داره.
 
 
-    In this example, add takes two arguments of type `i32` (signed integer of
-    32-bit
-
-    length).
+    توی این مثال، تابع *add* دو تا آرگومان از نوع `i32` می‌گیره (یه
+    عدد صحیح ۳۲ بیتی با علامت).
 
 
-    Function names are always in `snake_case`.
-- title: Multiple Return Values
+    اگه فقط بخوای یه عبارت رو برگردونی، می‌تونی کلیدواژه‌ی `return`
+    و سمی‌کالن آخرش رو حذف کنی؛ همون کاری که توی تابع *subtract*
+    انجام دادیم.
+
+
+    اسم تابع‌ها همیشه به شکل `snake_case` نوشته می‌شن.
+
+
+    نکته: وقتی یه تابع تعریف می‌کنی، داده‌هایی که می‌گیره رو
+    پارامتر (parameter) می‌گن. وقتی همون تابع رو صدا می‌زنی و بهش
+    داده می‌دی، به اون داده‌ها آرگومان (argument) می‌گن.
+- title: چند مقدار بازگشتی
   code: |
     fn swap(x: i32, y: i32) -> (i32, i32) {
         return (y, x);
@@ -234,30 +243,28 @@
         println!("{} {}", a, b);
     }
   content_markdown: >
-    Functions can return multiple values by returning a **tuple**
-
-    of values.
-
-
-    Tuple elements can be referenced by their index number.
+    تابع‌ها می‌تونن با برگردوندن یه **تاپل** چند تا مقدار رو با هم
+    برگردونن.
 
 
-    Rust supports various kinds of destructuring that we will see in many forms,
-    allowing
+    به عناصر تاپل می‌شه با شماره‌ی ایندکسشون ارجاع داد.
 
-    us to extract sub-pieces of data structures in ergonomic ways. Be on the
-    lookout!
-- title: Returning Nothing
+
+    راست از انواع مختلفی از تجزیه‌ی مقدار (destructuring) پشتیبانی
+    می‌کنه که به شکل‌های مختلفی می‌بینیمشون؛ این کار بهمون اجازه
+    می‌ده که زیرمجموعه‌های ساختارهای داده رو به شکل راحتی استخراج
+    کنیم. حواست بهش باشه!
+- title: هیچ‌چیز برنگردوندن
   content_markdown: >
-    If no return type is specified for a function, it returns an empty tuple,
-    also known as a *unit*.
+    اگه برای یه تابع نوع بازگشتی مشخص نشده باشه، اون تابع یه تاپل
+    خالی برمی‌گردونه که بهش *یونیت* (unit) هم می‌گن.
 
 
-    An empty tuple is represented by `()`.
+    تاپل خالی با `()‎` نشون داده می‌شه.
 
 
-    Using `()` is uncommon, but will come up often enough that it's good to know
-    whats happening.
+    استفاده از `()‎` زیاد رایج نیست، ولی به اندازه‌ی کافی پیش میاد که
+    خوبه بدونی چه اتفاقی داره میفته.
   code: |
     fn make_nothing() -> () {
         return ();
@@ -277,23 +284,17 @@
         println!("The value of a: {:?}", a);
         println!("The value of b: {:?}", b);
     }
-- title: Chapter 1 - Conclusion
+- title: فصل 1 - جمع‌بندی
   content_markdown: >
-    Nice job so far! The basics of Rust aren't so bad, right?  We're
-
-    getting a peek into how the Rust compiler thinks.  As a system programming
-    language 
-
-    it cares a lot about the size  of values in memory, whether things can be
-    modified or not, 
-
-    and making sure your math is what you want it to be. Next up we'll be
-    looking at some old friends:
-
-    `if` tests and `for` loops.
+    تا اینجا کارت خوب بوده! مبانی راست که اونقدرها هم بد نیست، نه؟
+    داریم یه نگاه به طرز فکر کامپایلر راست می‌ندازیم. چون راست یه
+    زبان برنامه‌نویسی سیستمی‌ـه، خیلی به اندازه‌ی مقدارها توی حافظه
+    اهمیت می‌ده، به اینکه چیزها قابل تغییرن یا نه، و به اینکه مطمئن
+    بشه محاسباتت همون چیزیه که می‌خوای باشه. توی قسمت بعدی می‌ریم
+    سراغ چند تا دوست قدیمی: تست‌های `if` و حلقه‌های `for`.
 
 
-    More Resources:
+    منابع بیشتر:
 
 
     * [Youtube: Rust Cast - A deeper dive on Rust's primitive number

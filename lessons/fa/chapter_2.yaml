@@ -1,22 +1,22 @@
-- title: Chapter 2 - Basic Control Flow
+- title: فصل 2 - جریان کنترل پایه
   content_markdown: >
-    In this chapter let's talk about basic control flow methods in Rust.
+    توی این فصل بیا در مورد روش‌های پایه‌ی جریان کنترل (control flow)
+    توی راست حرف بزنیم.
 
-    If you are familiar with C based languages you'll feel right at home and
-    maybe
 
-    enjoy a surprise or two.
-- title: if/else if/else
+    اگه با زبان‌های بر پایه‌ی C آشنا باشی، حس خونه رو می‌گیری و شاید
+    یکی دو تا سورپرایز هم در انتظارت باشه.
+- title: if/else
   content_markdown: >
-    Code branching in Rust is not surprising.
+    شاخه‌بندی کد (code branching) توی راست غافلگیرکننده نیست.
 
 
-    Conditions don't have parentheses! Did we ever really need them? Our logic
-    now looks nice and clean.
+    شرط‌ها پرانتز ندارن! اصلاً بهشون نیاز داشتیم؟ الان منطقمون خیلی
+    تمیز و مرتب به نظر می‌رسه.
 
 
-    All your usual relational and logical operators still work: `==`, `!=`, `<`,
-    `>`, `<=`, `>=`, `!`, `||`, `&&`.
+    همه‌ی عملگرهای رابطه‌ای و منطقی معمولی هنوز کار می‌کنن: `==`،
+    `!=`، `<`، `>`، `<=`، `>=`، `!`، `||`، `&&`.
   code: |-
     fn main() {
         let x = 42;
@@ -30,13 +30,13 @@
     }
 - title: loop
   content_markdown: |
-    Need an infinite loop?
+    یه حلقه‌ی بی‌نهایت لازم داری؟
 
-    Rust makes it easy.
+    راست کارش رو راحت می‌کنه.
 
-    `break` will escape a loop when you are ready.
+    `break` وقتی آماده باشی، از حلقه خارجت می‌کنه.
 
-    `loop` has a secret we'll talk about soon.
+    `loop` یه رازی داره که بزودی در موردش صحبت می‌کنیم.
   code: |
     fn main() {
         let mut x = 0;
@@ -50,45 +50,36 @@
     }
 - title: while
   content_markdown: |
-    `while` lets you easily add a condition to a loop.
+    با `while` می‌تونی خیلی راحت یه شرط به یه حلقه اضافه کنی.
 
-    If the condition evaluates to `false`, the loop will exit.
+    اگه شرط به `false` برسه، حلقه تموم می‌شه.
   code: |
     fn main() {
         let mut x = 0;
         while x != 42 {
             x += 1;
         }
+        println!("x is {}", x);
     }
 - title: for
   content_markdown: >
-    Rust's `for` loop is a powerful upgrade. It
-
-    iterates over values from any expression that evaluates into an iterator.
-    What's
-
-    an iterator? An iterator is an object that you can ask the question "What's
-    the
-
-    next item you have?" until there are no more items.
+    حلقه‌ی `for` توی راست یه ارتقای قدرتمنده. این حلقه روی مقدارهای
+    هر عبارتی که به یه iterator تبدیل می‌شه، پیمایش می‌کنه. iterator
+    چیه؟ یه iterator یه شیه که می‌شه ازش پرسید "آیتم بعدیت چیه؟" تا
+    وقتی که دیگه آیتمی نمونده باشه.
 
 
-    We'll explore this more in a future chapter. In the meantime, just know Rust
-    makes 
-
-    it easy to create iterators that generate a sequence of integer numbers.
-
-
-    The `..` operator creates an iterator that generates numbers from a start
-    number up to
-
-    but not including an end number.
+    توی یه فصل بعدی بیشتر در موردش صحبت می‌کنیم. فعلاً همین بس که
+    بدونی راست کار ساختن iterator هایی که یه دنباله از اعداد صحیح
+    تولید می‌کنن رو راحت کرده.
 
 
-    The `..=` operator creates an iterator that generates numbers from a start
-    number up to 
+    عملگر `..` یه iterator می‌سازه که از یه عدد شروع، اعداد رو تا
+    قبل از یه عدد پایانی تولید می‌کنه (بدون خود عدد پایانی).
 
-    and including an end number.
+
+    عملگر `..=` یه iterator می‌سازه که از یه عدد شروع، اعداد رو تا
+    عدد پایانی تولید می‌کنه (این بار شامل خود عدد پایانی هم می‌شه).
   code: |
     fn main() {
         for x in 0..5 {
@@ -101,28 +92,19 @@
     }
 - title: match
   content_markdown: >
-    Miss your switch statement? Rust has an incredibly useful keyword
-
-    for matching all possible conditions of a value and executing a code path if
-    the
-
-    match is true. Let's see how this works for numbers. We will have more to
-    say
-
-    in future chapters on pattern matching more complex data. I promise you it
-    will
-
-    be worth the wait.
+    دلت برای switch statement تنگ شده؟ راست یه کلیدواژه‌ی خیلی
+    کاربردی داره برای مچ کردن همه‌ی حالت‌های ممکن یه مقدار و اجرای
+    یه مسیر کد در صورتی که مچ درست باشه. بیا ببینیم این برای اعداد
+    چطوری کار می‌کنه. توی فصل‌های بعدی بیشتر در مورد pattern matching
+    داده‌های پیچیده‌تر صحبت می‌کنیم؛ قول می‌دم ارزش صبر کردن رو
+    داره.
 
 
-    `match` is exhaustive so all cases
-
-    must be handled.
+    `match` جامعه، یعنی همه‌ی حالت‌ها باید مدیریت بشن.
 
 
-    Matching combined with destructuring is by far one of the
-
-    most common patterns you will see in all of Rust.
+    مچ کردن به همراه destructuring یکی از رایج‌ترین الگوهاییه که توی
+    کل راست می‌بینی.
   code: |
     fn main() {
         let x = 42;
@@ -149,9 +131,9 @@
             }
         }
     }
-- title: Returning Values From loop
+- title: برگردوندن مقدار از loop
   content_markdown: |
-    `loop` can break to return a value.
+    `loop` می‌تونه با break یه مقدار برگردونه.
   code: |
     fn main() {
         let mut x = 0;
@@ -163,25 +145,20 @@
         };
         println!("from loop: {}", v);
     }
-- title: Returning Values From Block Expressions
+- title: برگردوندن مقدار از عبارت‌های بلوکی
   content_markdown: >
-    `if`, `match`, functions, and scope blocks all have a unique way of
-    returning values in Rust.
+    `if`، `match`، تابع‌ها، و بلوک‌های scope، همشون یه روش خاص برای
+    برگردوندن مقدار توی راست دارن.
 
 
-    If the last statement in an `if`, `match`, function, or scope block is an
-    expression without
-
-    a `;`, Rust will return it as a value from the block. This
-
-    is a great way to create concise logic that returns a value that can be put
-    into
-
-    a new variable.
+    اگه آخرین دستور توی یه بلوک `if`، `match`، تابع، یا بلوک scope،
+    یه عبارت بدون `;‎` باشه، راست اون رو به‌عنوان مقدار اون بلوک
+    برمی‌گردونه. این روش خیلی خوبیه برای ساختن منطق مختصری که یه
+    مقدار برمی‌گردونه و می‌شه اون رو توی یه متغیر جدید ریخت.
 
 
-    Notice that it also allows an `if` statement to operate like a concise
-    ternary expression.
+    توجه کن که این کار همچنین اجازه می‌ده یه دستور `if` مثل یه
+    عبارت شرطی سه‌گانه‌ی (ternary) مختصر عمل کنه.
   code: |
     fn example() -> i32 {
         let x = 42;
@@ -212,15 +189,10 @@
     fn main() {
         println!("from function: {}", example());
     }
-- title: Chapter 2 - Conclusion
+- title: فصل 2 - جمع‌بندی
   content_markdown: >
-    Hopefully I've shown a glimpse of Rust's power even in the most
-
-    basic language features. We'll be talking about `for` and
-
-    `match` even more in depth as we gain more knowledge that
-
-    can utilize their capabilities. Next time we'll get into Rust's foundational
-    data
-
-    structures.
+    امیدوارم تونسته باشم یه نمایی از قدرت راست رو نشونت بدم؛ حتی توی
+    ابتدایی‌ترین ویژگی‌های زبان. در مورد `for` و `match` بیشتر و
+    عمیق‌تر صحبت می‌کنیم، همون‌طور که دانشمون برای استفاده از
+    قابلیت‌هاشون بیشتر می‌شه. دفعه‌ی بعد می‌ریم سراغ ساختارهای داده‌ی
+    پایه‌ی راست.

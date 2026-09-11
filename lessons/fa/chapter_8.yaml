@@ -1,32 +1,23 @@
-- title: Chapter 8 - Smart Pointers
+- title: فصل 8 - Smart Pointer ها
   content_markdown: >
-    In this chapter we will demystify smart pointers. Let's explore into
-
-    these data structures that let us interact with the lowest level of 
-
-    memory.
+    توی این فصل smart pointer ها رو براتون شفاف می‌کنیم. بیاید این
+    ساختارهای داده‌ای رو کشف کنیم که بهمون اجازه می‌دن با پایین‌ترین
+    سطح حافظه تعامل داشته باشیم.
 
 
-    Ferris says: "Don't feel overwhelmed by this chapter if you don't feel 
-
-    you can write your own low level memory management code in one short read.
-    This chapter 
-
-    is mostly to introduce you to some useful tools and give a glimpse at how
-    they work!"
-- title: References Revisited
+    فریس می‌گه: «اگه حس می‌کنی که نمی‌تونی توی یه خوندن کوتاه، کد
+    مدیریت حافظه‌ی سطح پایین خودت رو بنویسی، از این فصل خسته نشو.
+    این فصل بیشتر برای اینه که باهات چند تا ابزار مفید رو آشنا کنه
+    و یه نمای کلی از نحوه‌ی کارشون بهت بده!»
+- title: رفرنس‌ها، دوباره بررسی می‌کنیم
   content_markdown: >
-    A reference is fundamentally just a number that is the start position
-
-    of some bytes in memory. Its only purpose is to represent the concept of 
-
-    where data of a specific type exists. What makes a reference different from
-    just a number is that Rust
-
-    will validate the lifetime of references doesn't last longer than what
-
-    it refers to (otherwise we'd get an error when we used it!).
-- title: Raw Pointers
+    یه رفرنس اساساً فقط یه عدده که موقعیت شروع چند تا بایت توی
+    حافظه‌ست. تنها هدفش نمایش این مفهومه که داده‌ای از یه نوع خاص
+    کجا وجود داره. چیزی که یه رفرنس رو از یه عدد ساده متفاوت می‌کنه
+    اینه که راست تأیید می‌کنه که طول عمر رفرنس‌ها بیشتر از چیزی که
+    بهش اشاره می‌کنن دوام نمیاره (وگرنه موقع استفاده ازش خطا
+    می‌گرفتیم!).
+- title: Pointer های خام (Raw)
   code: |
     fn main() {
         let a = 42;
@@ -34,49 +25,60 @@
         println!("Data is here {}", memory_location);
     }
   content_markdown: >
-    References can be converted into a more primitive type called a *raw
-    pointer*. Much like a number, it
-
-    can be copied and moved around with little restriction. Rust
-
-    makes no assurances of the validity of the memory location it points to.
+    رفرنس‌ها رو می‌شه به یه نوع ساده‌تر به اسم *pointer خام (raw
+    pointer)* تبدیل کرد. درست مثل یه عدد، می‌شه با محدودیت کمی
+    کپیش کرد و جابه‌جاش کرد. راست هیچ تضمینی در مورد اعتبار موقعیت
+    حافظه‌ای که بهش اشاره می‌کنه، نمی‌ده.
 
 
-    Two kinds of raw pointers exist:
+    دو نوع pointer خام وجود داره:
 
 
-    * `*const T` - A raw pointer to data of type T that should never change.
+    * `*const T` - یه pointer خام به داده‌ای از نوع T که هیچ‌وقت
+    نباید تغییر کنه.
 
-    * `*mut T` - A raw pointer to data of type T that can change.
-
-
-    Raw pointers can be converted to and from numbers (e.g. `usize`).
-
-
-    Raw pointers can access data with *unsafe* code (more on this later).
+    * `*mut T` - یه pointer خام به داده‌ای از نوع T که می‌تونه تغییر
+    کنه.
 
 
-    Memory Details:
+    pointer های خام رو می‌شه به عدد تبدیل کرد و برعکس (مثلاً به
+    `usize`).
 
-    * A reference in Rust is very similar to a pointer in C in terms of usage,
-    but with much more compile time restrictions on
-      how it can be stored and moved around to other functions.
-    * A raw pointer in Rust is similar to a pointer in C that it represents a
-    number that can be copied 
-      passed around, and even turned into numerical types where it can be modifed as a number to do pointer math.
-- title: Dereferencing
+
+    pointer های خام می‌تونن با کد *unsafe* به داده دسترسی پیدا کنن
+    (بعداً بیشتر در موردش صحبت می‌کنیم).
+
+
+    جزئیات حافظه:
+
+    * یه رفرنس توی راست از نظر نحوه‌ی استفاده خیلی شبیه یه pointer
+    توی C هست، ولی با محدودیت‌های خیلی بیشتری در زمان کامپایل برای
+    اینکه چطور می‌شه ذخیره‌ش کرد و به تابع‌های دیگه منتقلش کرد.
+    * یه pointer خام توی راست شبیه یه pointer توی C هست، چون یه عدد
+    رو نمایش می‌ده که می‌شه کپی کرد یا جابه‌جاش کرد، و حتی می‌شه
+    به نوع‌های عددی تبدیلش کرد و به‌عنوان یه عدد برای محاسبات
+    pointer تغییرش داد.
+- title: دیرفرنس کردن (Dereferencing)
   content_markdown: |
-    The process of accessing/manipulating data that is being referred to
-    by a *reference* (i.e. `&i32`) is called *dereferencing*. 
+    به فرآیند دسترسی/دستکاری داده‌ای که یه *رفرنس* (مثلاً `&i32`)
+    بهش اشاره می‌کنه، *دیرفرنس کردن (dereferencing)* می‌گن.
 
-    References are used to access/manipulate data in two ways:
-    * Access to the referred data during assignment of variables.
-    * Access to fields or methods of the referred data.
+    از رفرنس‌ها به دو روش برای دسترسی/دستکاری داده استفاده می‌شه:
+    * دسترسی به داده‌ی اشاره‌شده در زمان انتساب متغیرها.
+    * دسترسی به فیلدها یا متدهای داده‌ی اشاره‌شده.
 
-    Rust has some powerful operators that allow us to do this.
-- title: The * Operator
+    راست چند تا عملگر قدرتمند داره که بهمون اجازه‌ی این کار رو می‌ده.
+- title: عملگر *
+  code: |-
+    fn main() {
+        let a: i32 = 42;
+        let ref_ref_ref_a: &&&i32 = &&&a;
+        let ref_a: &i32 = **ref_ref_ref_a;
+        let b: i32 = *ref_a;
+        println!("{}", b)
+    }
   content_markdown: >
-    The `*` operator is an explicit way to dereference a reference. 
+    عملگر `*` یه روش صریح برای دیرفرنس کردن یه رفرنسه.
 
 
     ```rust
@@ -92,16 +94,25 @@
     ```
 
 
-    Memory detail:
+    جزئیات حافظه:
 
-    - Because i32 is a primitive type that implements the `Copy` trait, 
+    - چون i32 یه نوع پایه‌ست که trait به اسم `Copy` رو پیاده‌سازی
+    می‌کنه، بایت‌های متغیر `a` روی پشته توی بایت‌های متغیر `b` کپی
+    می‌شن.
+- title: عملگر .
+  code: |-
+    struct Foo {
+        value: i32
+    }
 
-    the bytes of variable `a` on stack are copied into the bytes of variable
-    `b`.
-- title: The . Operator
+    fn main() {
+        let f = Foo { value: 42 };
+        let ref_ref_ref_f = &&&f;
+        println!("{}", ref_ref_ref_f.value);
+    }
   content_markdown: >
-    The `.` operator is used in accessing fields and methods of a reference. It
-    works a bit more subtly.
+    عملگر `.` برای دسترسی به فیلدها و متدهای یه رفرنس استفاده می‌شه.
+    یه‌کم ظریف‌تر عمل می‌کنه.
 
 
     ```rust
@@ -114,11 +125,11 @@
 
     ```
 
-    Whoa, why didn't we need to add `***` before `ref_ref_ref_f`? This is
-    because the `.` operator automatically dereferences 
 
-    a sequence of references. That last line is turned into the following by the
-    compiler automatically.
+    وای، چرا لازم نبود قبل از `ref_ref_ref_f` سه‌تا `*` بذاریم؟ به
+    این خاطره که عملگر `.` به‌طور خودکار یه زنجیره از رفرنس‌ها رو
+    دیرفرنس می‌کنه. اون خط آخر رو کامپایلر به‌طور خودکار به این شکل
+    تبدیل می‌کنه:
 
 
     ```rust
@@ -126,7 +137,7 @@
     println!("{}", (***ref_ref_ref_f).value);
 
     ```
-- title: Smart Pointers
+- title: Smart Pointer ها
   code: |
     use std::ops::Deref;
     struct TattleTell<T> {
@@ -149,26 +160,22 @@
         println!("{}", foo.len());
     }
   content_markdown: >
-    In addition to the ability to create references to existing typed data using
-    the `&` operator, Rust gives us the ability
-
-    to create *reference-like* structs called **smart pointers**. 
-
-
-    We can think of references at a high level as a type that give us access to
-    another type.  Smart pointers are different in their 
-
-    behavior from normal references in that they operate based on internal logic
-    that a programmer writes. You — the programmer —
-
-    are the *smart* part.
+    راست علاوه بر توانایی ساختن رفرنس به داده‌های تایپ‌شده‌ی موجود با
+    عملگر `&`، این توانایی رو هم بهمون می‌ده که struct هایی *شبیه
+    رفرنس* بسازیم که بهشون **smart pointer** می‌گن.
 
 
-    Typically smart pointers implement `Deref`, `DerefMut`, and `Drop` traits to
-    specify the logic of what should happen when
+    می‌تونیم رفرنس‌ها رو در سطح بالا مثل یه نوع در نظر بگیریم که
+    بهمون دسترسی به یه نوع دیگه رو می‌ده. smart pointer ها توی رفتار
+    خودشون با رفرنس‌های معمولی فرق دارن، چون بر اساس یه منطق داخلی
+    که برنامه‌نویس می‌نویسه، عمل می‌کنن. تو — برنامه‌نویس — همون
+    بخش *smart* هستی.
 
-    the structure is dereferenced with `*` and `.` operators.
-- title: Smart Unsafe Code
+
+    معمولاً smart pointer ها trait های `Deref`، `DerefMut` و `Drop`
+    رو پیاده‌سازی می‌کنن تا مشخص کنن وقتی ساختار با عملگرهای `*` و
+    `.` دیرفرنس می‌شه، چه اتفاقی باید بیفته.
+- title: کد Unsafe هوشمند
   code: |
     fn main() {
         let a: [u8; 4] = [86, 14, 73, 64];
@@ -182,43 +189,39 @@
         let b = unsafe {
             // This is unsafe because we are telling the compiler
             // to assume our pointer is a valid f32 and
-            // dereference it's value into the variable b.
+            // dereference its value into the variable b.
             // Rust has no way to verify this assumption is true.
             *pointer_b
         };
         println!("I swear this is a pie! {}", b);
     }
   content_markdown: >
-    Smart pointers tend to use *unsafe* code fairly often. As mentioned
-    earlier, 
-
-    they are common tools for interacting with the lowest levels of memory in
-    Rust.
+    smart pointer ها معمولاً کد *unsafe* رو خیلی استفاده می‌کنن.
+    همون‌طور که قبلاً گفته شد، اونا ابزارهای رایجی برای تعامل با
+    پایین‌ترین سطح‌های حافظه توی راست هستن.
 
 
-    What is unsafe code? Unsafe code behaves exactly like normal Rust with the
-    exception of a few abilities that
-
-    the Rust compiler is unable to make guarantees about.
-
-
-    A primary ability of unsafe code is *dereferencing a raw pointer*. That
-    means taking a *raw pointer* 
-
-    to a position in memory and declaring "a data structure exists here!" and
-    turning it into a representation of data you can use (i.e. `*const u8` into
-    `u8`). 
-
-    Rust has no way to keep track of the meaning of every byte that gets written
-    to memory. Because Rust can't make 
-
-    guarantees about what exists at an arbitrary number used as a *raw pointer*,
-    it puts the dereference in an `unsafe { ... }` block. 
+    کد unsafe چیه؟ کد unsafe دقیقاً مثل کد معمولی راست رفتار می‌کنه،
+    به جز چند تا قابلیت که کامپایلر راست نمی‌تونه در موردشون تضمینی
+    بده.
 
 
-    Smart pointers *dereference raw pointers* extensively, but they are well
-    proven in what they do.
-- title: Familiar Friends
+    یه قابلیت اصلی کد unsafe اینه که یه *pointer خام رو دیرفرنس
+    می‌کنه*. یعنی یه *pointer خام* به یه موقعیت توی حافظه رو می‌گیره
+    و اعلام می‌کنه "این‌جا یه ساختار داده وجود داره!" و تبدیلش
+    می‌کنه به یه نمایش از داده که می‌شه ازش استفاده کرد (مثلاً
+    `*const u8‎` به `u8`).
+
+
+    راست هیچ راهی برای پیگیری معنای هر بایتی که توی حافظه نوشته
+    می‌شه، نداره. چون راست نمی‌تونه در مورد اینکه چی توی یه عدد
+    دلخواه که به‌عنوان *pointer خام* استفاده می‌شه وجود داره، تضمینی
+    بده، دیرفرنس کردن رو توی یه بلوک `unsafe { ... }‎` قرار می‌ده.
+
+
+    smart pointer ها به‌شکل گسترده‌ای *pointer های خام رو دیرفرنس
+    می‌کنن*، ولی توی کاری که انجام می‌دن خیلی خوب آزمایش شدن.
+- title: دوستای آشنا
   code: |
     use std::alloc::{alloc, Layout};
     use std::ops::Deref;
@@ -262,40 +265,36 @@
         println!("{:?}", *p);
     }
   content_markdown: >
-    Consider some smart pointers we've already seen like `Vec<T>` and `String`.
+    بیاید به چند تا smart pointer که قبلاً دیدیم فکر کنیم، مثل
+    `Vec<T>‎` و `String`.
 
 
-    `Vec<T>` is a smart pointer that just owns some memory region of bytes. The
-    Rust compiler has no idea what 
-
-    exists in these bytes. The smart pointer interprets what it means to grab
-    items from the region of memory it manages,
-
-    keeps track of where data structures within those bytes begin and end, and
-    then finally dereferences a raw pointer
-
-    into data structures into a nice clean ergonomic interface for us to use
-    (e.g. `my_vec[3]`).
+    `Vec<T>‎` یه smart pointer هست که فقط مالک یه ناحیه از حافظه‌ی
+    بایتیه. کامپایلر راست هیچ ایده‌ای نداره که توی این بایت‌ها چیه.
+    smart pointer تفسیر می‌کنه که برداشتن آیتم‌ها از ناحیه‌ی حافظه‌ای
+    که مدیریتش می‌کنه یعنی چی، پیگیری می‌کنه که ساختارهای داده داخل
+    اون بایت‌ها از کجا شروع و کجا تموم می‌شن، و در نهایت یه pointer
+    خام رو به ساختارهای داده دیرفرنس می‌کنه تا یه رابط تمیز و
+    ارگونومیک برای استفاده‌ی ما بسازه (مثلاً `my_vec[3]‎`).
 
 
-    Similarly, `String` keeps track of a memory region of bytes, and
-    programmatically restricts content written to it to always
-
-    be valid `utf-8` and helps dereference that memory region into a type
-    `&str`.
-
-
-    Both these datastructures use unsafe dereferencing of raw pointers to do
-    their job.
+    به همین شکل، `String` هم یه ناحیه از حافظه‌ی بایتی رو پیگیری
+    می‌کنه، و به‌شکل برنامه‌ای محتوایی که توش نوشته می‌شه رو محدود
+    می‌کنه که همیشه `utf-8` معتبر باشه، و کمک می‌کنه اون ناحیه‌ی
+    حافظه به یه نوع `&str‎` دیرفرنس بشه.
 
 
-    Memory details:
+    هر دوی این ساختارهای داده از دیرفرنس کردن unsafeِ pointer های
+    خام برای انجام کارشون استفاده می‌کنن.
 
-    * Rust has an equivalent of C's `malloc` using
-    [alloc](https://doc.rust-lang.org/std/alloc/fn.alloc.html) and
-    [Layout](https://doc.rust-lang.org/std/alloc/struct.Layout.html ) for
-    getting ahold of your own memory regions to manage.
-- title: Heap Allocated Memory
+
+    جزئیات حافظه:
+
+    * راست معادلی برای `malloc` توی C داره؛ با استفاده از
+    [alloc](https://doc.rust-lang.org/std/alloc/fn.alloc.html) و
+    [Layout](https://doc.rust-lang.org/std/alloc/struct.Layout.html)
+    برای گرفتن ناحیه‌های حافظه‌ی خودتون برای مدیریتشون.
+- title: حافظه‌ی تخصیص‌یافته روی هیپ
   code: |
     struct Pie;
 
@@ -310,14 +309,15 @@
         heap_pie.eat();
     }
   content_markdown: >
-    `Box` is a smart pointer that lets us move data from the stack to the heap.
+    `Box` یه smart pointer هست که بهمون اجازه می‌ده داده رو از پشته
+    به هیپ منتقل کنیم.
 
 
-    Dereferencing it lets us use the heap allocated data ergonomically as if it
-    were the original type.
-- title: Failable Main Revisited
+    دیرفرنس کردنش بهمون اجازه می‌ده داده‌ی تخصیص‌یافته روی هیپ رو
+    ارگونومیک استفاده کنیم، انگار که نوع اصلی خودشه.
+- title: Main شکست‌پذیر، دوباره بررسی می‌کنیم
   code: |
-    use core::fmt::Display;
+    use std::fmt::Display;
     use std::error::Error;
 
     struct Pie;
@@ -345,27 +345,22 @@
         Ok(())
     }
   content_markdown: >
-    Rust code may have a plethora of representations of errors, but the standard
-    library has
-
-    a universal trait `std::error::Error` for describing errors.
-
-
-    Using a smart pointer `Box` we can use the type `Box<dyn std::error::Error>`
-    as a common type for returning errors because it allows us to
-
-    propagate up an error on the heap and interact with it at a high level
-    without having to know a specific type.
+    کد راست ممکنه نمایش‌های زیادی برای خطاها داشته باشه، ولی
+    کتابخونه‌ی استاندارد یه trait جهانی به اسم `std::error::Error`
+    برای توصیف خطاها داره.
 
 
-    Early in Tour of Rust we learned that `main` can return an error. We can now
-    return
+    با استفاده از یه smart pointer به اسم `Box`، می‌تونیم از نوع
+    `Box<dyn std::error::Error>‎` به‌عنوان یه نوع مشترک برای
+    برگردوندن خطاها استفاده کنیم، چون بهمون اجازه می‌ده یه خطا رو
+    روی هیپ منتشر کنیم و باهاش توی سطح بالا تعامل داشته باشیم، بدون
+    اینکه لازم باشه یه نوع خاص رو بشناسیم.
 
-    a type capable of describing almost any kind of error that might occur in
-    our program 
 
-    so long as the error's data structure implements Rust's common `Error`
-    trait.
+    اوایل تور راست یاد گرفتیم که `main` می‌تونه یه خطا برگردونه.
+    الان می‌تونیم یه نوع برگردونیم که تقریباً هر نوع خطایی که ممکنه
+    توی برنامه‌مون اتفاق بیفته رو توصیف کنه، به شرطی که ساختار داده‌ی
+    خطا، trait مشترک `Error` راست رو پیاده‌سازی کنه.
 
 
     ```rust
@@ -373,7 +368,7 @@
     fn main() -> Result<(), Box<dyn std::error::Error>>
 
     ```
-- title: Referencing Counting
+- title: شمارش رفرنس (Reference Counting)
   code: |
     use std::rc::Rc;
 
@@ -398,18 +393,15 @@
         // the heap data Pie finally deallocates
     }
   content_markdown: >
-    `Rc` is a smart pointer that moves data from the stack onto the heap. It
-    allows us to 
-
-    clone other `Rc` smart pointers that all have the ability to immutably
-    borrow the data 
-
-    that was put on the heap.
+    `Rc` یه smart pointer هست که داده رو از پشته به هیپ منتقل می‌کنه.
+    بهمون اجازه می‌ده smart pointer های `Rc` دیگه رو کلون کنیم که
+    همه‌شون توانایی قرض گرفتن غیرقابل‌تغییر (immutable) داده‌ای که
+    روی هیپ گذاشته شده رو دارن.
 
 
-    Only when the last smart pointer is dropped does the data on the heap become
-    deallocated.
-- title: Sharing Access
+    فقط وقتی که آخرین smart pointer دراپ بشه، داده روی هیپ آزاد
+    می‌شه.
+- title: به اشتراک گذاشتن دسترسی
   code: |
     use std::cell::RefCell;
 
@@ -443,24 +435,20 @@
          println!("{} slices left",ref_pie.slices);
     }
   content_markdown: >
-    `RefCell` is a container data structure commonly held by smart pointers that
-    takes in data and lets us
-
-    borrow mutable and immutable references to what's inside. It prevents
-    borrowing from
-
-    being abused by enforcing Rust's memory safety rules at runtime when you ask
-    to borrow
-
-    the data within:
+    `RefCell` یه ساختار داده‌ی کانتینره که معمولاً توسط smart pointer
+    ها نگه داشته می‌شه، داده می‌گیره و بهمون اجازه می‌ده رفرنس‌های
+    mutable و immutable به محتوای داخلش قرض بگیریم. این کار جلوی
+    سوءاستفاده از قرض گرفتن رو می‌گیره، چون قوانین ایمنی حافظه‌ی راست
+    رو در زمان اجرا، وقتی که درخواست قرض گرفتن داده‌های داخلش رو
+    می‌دی، اجرا می‌کنه:
 
 
-    **Only one mutable reference OR multiple immutable references, but not
-    both!**
+    **فقط یه رفرنس mutable یا چند تا رفرنس immutable، ولی نه هر دو
+    با هم!**
 
 
-    If you violate these rules `RefCell` will panic.
-- title: Sharing Across Threads
+    اگه این قوانین رو نقض کنی، `RefCell` panic می‌کنه.
+- title: به اشتراک گذاشتن بین Thread ها
   code: |
     use std::sync::Mutex;
 
@@ -482,30 +470,25 @@
         // locked reference drops here, and mutex protected value can be used by someone else
     }
   content_markdown: >
-    `Mutex` is a container data structure commonly held by smart pointers that
-    takes in data and lets us borrow mutable
-
-    and immutable references to the data within. This prevents borrowing from
-    being abused by 
-
-    having the operating system restrict only one CPU thread at time to have
-    access to the data, 
-
-    blocking other threads until that original thread is done with its locked
-    borrow.
+    `Mutex` یه ساختار داده‌ی کانتینره که معمولاً توسط smart pointer
+    ها نگه داشته می‌شه، داده می‌گیره و بهمون اجازه می‌ده رفرنس‌های
+    mutable و immutable به داده‌های داخلش قرض بگیریم. این کار جلوی
+    سوءاستفاده از قرض گرفتن رو می‌گیره، چون سیستم‌عامل فقط اجازه
+    می‌ده یه thread پردازنده در یه لحظه به داده دسترسی داشته باشه، و
+    thread های دیگه رو بلاک می‌کنه تا وقتی که اون thread اصلی با قرض
+    قفل‌شده‌ش کارش تموم بشه.
 
 
-    Multithreading is beyond the scope of Tour of Rust, but `Mutex` is a
-    fundamental part of orchestrating
+    چندریسمانی (multithreading) فراتر از حوصله‌ی تور راست هست، ولی
+    `Mutex` یه بخش بنیادی توی هماهنگ کردن چند تا thread پردازنده که
+    به یه داده‌ی مشترک دسترسی دارن، محسوب می‌شه.
 
-    multiple CPU threads accessing the same data.
 
-
-    There is a special smart pointer `Arc` which is identical to `Rc` except
-    uses thread-safe incrementing of reference counts. 
-
-    It's often used to have many references to the same `Mutex`.
-- title: Combining Smart Pointers
+    یه smart pointer خاص به اسم `Arc` هست که دقیقاً مثل `Rc` هست، با
+    این تفاوت که از یه افزایش thread-safe برای شمارش رفرنس‌ها
+    استفاده می‌کنه. معمولاً برای داشتن رفرنس‌های زیاد به یه `Mutex`
+    یکسان استفاده می‌شه.
+- title: ترکیب کردن Smart Pointer ها
   code: |
     use std::cell::RefCell;
     use std::rc::Rc;
@@ -553,41 +536,39 @@
         println!("{} slices left", p.slices);
     }
   content_markdown: >
-    Smart pointers might seem limited, but they can make some very powerful
-    combinations.
+    smart pointer ها ممکنه محدود به نظر برسن، ولی می‌تونن ترکیب‌های
+    خیلی قدرتمندی بسازن.
 
 
-    `Rc<Vec<Foo>>` - Allow the cloning of multiple smart pointers that can
-    borrow the same vector of immutable data structures on the heap.
+    `Rc<Vec<Foo>>‎` - اجازه‌ی کلون کردن چند تا smart pointer رو می‌ده
+    که می‌تونن یه وکتور مشترک از ساختارهای داده‌ی immutable روی هیپ
+    رو قرض بگیرن.
 
 
-    `Rc<RefCell<Foo>>` - Allow multiple smart pointers the ability to borrow
-    mutably/immutably the same struct `Foo`
+    `Rc<RefCell<Foo>>‎` - به چند تا smart pointer این توانایی رو
+    می‌ده که یه struct یکسان به اسم `Foo` رو mutable/immutable قرض
+    بگیرن.
 
 
-    `Arc<Mutex<Foo>>` - Allow multiple smart pointers the ability to lock
-    temporary mutable/immutable borrows in a CPU thread exclusive manner.
+    `Arc<Mutex<Foo>>‎` - به چند تا smart pointer این توانایی رو
+    می‌ده که قرض‌های موقت mutable/immutable رو به‌شکلی انحصاری برای
+    یه thread پردازنده قفل کنن.
 
 
-    Memory detail:
+    جزئیات حافظه:
 
-    * You'll notice a theme with many of these combinations. The use of a
-    immutable data type (possibly owned by multiple smart pointers) to modify
-    internal data. This 
-      is referred to as the "interior mutability" pattern in Rust. It is a pattern that lets us bend the rules of memory usage at runtime with the same level of safety as Rust's
-      compile-time checks.
-
-- title: Chapter 8 - Conclusion
+    * یه الگوی تکرارشونده رو توی خیلی از این ترکیب‌ها می‌بینی.
+    استفاده از یه نوع داده‌ی immutable (که شاید توسط چند تا smart
+    pointer مالکیتش انجام بشه) برای تغییر داده‌ی داخلی. به این کار
+    توی راست الگوی "interior mutability" (تغییرپذیری داخلی) می‌گن.
+    این یه الگوئه که بهمون اجازه می‌ده قوانین استفاده از حافظه رو در
+    زمان اجرا خم کنیم، با همون سطح ایمنی که چک‌های راست در زمان
+    کامپایل دارن.
+- title: فصل 8 - جمع‌بندی
   content_markdown: >
-    Smart pointers are the idioms of Rust programming and let us not have to
-    re-create the 
-
-    very common patterns of memory usage. With them you are ready to tackle the
-    toughest of
-
-    challenges! Now that we have the foundations of Rust, let's talk a bit about
-    how we make 
-
-    larger projects. In chapter 9 we break free of single page
-
-    lines of code.
+    smart pointer ها اصطلاحات رایج برنامه‌نویسی راست هستن و بهمون
+    اجازه می‌دن مجبور نباشیم الگوهای خیلی رایج استفاده از حافظه رو
+    دوباره بسازیم. با اینا آماده‌ای که سخت‌ترین چالش‌ها رو حل کنی!
+    حالا که مبانی راست رو داریم، بیا یه‌کم در مورد اینکه چطوری
+    پروژه‌های بزرگ‌تر می‌سازیم صحبت کنیم. توی فصل 9 از خطوط کد یه
+    صفحه‌ی تنها آزاد می‌شیم.
