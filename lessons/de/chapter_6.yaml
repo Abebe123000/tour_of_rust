@@ -1,239 +1,257 @@
-- title: Kapitel 6 – Text
+- title: Kapitel 6 - Text
   content_markdown: >
-    Wenn Sie das Modul zur Pflege von Rust einsetzen, müssen Sie es sich merken, bevor Sie darüber reden
-    Weitere Informationen zum Text.
+    Jetzt, wo wir ein wenig verstehen, wie Rust über Speicher denkt, sind wir
+    bereit, ausführlicher über Text zu sprechen.
 
-    Rust hat viele wichtige Texte in verschiedenen Texten und Modulen geschrieben, die es zu repräsentieren gilt
-    Nachdem Sie die Oktavebene erreicht haben, müssen Sie sich mit der alten Schule vertraut machen.
 
-    aus anderen Sprachen. Allerdings verfügt Rust über viele großartige Tools zur Verwaltung 
-    diese Bedenken.
+    Rust legt großen Wert auf internationalen Text und Belange auf Byte-Ebene,
+    die Dir aus anderen Sprachen vielleicht nicht vertraut sind. Trotzdem
+    besitzt Rust viele großartige Werkzeuge, um mit diesen Belangen
+    umzugehen.
 - title: String-Literale
   content_markdown: >
-    String-Literale werden immer dargestellt
-    unter Verwendung der **utf-8**-Kodierung des Unicode-Zeichensatzes.
+    String-Literale sind immer Unicode.
 
-    String-Literale sind vom Typ „&'static str“:
 
-    * '&' dient als Verweis auf den Speicherort, ohne dass „&mut“ vom Compiler verwendet wird
-    Sie haben keine Änderungserlaubnis.
+    Der Typ von String-Literalen ist `&'static str`:
 
-    * 'static' bedeutet, dass die String-Daten bis zum Ende verfügbar sind
-    das Programm (es stürzt nie ab).
 
-    * 'str' bezeichnet eine Folge von Bytes, die immer gültigen Text im **utf-8**-Format bilden
+    * `&` bedeutet, dass es sich auf eine Stelle im Speicher bezieht, und da
+    kein `&mut` vorhanden ist, wird der Compiler keine Veränderung erlauben
+
+    * `'static` bedeutet, dass die String-Daten bis zum Ende unseres
+    Programms verfügbar sind (sie werden niemals fallen gelassen)
+
+    * `str` bedeutet, dass es auf eine Byte-Sequenz zeigt, die immer
+    gültiges **utf-8** sein muss
+
 
     Speicherdetails:
 
-    * Der Rust-Compiler wird die Zeichenfolge wahrscheinlich in das Datensegment von einfügen
-    Programmspeicher.
+    * Der Rust-Compiler wird Deinen String wahrscheinlich in das
+    Datensegment des Programmspeichers legen
   code: |
-    fn+main()+{
-    ++++let+a:+&'static+str+=+"hallo+🦀";
-    ++++println!("{}+{}",+a,+a.len());
+    fn main() {
+        let a: &'static str = "hi 🦀";
+        println!("{} {}", a, a.len());
     }
-- title: Was ist utf-8
-  content_markdown: "Da immer mehr Sprachen auf Computern verwendet wurden, brauchte die Welt Möglichkeiten, mehr Textzeichen darzustellen, als ASCII erlaubte (1 Byte erlaubte nur 256 Zeichen).\n\nEs wurde **utf-8** eingeführt , mit einer variablen Länge von Bytes (1-4 Bytes), was den Bereich möglicher Zeichen erheblich vergrößert.\n\nEin Vorteil von Zeichen variabler Größe besteht darin, dass der Text keine unnötigen Bytes mehr für sehr häufige ASCII-Zeichen enthält (die nur 1 erfordern). Byte in **utf-8**).\n\nEin Nachteil von Zeichen variabler Größe besteht darin, dass Zeichensuchen nicht mehr schnell durchgeführt werden können \n(** konstante Zeit O(1 )**) mit einfacher Indizierung (Beispiel : `my_text[3]`, um das 4. Zeichen zu erhalten).\nDie vorherigen Zeichen können variable Breiten haben, wodurch sich ändert, wo das 4. Zeichen tatsächlich in der Bytefolge beginnt.\n\nStattdessen müssen wir eine Schleife durch ein **utf- 8** Bytefolge, um zu verstehen, wo die Unicode-Zeichen tatsächlich beginnen (** lineare Zeit **O(n)**).\n\nFerris: „Meistens bin ich einfach nur froh, dass ich **utf-8 habe ** um Emoticons mit meinen Unterwasserfreunden zu rendern.\"\n\n<span class=\"emoji\">\U0001F420\U0001F419\U0001F41F\U0001F42C\U0001F40B</span>\n"
-- title: Escape-Sequenzen
+- title: Was Ist utf-8
+  content_markdown: "Als immer mehr Sprachen auf Computern verwendet wurden, brauchte die Welt eine Möglichkeit, mehr Textzeichen darzustellen, als ASCII erlaubte (1 Byte erlaubte nur 256 Zeichen).\n\n**utf-8** wurde mit einer variablen Byte-Länge von 1-4 Bytes eingeführt, was die Bandbreite möglicher Zeichen stark vergrößerte.\n\nEin Vorteil von Zeichen variabler Größe ist, dass Text keine unnötigen Bytes für sehr häufige ASCII-Zeichen enthält (diese benötigen weiterhin nur 1 Byte in **utf-8**).\n\nEin Nachteil von Zeichen variabler Größe ist, dass das Auffinden eines Zeichens nicht mehr schnell (in konstanter Zeit **O(1)**) über eine einfache Indizierung möglich ist (z. B. `my_text[3]`, um das 4. Zeichen zu erhalten). Es ist möglich, dass die vorangehenden Zeichen unterschiedliche Breiten haben, wodurch sich verändert, wo das 4. Zeichen tatsächlich in der Byte-Sequenz beginnt.\n\nStattdessen müssen wir durch eine **utf-8**-Byte-Sequenz iterieren, um zu verstehen, wo die Unicode-Zeichen tatsächlich beginnen (in linearer Zeit **O(n)**).\n\nFerris: \"Ich bin vor allem einfach froh, **utf-8** zu haben, um die Emojis meiner Unterwasserfreunde darzustellen.\"\n\n<span class=\"emoji\">\U0001F420\U0001F419\U0001F41F\U0001F42C\U0001F40B</span>\n"
+- title: Escape-Zeichen
   content_markdown: >
-    Es ist eine Herausforderung, bestimmte Zeichen visuell darzustellen, daher müssen Escape-Sequenzen (*Escape-Codes*)
-    Sie ermöglichen es uns, ein Symbol an ihre Stelle zu setzen.
+    Es ist schwierig, bestimmte Zeichen visuell darzustellen, daher
+    erlauben uns **Escape-Codes**, an ihrer Stelle ein Symbol zu setzen.
 
 
-    Rust unterstützt gängige Escape-Codes von C-basierten Sprachen:
+    Rust unterstützt die gängigen Escape-Codes aus C-basierten Sprachen:
 
-    * `\n` - Neue Zeile
+    * `\n` - Zeilenumbruch
 
     * `\r` - Wagenrücklauf
 
-    * `\t` - tab
+    * `\t` - Tabulator
 
-    * `\\\` - backslash
+    * `\\` - Backslash
 
-    * `\0` - nul
+    * `\0` - Null-Zeichen
 
-    * `\'` - Einzelzitate
+    * `\'` - einfaches Anführungszeichen
 
 
-    Die vollständige Liste ist vorhanden
-    [Hier](https://doc.rust-lang.org/reference/tokens.html).
+    Die vollständige Liste findest Du
+    [hier](https://doc.rust-lang.org/reference/tokens.html).
   code: |
-    fn+main()+{
-    ++++let+a:+&'static+str+=+"Ferris+sagt:\t\"hallo\"";
-    ++++println!("{}",+a);
+    fn main() {
+        let a: &'static str = "Ferris says:\t\"hello\"";
+        println!("{}",a);
     }
-  edition: 2021
-- title: String-Literale in mehreren Zeilen
+- title: Mehrzeilige String-Literale
   content_markdown: |
-    Strings in Rust sind standardmäßig mehrzeilig.
+    Rust-Strings sind standardmäßig mehrzeilig.
 
-    Verwenden Sie am Ende der Zeile ein `\`, wenn Sie keinen Zeilenumbruch wünschen.
+    Verwende ein `\` am Ende einer Zeile, wenn Du dort keinen Zeilenumbruch
+    möchtest.
   code: |
     fn main() {
         let haiku: &'static str = "
             I write, erase, rewrite
             Erase again, and then
             A poppy blooms.
-            - Katsushika Hokusai";
+            - Tachibana Hokushi";
         println!("{}", haiku);
         
         
-        println!("salutare \
-        lume") // observati cum spatierea de dinainte de "l" este ignorata
+        println!("hello \
+        world") // notice that the spacing before w is ignored
     }
-- title: Rohe Literalzeichenfolgen
+- title: Raw-String-Literale
   content_markdown: >
-    Rohzeichenfolgen (auf Englisch *raw strings*) ermöglichen es uns, eine Folge von Zeichen zu schreiben,
-    Wort für Wort, beginnend mit `r#` und endend mit `#`. Dies ermöglicht uns das Einfügen
-
-    Zeichen, die sonst dazu führen könnten, dass wir eine normale Zeichenfolge mit einem Literal verwechseln
-    (z. B. doppelte Anführungszeichen und Backslashes).
+    Raw-Strings erlauben es uns, eine Zeichenfolge wortwörtlich zu
+    schreiben, indem wir mit `r#"` beginnen und mit `"#` enden. Dadurch
+    können wir Zeichen einfügen, die einen normalen String sonst als
+    Literal verwirren könnten (wie doppelte Anführungszeichen und
+    Backslashes).
   code: |
     fn main() {
         let a: &'static str = r#"
-            <div class="sfat">
-                Sirurile de caractere brute sunt folositoare in unele situatii.
+            <div class="advice">
+                Raw strings are useful for some situations.
             </div>
             "#;
         println!("{}", a);
     }
-- title: Literale Zeichenfolgen aus Dateien
+- title: String-Literale Aus Dateien
   content_markdown: >
-    Wenn Sie sehr großen Text haben, sollten Sie das Makro „include_str!“ verwenden
-    So fügen Sie Text aus lokalen Dateien in Ihr Programm ein:
+    Wenn Du sehr großen Text hast, solltest Du das Makro `include_str!` in
+    Betracht ziehen, um Text aus lokalen Dateien in Dein Programm
+    einzubinden:
 
 
     ```rust
 
-    let halo_html = include_str!("halo.html");
+    let hello_html = include_str!("hello.html");
 
     ```
-- title: Zeichen-Teilzeichenfolgen
+- title: String-Slice
   content_markdown: >
-    Eine Teilzeichenfolge von Zeichen (im Englischen *string slice*) ist ein Verweis auf eine Folge von Bytes im Speicher, die vorhanden sein müssen
-    immer im gültigen UTF-8-Format vorliegen.
+    Ein String-Slice ist eine Referenz auf eine Byte-Sequenz im Speicher,
+    die immer gültiges utf-8 sein muss.
 
-    Ein Teilstring eines Teilstrings (auf Englisch *sub-slice*) von „str“ muss ebenfalls im gültigen UTF-8-Format vorliegen.
+
+    Ein Slice (ein Sub-Slice) eines `str`-Slices muss ebenfalls gültiges
+    utf-8 sein.
 
 
     Gängige Methoden von `&str`:
 
-    * `len` ermitteln Sie die Länge des Zeichenfolgenliterals in Bytes (nicht die Anzahl der Zeichen).
+    * `len` liefert die Länge des String-Literals in Bytes (nicht die
+    Anzahl der Zeichen).
 
-    * `starts_with`/`ends_with` für Grundprüfungen.
+    * `starts_with`/`ends_with` für einfache Prüfungen.
 
-    * `is_empty` gibt *true* zurück, wenn die Länge null ist.
+    * `is_empty` gibt `true` zurück, wenn die Länge null ist.
 
-    * `find` gibt einen zurück `Option<usize>` der ersten Stelle in einem Text.
+    * `find` gibt ein `Option<usize>` der ersten Position eines Textes
+    zurück.
   code: |
     fn main() {
-        let a = "salut 🦀";
+        let a = "hi 🦀";
         println!("{}", a.len());
-        let primul_cuvant = &a[0..5];
-        let al_doilea_cuvant = &a[6..10];
-        // let jumatate_de_crab = &a[6..8]; EȘUEAZĂ
-        // Rust nu accepta subsiruri formate din caractere Unicode invalide
-        println!("{} {}", primul_cuvant, al_doilea_cuvant);
+        let first_word = &a[0..2];
+        let second_word = &a[3..7];
+        // let half_crab = &a[3..5]; FAILS
+        // Rust does not accept slices of invalid unicode characters
+        println!("{} {}", first_word, second_word);
     }
-- title: der Typ `char`
+- title: Chars
   content_markdown: >
-    Angesichts der vielen Schwierigkeiten bei der Arbeit mit Unicode bietet Rust eine Möglichkeit dazu
-    Nimmt eine Folge von UTF-8-Bytes als Zeichenvektor vom Typ `char`.
+    Wegen der großen Schwierigkeiten bei der Arbeit mit Unicode bietet Rust
+    einen Weg, eine Sequenz von utf-8-Bytes als Vektor von Zeichen vom Typ
+    `char` abzurufen.
 
 
-    Ein `char` ist immer 4 Bytes lang (was eine effiziente Suche nach einzelnen Zeichen ermöglicht).
+    Ein `char` ist immer 4 Bytes lang (was eine effiziente Suche nach
+    einzelnen Zeichen ermöglicht).
   code: |
     fn main() {
-        // colecteaza caracterele ca vector de char-uri
-        let chars = "salut 🦀".chars().collect::<Vec<char>>();
-        println!("{}", chars.len()); // ar trebui sa fie 7
-        // cum un char ocupa 4 biti, putem converti la u32
+        // collect the characters as a vector of char
+        let chars = "hi 🦀".chars().collect::<Vec<char>>();
+        println!("{}", chars.len()); // should be 4
+        // since chars are 4 bytes we can convert to u32
         println!("{}", chars[3] as u32);
     }
-- title: Zeichenfolgen
+- title: String
   content_markdown: >
-    Eine Zeichenfolge (auf Englisch *string*) ist eine Struktur, die eine Folge von UTF-8-Bytes im Heap-Speicher enthält.
+    Ein **String** ist ein Struct, das eine Sequenz von utf-8-Bytes im
+    Heap-Speicher besitzt.
 
 
-    Da sich sein Speicher auf dem Heap befindet, kann er erweitert, geändert usw. werden. auf eine Weise, die Saiten hervorruft
-    von Literalzeichen kann nicht geändert werden.
+    Da sich sein Speicher auf dem Heap befindet, kann er erweitert,
+    verändert usw. werden, auf eine Weise, wie es bei String-Literalen
+    nicht möglich ist.
 
 
     Gängige Methoden:
 
 
-    * `push_str` um mehrere UTF-8-Bytes an das Ende einer Zeichenfolge anzuhängen.
+    * `push_str` fügt weitere utf-8-Bytes an das Ende eines Strings an.
 
-    * `replace` um UTF-8-Byte-Sequenzen durch andere zu ersetzen.
+    * `replace` ersetzt Sequenzen von utf-8-Bytes durch andere.
 
-    * `to_lowercase`/`to_uppercase` um zwischen Groß- und Kleinschreibung zu wechseln.
+    * `to_lowercase`/`to_uppercase` für Änderungen der Groß-/
+    Kleinschreibung.
 
-    * `trim` um Leerzeichen zu entfernen.
-
-
-    Wenn eine Zeichenfolge gelöscht wird (drop), wird auch ihr Heapspeicher gelöscht.
+    * `trim` zum Entfernen von Leerraum.
 
 
-    Strings haben einen `+`-Operator, der den String mit einem `&str` erweitert. (Der String auf der linken Seite ist `verbraucht` und sein Puffer
-    wird wiederverwendet, um den Endwert zu speichern. Die Zeichenfolge auf der rechten Seite wurde nur ausgeliehen, um die Verkettung durchzuführen.)
-    aber es ist möglicherweise nicht so ergonomisch, wie Sie hoffen.
+    Wenn ein String fallen gelassen wird, wird auch sein Heap-Speicher
+    fallen gelassen.
+
+
+    `String` besitzt einen `+`-Operator, der den String um einen `&str`
+    erweitert und sich selbst zurückgibt, aber das ist vielleicht nicht so
+    ergonomisch, wie Du hoffen würdest.
   code: |
     fn main() {
-        let mut salutarelume = String::from("salutare");
-        salutarelume.push_str(" lume");
-        salutarelume = salutarelume + "!";
-        println!("{}", salutarelume);
+        let mut helloworld = String::from("hello");
+        helloworld.push_str(" world");
+        helloworld = helloworld + "!";
+        println!("{}", helloworld);
     }
-- title: Text als Funktionsparameter
+- title: Text Als Funktionsparameter
   content_markdown: >
-    Zeichenfolgen (Literale) werden im Allgemeinen als Teilzeichenfolgen an Funktionen übergeben.
-    
-    Dies bietet in den meisten Szenarien große Flexibilität, wenn es nicht benötigt wird
-    das Eigentum tatsächlich zu übertragen.
+    String-Literale und Strings werden Funktionen im Allgemeinen als
+    String-Slice übergeben. Das bietet viel Flexibilität in den meisten
+    Szenarien, in denen Du gar nicht wirklich das Eigentum übergeben
+    musst.
   code: |
-    fn spune_tare(msg:&str){
+    fn say_it_loud(msg:&str){
         println!("{}!!!",msg.to_string().to_uppercase());
     }
 
     fn main() {
-        // spune_tare poate imprumuta un &'static str ca &str
-        spune_tare("salut");
-        // spune_tare poate, de asemenea, imprumuta un String ca &str
-        spune_tare(&String::from("la revedere"));
+        // say_it_loud can borrow &'static str as a &str
+        say_it_loud("hello");
+        // say_it_loud can also borrow String as a &str
+        say_it_loud(&String::from("goodbye"));
     }
-- title: Konstruktion und Charaktercharakter
+- title: Strings Bauen
   content_markdown: |
-    `concat` und `join` sind zwei einfache, aber effektive Möglichkeiten, Strings zu erstellen.
+    `concat` und `join` sind zwei einfache, aber mächtige Wege, um Strings
+    zu bauen.
   code: |
     fn main() {
-        let salutarelume = ["salutare", " ", "lume", "!"].concat();
+        let helloworld = ["hello", " ", "world", "!"].concat();
         let abc = ["a", "b", "c"].join(",");
-        println!("{}", salutarelume);
+        println!("{}", helloworld);
         println!("{}",abc);
     }
-- title: Zeichenfolgen formatieren
+- title: Strings Formatieren
   content_markdown: >
-    Mit dem Makro `format!` können wir eine Zeichenfolge erstellen, indem wir eine parametrisierte Zeichenfolge definieren
-    mit Platzhaltern dafür, wo und wie die Werte platziert werden sollen (Beispiel: `{}`).
+    Das Makro `format!` erlaubt es uns, einen String zu erstellen, indem
+    wir einen parametrisierten String mit Platzhaltern definieren, die
+    festlegen, wo und wie Werte eingesetzt werden sollen (z. B. `{}`).
 
 
-    `format!` verwendet die gleichen parametrisierten Strings wie `println!`.
+    `format!` verwendet dieselben parametrisierten Strings wie `println!`
 
 
-    Die Möglichkeiten dieser Funktion sind zu groß für die *Rundgang durch Rust*;
-    siehe Dokumentation [Hier](https://doc.rust-lang.org/std/fmt/).
+    Die Fähigkeiten dieser Funktion würden den Rahmen von *Tour of Rust*
+    sprengen; schau Dir die [Dokumentation](https://doc.rust-lang.org/std/fmt/)
+    an, um mehr zu erfahren.
   code: |
     fn main() {
         let a = 42;
-        let f = format!("secretul vietii: {}",a);
+        let f = format!("secret to life: {}",a);
         println!("{}",f);
     }
-- title: Konvertieren von Zeichenfolgen
+- title: Strings Umwandeln
   content_markdown: |
-    Viele Typen können mit `to_string` in einen String konvertiert werden.
+    Viele Typen können mit `to_string` in einen String umgewandelt werden.
 
-    Die generische Funktion `parse` kann zum Konvertieren von Zeichenfolgen (Literalen) verwendet werden.
-    in einem typisierten Wert. Diese Funktion gibt ein `Result` zurück, da sie möglicherweise fehlschlägt.
+    Die generische Funktion `parse` kann verwendet werden, um Strings oder
+    String-Literale in einen typisierten Wert umzuwandeln. Diese Funktion
+    gibt ein `Result` zurück, weil sie fehlschlagen kann.
   code: |
     fn main() -> Result<(), std::num::ParseIntError> {
         let a = 42;
@@ -242,16 +260,15 @@
         println!("{} {}", a, b);
         Ok(())
     }
-- title: Kapitel 6 - Schlüssig
+- title: Kapitel 6 - Fazit
   content_markdown: >
-    Jetzt kennen Sie die Grundlagen des Textes! Wie Sie gesehen haben, erledigt Unicode den Zweck
-    mit dem etwas komplizierteren Text, aber der Standardbibliothek 
+    Jetzt kennst Du die Grundlagen von Text! Wie Du gesehen hast, macht
+    Unicode die Arbeit mit Text etwas kniffliger, aber die
+    Standardbibliothek bietet jede Menge Funktionalität, um damit leicht
+    umzugehen.
 
-    es verfügt über viele Funktionen, die die Verwaltung erleichtern.  
 
-
-    Bisher haben wir die Rust-Sprache hauptsächlich durch die Linse eines prozeduralen Paradigmas betrachtet
-    (also nur Funktionen und Daten),
-
-    Aber es ist jetzt an der Zeit, über die Eigenschaften und Fähigkeiten zu sprechen, die sich daraus ergeben
-    das objektorientierte Paradigma der Rust-Programmiersprache.
+    Bis jetzt haben wir Rust vor allem aus der Perspektive eines
+    prozeduralen Paradigmas betrachtet (also nur Funktionen und Daten),
+    aber es ist Zeit, dass wir jetzt über Traits sprechen und die
+    Fähigkeiten, die Rusts objektorientiertes Paradigma freischaltet.
