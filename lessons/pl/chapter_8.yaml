@@ -1,32 +1,24 @@
-- title: Chapter 8 - Smart Pointers
+- title: Rozdział 8 - Inteligentne Wskaźniki
   content_markdown: >
-    In this chapter we will demystify smart pointers. Let's explore into
-
-    these data structures that let us interact with the lowest level of 
-
-    memory.
+    W tym rozdziale odczarujemy inteligentne wskaźniki. Zbadajmy te
+    struktury danych, które pozwalają nam wchodzić w interakcję z
+    najniższym poziomem pamięci.
 
 
-    Ferris says: "Don't feel overwhelmed by this chapter if you don't feel 
-
-    you can write your own low level memory management code in one short read.
-    This chapter 
-
-    is mostly to introduce you to some useful tools and give a glimpse at how
-    they work!"
-- title: References Revisited
+    Ferris mówi: "Nie przytłaczaj się tym rozdziałem, jeśli nie czujesz się
+    na siłach, żeby po jednej krótkiej lekturze napisać własny kod do
+    niskopoziomowego zarządzania pamięcią. Ten rozdział ma za zadanie
+    głównie przedstawić Ci kilka przydatnych narzędzi i dać Ci wgląd w to,
+    jak one działają!"
+- title: Referencje Ponownie
   content_markdown: >
-    A reference is fundamentally just a number that is the start position
-
-    of some bytes in memory. Its only purpose is to represent the concept of 
-
-    where data of a specific type exists. What makes a reference different from
-    just a number is that Rust
-
-    will validate the lifetime of references doesn't last longer than what
-
-    it refers to (otherwise we'd get an error when we used it!).
-- title: Raw Pointers
+    Referencja to w gruncie rzeczy po prostu liczba, będąca pozycją
+    początkową pewnych bajtów w pamięci. Jej jedynym celem jest reprezentować
+    koncepcję tego, gdzie istnieją dane konkretnego typu. Tym, co odróżnia
+    referencję od zwykłej liczby jest to, że Rust sprawdzi, czy czas życia
+    referencji nie trwa dłużej niż to, do czego się ona odnosi (inaczej
+    dostalibyśmy błąd podczas jej użycia!).
+- title: Surowe Wskaźniki
   code: |
     fn main() {
         let a = 42;
@@ -34,49 +26,63 @@
         println!("Data is here {}", memory_location);
     }
   content_markdown: >
-    References can be converted into a more primitive type called a *raw
-    pointer*. Much like a number, it
-
-    can be copied and moved around with little restriction. Rust
-
-    makes no assurances of the validity of the memory location it points to.
-
-
-    Two kinds of raw pointers exist:
+    Referencje mogą zostać przekonwertowane na bardziej prymitywny typ,
+    zwany *surowym wskaźnikiem*. Podobnie jak liczba, może on być
+    kopiowany i przenoszony z niewielkimi ograniczeniami. Rust nie daje
+    żadnych gwarancji co do poprawności miejsca w pamięci, na które on
+    wskazuje.
 
 
-    * `*const T` - A raw pointer to data of type T that should never change.
-
-    * `*mut T` - A raw pointer to data of type T that can change.
+    Istnieją dwa rodzaje surowych wskaźników:
 
 
-    Raw pointers can be converted to and from numbers (e.g. `usize`).
+    * `*const T` - Surowy wskaźnik do danych typu T, które nigdy nie
+    powinny się zmienić.
+
+    * `*mut T` - Surowy wskaźnik do danych typu T, które mogą się zmienić.
 
 
-    Raw pointers can access data with *unsafe* code (more on this later).
+    Surowe wskaźniki mogą być konwertowane na liczby i z powrotem
+    (np. `usize`).
 
 
-    Memory Details:
+    Surowe wskaźniki mogą uzyskać dostęp do danych za pomocą kodu *unsafe*
+    (więcej o tym później).
 
-    * A reference in Rust is very similar to a pointer in C in terms of usage,
-    but with much more compile time restrictions on
-      how it can be stored and moved around to other functions.
-    * A raw pointer in Rust is similar to a pointer in C that it represents a number that can be
-      copied or passed around, and even turned into numerical types where it can be modifed as a
-      number to do pointer math.
-- title: Dereferencing
+
+    Kilka szczegółów dotyczących pamięci:
+
+    * Referencja w Ruście jest bardzo podobna w użyciu do wskaźnika w C,
+    ale posiada dużo więcej ograniczeń na etapie kompilacji dotyczących
+    tego, jak może być przechowywana i przenoszona do innych funkcji.
+
+    * Surowy wskaźnik w Ruście jest podobny do wskaźnika w C, ponieważ
+    reprezentuje liczbę, którą można kopiować lub przekazywać dalej, a
+    nawet zamienić na typ liczbowy, gdzie może zostać zmodyfikowana jak
+    liczba, żeby wykonać na niej działania arytmetyczne.
+- title: Dereferencja
   content_markdown: |
-    The process of accessing/manipulating data that is being referred to
-    by a *reference* (i.e. `&i32`) is called *dereferencing*. 
+    Proces uzyskiwania dostępu/manipulowania danymi, do których odnosi się
+    *referencja* (np. `&i32`), nazywamy *dereferencją*.
 
-    References are used to access/manipulate data in two ways:
-    * Access to the referred data during assignment of variables.
-    * Access to fields or methods of the referred data.
+    Referencje są używane do uzyskiwania dostępu/manipulowania danymi na
+    dwa sposoby:
+    * Dostęp do danych, do których się odnosimy, podczas przypisywania
+    zmiennych.
+    * Dostęp do pól lub metod danych, do których się odnosimy.
 
-    Rust has some powerful operators that allow us to do this.
-- title: The * Operator
+    Rust posiada kilka potężnych operatorów, które pozwalają nam to zrobić.
+- title: Operator *
+  code: |-
+    fn main() {
+        let a: i32 = 42;
+        let ref_ref_ref_a: &&&i32 = &&&a;
+        let ref_a: &i32 = **ref_ref_ref_a;
+        let b: i32 = *ref_a;
+        println!("{}", b)
+    }
   content_markdown: >
-    The `*` operator is an explicit way to dereference a reference. 
+    Operator `*` to jawny sposób na dereferencję referencji.
 
 
     ```rust
@@ -92,16 +98,25 @@
     ```
 
 
-    Memory detail:
+    Kilka szczegółów dotyczących pamięci:
 
-    - Because i32 is a primitive type that implements the `Copy` trait, 
+    - Ponieważ i32 jest typem prymitywnym, który implementuje cechę
+    `Copy`, bajty zmiennej `a` na stosie zostają skopiowane do bajtów
+    zmiennej `b`.
+- title: Operator .
+  code: |-
+    struct Foo {
+        value: i32
+    }
 
-    the bytes of variable `a` on stack are copied into the bytes of variable
-    `b`.
-- title: The . Operator
+    fn main() {
+        let f = Foo { value: 42 };
+        let ref_ref_ref_f = &&&f;
+        println!("{}", ref_ref_ref_f.value);
+    }
   content_markdown: >
-    The `.` operator is used in accessing fields and methods of a reference. It
-    works a bit more subtly.
+    Operator `.` jest używany do uzyskiwania dostępu do pól i metod
+    referencji. Działa on odrobinę bardziej subtelnie.
 
 
     ```rust
@@ -114,11 +129,11 @@
 
     ```
 
-    Whoa, why didn't we need to add `***` before `ref_ref_ref_f`? This is
-    because the `.` operator automatically dereferences 
 
-    a sequence of references. That last line is turned into the following by the
-    compiler automatically.
+    O rety, dlaczego nie musieliśmy dodać `***` przed `ref_ref_ref_f`?
+    Dzieje się tak dlatego, że operator `.` automatycznie dereferencjonuje
+    sekwencję referencji. Ta ostatnia linia zostaje automatycznie
+    zamieniona przez kompilator na poniższą:
 
 
     ```rust
@@ -126,7 +141,7 @@
     println!("{}", (***ref_ref_ref_f).value);
 
     ```
-- title: Smart Pointers
+- title: Inteligentne Wskaźniki
   code: |
     use std::ops::Deref;
     struct TattleTell<T> {
@@ -149,26 +164,24 @@
         println!("{}", foo.len());
     }
   content_markdown: >
-    In addition to the ability to create references to existing typed data using
-    the `&` operator, Rust gives us the ability
-
-    to create *reference-like* structs called **smart pointers**. 
-
-
-    We can think of references at a high level as a type that give us access to
-    another type.  Smart pointers are different in their 
-
-    behavior from normal references in that they operate based on internal logic
-    that a programmer writes. You — the programmer —
-
-    are the *smart* part.
+    Oprócz zdolności do tworzenia referencji do już istniejących,
+    otypowanych danych przy pomocy operatora `&`, Rust daje nam również
+    możliwość tworzenia struktur *podobnych do referencji*, zwanych
+    **inteligentnymi wskaźnikami**.
 
 
-    Typically smart pointers implement `Deref`, `DerefMut`, and `Drop` traits to
-    specify the logic of what should happen when
+    Możemy myśleć o referencjach na wysokim poziomie jak o typie, który
+    daje nam dostęp do innego typu. Inteligentne wskaźniki różnią się w
+    swoim zachowaniu od zwykłych referencji tym, że działają na podstawie
+    wewnętrznej logiki napisanej przez programistę. Ty - programista -
+    jesteś tą *inteligentną* częścią.
 
-    the structure is dereferenced with `*` and `.` operators.
-- title: Smart Unsafe Code
+
+    Zazwyczaj inteligentne wskaźniki implementują cechy `Deref`,
+    `DerefMut` oraz `Drop`, żeby określić logikę tego, co powinno się
+    wydarzyć, kiedy struktura zostaje zdereferencjonowana przy pomocy
+    operatorów `*` i `.`.
+- title: Inteligentny Kod Unsafe
   code: |
     fn main() {
         let a: [u8; 4] = [86, 14, 73, 64];
@@ -182,43 +195,39 @@
         let b = unsafe {
             // This is unsafe because we are telling the compiler
             // to assume our pointer is a valid f32 and
-            // dereference it's value into the variable b.
+            // dereference its value into the variable b.
             // Rust has no way to verify this assumption is true.
             *pointer_b
         };
         println!("I swear this is a pie! {}", b);
     }
   content_markdown: >
-    Smart pointers tend to use *unsafe* code fairly often. As mentioned
-    earlier, 
-
-    they are common tools for interacting with the lowest levels of memory in
-    Rust.
+    Inteligentne wskaźniki dość często korzystają z kodu *unsafe*. Jak
+    wspomniano wcześniej, są one popularnym narzędziem do interakcji z
+    najniższymi poziomami pamięci w Ruście.
 
 
-    What is unsafe code? Unsafe code behaves exactly like normal Rust with the
-    exception of a few abilities that
-
-    the Rust compiler is unable to make guarantees about.
-
-
-    A primary ability of unsafe code is *dereferencing a raw pointer*. That
-    means taking a *raw pointer* 
-
-    to a position in memory and declaring "a data structure exists here!" and
-    turning it into a representation of data you can use (i.e. `*const u8` into
-    `u8`). 
-
-    Rust has no way to keep track of the meaning of every byte that gets written
-    to memory. Because Rust can't make 
-
-    guarantees about what exists at an arbitrary number used as a *raw pointer*,
-    it puts the dereference in an `unsafe { ... }` block. 
+    Czym jest kod unsafe? Kod unsafe zachowuje się dokładnie tak samo jak
+    zwykły kod Rusta, z wyjątkiem kilku możliwości, co do których
+    kompilator Rusta nie jest w stanie zagwarantować bezpieczeństwa.
 
 
-    Smart pointers *dereference raw pointers* extensively, but they are well
-    proven in what they do.
-- title: Familiar Friends
+    Podstawową możliwością kodu unsafe jest *dereferencja surowego
+    wskaźnika*. Oznacza to wzięcie *surowego wskaźnika* wskazującego na
+    pozycję w pamięci i zadeklarowanie: "tutaj istnieje struktura danych!",
+    a następnie przekształcenie jej w reprezentację danych, których możesz
+    użyć (np. zamiana `*const u8` na `u8`).
+
+
+    Rust nie ma sposobu na śledzenie znaczenia każdego bajtu zapisanego do
+    pamięci. Ponieważ Rust nie może zagwarantować, co istnieje pod
+    dowolną liczbą użytą jako *surowy wskaźnik*, umieszcza on
+    dereferencję w bloku `unsafe { ... }`.
+
+
+    Inteligentne wskaźniki *dereferencjonują surowe wskaźniki* na dużą
+    skalę, ale są dobrze sprawdzone w tym, co robią.
+- title: Znajomi Przyjaciele
   code: |
     use std::alloc::{alloc, Layout};
     use std::ops::Deref;
@@ -262,40 +271,37 @@
         println!("{:?}", *p);
     }
   content_markdown: >
-    Consider some smart pointers we've already seen like `Vec<T>` and `String`.
+    Rozważmy kilka inteligentnych wskaźników, które już widzieliśmy, takie
+    jak `Vec<T>` czy `String`.
 
 
-    `Vec<T>` is a smart pointer that just owns some memory region of bytes. The
-    Rust compiler has no idea what 
-
-    exists in these bytes. The smart pointer interprets what it means to grab
-    items from the region of memory it manages,
-
-    keeps track of where data structures within those bytes begin and end, and
-    then finally dereferences a raw pointer
-
-    into data structures into a nice clean ergonomic interface for us to use
-    (e.g. `my_vec[3]`).
+    `Vec<T>` to inteligentny wskaźnik, który po prostu posiada pewien
+    region pamięci złożony z bajtów. Kompilator Rusta nie ma pojęcia, co
+    istnieje w tych bajtach. Inteligentny wskaźnik interpretuje, co
+    oznacza pobranie elementów z regionu pamięci, którym zarządza,
+    śledzi, gdzie zaczynają się i kończą struktury danych wewnątrz tych
+    bajtów, a na końcu dereferencjonuje surowy wskaźnik na struktury
+    danych, tworząc ładny, przejrzysty i ergonomiczny interfejs, z którego
+    możemy korzystać (np. `my_vec[3]`).
 
 
-    Similarly, `String` keeps track of a memory region of bytes, and
-    programmatically restricts content written to it to always
-
-    be valid `utf-8` and helps dereference that memory region into a type
-    `&str`.
-
-
-    Both these datastructures use unsafe dereferencing of raw pointers to do
-    their job.
+    Podobnie, `String` śledzi region pamięci złożony z bajtów i
+    programistycznie ogranicza treść zapisywaną w nim, tak, żeby zawsze
+    stanowiła poprawne kodowanie `utf-8`, oraz pomaga dereferencjonować
+    ten region pamięci do typu `&str`.
 
 
-    Memory details:
+    Obie te struktury danych korzystają z niebezpiecznej (unsafe)
+    dereferencji surowych wskaźników, żeby wykonać swoją pracę.
 
-    * Rust has an equivalent of C's `malloc` using
-    [alloc](https://doc.rust-lang.org/std/alloc/fn.alloc.html) and
-    [Layout](https://doc.rust-lang.org/std/alloc/struct.Layout.html ) for
-    getting ahold of your own memory regions to manage.
-- title: Heap Allocated Memory
+
+    Kilka szczegółów dotyczących pamięci:
+
+    * Rust posiada odpowiednik funkcji `malloc` z C, korzystając z
+    [alloc](https://doc.rust-lang.org/std/alloc/fn.alloc.html) oraz
+    [Layout](https://doc.rust-lang.org/std/alloc/struct.Layout.html), żeby
+    uzyskać dostęp do własnych regionów pamięci, którymi możesz zarządzać.
+- title: Pamięć Alokowana Na Stercie
   code: |
     struct Pie;
 
@@ -310,14 +316,15 @@
         heap_pie.eat();
     }
   content_markdown: >
-    `Box` is a smart pointer that lets us move data from the stack to the heap.
+    `Box` to inteligentny wskaźnik, który pozwala nam przenieść dane ze
+    stosu na stertę.
 
 
-    Dereferencing it lets us use the heap allocated data ergonomically as if it
-    were the original type.
-- title: Failable Main Revisited
+    Dereferencjonowanie go pozwala nam używać danych zaalokowanych na
+    stercie w ergonomiczny sposób, tak, jakby to był oryginalny typ.
+- title: Funkcja Main, Która Może Zawieść, Ponownie
   code: |
-    use core::fmt::Display;
+    use std::fmt::Display;
     use std::error::Error;
 
     struct Pie;
@@ -345,27 +352,22 @@
         Ok(())
     }
   content_markdown: >
-    Rust code may have a plethora of representations of errors, but the standard
-    library has
-
-    a universal trait `std::error::Error` for describing errors.
-
-
-    Using a smart pointer `Box` we can use the type `Box<dyn std::error::Error>`
-    as a common type for returning errors because it allows us to
-
-    propagate up an error on the heap and interact with it at a high level
-    without having to know a specific type.
+    Kod Rusta może mieć wiele różnych reprezentacji błędów, ale biblioteka
+    standardowa posiada uniwersalną cechę `std::error::Error` do opisywania
+    błędów.
 
 
-    Early in Tour of Rust we learned that `main` can return an error. We can now
-    return
+    Korzystając z inteligentnego wskaźnika `Box`, możemy użyć typu
+    `Box<dyn std::error::Error>` jako wspólnego typu do zwracania błędów,
+    ponieważ pozwala nam to propagować błąd na stercie i wchodzić z nim w
+    interakcję na wysokim poziomie, bez potrzeby znajomości konkretnego
+    typu.
 
-    a type capable of describing almost any kind of error that might occur in
-    our program 
 
-    so long as the error's data structure implements Rust's common `Error`
-    trait.
+    Na początku Tour of Rust dowiedzieliśmy się, że `main` może zwrócić
+    błąd. Teraz możemy zwrócić typ zdolny opisać niemal każdy rodzaj błędu,
+    jaki może wystąpić w naszym programie, o ile struktura danych tego
+    błędu implementuje wspólną dla Rusta cechę `Error`.
 
 
     ```rust
@@ -373,7 +375,7 @@
     fn main() -> Result<(), Box<dyn std::error::Error>>
 
     ```
-- title: Referencing Counting
+- title: Liczenie Referencji
   code: |
     use std::rc::Rc;
 
@@ -398,18 +400,15 @@
         // the heap data Pie finally deallocates
     }
   content_markdown: >
-    `Rc` is a smart pointer that moves data from the stack onto the heap. It
-    allows us to 
-
-    clone other `Rc` smart pointers that all have the ability to immutably
-    borrow the data 
-
-    that was put on the heap.
+    `Rc` to inteligentny wskaźnik, który przenosi dane ze stosu na stertę.
+    Pozwala nam on klonować inne inteligentne wskaźniki `Rc`, które
+    wszystkie mają zdolność do niemutowalnego pożyczania danych
+    umieszczonych na stercie.
 
 
-    Only when the last smart pointer is dropped does the data on the heap become
-    deallocated.
-- title: Sharing Access
+    Dopiero kiedy ostatni inteligentny wskaźnik zostaje wypuszczony, dane
+    na stercie zostają zdealokowane.
+- title: Współdzielony Dostęp
   code: |
     use std::cell::RefCell;
 
@@ -443,24 +442,20 @@
          println!("{} slices left",ref_pie.slices);
     }
   content_markdown: >
-    `RefCell` is a container data structure commonly held by smart pointers that
-    takes in data and lets us
-
-    borrow mutable and immutable references to what's inside. It prevents
-    borrowing from
-
-    being abused by enforcing Rust's memory safety rules at runtime when you ask
-    to borrow
-
-    the data within:
+    `RefCell` to kontenerowa struktura danych, zazwyczaj przechowywana
+    przez inteligentne wskaźniki, która przyjmuje dane i pozwala nam
+    pożyczać mutowalne i niemutowalne referencje do tego, co znajduje się
+    w środku. Zapobiega ona nadużywaniu pożyczania, egzekwując zasady
+    bezpieczeństwa pamięci Rusta w czasie wykonania, w momencie, gdy prosisz
+    o pożyczenie znajdujących się w niej danych:
 
 
-    **Only one mutable reference OR multiple immutable references, but not
-    both!**
+    **Tylko jedna mutowalna referencja ALBO wiele niemutowalnych
+    referencji, ale nigdy jedno i drugie naraz!**
 
 
-    If you violate these rules `RefCell` will panic.
-- title: Sharing Across Threads
+    Jeśli złamiesz te zasady, `RefCell` zapanikuje.
+- title: Współdzielenie Pomiędzy Wątkami
   code: |
     use std::sync::Mutex;
 
@@ -482,30 +477,28 @@
         // locked reference drops here, and mutex protected value can be used by someone else
     }
   content_markdown: >
-    `Mutex` is a container data structure commonly held by smart pointers that
-    takes in data and lets us borrow mutable
-
-    and immutable references to the data within. This prevents borrowing from
-    being abused by 
-
-    having the operating system restrict only one CPU thread at time to have
-    access to the data, 
-
-    blocking other threads until that original thread is done with its locked
-    borrow.
+    `Mutex` to kontenerowa struktura danych, zazwyczaj przechowywana przez
+    inteligentne wskaźniki, która przyjmuje dane i pozwala nam pożyczać
+    mutowalne i niemutowalne referencje do danych znajdujących się w
+    środku. Zapobiega to nadużywaniu pożyczania poprzez to, że system
+    operacyjny ogranicza dostęp do danych w danym momencie tylko do
+    jednego wątku procesora, blokując inne wątki, dopóki ten oryginalny
+    wątek nie zakończy swojego zablokowanego pożyczenia.
 
 
-    Multithreading is beyond the scope of Tour of Rust, but `Mutex` is a
-    fundamental part of orchestrating
+    Wielowątkowość wykracza poza zakres Tour of Rust, ale `Mutex` jest
+    fundamentalną częścią koordynowania wielu wątków procesora
+    uzyskujących dostęp do tych samych danych.
 
-    multiple CPU threads accessing the same data.
+
+    Istnieje specjalny inteligentny wskaźnik `Arc`, identyczny z `Rc`, z
+    tą różnicą, że korzysta z bezpiecznego dla wątków inkrementowania
+    liczby referencji.
 
 
-    There is a special smart pointer `Arc` which is identical to `Rc` except
-    uses thread-safe incrementing of reference counts. 
-
-    It's often used to have many references to the same `Mutex`.
-- title: Combining Smart Pointers
+    Jest on często używany, kiedy chcemy mieć wiele referencji do tego
+    samego `Mutex`a.
+- title: Łączenie Inteligentnych Wskaźników
   code: |
     use std::cell::RefCell;
     use std::rc::Rc;
@@ -553,41 +546,41 @@
         println!("{} slices left", p.slices);
     }
   content_markdown: >
-    Smart pointers might seem limited, but they can make some very powerful
-    combinations.
+    Inteligentne wskaźniki mogą wydawać się ograniczone, ale potrafią
+    tworzyć bardzo potężne kombinacje.
 
 
-    `Rc<Vec<Foo>>` - Allow the cloning of multiple smart pointers that can
-    borrow the same vector of immutable data structures on the heap.
+    `Rc<Vec<Foo>>` - Pozwala na klonowanie wielu inteligentnych
+    wskaźników, które mogą pożyczać ten sam wektor niemutowalnych struktur
+    danych na stercie.
 
 
-    `Rc<RefCell<Foo>>` - Allow multiple smart pointers the ability to borrow
-    mutably/immutably the same struct `Foo`
+    `Rc<RefCell<Foo>>` - Pozwala wielu inteligentnym wskaźnikom na zdolność
+    do mutowalnego/niemutowalnego pożyczania tej samej struktury `Foo`.
 
 
-    `Arc<Mutex<Foo>>` - Allow multiple smart pointers the ability to lock
-    temporary mutable/immutable borrows in a CPU thread exclusive manner.
+    `Arc<Mutex<Foo>>` - Pozwala wielu inteligentnym wskaźnikom na zdolność
+    do blokowania tymczasowych mutowalnych/niemutowalnych pożyczeń w
+    sposób wyłączny dla danego wątku procesora.
 
 
-    Memory detail:
+    Kilka szczegółów dotyczących pamięci:
 
-    * You'll notice a theme with many of these combinations. The use of a
-    immutable data type (possibly owned by multiple smart pointers) to modify
-    internal data. This 
-      is referred to as the "interior mutability" pattern in Rust. It is a pattern that lets us bend the rules of memory usage at runtime with the same level of safety as Rust's
-      compile-time checks.
-
-- title: Chapter 8 - Conclusion
+    * Zauważysz powtarzający się motyw w wielu z tych kombinacji. Użycie
+    niemutowalnego typu danych (być może posiadanego przez wiele
+    inteligentnych wskaźników) do modyfikacji danych wewnętrznych. Nazywa
+    się to w Ruście wzorcem "wewnętrznej mutowalności" (ang. *interior
+    mutability*). Jest to wzorzec, który pozwala nam obchodzić zasady
+    użycia pamięci w czasie wykonania, z tym samym poziomem
+    bezpieczeństwa, co kontrole Rusta wykonywane w czasie kompilacji.
+- title: Rozdział 8 - Podsumowanie
   content_markdown: >
-    Smart pointers are the idioms of Rust programming and let us not have to
-    re-create the 
+    Inteligentne wskaźniki są idiomami programowania w Ruście i pozwalają
+    nam nie odtwarzać wciąż od nowa bardzo popularnych wzorców użycia
+    pamięci. Dzięki nim jesteś gotowy, żeby zmierzyć się z najtrudniejszymi
+    wyzwaniami!
 
-    very common patterns of memory usage. With them you are ready to tackle the
-    toughest of
 
-    challenges! Now that we have the foundations of Rust, let's talk a bit about
-    how we make 
-
-    larger projects. In chapter 9 we break free of single page
-
-    lines of code.
+    Teraz, kiedy mamy już podstawy Rusta, porozmawiajmy trochę o tym, jak
+    tworzymy większe projekty. W rozdziale 9 uwalniamy się od pisania kodu
+    w jednym, pojedynczym pliku.
