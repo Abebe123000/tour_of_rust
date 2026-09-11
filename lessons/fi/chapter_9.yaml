@@ -1,0 +1,189 @@
+- title: Kappale 9 - Projektin Organisointi Ja Rakenne
+  content_markdown: >
+    Tähän asti kaikki koodiesimerkkimme ovat olleet yhdessä
+    tiedostossa. Keskustellaan siitä, miten koodimme voidaan
+    organisoida paremmin ja jakaa muiden kanssa!
+- title: Moduulit
+  content_markdown: |
+    Jokainen Rust-ohjelma tai -kirjasto on *crate*.
+
+    Jokainen crate koostuu *moduulien* hierarkiasta.
+
+    Jokaisella cratella on juurimoduuli (root module).
+
+    Moduuli voi sisältää globaaleja muuttujia, funktioita, structeja,
+    traitteja tai jopa muita moduuleja!
+
+    Rustissa tiedostojen ja moduulipuun hierarkian välillä ei ole
+    yksi yhteen -vastaavuutta. Meidän täytyy rakentaa moduulipuu
+    eksplisiittisesti, käsin, koodissamme.
+- title: Ohjelman Kirjoittaminen
+  content_markdown: |
+    Ohjelmalla on juurimoduuli tiedostossa nimeltä `main.rs`.
+- title: Kirjaston Kirjoittaminen
+  content_markdown: |
+    Kirjastolla on juurimoduuli tiedostossa nimeltä `lib.rs`.
+- title: Viittaaminen Muihin Moduuleihin Ja Crateihin
+  code: |
+    use std::f64::consts::PI;
+
+    fn main() {
+        println!("Welcome to the playground!");
+        println!("I would love a slice of {}!", PI);
+    }
+  content_markdown: >
+    Moduulien sisällä oleviin kohteisiin voidaan viitata niiden
+    täydellisellä moduulipolulla `std::f64::consts::PI`.
+
+
+    Yksinkertaisempi tapa on `use`-avainsana. Sen avulla voimme
+    määrittää tiettyjä kohteita moduuleista, joita haluamme käyttää
+    koko koodissamme ilman täyttä polkua. Esimerkiksi `use
+    std::f64::consts::PI` antaa minun käyttää pelkkää tunnistetta
+    `PI` main-funktiossani.
+
+
+    **std** on Rustin **standardikirjaston** crate, joka on täynnä
+    hyödyllisiä tietorakenteita ja funktioita käyttöjärjestelmäsi
+    kanssa vuorovaikutukseen.
+
+
+    Yhteisön luomien crateiden haettavan hakemiston löydät osoitteesta
+    [https://crates.io](https://crates.io/).
+- title: Useisiin Kohteisiin Viittaaminen
+  content_markdown: |
+    Useisiin kohteisiin voidaan viitata yhdessä moduulipolussa näin:
+
+    ```rust
+    use std::f64::consts::{PI,TAU}
+    ```
+
+    Ferris ei syö TAU:ta, hän syö vain PI:tä.
+- title: Moduulien Luominen
+  content_markdown: |
+    Kun ajattelemme koodia, kuvittelemme yleensä tiedostohierarkian,
+    joka on organisoitu hakemistoihin. Rust antaa sinun luoda
+    moduuleja, jotka liittyvät läheisesti tiedostorakenteeseesi.
+
+    Rustissa on kaksi tapaa julistaa moduuli. Esimerkiksi moduuli
+    `foo` voidaan esittää seuraavasti:
+      * tiedostona nimeltä `foo.rs`
+      * hakemistona nimeltä `foo`, jonka sisällä on tiedosto `mod.rs`
+- title: Moduulihierarkia
+  content_markdown: >
+    Moduuli voi olla riippuvainen toisesta. Suhteen luomiseksi
+    moduulin ja sen alimoduulin välille, sinun täytyy kirjoittaa
+    vanhempaan moduuliin:
+
+
+    ```rust
+
+    mod foo;
+
+    ```
+
+
+    Yllä oleva julistus etsii tiedostoa nimeltä `foo.rs` tai
+    `foo/mod.rs`, ja lisää sen sisällön `foo`-nimisen moduulin
+    sisälle tähän näkyvyysalueeseen.
+- title: Sisäkkäinen Moduuli
+  content_markdown: >
+    Alimoduuli voidaan sijoittaa suoraan moduulin koodin sisälle
+    (inline).
+
+
+    Yksi hyvin yleinen käyttötapa sisäkkäisille moduuleille on
+    yksikkötestien luominen. Luomme sisäkkäisen moduulin, joka on
+    olemassa vain kun Rustia käytetään testaukseen!
+
+
+    ```
+
+    // This macro removes this inline module when Rust
+
+    // is not in test mode.
+
+    #[cfg(test)]
+
+    mod tests {
+        // Notice that we don't immediately get access to the
+        // parent module. We must be explicit.
+        use super::*;
+
+        ... tests go here ...
+    }
+
+    ```
+- title: Sisäiset Moduuliviittaukset
+  content_markdown: >
+    Rustissa on useita avainsanoja, joita voit käyttää `use`-
+    polussasi päästäksesi nopeasti käsiksi haluamaasi moduuliin:
+
+
+    * `crate` - cratesi juurimoduuli
+
+    * `super` - nykyisen moduulisi vanhempi moduuli
+
+    * `self` - nykyinen moduuli
+- title: Vienti
+  content_markdown: >
+    Oletuksena *moduulin* jäsenet eivät ole käytettävissä moduulin
+    ulkopuolelta (eivät edes sen lapsimoduuleista!). Teemme moduulin
+    jäsenet käytettäviksi käyttämällä avainsanaa `pub`.
+
+
+    Oletuksena *cratelin* jäsenet eivät ole käytettävissä cratelin
+    ulkopuolella. Teemme cratelin jäsenet käytettäviksi merkitsemällä
+    ne `pub`:iksi cratesi *juurimoduulissa* (`lib.rs` tai `main.rs`).
+- title: Structien Näkyvyys
+  content_markdown: >
+    Aivan kuten funktiot, myös structit voivat julistaa, mitä ne
+    haluavat paljastaa moduulinsa ulkopuolelle käyttämällä `pub`:ia.
+  code: |
+    // SeaCreature struct will be usable outside of our module
+    pub struct SeaCreature {
+        pub animal_type: String,
+        pub name: String,
+        pub arms: i32,
+        pub legs: i32,
+        // let's keep our weapon private
+        weapon: String,
+    }
+- title: Prelude
+  content_markdown: |
+    Saatat ihmetellä, miten meillä on pääsy `Vec`:iin tai `Box`:iin
+    kaikkialla ilman `use`:a tuomaan niitä. Tämä johtuu
+    standardikirjaston `prelude`-moduulista.
+
+    Tiedä, että Rustin standardikirjastossa kaikki, mikä on viety
+    `std::prelude::*`:ssa, on automaattisesti käytettävissä kaikkialla
+    Rustissa. Näin on `Vec`:in ja `Box`:in kohdalla, mutta myös
+    muiden (Option, Copy, jne.).
+- title: Oma Preludesi
+  content_markdown: >
+    Standardikirjaston preluden ansiosta on yleistä, että kirjastollasi
+    on oma prelude-moduulinsa lähtökohtana, josta käyttäjien tulisi
+    tuoda kaikki yleisimmät tietorakenteet kirjastosi käyttämiseksi
+    (esim. `use my_library::prelude::*`).
+
+
+    Sitä ei käytetä automaattisesti ohjelmissa/kirjastoissa, jotka
+    käyttävät cratesiasi, mutta se on hyvä käytäntö, jotta ihmiset
+    tietävät, mistä aloittaa.
+
+
+    Ferris sanoo: "Ole hyvä rustacean ja auta toveriravun kaveria
+    hyvällä preludella!"
+- title: Kappale 9 - Päätelmä
+  content_markdown: >
+    Sinulla on nyt muutamia niksejä hihassasi, kun on kyse Rust-
+    sovellusten ja -kirjastojen luomisesta, jotka ovat valmiita
+    maailmaan. Älä huoli kaiken muistamisesta. Kun kirjastosi kasvaa
+    ja sitä käyttävät muut ihmiset, huomaat mikä toimii parhaiten
+    kussakin vaiheessa.
+
+
+    Resursseja:
+
+    - [Guidelines For Writing Rust
+    APIs](https://rust-lang.github.io/api-guidelines/)
