@@ -1,40 +1,39 @@
-- title: Kapitel 5 - Eigentums- und Kreditdaten
+- title: Kapitel 5 - Eigentum & Ausleihen von Daten
   content_markdown: >
-    Rust verfügt im Vergleich zu anderen Programmen über ein einzigartiges Paradigma für die
-    Speicherverwaltung Sprachen. Wir werden uns das ansehen
-
-    die Verhaltensweisen und Validierungen des Compilers nacheinander, also nicht
-    überwältigend. Es ist wichtig, sich daran zu erinnern
-
-    Letztlich dienen die Regeln, die wir aufzeigen, nicht dazu, Ihnen das Leben schwer zu machen, sondern um Ihnen zu helfen
-    Sie machen Ihren Code weniger fehleranfällig!
+    Rust hat im Vergleich zu anderen Programmiersprachen ein einzigartiges
+    Paradigma für die Speicherverwaltung. Wir werden uns die Verhaltensweisen
+    und Validierungen des Compilers nach und nach ansehen, damit es nicht
+    überwältigend wird. Es ist wichtig, sich daran zu erinnern, dass die
+    Regeln, die wir zeigen, letztendlich nicht dazu da sind, Dir das Leben
+    schwer zu machen, sondern Dir zu helfen, Deinen Code weniger
+    fehleranfällig zu machen!
 - title: Eigentum
   content_markdown: >
-    Durch die Instanziierung eines Typs und dessen **Bindung** an einen Variablennamen wird ein Speicher erstellt
-    Ressource, die der Rust-Compiler validiert
-    
-    durch sein ganzes **Leben**. Die gebundene Variable wird als Ressource bezeichnet
-    **Eigentümer**.
+    Das Instanziieren eines Typs und das **Binden** an einen Variablennamen
+    erzeugt eine Speicherressource, die der Rust-Compiler während ihrer
+    gesamten **Lebensdauer** (lifetime) validiert. Die gebundene Variable
+    wird der **Eigentümer** (owner) der Ressource genannt.
   code: |
     struct Foo {
         x: i32,
     }
 
     fn main() {
-        // Instanțiem structuri (Foo) și le legăm de variabile (foo)
-        // pentru a crea resurse în memorie
+        // We instantiate structs and bind to variables
+        // to create memory resources
         let foo = Foo { x: 42 };
-        // foo este proprietarul
+        // foo is the owner
     }
-- title: Bereichsbasiertes Ressourcenmanagement
+- title: Gültigkeitsbereich-Basiertes Ressourcenmanagement
   content_markdown: |
-    Rust verwendet das Ende des Gültigkeitsbereichs als Ort zum Dekonstruieren und Freigeben einer Ressource.
+    Rust verwendet das Ende eines Gültigkeitsbereichs (scope) als den Ort,
+    an dem eine Ressource dekonstruiert und freigegeben wird.
 
     Der Begriff für diese Dekonstruktion und Freigabe wird **Drop** genannt.
 
     Speicherdetail:
-    * Rust verfügt über keine Garbage Collection.
-    * Dies wird in C++ auch als Ressourcenbelegung ist Initialisierung (RAII) bezeichnet.
+    * Rust besitzt keine Garbage Collection.
+    * Dies wird in C++ auch als Resource Acquisition Is Initialization (RAII) bezeichnet.
   code: |
     struct Foo {
         x: i32,
@@ -47,21 +46,22 @@
         println!("{}", foo_a.x);
 
         println!("{}", foo_b.x);
-        // se renunță la foo_b aici
-        // se renunță la foo_a aici
+        // foo_b is dropped here 
+        // foo_a is dropped here
     }
-- title: Das Löschen ist hierarchisch
+- title: Fallenlassen Ist Hierarchisch
   content_markdown: >
-    Wenn eine Struktur gelöscht wird, wird zuerst die Struktur selbst und dann die Struktur selbst gelöscht
-    Kinder werden einzeln abgesetzt und so weiter.
+    Wenn ein Struct fallen gelassen (dropped) wird, wird zuerst das Struct
+    selbst fallen gelassen, dann werden seine Kinder einzeln fallen
+    gelassen, und so weiter.
 
 
     Speicherdetails:
 
-    * Durch die automatische Freigabe von Speicher trägt Rust dazu bei, dass es weniger Speicher gibt
-    Speicherlecks.
+    * Indem Speicher automatisch freigegeben wird, hilft Rust dabei
+    sicherzustellen, dass es weniger Speicherlecks gibt.
 
-    * Speicherressourcen können nur einmal gelöscht werden.
+    * Speicherressourcen können nur einmal fallen gelassen werden.
   code: |
     struct Bar {
         x: i32,
@@ -74,22 +74,24 @@
     fn main() {
         let foo = Foo { bar: Bar { x: 42 } };
         println!("{}", foo.bar.x);
-        // se renunță la foo mai întâi
-        // apoi se renunță la foo.bar
+        // foo is dropped first
+        // then foo.bar is dropped
     }
-- title: Eigentumsübertragung
+- title: Eigentum Verschieben
   content_markdown: >
-    Wenn ein Eigentümer als Argument an eine Funktion übergeben wird, wird der Eigentümer dorthin verschoben
-    der Funktionsparameter.
+    Wenn ein Eigentümer als Argument an eine Funktion übergeben wird, wird
+    das Eigentum auf den Funktionsparameter verschoben.
 
-    Nach einer **Verschiebung** kann die Variable in der ursprünglichen Funktion nicht mehr vorhanden sein
-    gebraucht.
+
+    Nach einer **Verschiebung** (move) kann die Variable in der
+    ursprünglichen Funktion nicht mehr verwendet werden.
 
 
     Speicherdetails:
 
-    * Während einer **Verschiebung** wird der Stapelspeicher des Eigentümerwerts in den kopiert
-    Parameterstapelspeicher des Funktionsaufrufs.
+    * Während einer **Verschiebung** wird der Stack-Speicher des
+    Eigentümerwerts in den Stack-Speicher des Parameters des Funktionsaufrufs
+    kopiert.
   code: |
     struct Foo {
         x: i32,
@@ -97,18 +99,18 @@
 
     fn do_something(f: Foo) {
         println!("{}", f.x);
-        // se renunță la f aici
+        // f is dropped here
     }
 
     fn main() {
         let foo = Foo { x: 42 };
-        // foo este cedat funcției do_something
+        // foo is moved to do_something
         do_something(foo);
-        // foo nu mai poate fi folosit
+        // foo can no longer be used
     }
-- title: Rückgabe des Eigentums
+- title: Eigentum Zurückgeben
   content_markdown: |
-    Der Besitz kann auch von einer Funktion zurückgegeben werden.
+    Eigentum kann auch von einer Funktion zurückgegeben werden.
   code: |
     struct Foo {
         x: i32,
@@ -116,19 +118,20 @@
 
     fn do_something() -> Foo {
         Foo { x: 42 }
-        // proprietatea este cedată
+        // ownership is moved out
     }
 
     fn main() {
         let foo = do_something();
-        // foo devine proprietar
-        // se renunță la foo din cauza terminării funcției
+        // foo becomes the owner
+        // foo is dropped because of end of function scope
     }
-- title: Eigentumsleihe mit Referenzen
+- title: Eigentum Mit Referenzen Ausleihen
   content_markdown: |
-    Referenzen ermöglichen uns den Zugriff auf eine Ressource mit dem Operator '&'.
+    Referenzen erlauben es uns, mit dem Operator `&` Zugriff auf eine
+    Ressource zu leihen (borrow).
 
-    Referenzen werden ebenso gelöscht wie andere Ressourcen.
+    Referenzen werden ebenfalls fallen gelassen, wie andere Ressourcen auch.
   code: |
     struct Foo {
         x: i32,
@@ -138,21 +141,24 @@
         let foo = Foo { x: 42 };
         let f = &foo;
         println!("{}", f.x);
-        // se renunță la f aici
-        // se renunță la foo aici
+        // f is dropped here
+        // foo is dropped here
     }
-- title: Veränderliches Eigentum mit Referenzen ausleihen
+- title: Veränderliches Eigentum Mit Referenzen Ausleihen
   content_markdown: >
-    Mit dem Operator „&mut“ können wir auch veränderlichen Zugriff auf eine Ressource ausleihen.
+    Wir können mit dem Operator `&mut` auch veränderlichen (mutable) Zugriff
+    auf eine Ressource leihen.
 
 
-    Ein Ressourceneigentümer kann nicht verschoben oder geändert werden, während er veränderlich ausgeliehen ist.
+    Ein Ressourceneigentümer kann nicht verschoben oder verändert werden,
+    während er veränderlich ausgeliehen ist.
 
 
     Speicherdetail:
 
-    * Rust verhindert, dass es zwei Möglichkeiten gibt, einen eigenen Wert zu ändern
-    führt die Möglichkeit eines Datenwettlaufs ein.
+    * Rust verhindert, dass es zwei Wege gibt, einen im Eigentum stehenden
+    Wert zu verändern, weil dies die Möglichkeit eines Data Race einführen
+    würde.
   code: |
     struct Foo {
         x: i32,
@@ -160,69 +166,74 @@
 
     fn do_something(f: Foo) {
         println!("{}", f.x);
-        // se renunță la f aici
+        // f is dropped here
     }
 
     fn main() {
         let mut foo = Foo { x: 42 };
         let f = &mut foo;
 
-        // EȘEC: do_something(foo) va eșua pentru că
-        // foo nu poate fi mutat în timp ce este împrumutat în mod mutabil
+        // FAILURE: do_something(foo) would fail because
+        // foo cannot be moved while mutably borrowed
 
-        // EȘEC: foo.x = 13; va eșua aici pentru că
-        // foo nu poate fi modificat în timp ce este împrumutat în mod mutabil
+        // FAILURE: foo.x = 13; would fail here because
+        // foo is not modifiable while mutably borrowed
 
         f.x = 13;
-        // se renunță la f aici pentru că nu mai este folosit dupa acest moment
+        // f is dropped here because it's no longer used after this point
         
         println!("{}", foo.x);
         
-        // acest lucru funcționează pentru s-a renunțat la toate referințele mutabile
+        // this works now because all mutable references were dropped
         foo.x = 7;
         
-        // cedăm proprietatea lui foo într-o funcție
+        // move foo's ownership to a function
         do_something(foo);
     }
-- title: Dereferenzierung
+- title: Dereferenzieren
   content_markdown: >
-    Mithilfe von '&mut'-Referenzen können Sie den Wert des Eigentümers mithilfe des '*'' festlegen
-    Operator.
+    Mit `&mut`-Referenzen kannst Du den Wert des Eigentümers mit dem
+    Operator `*` setzen.
 
 
-    Sie können auch eine Kopie eines eigenen Werts erhalten, indem Sie den Operator '*'' verwenden (wenn der Wert
-    können kopiert werden (wir werden kopierbare Typen in späteren Kapiteln besprechen).
+    Du kannst mit dem Operator `*` auch eine Kopie eines im Eigentum
+    stehenden Werts erhalten (wenn der Wert kopiert werden kann - wir werden
+    kopierbare Typen in späteren Kapiteln besprechen).
   code: |
     fn main() {
         let mut foo = 42;
         let f = &mut foo;
-        let bar = *f; // primim o copie a valorii proprietarului
-        *f = 13;      // setăm valoarea proprietarului prin referință
+        let bar = *f; // get a copy of the owner's value
+        *f = 13;      // set the reference's owner's value
         println!("{}", bar);
         println!("{}", foo);
     }
-- title: Weitergabe geliehener Daten
+- title: Umgang Mit Geliehenen Daten
   content_markdown: >
-    Rusts Regeln für Referenzen lassen sich am besten wie folgt zusammenfassen:
-
-    * Rust erlaubt nur eine veränderbare Referenz **oder** mehrere
-    nicht veränderliche Referenzen **aber nicht beides**.
-
-    * Eine Referenz darf niemals **länger leben** als ihr Besitzer.
+    Rusts Regeln für Referenzen lassen sich am besten so zusammenfassen:
 
 
-    Dies stellt in der Regel kein Problem dar, wenn Verweise weitergegeben werden Funktionen.
+    * Rust erlaubt entweder nur eine veränderliche Referenz **oder**
+    mehrere nicht-veränderliche Referenzen, **aber nicht beides**.
+
+    * Eine Referenz darf niemals **länger leben** als ihr Eigentümer.
+
+
+    Das ist in der Regel kein Problem, wenn Referenzen an Funktionen
+    weitergegeben werden.
 
 
     Speicherdetails:
 
-    * Die erste Referenzregel verhindert Datenwettläufe. Was ist ein Datenwettlauf? A
-    Beim Datenwettlauf kann es beim Lesen von Daten zu Abweichungen kommen
-    aufgrund der gleichzeitigen Existenz eines Schreibers für die Daten. Das passiert
-    häufig in der Multithread-Programmierung.
+    * Die erste Regel für Referenzen verhindert Data Races. Was ist ein
+    Data Race? Ein Data Race entsteht, wenn beim Lesen von Daten die
+    Möglichkeit besteht, dass diese nicht synchron sind, weil gleichzeitig
+    ein Schreibzugriff auf die Daten existiert. Das passiert häufig in der
+    Multithread-Programmierung.
 
-    * Die zweite Referenzregel verhindert den Missbrauch von Referenzen, die verweisen
-    auf nicht vorhandene Daten (in C baumelnde Zeiger genannt).
+    * Die zweite Regel für Referenzen verhindert den Missbrauch von
+    Referenzen, die auf nicht mehr existierende Daten verweisen (in C
+    "dangling pointers" genannt).
   code: |
     struct Foo {
         x: i32,
@@ -230,20 +241,20 @@
 
     fn do_something(f: &mut Foo) {
         f.x += 1;
-        // se renunță la referința mutabilă f aici
+        // mutable reference f is dropped here
     }
 
     fn main() {
         let mut foo = Foo { x: 42 };
         do_something(&mut foo);
-        // pentru că se renunță la toate referințele mutabile
-        // în cadrul funcției do_something, putem crea alta
+        // because all mutable references are dropped within
+        // the function do_something, we can create another.
         do_something(&mut foo);
-        // se renunță la foo aici
+        // foo is dropped here
     }
-- title: Referenzen von Referenzen
+- title: Referenzen Von Referenzen
   content_markdown: |
-    Referenzen können sogar auf Referenzteile verwendet werden.
+    Referenzen können sogar auf Teile von Referenzen angewendet werden.
   code: |
     struct Foo {
         x: i32,
@@ -257,32 +268,33 @@
         let mut foo = Foo { x: 42 };
         let x = &mut foo.x;
         *x = 13;
-        // se renunță la x aici și putem crea o referință imutabilă
+        // x is dropped here allow us to create a non-mutable reference
         let y = do_something(&foo);
         println!("{}", y);
-        // se renunță la y aici
-        // se renunță la foo aici
+        // y is dropped here
+        // foo is dropped here
     }
-- title: Explizite Lebenszeiten
+- title: Explizite Lebensdauern
   content_markdown: >
-    Auch wenn Rust es nicht immer im Code anzeigt, versteht der Compiler es
-    die Lebensdauer jeder Variablen und wird versucht
-
-    um zu bestätigen, dass eine Referenz nie länger existiert als ihr Besitzer.
-
-    Funktionen können explizit sein, indem die Funktionssignatur mit parametrisiert wird
-    Symbole, die bei der Identifizierung helfen
-
-    welche Parameter und Rückgabewerte dieselbe Lebensdauer haben.
+    Auch wenn Rust es nicht immer im Code anzeigt, versteht der Compiler
+    die Lebensdauer (lifetime) jeder Variable und wird versuchen zu
+    validieren, dass eine Referenz niemals länger existiert als ihr
+    Eigentümer.
 
 
-    Lebensdauerspezifizierer beginnen immer mit einem `'` (z. B. `'a`, `'b`, `'c`).
+    Funktionen können explizit sein, indem die Funktionssignatur mit
+    Symbolen parametrisiert wird, die dabei helfen zu erkennen, welche
+    Parameter und Rückgabewerte dieselbe Lebensdauer teilen.
+
+
+    Lebensdauer-Spezifizierer beginnen immer mit einem `'` (z. B. `'a`,
+    `'b`, `'c`)
   code: |
     struct Foo {
         x: i32,
     }
 
-    // parametrul foo și valoarea de retur au aceeași durată de viață
+    // the parameter foo and return value share the same lifetime
     fn do_something<'a>(foo: &'a Foo) -> &'a i32 {
         return &foo.x;
     }
@@ -291,25 +303,25 @@
         let mut foo = Foo { x: 42 };
         let x = &mut foo.x;
         *x = 13;
-        // se renunță la x aici, deci putem crea o referință imutabilă
+        // x is dropped here, allowing us to create a non-mutable reference
         let y = do_something(&foo);
         println!("{}", y);
-        // se renunță la y aici
-        // se renunță la foo aici
+        // y is dropped here
+        // foo is dropped here
     }
-- title: Mehrere Leben
+- title: Mehrere Lebensdauern
   content_markdown: >
-    Lebensdauerspezifizierer ermöglichen es uns, bestimmte Szenarien explizit zu definieren
-    Der Compiler kann sich nicht selbst auflösen
-
-    durch Unterscheidung aller Lebensdauern einer Funktionssignaturkomponente.
+    Lebensdauer-Spezifizierer erlauben es uns, bei bestimmten Szenarien,
+    die der Compiler nicht selbst auflösen kann, explizit zu sein, indem
+    wir alle Lebensdauern der Bestandteile einer Funktionssignatur
+    unterscheiden.
   code: |
     struct Foo {
         x: i32,
     }
 
-    // foo_b și valoarea de retur au aceeași durată de viață
-    // foo_a are o durată de viață fără legătură cu foo_b
+    // foo_b and the return value share the same lifetime
+    // foo_a has an unrelated lifetime
     fn do_something<'a, 'b>(foo_a: &'a Foo, foo_b: &'b Foo) -> &'b i32 {
         println!("{}", foo_a.x);
         println!("{}", foo_b.x);
@@ -320,79 +332,80 @@
         let foo_a = Foo { x: 42 };
         let foo_b = Foo { x: 12 };
         let x = do_something(&foo_a, &foo_b);
-        // se renunță la foo_a aici pentru că numai durata de viață
-        // a lui foo_b și a valorii de retur continuă de aici
+        // foo_a is dropped here because only foo_b's lifetime exist beyond here
         println!("{}", x);
-        // se renunță la x aici
-        // se renunță la foo_b aici
+        // x is dropped here
+        // foo_b is dropped here
     }
 - title: Statische Lebensdauern
   content_markdown: >
-    Eine **statische** Variable ist eine Speicherressource, die zur Kompilierungszeit erstellt wird
-    existiert durch einen Programmstart
-
-    beenden. Ihre Typen müssen explizit angegeben werden.
-
-    
-    Eine **statische Lebensdauer** ist eine Speicherressource, die unbegrenzt vorhanden ist
-    Ende eines Programms. Beachten Sie, dass nach dieser Definition
-
-    Einige statische Lebenszeitressourcen können zur Laufzeit erstellt werden.
-
-    
-    Ressourcen mit statischer Lebensdauer haben einen speziellen Lebensdauerspezifizierer `'static`.
+    Eine **statische** Variable ist eine zur Kompilierzeit erstellte
+    Speicherressource, die vom Programmstart bis zum Programmende besteht.
+    Ihr Typ muss explizit angegeben werden.
 
 
-    `'static` Ressourcen werden niemals **verloren**.
+    Eine **statische Lebensdauer** ist eine Speicherressource, die
+    unbegrenzt bis zum Ende eines Programms besteht. Beachte, dass nach
+    dieser Definition einige Ressourcen mit statischer Lebensdauer auch
+    zur Laufzeit erstellt werden können.
 
 
-    Wenn statische Lebenszeitressourcen Referenzen enthalten, müssen sie alle `'statisch` sein
-    (Alles andere würde nicht lange genug leben).
+    Ressourcen mit statischer Lebensdauer haben einen speziellen
+    Lebensdauer-Spezifizierer `'static`.
+
+
+    `'static`-Ressourcen werden niemals **fallen gelassen** (dropped).
+
+
+    Wenn Ressourcen mit statischer Lebensdauer Referenzen enthalten,
+    müssen diese ebenfalls alle `'static` sein (alles andere würde nicht
+    lange genug leben).
 
 
     Speicherdetail:
 
 
-    * Das Ändern statischer Variablen ist von Natur aus gefährlich, weil sie es sind
-    weltweit zugänglich und für jedermann lesbar
-      Einführung der Möglichkeit eines Datenwettlaufs. Wir werden später über die Herausforderungen globaler Daten sprechen.
-    * Rust erlaubt die Verwendung von „unsafe { ... }“-Blöcken, um einige Operationen auszuführen
-    dass der Compiler keine Speichergarantien geben kann. Die [<span
-    style="color:red; Schriftstärke:
-    fett;">R̸͉̟͈͔̄͛̾̇͜U̶͓͖͋̅Ṡ̴͉͇̃̉̀T̵̻̻͔̟͉́͆Ơ̷̥̟̳̓͝N̶̨̼̹̲͛Ö̵̝͉̖̏̾̔M̶̡̠̺̠̐ ͜Î̷̛͓̣̃̐̏C̸̥̤̭̏͛̎͜O̶̧͚͖͔̊͗̇͠N̸͇̰̏̏̽̃</span>](https://doc.rust-lang.org/nomicon/)
-    darüber sollte nicht beiläufig gesprochen werden.
+    * Das Verändern statischer Variablen ist von Natur aus gefährlich, weil
+    sie global zugänglich sind und von jedem gelesen werden können, was die
+    Möglichkeit eines Data Race einführt. Wir werden später über die
+    Herausforderungen globaler Daten sprechen.
+    * Rust erlaubt die Verwendung von `unsafe { ... }`-Blöcken, um einige
+    Operationen durchzuführen, über die der Compiler keine
+    Speichergarantien geben kann. Das [<span style="color:red;
+    font-weight: bold;">R̸͉̟͈͔̄͛̾̇͜U̶͓͖͋̅Ṡ̴͉͇̃̉̀T̵̻̻͔̟͉́͆Ơ̷̥̟̳̓͝N̶̨̼̹̲͛Ö̵̝͉̖̏̾̔M̶̡̠̺̠̐͜Î̷̛͓̣̃̐̏C̸̥̤̭̏͛̎͜O̶̧͚͖͔̊͗̇͠N̸͇̰̏̏̽̃</span>](https://doc.rust-lang.org/nomicon/)
+    sollte nicht leichtfertig zur Sprache gebracht werden.
   code: |
     static PI: f64 = 3.1415;
 
     fn main() {
-        // variabilele statice pot fi încadrate într-o funcție
+        // static variables can also be scoped to a function
         static mut SECRET: &'static str = "swordfish";
 
-        // string-urile între ghilimele au durată de viață statică
+        // string literals have a 'static lifetime
         let msg: &'static str = "Hello World!";
         let p: &'static f64 = &PI;
         println!("{} {}", msg, p);
 
-        // Puteți încălca unele reguli, dar trebuie să fiți expliciți
+        // You can break some rules, but you must be explicit
         unsafe {
-            // putem seta SECRET cu un string între ghilimele
-            // pentru că are de asemenea durată de viață statică (`static)
+            // we can set SECRET to a string literal because it is also `static
             SECRET = "abracadabra";
             println!("{}", SECRET);
         }
     }
-- title: Lebensdauern in Datentypen
+- title: Lebensdauern In Datentypen
   content_markdown: >
-    Ähnlich wie bei Funktionen können Datentypen mit der Lebensdauer parametrisiert werden
-    Spezifizierer seiner Mitglieder.
+    Ähnlich wie bei Funktionen können Datentypen mit Lebensdauer-
+    Spezifizierern für ihre Mitglieder parametrisiert werden.
 
 
-    Rust validiert, dass die enthaltende Datenstruktur der Referenzen niemals vorhanden ist
-    hält länger als die Besitzer, auf die seine Referenzen hinweisen.
+    Rust validiert, dass die Datenstruktur, die die Referenzen enthält,
+    niemals länger besteht als die Eigentümer, auf die ihre Referenzen
+    zeigen.
 
 
-    Wir können keine Strukturen herumlaufen lassen, auf die Referenzen verweisen
-    Nichts!
+    Wir können keine Structs mit Referenzen herumlaufen lassen, die ins
+    Nichts zeigen!
   code: |
     struct Foo<'a> {
         i:&'a i32
@@ -403,31 +416,31 @@
         let foo = Foo {
             i: &x
         };
-        println!("{}", foo.i);
+        println!("{}",foo.i);
     }
-- title: Kapitel 5 - Abschluss
+- title: Kapitel 5 - Fazit
   content_markdown: >
-    Puh, herzlichen Glückwunsch, dass du es geschafft hast! Ich weiß, es ist eine Menge zu verdauen, aber du
-    sind gut
-
-    auf dem Weg, ein Rustaceaner zu werden. Hoffentlich ist klar, wie Rust als
-    Sprache zielt darauf ab
-
-    Lösen Sie viele dieser häufigen Herausforderungen in der Systemprogrammierung:
-
-    * Unbeabsichtigte Änderung von Ressourcen
-
-    * Vergessen, Ressourcen abzubauen
-
-    * Ressourcen wurden versehentlich zweimal dekonstruiert
-
-    * Nutzung von Ressourcen, nachdem sie dekonstruiert wurden
-
-    * Datenwettläufe, die dadurch verursacht werden, dass auf Ressourcen geschrieben wird, während andere lesen
-    Ressourcen
-
-    * Klare Sicht auf Bereiche des Codes, für die der Compiler keine Garantien geben kann
+    Puh, herzlichen Glückwunsch, dass Du es bis hierher geschafft hast! Ich
+    weiß, es ist eine Menge zum Verarbeiten, aber Du bist auf dem besten
+    Weg, ein Rustacean zu werden. Hoffentlich ist klar geworden, wie Rust
+    als Sprache versucht, viele dieser häufigen Herausforderungen der
+    Systemprogrammierung zu lösen:
 
 
-    Im nächsten Kapitel werden wir einen Teil dieses Wissens anwenden und uns ansehen, wie
-    Rust verarbeitet Text.
+    * Unbeabsichtigte Veränderung von Ressourcen
+
+    * Vergessen, Ressourcen zu dekonstruieren
+
+    * Ressourcen, die versehentlich zweimal dekonstruiert werden
+
+    * Die Verwendung von Ressourcen, nachdem sie dekonstruiert wurden
+
+    * Data Races, verursacht durch das Schreiben in Ressourcen, während
+    andere aus diesen Ressourcen lesen
+
+    * Klar erkennbare Bereiche im Code, für die der Compiler keine
+    Garantien geben kann
+
+
+    Im nächsten Kapitel wenden wir etwas von diesem Wissen an, indem wir
+    uns ansehen, wie Rust mit Text umgeht.
