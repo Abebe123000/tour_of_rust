@@ -27,9 +27,28 @@
         jambes: i32,
         arme: String,
     }
-- title: Calling Methods
-  content_markdown: |
-    Need translation.
+- title: Vocar Metodes
+  content_markdown: >
+    Diferentmen de functiones, metodes es functiones associat a un specific
+    data-tip.
+
+
+    **metodes static** — metodes quel apertene al tip self es vocat per
+    usar li operator `::`.
+
+
+    **metodes de instantie** — metodes quel apertene a un instantie de un
+    tip es vocat per usar li operator `.`.
+
+
+    Noi va parlar plu pri crear tui propri metodes in capitules futuri.
+  code: |
+    fn main() {
+        // Using a static method to create an instance of String
+        let s = String::from("Hello world!");
+        // Using a method on the instance
+        println!("{} is {} characters long.", s, s.len());
+    }
 - title: Memorie
   content_markdown: >
     Programmas in Rust have 3 regiones de memorie ú es plazzat li data:

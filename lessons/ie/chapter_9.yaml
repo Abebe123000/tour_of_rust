@@ -111,3 +111,40 @@
         // ma noi vole que li arme mey esser privat
         arme: String,
     }
+- title: Prelude
+  content_markdown: |
+    Tu pote vole saver qualmen noi have accesse a `Vec` o `Box` pertot sin
+    un `use` por importar les. To es pro li modul `prelude` in li
+    biblioteca standard.
+
+    Save que in li biblioteca standard de Rust quelcunc cose quel es
+    exportat in `std::prelude::*` es automaticmen accessibil a chascun
+    parte de Rust. To es li casu por `Vec` e `Box` ma anc por altres
+    (Option, Copy, etc.).
+- title: Tui Propri Prelude
+  content_markdown: >
+    Pro li prelude del biblioteca standard, it es comun que tui biblioteca
+    possede su propri modul prelude, quam un loc de comensa de u usatores
+    deve importar omni li max comun data-structuras por usar tui
+    biblioteca (p.ex. `use mi_biblioteca::prelude::*`).
+
+
+    It ne es usat automaticmen in programmas/bibliotecas queles usa tui
+    crate, ma it es un bon convention por sequer talmen que li gente sape
+    de u comensar.
+
+
+    Ferris di: "Es un bon rustacean e aida un fellow crabe con un bon
+    prelude!"
+- title: Capitul 9 - Conclusion
+  content_markdown: >
+    Tu have nu quelc trucs in tui manica pri crear applicationes e
+    bibliotecas de Rust pret por li munde. Ne cura pri memorar it omni.
+    Durant que tui biblioteca cresce e es usat per altri gente, tu va
+    trovar quo functiona max bon a chascun etappe.
+
+
+    Ressources:
+
+    - [Guidelines For Writing Rust
+    APIs](https://rust-lang.github.io/api-guidelines/)
