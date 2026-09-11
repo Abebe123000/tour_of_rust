@@ -1,0 +1,449 @@
+- title: Kapitulli 5 - Pronësia & Huazimi I Të Dhënave
+  content_markdown: >
+    Rust ka një paradigmë unike për menaxhimin e kujtesës në krahasim
+    me gjuhët e tjera të programimit. Do t'i shohim sjelljet dhe
+    verifikimet e përpiluesit një nga një, në mënyrë që të mos jetë
+    dërrmuese. Është e rëndësishme të mbani mend se rregullat që po
+    tregojmë nuk ekzistojnë për t'jua vështirësuar jetën, por për t'ju
+    ndihmuar të bëni kodin tuaj më pak të prirur ndaj gabimeve!
+- title: Pronësia
+  content_markdown: >
+    Instanciimi i një lloji dhe **lidhja** e tij me një emër variabli
+    krijon një burim kujtese që përpiluesi i Rust do ta verifikojë
+    gjatë gjithë **jetëgjatësisë** (lifetime) së tij. Variabli i
+    lidhur quhet **pronar** (owner) i burimit.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        // We instantiate structs and bind to variables
+        // to create memory resources
+        let foo = Foo { x: 42 };
+        // foo is the owner
+    }
+- title: Menaxhimi I Burimeve Bazuar Në Fushëveprim
+  content_markdown: |
+    Rust përdor fundin e një fushëveprimi (scope) si vendin ku një
+    burim dekonstruktohet dhe çlirohet.
+
+    Termi për këtë dekonstruktim dhe çlirim quhet **drop**.
+
+    Detaj kujtese:
+    * Rust nuk ka mbledhje mbeturinash (garbage collection).
+    * Kjo quhet gjithashtu Resource Acquisition Is Initialization (RAII) në C++.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        let foo_a = Foo { x: 42 };
+        let foo_b = Foo { x: 13 };
+
+        println!("{}", foo_a.x);
+
+        println!("{}", foo_b.x);
+        // foo_b is dropped here 
+        // foo_a is dropped here
+    }
+- title: Lëshimi Është Hierarkik
+  content_markdown: >
+    Kur një struct lëshohet (dropped), fillimisht lëshohet vetë
+    struct-i, pastaj fushat e tij lëshohen një nga një, e kështu me
+    radhë.
+
+
+    Detaje kujtese:
+
+    * Duke çliruar kujtesën automatikisht, Rust ndihmon të sigurojë
+    që të ketë më pak rrjedhje kujtese.
+
+    * Një burim kujtese mund të lëshohet vetëm një herë.
+  code: |
+    struct Bar {
+        x: i32,
+    }
+
+    struct Foo {
+        bar: Bar,
+    }
+
+    fn main() {
+        let foo = Foo { bar: Bar { x: 42 } };
+        println!("{}", foo.bar.x);
+        // foo is dropped first
+        // then foo.bar is dropped
+    }
+- title: Zhvendosja E Pronësisë
+  content_markdown: >
+    Kur një pronar i jepet si argument një funksioni, pronësia
+    zhvendoset te parametri i funksionit.
+
+
+    Pas një **zhvendosjeje** (move), variabli në funksionin origjinal
+    nuk mund të përdoret më.
+
+
+    Detaje kujtese:
+
+    * Gjatë një **zhvendosjeje**, kujtesa stack e vlerës së pronarit
+    kopjohet në kujtesën stack të parametrit të thirrjes së
+    funksionit.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: Foo) {
+        println!("{}", f.x);
+        // f is dropped here
+    }
+
+    fn main() {
+        let foo = Foo { x: 42 };
+        // foo is moved to do_something
+        do_something(foo);
+        // foo can no longer be used
+    }
+- title: Kthimi I Pronësisë
+  content_markdown: |
+    Pronësia mund të kthehet gjithashtu nga një funksion.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something() -> Foo {
+        Foo { x: 42 }
+        // ownership is moved out
+    }
+
+    fn main() {
+        let foo = do_something();
+        // foo becomes the owner
+        // foo is dropped because of end of function scope
+    }
+- title: Huazimi I Pronësisë Me Referenca
+  content_markdown: |
+    Referencat na lejojnë të huazojmë akses në një burim me
+    operatorin `&`.
+
+    Referencat gjithashtu lëshohen si çdo burim tjetër.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        let foo = Foo { x: 42 };
+        let f = &foo;
+        println!("{}", f.x);
+        // f is dropped here
+        // foo is dropped here
+    }
+- title: Huazimi I Pronësisë Së Ndryshueshme Me Referenca
+  content_markdown: >
+    Mund të huazojmë gjithashtu akses të ndryshueshëm (mutable) në
+    një burim me operatorin `&mut`.
+
+
+    Një pronar burimi nuk mund të zhvendoset as të ndryshohet përderisa
+    huazohet në mënyrë të ndryshueshme.
+
+
+    Detaj kujtese:
+
+    * Rust parandalon ekzistencën e dy mënyrave për të ndryshuar një
+    vlerë të zotëruar, sepse kjo do të sillte mundësinë e një *data
+    race*.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: Foo) {
+        println!("{}", f.x);
+        // f is dropped here
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let f = &mut foo;
+
+        // FAILURE: do_something(foo) would fail because
+        // foo cannot be moved while mutably borrowed
+
+        // FAILURE: foo.x = 13; would fail here because
+        // foo is not modifiable while mutably borrowed
+
+        f.x = 13;
+        // f is dropped here because it's no longer used after this point
+        
+        println!("{}", foo.x);
+        
+        // this works now because all mutable references were dropped
+        foo.x = 7;
+        
+        // move foo's ownership to a function
+        do_something(foo);
+    }
+- title: Dereferencimi
+  content_markdown: >
+    Duke përdorur referenca `&mut`, mund të caktoni vlerën e pronarit
+    duke përdorur operatorin `*`.
+
+
+    Mund të merrni gjithashtu një kopje të një vlere të zotëruar duke
+    përdorur operatorin `*` (nëse vlera mund të kopjohet - do të
+    diskutojmë llojet e kopjueshme në kapitujt e ardhshëm).
+  code: |
+    fn main() {
+        let mut foo = 42;
+        let f = &mut foo;
+        let bar = *f; // get a copy of the owner's value
+        *f = 13;      // set the reference's owner's value
+        println!("{}", bar);
+        println!("{}", foo);
+    }
+- title: Trajtimi I Të Dhënave Të Huazuara
+  content_markdown: >
+    Rregullat e Rust për referencat mund të përmblidhen ndoshta më
+    mirë kështu:
+
+
+    * Rust lejon vetëm një referencë të ndryshueshme **ose** disa
+    referenca jo-të-ndryshueshme, **por jo të dyja njëherësh**.
+
+    * Një referencë nuk duhet kurrë të **jetojë më gjatë** se pronari
+    i saj.
+
+
+    Kjo zakonisht nuk përbën problem kur referencat kalohen te
+    funksionet.
+
+
+    Detaje kujtese:
+
+    * Rregulli i parë i referencave parandalon data race-t. Çfarë
+    është një data race? Një data race ndodh kur leximi i të dhënave
+    ka mundësinë të mos jetë i sinkronizuar për shkak të ekzistencës
+    së njëkohshme të një shkruesi në të njëjtat të dhëna. Kjo ndodh
+    shpesh në programimin me shumë fije (multi-thread).
+
+    * Rregulli i dytë i referencave parandalon keqpërdorimin e
+    referencave që tregojnë drejt të dhënave që nuk ekzistojnë (të
+    quajtura dangling pointers në C).
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: &mut Foo) {
+        f.x += 1;
+        // mutable reference f is dropped here
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        do_something(&mut foo);
+        // because all mutable references are dropped within
+        // the function do_something, we can create another.
+        do_something(&mut foo);
+        // foo is dropped here
+    }
+- title: Referenca Të Referencave
+  content_markdown: |
+    Referencat mund të përdoren edhe mbi pjesë të referencave të
+    tjera.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(a: &Foo) -> &i32 {
+        return &a.x;
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let x = &mut foo.x;
+        *x = 13;
+        // x is dropped here allow us to create a non-mutable reference
+        let y = do_something(&foo);
+        println!("{}", y);
+        // y is dropped here
+        // foo is dropped here
+    }
+- title: Jetëgjatësi Eksplicite
+  content_markdown: >
+    Edhe pse Rust nuk e tregon gjithmonë në kod, përpiluesi e kupton
+    jetëgjatësinë (lifetime) e çdo variabli dhe do të përpiqet të
+    verifikojë që një referencë të mos ekzistojë kurrë më gjatë se
+    pronari i saj.
+
+
+    Funksionet mund të jenë eksplicite duke parametrizuar
+    nënshkrimin e funksionit me simbole që ndihmojnë të identifikohet
+    se cilët parametra dhe vlera kthimi ndajnë të njëjtën
+    jetëgjatësi.
+
+
+    Specifikuesit e jetëgjatësisë fillojnë gjithmonë me `'` (p.sh.
+    `'a`, `'b`, `'c`)
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    // the parameter foo and return value share the same lifetime
+    fn do_something<'a>(foo: &'a Foo) -> &'a i32 {
+        return &foo.x;
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let x = &mut foo.x;
+        *x = 13;
+        // x is dropped here, allowing us to create a non-mutable reference
+        let y = do_something(&foo);
+        println!("{}", y);
+        // y is dropped here
+        // foo is dropped here
+    }
+- title: Jetëgjatësi Të Shumëfishta
+  content_markdown: >
+    Specifikuesit e jetëgjatësisë na lejojnë të jemi eksplicitë në
+    disa skenarë që përpiluesi nuk mund t'i zgjidhë vetë, duke
+    dalluar jetëgjatësitë e të gjithë komponentëve të nënshkrimit të
+    një funksioni.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    // foo_b and the return value share the same lifetime
+    // foo_a has an unrelated lifetime
+    fn do_something<'a, 'b>(foo_a: &'a Foo, foo_b: &'b Foo) -> &'b i32 {
+        println!("{}", foo_a.x);
+        println!("{}", foo_b.x);
+        return &foo_b.x;
+    }
+
+    fn main() {
+        let foo_a = Foo { x: 42 };
+        let foo_b = Foo { x: 12 };
+        let x = do_something(&foo_a, &foo_b);
+        // foo_a is dropped here because only foo_b's lifetime exist beyond here
+        println!("{}", x);
+        // x is dropped here
+        // foo_b is dropped here
+    }
+- title: Jetëgjatësi Statike
+  content_markdown: >
+    Një variabël **statike** është një burim kujtese i krijuar në
+    kohën e përpilimit, që ekziston nga fillimi deri në fund të një
+    programi. Lloji i saj duhet specifikuar eksplicitisht.
+
+
+    Një **jetëgjatësi statike** është një burim kujtese që zgjat
+    pafundësisht deri në fund të një programi. Vini re se sipas kësaj
+    përkufizimi, disa burime me jetëgjatësi statike mund të krijohen
+    edhe gjatë ekzekutimit.
+
+
+    Burimet me jetëgjatësi statike kanë një specifikues jetëgjatësie
+    të veçantë, `'static`.
+
+
+    Burimet `'static` nuk **lëshohen** kurrë.
+
+
+    Nëse burimet me jetëgjatësi statike përmbajnë referenca, ato
+    duhet të jenë të gjitha `'static` (çdo gjë më pak se kaq nuk do
+    të jetonte gjatë sa duhet).
+
+
+    Detaj kujtese:
+
+
+    * Modifikimi i variablave statike është në thelb i rrezikshëm
+    sepse ato janë të aksesueshme globalisht për t'u lexuar nga
+      kushdo, duke sjellë mundësinë e një data race. Do të flasim më vonë për sfidat e të dhënave globale.
+    * Rust lejon përdorimin e blloqeve `unsafe { ... }` për të
+    kryer disa operacione për të cilat përpiluesi nuk mund të japë
+    garanci kujtese. [<span
+    style="color:red; font-weight:
+    bold;">R̸͉̟͈͔̄͛̾̇͜U̶͓͖͋̅Ṡ̴͉͇̃̉̀T̵̻̻͔̟͉́͆Ơ̷̥̟̳̓͝N̶̨̼̹̲͛Ö̵̝͉̖̏̾̔M̶̡̠̺̠̐͜Î̷̛͓̣̃̐̏C̸̥̤̭̏͛̎͜O̶̧͚͖͔̊͗̇͠N̸͇̰̏̏̽̃</span>](https://doc.rust-lang.org/nomicon/)
+    nuk duhet përmendur lehtazi.
+  code: |
+    static PI: f64 = 3.1415;
+
+    fn main() {
+        // static variables can also be scoped to a function
+        static mut SECRET: &'static str = "swordfish";
+
+        // string literals have a 'static lifetime
+        let msg: &'static str = "Hello World!";
+        let p: &'static f64 = &PI;
+        println!("{} {}", msg, p);
+
+        // You can break some rules, but you must be explicit
+        unsafe {
+            // we can set SECRET to a string literal because it is also `static
+            SECRET = "abracadabra";
+            println!("{}", SECRET);
+        }
+    }
+- title: Jetëgjatësi Në Llojet E Të Dhënave
+  content_markdown: >
+    Ashtu si funksionet, edhe llojet e të dhënave mund të
+    parametrizohen me specifikues jetëgjatësie për anëtarët e tyre.
+
+
+    Rust verifikon që struktura e të dhënave që përmban referencat
+    të mos zgjasë kurrë më shumë se pronarët drejt të cilëve
+    tregojnë referencat e saj.
+
+
+    Nuk mund të kemi struct-e që sillen rreth e rrotull me referenca
+    që tregojnë drejt asgjëje!
+  code: |
+    struct Foo<'a> {
+        i:&'a i32
+    }
+
+    fn main() {
+        let x = 42;
+        let foo = Foo {
+            i: &x
+        };
+        println!("{}",foo.i);
+    }
+- title: Kapitulli 5 - Përfundim
+  content_markdown: >
+    Uau, urime që arritët deri këtu! E di që është shumë për t'u
+    tretur, por jeni tashmë në rrugën e duhur për t'u bërë një
+    Rustacean. Shpresojmë të jetë e qartë se si Rust si gjuhë synon
+    të zgjidhë shumë nga këto sfida të zakonshme të programimit të
+    sistemeve:
+
+
+    * Modifikimi i paqëllimshëm i burimeve
+
+    * Harresa për të dekonstruktuar burimet
+
+    * Burime që dekonstruktohen aksidentalisht dy herë
+
+    * Përdorimi i burimeve pasi janë dekonstruktuar
+
+    * Data race të shkaktuara nga shkrimi në burime ndërkohë që të
+    tjerë po i lexojnë
+
+    * Të parit qartë të zonave të kodit ku përpiluesi nuk mund të
+    japë garanci
+
+
+    Në kapitullin tjetër do të zbatojmë pjesë të këtij njohurie
+    ndërsa shohim se si Rust trajton tekstin.

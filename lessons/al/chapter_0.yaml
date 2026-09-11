@@ -5,13 +5,13 @@
         println!("Ckemi!, 🦀");
     }
   content_markdown: |
-    <img src="/intro.png" alt="Welcome to the Tour of Rust" style="width: 100%; margin-bottom: 20px; border-radius: 10px;">
+    <img src="/intro.png" alt="Mirë se vini në Tur e Rustit" style="width: 100%; margin-bottom: 20px; border-radius: 10px;">
 
-    **Happy 3 Year Anniversary 🎉**
+    **Gëzuar 3-Vjetorin 🎉**
 
-    Welcome to the *Tour of Rust*. This is meant to be a step by step guide through the features of the Rust programming language.  Rust is often considered a language with a steep learning curve, but I hope I can convince you there's a lot to explore before we even get to complex parts.
+    Mirë se vini në *Tur e Rustit*. Ky udhëzues synon t'ju përcjellë hap pas hapi nëpër veçoritë e gjuhës së programimit Rust. Rust shpesh konsiderohet një gjuhë me një kurbë të thepisur mësimi, por shpresoj se mund t'ju bind se ka shumë për të eksploruar përpara se të arrijmë tek pjesët komplekse.
 
-    You can also find this guide in these languages:
+    Këtë udhëzues mund ta gjeni edhe në këto gjuhë:
 
     * [Deutsch](00_de.html)
     * [Español](00_es.html)
@@ -33,9 +33,10 @@
     * [Italian](00_it.html)
     * [Tiếng Việt](00_vi.html)
     * [العربية](00_ar.html)
+    * [Shqip](00_al.html)
 
-    If you have suggestions on content or would like to contribute to translations, check out Tour of Rust's [github repository](https://github.com/richardanaya/tour_of_rust).
+    Nëse keni sugjerime për përmbajtjen ose dëshironi të kontribuoni në përkthime, shikoni [depon github](https://github.com/richardanaya/tour_of_rust) të Tur e Rustit.
 
-    You can navigate through the tour with keyboard <span class="emoji">⬅️</span> and <span class="emoji">➡️</span>.
+    Mund të lundroni nëpër tur me tastierën <span class="emoji">⬅️</span> dhe <span class="emoji">➡️</span>.
 
-    In this classic example we show Rust's support for Unicode strings.
+    Në këtë shembull klasik ne tregojmë mbështetjen e Rust për vargjet Unicode.
