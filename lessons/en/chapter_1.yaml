@@ -85,20 +85,20 @@
     out for this keyword.
 - title: Basic Types
   code: |
-    fn+main()+{
-    ++++let+x+=+12;+//+by+default+this+is+i32
-    ++++let+a+=+12u8;
-    ++++let+b+=+4.3;+//+by+default+this+is+f64
-    ++++let+c+=+4.3f32;
-    ++++let+d+=+'r';+//+unicode+character
-    ++++let+ferris+=+'🦀';+//+also+a+unicode+character
-    ++++let+bv+=+true;
-    ++++let+t+=+(13,+false);
-    ++++let+sentence+=+"hello+world!";
-    ++++println!(
-    ++++++++"{}+{}+{}+{}+{}+{}+{}+{}+{}+{}",
-    ++++++++x,+a,+b,+c,+d,+ferris,+bv,+t.0,+t.1,+sentence
-    ++++);
+    fn main() {
+        let x = 12; // by default this is i32
+        let a = 12u8;
+        let b = 4.3; // by default this is f64
+        let c = 4.3f32;
+        let d = 'r'; // unicode character
+        let ferris = '🦀'; // also a unicode character
+        let bv = true;
+        let t = (13, false);
+        let sentence = "hello world!";
+        println!(
+            "{} {} {} {} {} {} {} {} {} {}",
+            x, a, b, c, d, ferris, bv, t.0, t.1, sentence
+        );
     }
   content_markdown: >
     Rust has a variety of familiar types:
