@@ -1,0 +1,275 @@
+- title: Bab 6 - Teks
+  content_markdown: >
+    Sekarang setelah kita memahami sedikit bagaimana Rust berpikir
+    tentang memori, kita siap membahas teks dengan lebih detail.
+
+
+    Rust sangat peduli terhadap teks internasional dan masalah pada
+    level byte yang mungkin belum kamu kenal dari bahasa lain. Meski
+    begitu, Rust mempunyai banyak alat yang bagus untuk mengelola
+    masalah tersebut.
+- title: String Literal
+  content_markdown: >
+    String literal selalu berupa Unicode.
+
+
+    Tipe dari string literal adalah `&'static str`:
+
+
+    * `&` berarti ia merujuk ke sebuah tempat di memori, dan
+    ketiadaan `&mut` berarti kompiler tidak akan memperbolehkan
+    modifikasi
+
+    * `'static` berarti data string akan tersedia hingga akhir
+    program kita (tidak pernah di-drop)
+
+    * `str` berarti ia menunjuk ke sebuah urutan byte yang selalu
+    valid **utf-8**
+
+
+    Detail memori:
+
+    * Kompiler Rust kemungkinan besar akan menempatkan string kamu di
+    segmen data dari memori programmu
+  code: |
+    fn main() {
+        let a: &'static str = "hi 🦀";
+        println!("{} {}", a, a.len());
+    }
+- title: Apa Itu utf-8
+  content_markdown: "Seiring semakin banyak bahasa yang digunakan di komputer, dunia membutuhkan cara untuk merepresentasikan lebih banyak karakter teks\ndaripada yang diperbolehkan ASCII (1 byte hanya memperbolehkan 256 karakter).\n\n**utf-8** diperkenalkan dengan panjang byte yang bervariasi dari 1-4 byte, meningkatkan jangkauan karakter yang mungkin secara signifikan.\n\nSebuah keuntungan dari karakter berukuran variabel adalah teks tidak mempunyai byte yang tidak perlu untuk karakter ASCII yang sangat umum (tetap hanya membutuhkan 1 byte di **utf-8**).\n\nSebuah kekurangan dari karakter berukuran variabel adalah pencarian karakter tidak lagi dapat dilakukan dengan cepat\n(waktu konstan **O(1)**) dengan pengindeksan sederhana (contoh `my_text[3]` untuk mendapatkan karakter ke-4). Ada kemungkinan bahwa\nkarakter-karakter sebelumnya mempunyai lebar yang bervariasi, mengubah di mana karakter ke-4 sebenarnya dimulai dalam urutan byte.\n\nSebagai gantinya kita harus mengiterasi melalui urutan byte **utf-8** untuk memahami di mana karakter Unicode sebenarnya dimulai (waktu linear **O(n)**).\n\nFerris: \"Saya sebagian besar hanya senang mempunyai **utf-8** untuk merepresentasikan emoji dari teman-teman bawah laut saya.\"\n\n<span class=\"emoji\">\U0001F420\U0001F419\U0001F41F\U0001F42C\U0001F40B</span>\n"
+- title: Karakter Escape
+  content_markdown: >
+    Sulit untuk merepresentasikan karakter tertentu secara visual,
+    sehingga **kode escape** memungkinkan kita menempatkan sebuah
+    simbol di tempatnya.
+
+
+    Rust mendukung kode escape umum dari bahasa berbasis C:
+
+    * `\n` - baris baru
+
+    * `\r` - carriage return
+
+    * `\t` - tab
+
+    * `\\` - backslash
+
+    * `\0` - null
+
+    * `\'` - kutip tunggal
+
+
+    Daftar lengkapnya ada
+    [di sini](https://doc.rust-lang.org/reference/tokens.html).
+  code: |
+    fn main() {
+        let a: &'static str = "Ferris says:\t\"hello\"";
+        println!("{}",a);
+    }
+- title: String Literal Multi-Baris
+  content_markdown: |
+    String di Rust bersifat multi-baris secara bawaan.
+
+    Gunakan `\` di akhir baris jika kamu tidak ingin ada ganti baris.
+  code: |
+    fn main() {
+        let haiku: &'static str = "
+            I write, erase, rewrite
+            Erase again, and then
+            A poppy blooms.
+            - Tachibana Hokushi";
+        println!("{}", haiku);
+        
+        
+        println!("hello \
+        world") // notice that the spacing before w is ignored
+    }
+- title: String Literal Mentah
+  content_markdown: >
+    String mentah (raw string) memungkinkan kita menulis sebuah
+    urutan karakter apa adanya dengan dimulai dengan `r#"` dan diakhiri
+    dengan `"#`. Ini memungkinkan kita menyisipkan karakter yang
+    mungkin membingungkan string biasa sebagai literal (seperti tanda
+    kutip ganda dan backslash).
+  code: |
+    fn main() {
+        let a: &'static str = r#"
+            <div class="advice">
+                Raw strings are useful for some situations.
+            </div>
+            "#;
+        println!("{}", a);
+    }
+- title: String Literal Dari File
+  content_markdown: >
+    Jika kamu mempunyai teks yang sangat besar, pertimbangkan
+    menggunakan macro `include_str!` untuk menyertakan teks dari file
+    lokal ke dalam programmu:
+
+
+    ```rust
+
+    let hello_html = include_str!("hello.html");
+
+    ```
+- title: String Slice
+  content_markdown: >
+    Sebuah string slice adalah referensi ke sebuah urutan byte di
+    memori yang harus selalu valid utf-8.
+
+
+    Sebuah slice (sub-slice) dari sebuah `str` slice, juga harus valid
+    utf-8.
+
+
+    Method umum dari `&str`:
+
+    * `len` mendapatkan panjang dari string literal dalam byte (bukan
+    jumlah karakter).
+
+    * `starts_with`/`ends_with` untuk pengujian dasar.
+
+    * `is_empty` mengembalikan `true` jika panjangnya nol.
+
+    * `find` mengembalikan sebuah `Option<usize>` dari posisi pertama
+    suatu teks.
+  code: |
+    fn main() {
+        let a = "hi 🦀";
+        println!("{}", a.len());
+        let first_word = &a[0..2];
+        let second_word = &a[3..7];
+        // let half_crab = &a[3..5]; FAILS
+        // Rust does not accept slices of invalid unicode characters
+        println!("{} {}", first_word, second_word);
+    }
+- title: Char
+  content_markdown: >
+    Dengan begitu banyak kesulitan bekerja dengan Unicode, Rust
+    menawarkan sebuah cara untuk mengambil urutan byte utf-8 sebagai
+    vector karakter bertipe `char`.
+
+
+    Sebuah `char` selalu berukuran 4 byte (memungkinkan pencarian
+    karakter individual yang efisien).
+  code: |
+    fn main() {
+        // collect the characters as a vector of char
+        let chars = "hi 🦀".chars().collect::<Vec<char>>();
+        println!("{}", chars.len()); // should be 4
+        // since chars are 4 bytes we can convert to u32
+        println!("{}", chars[3] as u32);
+    }
+- title: String
+  content_markdown: >
+    Sebuah **String** adalah sebuah struct yang memiliki sebuah urutan
+    byte utf-8 di memori heap.
+
+
+    Karena memorinya berada di heap, ia dapat diperpanjang, dimodifikasi,
+    dsb., dengan cara yang tidak dapat dilakukan oleh string literal.
+
+
+    Method umum:
+
+
+    * `push_str` untuk menambahkan lebih banyak byte utf-8 ke akhir
+    sebuah string.
+
+    * `replace` untuk mengganti urutan byte utf-8 dengan yang lain.
+
+    * `to_lowercase`/`to_uppercase` untuk perubahan huruf besar/kecil.
+
+    * `trim` untuk memotong spasi.
+
+
+    Ketika sebuah String di-drop, memori heapnya juga di-drop.
+
+
+    `String` mempunyai operator `+` yang memperpanjang string dengan
+    sebuah `&str` dan mengembalikan dirinya sendiri, tetapi mungkin
+    tidak seergonomis yang kamu harapkan.
+  code: |
+    fn main() {
+        let mut helloworld = String::from("hello");
+        helloworld.push_str(" world");
+        helloworld = helloworld + "!";
+        println!("{}", helloworld);
+    }
+- title: Teks Sebagai Parameter Fungsi
+  content_markdown: >
+    String literal dan String umumnya dioper ke fungsi sebagai string
+    slice. Ini menawarkan banyak fleksibilitas untuk sebagian besar
+    skenario dimana kamu sebenarnya tidak perlu memindahkan
+    kepemilikan.
+  code: |
+    fn say_it_loud(msg:&str){
+        println!("{}!!!",msg.to_string().to_uppercase());
+    }
+
+    fn main() {
+        // say_it_loud can borrow &'static str as a &str
+        say_it_loud("hello");
+        // say_it_loud can also borrow String as a &str
+        say_it_loud(&String::from("goodbye"));
+    }
+- title: Membangun String
+  content_markdown: |
+    `concat` dan `join` adalah dua cara sederhana namun ampuh untuk
+    membangun string.
+  code: |
+    fn main() {
+        let helloworld = ["hello", " ", "world", "!"].concat();
+        let abc = ["a", "b", "c"].join(",");
+        println!("{}", helloworld);
+        println!("{}",abc);
+    }
+- title: Memformat String
+  content_markdown: >
+    Macro `format!` memungkinkan kita membuat sebuah string dengan
+    mendefinisikan sebuah string terparameterisasi dengan placeholder
+    untuk di mana dan bagaimana nilai harus ditempatkan (contoh `{}`).
+
+
+    `format!` menggunakan string terparameterisasi yang sama seperti
+    `println!`
+
+
+    Kemampuan dari fungsi ini terlalu luas untuk cakupan *Tour of
+    Rust*; lihat dokumentasi [di
+    sini](https://doc.rust-lang.org/std/fmt/).
+  code: |
+    fn main() {
+        let a = 42;
+        let f = format!("secret to life: {}",a);
+        println!("{}",f);
+    }
+- title: Mengonversi String
+  content_markdown: |
+    Banyak tipe dapat dikonversi menjadi sebuah string menggunakan
+    `to_string`.
+
+    Fungsi generik `parse` dapat digunakan untuk mengonversi string
+    atau string literal menjadi sebuah nilai bertipe. Fungsi ini
+    mengembalikan sebuah `Result` karena bisa saja gagal.
+  code: |
+    fn main() -> Result<(), std::num::ParseIntError> {
+        let a = 42;
+        let a_string = a.to_string();
+        let b = a_string.parse::<i32>()?;
+        println!("{} {}", a, b);
+        Ok(())
+    }
+- title: Bab 6 - Kesimpulan
+  content_markdown: >
+    Sekarang kamu tahu dasar-dasar teks! Seperti yang kamu lihat,
+    Unicode membuat bekerja dengan teks sedikit lebih rumit, tetapi
+    pustaka standar mempunyai banyak fungsionalitas untuk memudahkan
+    pengelolaannya.
+
+
+    Sampai sekarang, kita sebagian besar telah melihat Rust dari sudut
+    pandang paradigma prosedural (yaitu hanya fungsi dan data), tetapi
+    sekarang saatnya kita membahas trait dan kemampuan yang dibuka
+    oleh paradigma berorientasi objek Rust.

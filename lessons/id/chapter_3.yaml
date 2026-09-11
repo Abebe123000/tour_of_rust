@@ -1,0 +1,303 @@
+- title: Bab 3 - Tipe Data Struktur Dasar
+  content_markdown: >
+    Sudah waktunya kita menjelajah lebih jauh dari tipe data dasar! Di
+    dalam bab ini kita akan melihat struktur data paling primitif di
+    Rust, dengan memperhatikan secara saksama bagaimana representasi
+    mereka di dalam memori. Saya rasa kamu akan senang melihat betapa
+    sedikitnya hal yang disembunyikan Rust darimu tentang bagaimana
+    semuanya bekerja.
+- title: Struktur
+  content_markdown: >
+    Sebuah `struct` adalah kumpulan dari field.
+
+
+    Sebuah *field* hanyalah sebuah nilai data yang berasosiasi dengan
+    sebuah struktur data. Nilainya dapat berupa tipe data primitif atau
+    sebuah struktur data.
+
+
+    Definisinya seperti sebuah cetak biru bagi kompiler tentang
+    bagaimana menata field-field tersebut berdekatan satu sama lain di
+    dalam memori.
+  code: |-
+    struct SeaCreature {
+        // String is a struct
+        animal_type: String,
+        name: String,
+        arms: i32,
+        legs: i32,
+        weapon: String,
+    }
+- title: Memanggil Method
+  content_markdown: >
+    Berbeda dengan fungsi, method adalah fungsi yang berasosiasi dengan
+    sebuah tipe data spesifik.
+
+
+    **static method** — method yang dimiliki oleh tipe itu sendiri
+    dipanggil menggunakan operator `::`.
+
+
+    **instance method** — method yang dimiliki oleh sebuah instance dari
+    suatu tipe dipanggil menggunakan operator `.`.
+
+
+    Kita akan berbicara lebih banyak tentang membuat method milikmu
+    sendiri di bab-bab selanjutnya.
+  code: |
+    fn main() {
+        // Using a static method to create an instance of String
+        let s = String::from("Hello world!");
+        // Using a method on the instance
+        println!("{} is {} characters long.", s, s.len());
+    }
+- title: Memori
+  content_markdown: >
+    Program Rust mempunyai 3 wilayah memori dimana data disimpan:
+
+    * **memori data** - Untuk data yang berukuran tetap dan **statis**
+    (yaitu, selalu tersedia sepanjang hidup program). Perhatikan teks di
+    dalam program kamu (contoh "Hello World!"): byte dari teks ini hanya
+    pernah dibaca dari satu tempat, sehingga dapat disimpan di wilayah
+    ini. Kompiler membuat banyak optimisasi dengan jenis data seperti
+    ini, dan umumnya dianggap sangat cepat untuk digunakan karena
+    lokasinya diketahui dan tetap.
+
+    * **memori stack** - Untuk data yang dideklarasikan sebagai variabel
+    di dalam sebuah fungsi. Lokasi dari memori ini tidak pernah berubah
+    selama durasi pemanggilan fungsi; karena itu kompiler dapat
+    mengoptimalkan kode sehingga data stack sangat cepat untuk diakses.
+
+    * **memori heap** - Untuk data yang dibuat saat aplikasi sedang
+    berjalan. Data di wilayah ini dapat ditambahkan, dipindahkan,
+    dihapus, diubah ukurannya, dsb. Karena sifatnya yang dinamis, ini
+    umumnya dianggap lebih lambat untuk digunakan, tetapi memungkinkan
+    penggunaan memori yang jauh lebih kreatif. Ketika data ditambahkan
+    ke wilayah ini kita menyebutnya sebuah **alokasi**. Ketika data
+    dihapus dari wilayah ini kita menyebutnya sebuah **dealokasi**.
+- title: Membuat Data Di Dalam Memori
+  content_markdown: >
+    Ketika kita **menginstansiasi** sebuah **struct** di dalam kode
+    kita, program kita membuat data field yang berasosiasi berdampingan
+    di dalam memori.
+
+
+    Kita menginstansiasi dengan menentukan semua nilai field di dalam
+
+
+    `NamaStruct { ... }`.
+
+
+    Field struct diakses menggunakan operator titik `.`.
+
+
+    Detail memori dari contoh kita:
+
+    * Teks di dalam tanda kutip adalah data yang hanya dapat dibaca
+    (contoh "Ferris"), oleh karena itu ditempatkan di *wilayah memori
+    data*.
+
+    * Pemanggilan fungsi `String::from` membuat sebuah struct `String`
+    yang ditempatkan berdampingan dengan field-field dari SeaCreature di
+    *stack*. Sebuah String merepresentasikan teks yang dapat diubah, dan
+    melakukannya dengan cara:
+      1. Membuat memori di *heap* untuk teks tersebut agar bisa diubah
+      2. Menyimpan referensi ke lokasi memori tersebut di *heap* dan menyimpannya di dalam struct `String` (lebih lanjut tentang ini di pelajaran selanjutnya)
+    * Terakhir, kedua teman kita *Ferris* dan *Sarah* mempunyai struktur
+    data yang akan selalu mempunyai lokasi tetap di dalam program kita,
+    jadi mereka ditempatkan di *stack*.
+  code: |
+    struct SeaCreature {
+        animal_type: String,
+        name: String,
+        arms: i32,
+        legs: i32,
+        weapon: String,
+    }
+
+    fn main() {
+        // SeaCreature's data is on stack
+        let ferris = SeaCreature {
+            // String struct is also on stack,
+            // but holds a reference to data on heap
+            animal_type: String::from("crab"),
+            name: String::from("Ferris"),
+            arms: 2,
+            legs: 4,
+            weapon: String::from("claw"),
+        };
+
+        let sarah = SeaCreature {
+            animal_type: String::from("octopus"),
+            name: String::from("Sarah"),
+            arms: 8,
+            legs: 0,
+            weapon: String::from("brain"),
+        };
+        
+        println!(
+            "{} is a {}. They have {} arms, {} legs, and a {} weapon",
+            ferris.name, ferris.animal_type, ferris.arms, ferris.legs, ferris.weapon
+        );
+        println!(
+            "{} is a {}. They have {} arms, and {} legs. They have no weapon..",
+            sarah.name, sarah.animal_type, sarah.arms, sarah.legs
+        );
+    }
+- title: Struct Seperti Tuple
+  content_markdown: |
+    Untuk keringkasan, kamu dapat membuat struct yang digunakan
+    layaknya sebuah tuple.
+  code: |
+    struct Location(i32, i32);
+
+    fn main() {
+        // This is still a struct on a stack
+        let loc = Location(42, 32);
+        println!("{}, {}", loc.0, loc.1);
+    }
+- title: Struct Seperti Unit
+  content_markdown: >
+    Struct tidak harus mempunyai field sama sekali.
+
+
+    Seperti disebutkan di Bab 1, sebuah *unit* adalah kata lain untuk
+    tuple kosong `()`. Inilah sebabnya jenis struct ini disebut
+    *Unit-like*.
+
+
+    Jenis struct ini jarang digunakan.
+  code: |
+    struct Marker;
+
+    fn main() {
+        let _m = Marker;
+    }
+- title: Enumerasi
+  content_markdown: >
+    Enumerasi memungkinkan kamu membuat sebuah tipe baru yang dapat
+    mempunyai nilai dari beberapa elemen bertanda, menggunakan kata
+    kunci `enum`.
+
+
+    `match` membantu memastikan penanganan yang menyeluruh dari semua
+    kemungkinan nilai enum, menjadikannya alat yang ampuh dalam
+    memastikan kualitas kode.
+  code: |
+    #![allow(dead_code)] // this line prevents compiler warnings
+
+    enum Species {
+        Crab,
+        Octopus,
+        Fish,
+        Clam
+    }
+
+    struct SeaCreature {
+        species: Species,
+        name: String,
+        arms: i32,
+        legs: i32,
+        weapon: String,
+    }
+
+    fn main() {
+        let ferris = SeaCreature {
+            species: Species::Crab,
+            name: String::from("Ferris"),
+            arms: 2,
+            legs: 4,
+            weapon: String::from("claw"),
+        };
+
+        match ferris.species {
+            Species::Crab => println!("{} is a crab",ferris.name),
+            Species::Octopus => println!("{} is an octopus",ferris.name),
+            Species::Fish => println!("{} is a fish",ferris.name),
+            Species::Clam => println!("{} is a clam",ferris.name),
+        }
+    }
+- title: Enumerasi Dengan Data
+  content_markdown: >
+    Elemen `enum` juga dapat mempunyai satu atau lebih tipe data,
+    memungkinkan mereka berperilaku seperti *union* dari C.
+
+
+    Ketika sebuah `enum` dicocokkan menggunakan `match`, kamu dapat
+    mengikat sebuah nama variabel ke setiap nilai data.
+
+
+    Detail memori dari `enum`:
+
+    * Sebuah nilai data enum akan mempunyai ukuran memori yang sama
+    dengan elemen terbesarnya. Ini memungkinkan semua nilai yang
+    mungkin untuk muat di ruang memori yang sama.
+
+    * Selain tipe data elemen (jika ada), setiap elemen juga mempunyai
+    nilai numerik yang merepresentasikan tag mana yang dimilikinya.
+
+
+    Detail lainnya:
+
+    * `enum` di Rust adalah sesuatu yang juga dikenal sebagai *tagged
+    union*.
+
+    * Penggabungan tipe untuk membuat tipe baru adalah apa yang orang
+    maksud ketika mereka mengatakan Rust mempunyai *algebraic types*.
+  code: |-
+    #![allow(dead_code)] // this line prevents compiler warnings
+
+    enum Species { Crab, Octopus, Fish, Clam }
+    enum PoisonType { Acidic, Painful, Lethal }
+    enum Size { Big, Small }
+    enum Weapon {
+        Claw(i32, Size),
+        Poison(PoisonType),
+        None
+    }
+
+    struct SeaCreature {
+        species: Species,
+        name: String,
+        arms: i32,
+        legs: i32,
+        weapon: Weapon,
+    }
+
+    fn main() {
+        // SeaCreature's data is on stack
+        let ferris = SeaCreature {
+            // String struct is also on stack,
+            // but holds a reference to data on heap
+            species: Species::Crab,
+            name: String::from("Ferris"),
+            arms: 2,
+            legs: 4,
+            weapon: Weapon::Claw(2, Size::Small),
+        };
+
+        match ferris.species {
+            Species::Crab => {
+                match ferris.weapon {
+                    Weapon::Claw(num_claws,size) => {
+                        let size_description = match size {
+                            Size::Big => "big",
+                            Size::Small => "small"
+                        };
+                        println!("ferris is a crab with {} {} claws", num_claws, size_description)
+                    },
+                    _ => println!("ferris is a crab with some other weapon")
+                }
+            },
+            _ => println!("ferris is some other animal"),
+        }
+    }
+- title: Bab 3 - Kesimpulan
+  content_markdown: >
+    Sungguh mengasyikkan! Sekarang kita mempunyai alat paling dasar
+    untuk merepresentasikan bentuk dari ide-ide kita di dalam kode.
+    Semoga sekarang kita bisa melihat sekilas bagaimana operasi
+    fundamental Rust bekerja secara harmonis dan ringkas dengan tipe
+    datanya. Selanjutnya kita akan membahas sebuah konsep yang memberi
+    tipe data kita fleksibilitas representasi yang lebih besar lagi:
+    *generics*.
