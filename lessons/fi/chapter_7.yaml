@@ -1,0 +1,606 @@
+- title: Kappale 7 - Olio-Ohjelmointi
+  content_markdown: >
+    Ideoiden ilmaiseminen funktioiden avulla on hyväksi todettu tapa
+    esittää käyttäytymistä ja dataa (C on tehnyt niin
+    vuosikymmeniä!). Historiallisesti tietojenkäsittelytiede on
+    löytänyt muitakin hyödyllisiä ja ilmaisuvoimaisia tapoja
+    aggregoida ja abstrahoida dataa. Ehkä tunnet olio-ohjelmoinnin
+    (OOP) yhtenä näistä tavoista. Tässä kappaleessa tutkimme, mitä
+    Rustilla on tarjottavana pelkkien funktioiden lisäksi.
+- title: Mitä OOP On?
+  content_markdown: >
+    Olio-ohjelmointi viittaa karkeasti ottaen ohjelmointikieliin,
+    joilla on joukko luonteenomaisia piirteitä:
+
+
+    * Kapselointi (Encapsulation) - Datan ja funktioiden yhdistäminen
+    yhden tyypin käsitteelliseksi yksiköksi, jota kutsutaan
+    *olioksi*.
+
+    * Abstraktio (Abstraction) - Datan ja funktiojäsenten
+    piilottaminen olion toteutuksen yksityiskohtien hämärtämiseksi.
+
+    * Polymorfismi (Polymorphism) - Kyky olla vuorovaikutuksessa
+    olion kanssa eri toiminnallisista näkökulmista.
+
+    * Perintä (Inheritance) - Kyky periä dataa ja käyttäytymistä
+    muilta olioilta.
+- title: Rust Ei Ole OOP
+  content_markdown: >
+    Rustista puuttuu datan ja käyttäytymisen perintä merkittävällä
+    tavalla.
+
+
+    * Structit eivät voi periä kenttiä vanhemmalta structilta.
+
+    * Structit eivät voi periä funktioita vanhemmalta structilta.
+
+
+    Rust kuitenkin toteuttaa monia muita kielen ominaisuuksia, joten
+    et ehkä edes huomaa tätä puutetta.
+- title: Kapselointi Metodien Avulla
+  code: |
+    struct SeaCreature {
+        noise: String,
+    }
+
+    impl SeaCreature {
+        fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            noise: String::from("blub"),
+        };
+        println!("{}", creature.get_sound());
+    }
+  content_markdown: >
+    Rust tukee *olion* käsitettä, eli structia, joka on liitetty
+    joihinkin funktioihin (tunnetaan myös *metodeina*).
+
+
+    Jokaisen metodin ensimmäisen parametrin täytyy olla referenssi
+    instanssiin, joka liittyy metodikutsuun (esim.
+    `instanceOfObj.foo()`). Rust käyttää:
+
+    * `&self` - Muuttumaton (immutable) referenssi instanssiin.
+
+    * `&mut self` - Muuttuva (mutable) referenssi instanssiin.
+
+
+    Metodit määritellään toteutuslohkon (impl block) sisällä
+    avainsanalla `impl`:
+
+
+    ```rust
+
+    impl MyStruct {
+        ...
+        fn foo(&self) {
+            ...
+        }
+    }
+
+    ```
+- title: Abstraktio Valikoivan Näkyvyyden Avulla
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        println!("{}", creature.get_sound());
+    }
+  content_markdown: >
+    Rust voi piilottaa olioiden sisäisen toiminnan.
+
+
+    Oletuksena kentät ja metodit ovat käytettävissä vain moduulista,
+    johon ne kuuluvat.
+
+
+    Avainsana `pub` tekee structin kentät ja metodit käytettäviksi
+    myös moduulin ulkopuolella.
+- title: Polymorfismi Traittien Avulla
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        creature.make_noise();
+    }
+  content_markdown: >
+    Rust tukee polymorfismia traittien avulla. Traitit antavat meidän
+    liittää joukon metodeja structin tyyppiin.
+
+
+    Ensin määritämme traitin metodien allekirjoitukset:
+
+
+    ```
+
+    trait MyTrait {
+        fn foo(&self);
+        ...
+    }
+
+    ```
+
+
+    Kun struct toteuttaa traitin, se luo sopimuksen, jonka avulla
+    voimme olla epäsuorasti vuorovaikutuksessa structin kanssa trait-
+    tyypin (esim. `&dyn MyTrait`) kautta ilman, että meidän tarvitsee
+    tietää todellista tyyppiä.
+
+
+    Structin toteuttamat traitin metodit määritellään toteutuslohkon
+    sisällä:
+
+
+    ```rust
+
+    impl MyTrait for MyStruct {
+        fn foo(&self) {
+            ...
+        }
+        ...
+    }
+
+    ```
+- title: Traitteihin Toteutetut Metodit
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+        
+        fn make_alot_of_noise(&self){
+            self.make_noise();
+            self.make_noise();
+            self.make_noise();
+        }
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        creature.make_alot_of_noise();
+    }
+  content_markdown: >
+    Traiteilla voi olla toteutettuja metodeja.
+
+
+    Näillä funktioilla ei ole suoraa pääsyä structin sisäisiin
+    kenttiin, mutta ne voivat olla hyödyllisiä käyttäytymisen
+    jakamisessa monien traitin toteuttajien kesken.
+- title: Traittien Periytyminen
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    trait LoudNoiseMaker: NoiseMaker {
+        fn make_alot_of_noise(&self) {
+            self.make_noise();
+            self.make_noise();
+            self.make_noise();
+        }
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    impl LoudNoiseMaker for SeaCreature {}
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        creature.make_alot_of_noise();
+    }
+  content_markdown: |
+    Traitit voivat periä metodeja toisilta traiteilta.
+- title: Dynaaminen Vs. Staattinen Dispatch
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    fn static_make_noise(creature: &SeaCreature) {
+        // we know the real type
+        creature.make_noise();
+    }
+
+    fn dynamic_make_noise(noise_maker: &dyn NoiseMaker) {
+        // we don't know the real type
+        noise_maker.make_noise();
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        static_make_noise(&creature);
+        dynamic_make_noise(&creature);
+    }
+  content_markdown: >
+    Metodeja suoritetaan kahdella tavalla:
+
+    * staattinen dispatch - Kun instanssin tyyppi tiedetään, tiedämme
+    suoraan, mitä funktiota kutsua.
+
+    * dynaaminen dispatch - Kun instanssin tyyppiä ei tiedetä, meidän
+    täytyy löytää tapa kutsua oikeaa funktiota.
+
+
+    Trait-tyypit kuten `&dyn MyTrait` antavat meille mahdollisuuden
+    työskennellä epäsuorasti olioiden instanssien kanssa käyttäen
+    dynaamista dispatchia.
+
+
+    Kun dynaamista dispatchia käytetään, Rust kannustaa sinua
+    laittamaan `dyn`:in ennen trait-tyyppiäsi, jotta muutkin
+    huomaavat sen.
+
+
+    Muistin yksityiskohdat:
+
+    * Dynaaminen dispatch on hieman hitaampi, koska todellisen
+    funktiokutsun löytäminen vaatii osoittimien seuraamista.
+- title: Trait-Oliot
+  content_markdown: >
+    Kun välitämme olion instanssin parametrille, jonka tyyppi on
+    `&dyn MyTrait`, välitämme sitä, mitä kutsutaan *trait-olioksi*.
+
+
+    Trait-olio on se, mikä antaa meidän kutsua epäsuorasti instanssin
+    oikeita metodeja. Trait-olio on struct, joka pitää sisällään
+    osoittimen instanssiimme yhdessä listan kanssa
+    funktio-osoittimia instanssimme metodeihin.
+
+
+    Muistin yksityiskohdat:
+
+    * Tätä funktioiden listaa kutsutaan C++:ssa nimellä *vtable*.
+- title: Tuntemattoman Kokoisen Datan Käsittely
+  content_markdown: >
+    Traitit tuovat mielenkiintoisen haasteen, kun haluamme tallentaa
+    ne toisen structin sisään. Traitit piilottavat alkuperäisen
+    structin, ja sen mukana myös sen alkuperäisen koon. Structeihin
+    tallennettuja tuntemattoman kokoisia arvoja käsitellään Rustissa
+    kahdella tavalla:
+
+
+    * `generics` (geneeriset tyypit) - Parametrisoitujen tyyppien
+    käyttö luo käytännössä structeja/funktioita, joilla on tunnetut
+    tyypit, ja siten tunnetut koot.
+
+    * `indirection` (epäsuoruus) - Instanssien sijoittaminen kekoon
+    antaa meille epäsuoruuden tason, jonka ansiosta meidän ei
+    tarvitse huolehtia todellisen tyypin koosta, ja sen sijaan
+    tallennamme vain osoittimen siihen. On myös muita tapoja!
+- title: Geneeriset Funktiot
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    fn generic_make_noise<T>(creature: &T)
+    where
+        T: NoiseMaker,
+    {
+        // we know the real type at compile-time
+        creature.make_noise();
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        generic_make_noise(&creature);
+    }
+  content_markdown: >
+    Geneeriset tyypit toimivat Rustissa käsi kädessä traittien
+    kanssa. Kun kuvailemme parametrisoitua tyyppiä `T`, voimme
+    rajoittaa, mitä tyyppejä voidaan käyttää argumenttina,
+    luettelemalla, mitä traitteja argumentin täytyy toteuttaa.
+
+
+    Tässä esimerkissä tyypin `T` täytyy toteuttaa `Foo`:
+
+
+    ```rust
+
+    fn my_function<T>(foo: T)
+
+    where
+        T:Foo
+    {
+        ...
+    }
+
+    ```
+
+
+    Käyttämällä geneerisiä tyyppejä luomme käännösaikana staattisesti
+    tyypitettyjä funktioita, joilla on tunnetut tyypit ja koot, minkä
+    ansiosta voimme suorittaa staattista dispatchia ja tallentaa ne
+    tunnetun kokoisena arvona.
+- title: Geneeristen Funktioiden Lyhenne
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    fn generic_make_noise(creature: &impl NoiseMaker)
+    {
+        // we know the real type at compile-time
+        creature.make_noise();
+    }
+
+    fn main() {
+        let creature = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        generic_make_noise(&creature);
+    }
+  content_markdown: |
+    Rustissa on lyhenne geneeristen tyyppien ilmaisemiseen, jotka on
+    rajoitettu traitilla:
+
+    ```rust
+    fn my_function(foo: impl Foo) {
+        ...
+    }
+    ```
+
+    Tämä vastaa:
+
+    ```rust
+    fn my_function<T>(foo: T)
+    where
+        T:Foo
+    {
+        ...
+    }
+    ```
+- title: Box
+  code: |
+    struct SeaCreature {
+        pub name: String,
+        noise: String,
+    }
+
+    impl SeaCreature {
+        pub fn get_sound(&self) -> &str {
+            &self.noise
+        }
+    }
+
+    trait NoiseMaker {
+        fn make_noise(&self);
+    }
+
+    impl NoiseMaker for SeaCreature {
+        fn make_noise(&self) {
+            println!("{}", &self.get_sound());
+        }
+    }
+
+    struct Ocean {
+        animals: Vec<Box<dyn NoiseMaker>>,
+    }
+
+    fn main() {
+        let ferris = SeaCreature {
+            name: String::from("Ferris"),
+            noise: String::from("blub"),
+        };
+        let sarah = SeaCreature {
+            name: String::from("Sarah"),
+            noise: String::from("swish"),
+        };
+        let ocean = Ocean {
+            animals: vec![Box::new(ferris), Box::new(sarah)],
+        };
+        for a in ocean.animals.iter() {
+            a.make_noise();
+        }
+    }
+  content_markdown: >
+    `Box` on tietorakenne, joka antaa meidän siirtää datamme pinosta
+    kekoon.
+
+
+    Sen dereferensointi antaa meidän käyttää kekoon allokoitua dataa
+    ergonomisesti, ikään kuin se olisi alkuperäinen tyyppi.
+
+
+    Koska `Box` on struct, jonka koko tunnetaan (koska se pitää
+    sisällään vain osoittimen), sitä käytetään usein tapana tallentaa
+    referenssi johonkin sellaisen structin sisällä, jonka täytyy
+    tietää kenttiensä koko.
+
+
+    `Box` on niin yleinen, että sitä voidaan käyttää mistä tahansa:
+
+
+    ```rust
+
+    Box::new(Foo { ... })
+
+    ```
+- title: Geneeriset Structit Uudelleen Tarkasteltuna
+  content_markdown: >
+    Myös geneerisillä structeilla voi olla omat parametrisoidut
+    tyyppinsä rajoitettuna traiteilla.
+
+
+    ```rust
+
+    struct MyStruct<T>
+
+    where
+        T: MyTrait
+    {
+        foo: T
+        ...
+    }
+
+    ```
+
+
+    Geneeriset structit kantavat parametrisoidun tyyppinsä mukanaan
+    myös toteutuslohkossaan:
+
+
+    ```rust
+
+    impl<T> MyStruct<T> {
+        ...
+    }
+
+    ```
+- title: Kappale 7 - Päätelmä
+  content_markdown: >
+    Meillä on nyt enemmän kielen ominaisuuksia käytettävissämme
+    ideoidemme selkeään esittämiseen!
+
+
+    Rustin abstraktiot saattavat olla yksinkertaisia, mutta ne ovat
+    tarpeeksi tehokkaita tekemään koodin kanssa työskentelystä
+    nautinnollista. Tässä kappaleessa loimme lyhyen katsauksen smart
+    pointereihin `Box`:n avulla. Seuraavassa kappaleessa opimme,
+    kuinka smart pointerit voivat auttaa meitä muissa,
+    erikoistuneemmissa muistitilanteissa.
+
+
+    Resursseja:
+
+    * [Video - Object-oriented Programming in 7
+    minutes](https://www.youtube.com/watch?v=pTB0EiLXUC8)
+
+    * [Artikkeli - "The faster you unlearn OOP, the better for you
+    and your
+    software"](https://dpc.pw/the-faster-you-unlearn-oop-the-better-for-you-and-your-software)

@@ -1,0 +1,274 @@
+- title: Kappale 6 - Teksti
+  content_markdown: >
+    Nyt kun ymmärrämme hieman, miten Rust ajattelee muistia, olemme
+    valmiita puhumaan tekstistä tarkemmin.
+
+
+    Rust välittää suuresti kansainvälisestä tekstistä ja tavutason
+    asioista, jotka eivät välttämättä ole sinulle tuttuja muista
+    kielistä. Siitä huolimatta Rustilla on monia hyviä työkaluja
+    näiden asioiden hallintaan.
+- title: Merkkijonoliteraalit
+  content_markdown: >
+    Merkkijonoliteraalit ovat aina Unicodea.
+
+
+    Merkkijonoliteraalien tyyppi on `&'static str`:
+
+
+    * `&` tarkoittaa, että se viittaa paikkaan muistissa, ja
+    `&mut`:in puuttuminen tarkoittaa, ettei kääntäjä salli muokkausta
+
+    * `'static` tarkoittaa, että merkkijonon data on saatavilla
+    ohjelmamme loppuun asti (sitä ei koskaan droppaata)
+
+    * `str` tarkoittaa, että se osoittaa tavusekvenssiin, joka on
+    aina validia **utf-8**:aa
+
+
+    Muistin yksityiskohdat:
+
+    * Rust-kääntäjä todennäköisesti sijoittaa merkkijonosi ohjelmasi
+    muistin datasegmenttiin
+  code: |
+    fn main() {
+        let a: &'static str = "hi 🦀";
+        println!("{} {}", a, a.len());
+    }
+- title: Mitä Utf-8 On
+  content_markdown: "Kun yhä useampia kieliä alettiin käyttää tietokoneilla, maailma tarvitsi tavan esittää enemmän tekstimerkkejä\nkuin ASCII salli (1 tavu salli vain 256 merkkiä).\n\n**utf-8** otettiin käyttöön vaihtelevalla 1-4 tavun pituudella, mikä kasvatti huomattavasti mahdollisten merkkien määrää.\n\nVaihtelevan kokoisten merkkien etu on, että tekstissä ei ole turhia tavuja hyvin yleisille ASCII-merkeille (jotka vaativat edelleen vain 1 tavun **utf-8**:ssa).\n\nVaihtelevan kokoisten merkkien haittapuoli on, että merkin hakua ei voida enää tehdä nopeasti\n(vakioajassa **O(1)**) yksinkertaisella indeksoinnilla (esim. `my_text[3]` saadaksesi 4. merkin). On mahdollista, että\nedeltävillä merkeillä on vaihtelevat leveydet, mikä muuttaa sitä, mistä 4. merkki oikeasti alkaa tavusekvenssissä.\n\nSen sijaan meidän täytyy iteroida **utf-8**-tavusekvenssin läpi ymmärtääksemme, mistä Unicode-merkit oikeasti alkavat (lineaarisessa ajassa **O(n)**).\n\nFerris: \"Olen enimmäkseen vain iloinen siitä, että minulla on **utf-8** vedenalaisten ystävieni emojien esittämiseen.\"\n\n<span class=\"emoji\">\U0001F420\U0001F419\U0001F41F\U0001F42C\U0001F40B</span>\n"
+- title: Escape-Merkit
+  content_markdown: >
+    Tiettyjen merkkien visuaalinen esittäminen on haastavaa, joten
+    **escape-koodit** antavat meidän laittaa symbolin niiden paikalle.
+
+
+    Rust tukee yleisiä C-pohjaisten kielten escape-koodeja:
+
+    * `\n` - rivinvaihto
+
+    * `\r` - rivinpalautus
+
+    * `\t` - sarkain
+
+    * `\\` - kenoviiva
+
+    * `\0` - null-merkki
+
+    * `\'` - yksinkertainen lainausmerkki
+
+
+    Täydellinen lista löytyy
+    [täältä](https://doc.rust-lang.org/reference/tokens.html).
+  code: |
+    fn main() {
+        let a: &'static str = "Ferris says:\t\"hello\"";
+        println!("{}",a);
+    }
+- title: Monirivisisät Merkkijonoliteraalit
+  content_markdown: |
+    Rust-merkkijonot ovat oletuksena monirivisiä.
+
+    Käytä `\`-merkkiä rivin lopussa, jos et halua rivinvaihtoa siihen
+    kohtaan.
+  code: |
+    fn main() {
+        let haiku: &'static str = "
+            I write, erase, rewrite
+            Erase again, and then
+            A poppy blooms.
+            - Tachibana Hokushi";
+        println!("{}", haiku);
+        
+        
+        println!("hello \
+        world") // notice that the spacing before w is ignored
+    }
+- title: Raa'at Merkkijonoliteraalit
+  content_markdown: >
+    Raa'at merkkijonot (raw strings) antavat meidän kirjoittaa
+    merkkisekvenssin sellaisenaan aloittamalla merkinnällä `r#"` ja
+    päättämällä merkintään `"#`. Sen avulla voimme lisätä merkkejä,
+    jotka muuten voisivat sekoittaa tavallisen merkkijonon
+    literaaleiksi (kuten kaksoislainausmerkit ja kenoviivat).
+  code: |
+    fn main() {
+        let a: &'static str = r#"
+            <div class="advice">
+                Raw strings are useful for some situations.
+            </div>
+            "#;
+        println!("{}", a);
+    }
+- title: Merkkijonoliteraalit Tiedostoista
+  content_markdown: >
+    Jos sinulla on hyvin suuri teksti, harkitse `include_str!`-makron
+    käyttöä sisällyttääksesi tekstiä paikallisista tiedostoista
+    ohjelmaasi:
+
+
+    ```rust
+
+    let hello_html = include_str!("hello.html");
+
+    ```
+- title: Merkkijonoviipale
+  content_markdown: >
+    Merkkijonoviipale on referenssi tavusekvenssiin muistissa, jonka
+    täytyy aina olla validia utf-8:aa.
+
+
+    Myös `str`-viipaleen viipaleen (alaviipaleen) täytyy olla validia
+    utf-8:aa.
+
+
+    Yleisiä `&str`:n metodeja:
+
+    * `len` hakee merkkijonoliteraalin pituuden tavuina (ei merkkien
+    määränä).
+
+    * `starts_with`/`ends_with` perustestaukseen.
+
+    * `is_empty` palauttaa `true`, jos pituus on nolla.
+
+    * `find` palauttaa `Option<usize>`:n tekstin ensimmäisestä
+    sijainnista.
+  code: |
+    fn main() {
+        let a = "hi 🦀";
+        println!("{}", a.len());
+        let first_word = &a[0..2];
+        let second_word = &a[3..7];
+        // let half_crab = &a[3..5]; FAILS
+        // Rust does not accept slices of invalid unicode characters
+        println!("{} {}", first_word, second_word);
+    }
+- title: Merkit (Chars)
+  content_markdown: >
+    Koska Unicoden kanssa työskentely on niin hankalaa, Rust tarjoaa
+    tavan hakea utf-8-tavusekvenssi `char`-tyyppisten merkkien
+    vektorina.
+
+
+    `char` on aina 4 tavua pitkä (mikä mahdollistaa yksittäisten
+    merkkien tehokkaan haun).
+  code: |
+    fn main() {
+        // collect the characters as a vector of char
+        let chars = "hi 🦀".chars().collect::<Vec<char>>();
+        println!("{}", chars.len()); // should be 4
+        // since chars are 4 bytes we can convert to u32
+        println!("{}", chars[3] as u32);
+    }
+- title: String
+  content_markdown: >
+    **String** on struct, joka omistaa tavusekvenssin utf-8:aa
+    kekomuistissa.
+
+
+    Koska sen muisti on keossa, sitä voidaan laajentaa, muokata, jne.
+    tavoilla, joilla merkkijonoliteraaleja ei voi.
+
+
+    Yleisiä metodeja:
+
+
+    * `push_str` lisää lisää utf-8-tavuja merkkijonon loppuun.
+
+    * `replace` korvaa utf-8-tavusekvenssejä toisilla.
+
+    * `to_lowercase`/`to_uppercase` kirjainkoon muuttamiseen.
+
+    * `trim` tyhjän tilan poistamiseen.
+
+
+    Kun String droppaataan, myös sen kekomuisti droppaataan.
+
+
+    `String`:llä on `+`-operaattori, joka laajentaa merkkijonoa
+    `&str`:llä ja palauttaa itsensä, mutta se ei ehkä ole niin
+    ergonominen kuin toivoisit.
+  code: |
+    fn main() {
+        let mut helloworld = String::from("hello");
+        helloworld.push_str(" world");
+        helloworld = helloworld + "!";
+        println!("{}", helloworld);
+    }
+- title: Teksti Funktion Parametrina
+  content_markdown: >
+    Merkkijonoliteraalit ja merkkijonot välitetään funktioille
+    yleensä merkkijonoviipaleena. Tämä tarjoaa paljon joustavuutta
+    useimmissa tilanteissa, joissa sinun ei tarvitse oikeasti
+    siirtää omistajuutta.
+  code: |
+    fn say_it_loud(msg:&str){
+        println!("{}!!!",msg.to_string().to_uppercase());
+    }
+
+    fn main() {
+        // say_it_loud can borrow &'static str as a &str
+        say_it_loud("hello");
+        // say_it_loud can also borrow String as a &str
+        say_it_loud(&String::from("goodbye"));
+    }
+- title: Merkkijonojen Rakentaminen
+  content_markdown: |
+    `concat` ja `join` ovat kaksi yksinkertaista mutta tehokasta
+    tapaa rakentaa merkkijonoja.
+  code: |
+    fn main() {
+        let helloworld = ["hello", " ", "world", "!"].concat();
+        let abc = ["a", "b", "c"].join(",");
+        println!("{}", helloworld);
+        println!("{}",abc);
+    }
+- title: Merkkijonojen Muotoilu
+  content_markdown: >
+    `format!`-makro antaa meidän luoda merkkijonon määrittelemällä
+    parametrisoidun merkkijonon paikkamerkeillä sille, missä ja miten
+    arvot tulisi sijoittaa (esim. `{}`).
+
+
+    `format!` käyttää samoja parametrisoituja merkkijonoja kuin
+    `println!`
+
+
+    Tämän funktion kyvyt ovat liian laajat *Tour of Rustin*
+    laajuuteen; katso
+    [dokumentaatio](https://doc.rust-lang.org/std/fmt/) saadaksesi
+    lisätietoja.
+  code: |
+    fn main() {
+        let a = 42;
+        let f = format!("secret to life: {}",a);
+        println!("{}",f);
+    }
+- title: Merkkijonojen Muuntaminen
+  content_markdown: |
+    Monet tyypit voidaan muuntaa merkkijonoksi käyttämällä
+    `to_string`.
+
+    Geneeristä `parse`-funktiota voidaan käyttää muuntamaan
+    merkkijonoja tai merkkijonoliteraaleja tyypitetyksi arvoksi.
+    Tämä funktio palauttaa `Result`:in, koska se voi epäonnistua.
+  code: |
+    fn main() -> Result<(), std::num::ParseIntError> {
+        let a = 42;
+        let a_string = a.to_string();
+        let b = a_string.parse::<i32>()?;
+        println!("{} {}", a, b);
+        Ok(())
+    }
+- title: Kappale 6 - Päätelmä
+  content_markdown: >
+    Nyt tiedät tekstin perusteet! Kuten olet nähnyt, Unicode tekee
+    tekstin kanssa työskentelystä hieman hankalampaa, mutta
+    standardikirjastossa on paljon toiminnallisuutta, joka helpottaa
+    sen hallintaa.
+
+
+    Tähän asti olemme tarkastelleet Rustia lähinnä proseduraalisen
+    paradigman näkökulmasta (eli vain funktioita ja dataa), mutta nyt
+    on aika puhua traiteista ja kyvyistä, jotka Rustin
+    olio-ohjelmointiparadigma avaa.

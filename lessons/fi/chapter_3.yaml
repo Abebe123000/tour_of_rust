@@ -1,0 +1,296 @@
+- title: Kappale 3 - Perustietorakenteet
+  content_markdown: >
+    On aika mennä perustietotyyppejä pidemmälle! Tässä kappaleessa
+    tarkastelemme Rustin primitiivisimpiä tietorakenteita ja
+    kiinnitämme erityistä huomiota siihen, miten ne esitetään
+    muistissa. Uskon, että pidät siitä, kuinka vähän Rust piilottaa
+    sinulta sitä, miten asiat toimivat.
+- title: Rakenteet
+  content_markdown: >
+    `struct` on kokoelma kenttiä.
+
+
+    *Kenttä* on yksinkertaisesti tietorakenteeseen liitetty arvo. Sen
+    arvo voi olla joko primitiivinen tyyppi tai toinen tietorakenne.
+
+
+    Sen määritelmä on kuin piirustus kääntäjälle siitä, miten kentät
+    asetellaan lähekkäin muistissa.
+  code: |-
+    struct SeaCreature {
+        // String is a struct
+        animal_type: String,
+        name: String,
+        arms: i32,
+        legs: i32,
+        weapon: String,
+    }
+- title: Metodien Kutsuminen
+  content_markdown: >
+    Toisin kuin funktiot, metodit ovat funktioita, jotka on liitetty
+    tiettyyn tietotyyppiin.
+
+
+    **staattiset metodit** — metodit, jotka kuuluvat itse tyypille,
+    kutsutaan `::`-operaattorilla.
+
+
+    **instanssimetodit** — metodit, jotka kuuluvat tyypin
+    instanssille, kutsutaan `.`-operaattorilla.
+
+
+    Puhumme lisää omien metodien tekemisestä tulevissa kappaleissa.
+  code: |
+    fn main() {
+        // Using a static method to create an instance of String
+        let s = String::from("Hello world!");
+        // Using a method on the instance
+        println!("{} is {} characters long.", s, s.len());
+    }
+- title: Muisti
+  content_markdown: >
+    Rust-ohjelmilla on 3 muistialuetta, joihin tietoa tallennetaan:
+
+    * **dataMuisti** - Tiedolle, jonka koko on kiinteä ja joka on
+    **staattista** (eli aina saatavilla koko ohjelman elinajan).
+    Ajattele tekstiä ohjelmassasi (esim. "Hello World!"): tämän
+    tekstin tavuja luetaan vain yhdestä paikasta, joten ne voidaan
+    tallentaa tähän alueeseen. Kääntäjät tekevät paljon optimointeja
+    tämäntyyppisen datan kanssa, ja niiden käyttöä pidetään yleensä
+    hyvin nopeana, koska sijainnit ovat tiedossa ja kiinteitä.
+
+    * **pinomuisti** - Tiedolle, joka on määritelty muuttujina
+    funktion sisällä. Tämän muistin sijainti ei koskaan muutu funktion
+    kutsun keston aikana; tämän ansiosta kääntäjät voivat optimoida
+    koodia niin, että pinodataan pääsee käsiksi hyvin nopeasti.
+
+    * **kekomuisti** - Tiedolle, joka luodaan sovelluksen ollessa
+    käynnissä. Tälle alueelle tallennettua tietoa voidaan lisätä,
+    siirtää, poistaa, muuttaa kokoa, jne. Dynaamisen luonteensa vuoksi
+    sitä pidetään yleensä hitaampana käyttää, mutta se mahdollistaa
+    paljon luovemman muistin käytön. Kun tietoa lisätään tähän
+    alueeseen, kutsumme sitä **allokoinniksi**. Kun tietoa poistetaan
+    tästä alueesta, kutsumme sitä **dealllokoinniksi**.
+- title: Tiedon Luominen Muistiin
+  content_markdown: >
+    Kun **instansioimme** **structin** koodissamme, ohjelmamme luo
+    siihen liittyvän kenttädatan vierekkäin muistiin.
+
+
+    Instansioimme määrittämällä kaikki kenttien arvot merkinnällä
+
+
+    `StructinNimi { ... }`.
+
+
+    Structin kenttiin päästään käsiksi pisteoperaattorilla `.`.
+
+
+    Esimerkkimme muistin yksityiskohdat:
+
+    * Lainausmerkkien sisällä oleva teksti on vain luettavaa dataa
+    (esim. "Ferris"), joten se sijoitetaan *dataMuistin alueelle*.
+
+    * Funktiokutsu `String::from` luo `String`-structin, joka
+    sijoitetaan vierekkäin SeaCreaturen kenttien kanssa *pinoon*.
+    String edustaa tekstiä, jota voidaan muuttaa, ja tämä tapahtuu
+    seuraavasti:
+      1. Luomalla muistia *kekoon* tekstille, jota voidaan muokata
+      2. Tallentamalla viittaus tähän muistipaikkaan *keossa* ja tallentamalla se `String`-structiin (lisää tästä tulevissa oppitunneissa)
+    * Lopuksi kahdella ystävällämme *Ferriksellä* ja *Sarahilla* on
+    tietorakenteita, joilla on aina kiinteä sijainti ohjelmassamme,
+    joten ne sijoitetaan *pinoon*.
+  code: |
+    struct SeaCreature {
+        animal_type: String,
+        name: String,
+        arms: i32,
+        legs: i32,
+        weapon: String,
+    }
+
+    fn main() {
+        // SeaCreature's data is on stack
+        let ferris = SeaCreature {
+            // String struct is also on stack,
+            // but holds a reference to data on heap
+            animal_type: String::from("crab"),
+            name: String::from("Ferris"),
+            arms: 2,
+            legs: 4,
+            weapon: String::from("claw"),
+        };
+
+        let sarah = SeaCreature {
+            animal_type: String::from("octopus"),
+            name: String::from("Sarah"),
+            arms: 8,
+            legs: 0,
+            weapon: String::from("brain"),
+        };
+        
+        println!(
+            "{} is a {}. They have {} arms, {} legs, and a {} weapon",
+            ferris.name, ferris.animal_type, ferris.arms, ferris.legs, ferris.weapon
+        );
+        println!(
+            "{} is a {}. They have {} arms, and {} legs. They have no weapon..",
+            sarah.name, sarah.animal_type, sarah.arms, sarah.legs
+        );
+    }
+- title: Tuplemaiset Structit
+  content_markdown: |
+    Tiiviyden vuoksi voit luoda structeja, joita käytetään kuin
+    tupleja.
+  code: |
+    struct Location(i32, i32);
+
+    fn main() {
+        // This is still a struct on a stack
+        let loc = Location(42, 32);
+        println!("{}, {}", loc.0, loc.1);
+    }
+- title: Yksikönkaltaiset Structit
+  content_markdown: >
+    Structeilla ei tarvitse olla lainkaan kenttiä.
+
+
+    Kuten Kappaleessa 1 mainittiin, *yksikkö* (unit) on toinen sana
+    tyhjälle tuplelle `()`. Tästä syystä tätä structin lajia
+    kutsutaan *yksikönkaltaiseksi*.
+
+
+    Tätä structin lajia käytetään harvoin.
+  code: |
+    struct Marker;
+
+    fn main() {
+        let _m = Marker;
+    }
+- title: Enumeraatiot
+  content_markdown: >
+    Enumeraatiot antavat sinun luoda uuden tyypin, jolla voi olla
+    arvo useasta merkitystä elementistä `enum`-avainsanalla.
+
+
+    `match` auttaa varmistamaan kaikkien mahdollisten enum-arvojen
+    kattavan käsittelyn, tehden siitä tehokkaan työkalun koodin
+    laadun varmistamisessa.
+  code: |
+    #![allow(dead_code)] // this line prevents compiler warnings
+
+    enum Species {
+        Crab,
+        Octopus,
+        Fish,
+        Clam
+    }
+
+    struct SeaCreature {
+        species: Species,
+        name: String,
+        arms: i32,
+        legs: i32,
+        weapon: String,
+    }
+
+    fn main() {
+        let ferris = SeaCreature {
+            species: Species::Crab,
+            name: String::from("Ferris"),
+            arms: 2,
+            legs: 4,
+            weapon: String::from("claw"),
+        };
+
+        match ferris.species {
+            Species::Crab => println!("{} is a crab",ferris.name),
+            Species::Octopus => println!("{} is an octopus",ferris.name),
+            Species::Fish => println!("{} is a fish",ferris.name),
+            Species::Clam => println!("{} is a clam",ferris.name),
+        }
+    }
+- title: Enumeraatiot Datan Kanssa
+  content_markdown: >
+    `enum`-elementeillä voi olla myös yksi tai useampi tietotyyppi,
+    jonka ansiosta ne voivat käyttäytyä kuin C:n *unionit*.
+
+
+    Kun `enum` sovitetaan `match`-lauseella, voit sitoa muuttujan
+    nimen jokaiseen datan arvoon.
+
+
+    `enum`:n muistin yksityiskohdat:
+
+    * Enumin datan arvon muistin koko on yhtä suuri kuin sen suurimman
+    elementin koko. Tämä mahdollistaa sen, että kaikki mahdolliset
+    arvot mahtuvat samaan muistitilaan.
+
+    * Elementtien tietotyyppien lisäksi (jos niitä on), jokaisella
+    elementillä on myös numeerinen arvo, joka edustaa sitä, mikä tagi
+    on kyseessä.
+
+
+    Muita yksityiskohtia:
+
+    * Rustin `enum` tunnetaan myös nimellä *tagged union*.
+
+    * Tyyppien yhdistäminen uuden tyypin luomiseksi on se, mitä
+    ihmiset tarkoittavat, kun he sanovat, että Rustissa on
+    *algebrallisia tyyppejä*.
+  code: |-
+    #![allow(dead_code)] // this line prevents compiler warnings
+
+    enum Species { Crab, Octopus, Fish, Clam }
+    enum PoisonType { Acidic, Painful, Lethal }
+    enum Size { Big, Small }
+    enum Weapon {
+        Claw(i32, Size),
+        Poison(PoisonType),
+        None
+    }
+
+    struct SeaCreature {
+        species: Species,
+        name: String,
+        arms: i32,
+        legs: i32,
+        weapon: Weapon,
+    }
+
+    fn main() {
+        // SeaCreature's data is on stack
+        let ferris = SeaCreature {
+            // String struct is also on stack,
+            // but holds a reference to data on heap
+            species: Species::Crab,
+            name: String::from("Ferris"),
+            arms: 2,
+            legs: 4,
+            weapon: Weapon::Claw(2, Size::Small),
+        };
+
+        match ferris.species {
+            Species::Crab => {
+                match ferris.weapon {
+                    Weapon::Claw(num_claws,size) => {
+                        let size_description = match size {
+                            Size::Big => "big",
+                            Size::Small => "small"
+                        };
+                        println!("ferris is a crab with {} {} claws", num_claws, size_description)
+                    },
+                    _ => println!("ferris is a crab with some other weapon")
+                }
+            },
+            _ => println!("ferris is some other animal"),
+        }
+    }
+- title: Kappale 3 - Päätelmä
+  content_markdown: >
+    Kuinka jännittävää! Meillä on nyt perustyökalut ideoidemme muodon
+    esittämiseen koodissa. Toivottavasti voimme nyt nähdä välähdyksen
+    siitä, miten Rustin perustoiminnot toimivat sopusoinnussa ja
+    tiiviisti sen tyyppien kanssa. Seuraavaksi puhumme käsitteestä,
+    joka antaa tietotyypeillemme vielä enemmän joustavuutta esitystapaan:
+    *geneerisyys*.

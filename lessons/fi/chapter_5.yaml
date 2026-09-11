@@ -1,0 +1,441 @@
+- title: Kappale 5 - Datan Omistajuus & Lainaaminen
+  content_markdown: >
+    Rustilla on ainutlaatuinen tapa hallita muistia verrattuna muihin
+    ohjelmointikieliin. Käymme läpi kääntäjän toimintatavat ja
+    tarkistukset yksi kerrallaan, jotta ne eivät tunnu ylivoimaisilta.
+    On tärkeää muistaa, että viime kädessä esittelemämme säännöt eivät
+    ole olemassa tehdäksesi elämästäsi vaikeaa, vaan auttaakseen sinua
+    tekemään koodistasi vähemmän virhealtista!
+- title: Omistajuus
+  content_markdown: >
+    Tyypin instansioiminen ja sen **sitominen** muuttujan nimeen luo
+    muistiresurssin, jonka Rust-kääntäjä varmistaa koko sen
+    **elinajan** (lifetime) ajan. Sidottua muuttujaa kutsutaan
+    resurssin **omistajaksi** (owner).
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        // We instantiate structs and bind to variables
+        // to create memory resources
+        let foo = Foo { x: 42 };
+        // foo is the owner
+    }
+- title: Näkyvyysalueeseen Perustuva Resurssienhallinta
+  content_markdown: |
+    Rust käyttää näkyvyysalueen (scope) loppua paikkana, jossa resurssi
+    puretaan ja vapautetaan.
+
+    Tätä purkamista ja vapauttamista kutsutaan termillä **drop**.
+
+    Muistin yksityiskohta:
+    * Rustissa ei ole roskienkeruuta (garbage collection).
+    * Tätä kutsutaan C++:ssa myös nimellä Resource Acquisition Is Initialization (RAII).
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        let foo_a = Foo { x: 42 };
+        let foo_b = Foo { x: 13 };
+
+        println!("{}", foo_a.x);
+
+        println!("{}", foo_b.x);
+        // foo_b is dropped here 
+        // foo_a is dropped here
+    }
+- title: Droppaaminen On Hierarkkista
+  content_markdown: >
+    Kun struct droppaataan, ensin droppaataan itse struct, sitten
+    droppaataan sen kentät yksi kerrallaan, ja niin edelleen.
+
+
+    Muistin yksityiskohdat:
+
+    * Vapauttamalla muistin automaattisesti, Rust auttaa varmistamaan,
+    että muistivuotoja on vähemmän.
+
+    * Muistiresurssi voidaan droppaata vain kerran.
+  code: |
+    struct Bar {
+        x: i32,
+    }
+
+    struct Foo {
+        bar: Bar,
+    }
+
+    fn main() {
+        let foo = Foo { bar: Bar { x: 42 } };
+        println!("{}", foo.bar.x);
+        // foo is dropped first
+        // then foo.bar is dropped
+    }
+- title: Omistajuuden Siirtäminen
+  content_markdown: >
+    Kun omistaja annetaan argumenttina funktiolle, omistajuus
+    siirtyy funktion parametrille.
+
+
+    **Siirron** (move) jälkeen alkuperäisen funktion muuttujaa ei voi
+    enää käyttää.
+
+
+    Muistin yksityiskohdat:
+
+    * **Siirron** aikana omistajan arvon pinomuisti kopioidaan
+    funktiokutsun parametrin pinomuistiin.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: Foo) {
+        println!("{}", f.x);
+        // f is dropped here
+    }
+
+    fn main() {
+        let foo = Foo { x: 42 };
+        // foo is moved to do_something
+        do_something(foo);
+        // foo can no longer be used
+    }
+- title: Omistajuuden Palauttaminen
+  content_markdown: |
+    Omistajuus voidaan myös palauttaa funktiosta.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something() -> Foo {
+        Foo { x: 42 }
+        // ownership is moved out
+    }
+
+    fn main() {
+        let foo = do_something();
+        // foo becomes the owner
+        // foo is dropped because of end of function scope
+    }
+- title: Omistajuuden Lainaaminen Referenssien Avulla
+  content_markdown: |
+    Referenssit antavat meidän lainata pääsyn resurssiin
+    `&`-operaattorilla.
+
+    Myös referenssit droppaataan kuten muutkin resurssit.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn main() {
+        let foo = Foo { x: 42 };
+        let f = &foo;
+        println!("{}", f.x);
+        // f is dropped here
+        // foo is dropped here
+    }
+- title: Muuttuvan Omistajuuden Lainaaminen Referenssien Avulla
+  content_markdown: >
+    Voimme myös lainata muuttuvaa (mutable) pääsyä resurssiin
+    `&mut`-operaattorilla.
+
+
+    Resurssin omistajaa ei voi siirtää eikä muuttaa, kun sitä lainataan
+    muuttuvasti.
+
+
+    Muistin yksityiskohta:
+
+    * Rust estää sen, että olisi kaksi tapaa muuttaa omistettua arvoa,
+    koska tämä toisi mukanaan *data race* -tilanteen mahdollisuuden.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: Foo) {
+        println!("{}", f.x);
+        // f is dropped here
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let f = &mut foo;
+
+        // FAILURE: do_something(foo) would fail because
+        // foo cannot be moved while mutably borrowed
+
+        // FAILURE: foo.x = 13; would fail here because
+        // foo is not modifiable while mutably borrowed
+
+        f.x = 13;
+        // f is dropped here because it's no longer used after this point
+        
+        println!("{}", foo.x);
+        
+        // this works now because all mutable references were dropped
+        foo.x = 7;
+        
+        // move foo's ownership to a function
+        do_something(foo);
+    }
+- title: Dereferensointi
+  content_markdown: >
+    Käyttämällä `&mut`-referenssejä voit asettaa omistajan arvon
+    `*`-operaattorilla.
+
+
+    Voit myös saada kopion omistetusta arvosta `*`-operaattorilla
+    (jos arvo voidaan kopioida - käsittelemme kopioitavia tyyppejä
+    tulevissa kappaleissa).
+  code: |
+    fn main() {
+        let mut foo = 42;
+        let f = &mut foo;
+        let bar = *f; // get a copy of the owner's value
+        *f = 13;      // set the reference's owner's value
+        println!("{}", bar);
+        println!("{}", foo);
+    }
+- title: Lainatun Datan Käsittely
+  content_markdown: >
+    Rustin säännöt referensseille voidaan ehkä parhaiten tiivistää
+    näin:
+
+
+    * Rust sallii joko yhden muuttuvan referenssin **tai** useita
+    ei-muuttuvia referenssejä, **mutta ei molempia**.
+
+    * Referenssi ei saa koskaan **elää pidempään** kuin sen omistaja.
+
+
+    Tämä ei yleensä ole ongelma, kun referenssejä välitetään
+    funktioille.
+
+
+    Muistin yksityiskohdat:
+
+    * Referenssien ensimmäinen sääntö estää data race -tilanteet.
+    Mikä on data race? Data race tapahtuu, kun datan lukemisessa on
+    mahdollisuus epäsynkronoitumiseen, koska samaan dataan kirjoitetaan
+    samanaikaisesti. Tätä tapahtuu usein monisäikeisessä
+    ohjelmoinnissa.
+
+    * Referenssien toinen sääntö estää sellaisten referenssien
+    väärinkäytön, jotka viittaavat olemattomaan dataan (C:ssä
+    kutsutaan roikkuviksi osoittimiksi, dangling pointer).
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(f: &mut Foo) {
+        f.x += 1;
+        // mutable reference f is dropped here
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        do_something(&mut foo);
+        // because all mutable references are dropped within
+        // the function do_something, we can create another.
+        do_something(&mut foo);
+        // foo is dropped here
+    }
+- title: Referenssien Referenssit
+  content_markdown: |
+    Referenssejä voidaan käyttää jopa toisten referenssien osissa.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    fn do_something(a: &Foo) -> &i32 {
+        return &a.x;
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let x = &mut foo.x;
+        *x = 13;
+        // x is dropped here allow us to create a non-mutable reference
+        let y = do_something(&foo);
+        println!("{}", y);
+        // y is dropped here
+        // foo is dropped here
+    }
+- title: Eksplisiittiset Elinajat
+  content_markdown: >
+    Vaikka Rust ei aina näytä sitä koodissa, kääntäjä ymmärtää jokaisen
+    muuttujan elinajan (lifetime) ja yrittää varmistaa, ettei
+    referenssi koskaan ole olemassa pidempään kuin sen omistaja.
+
+
+    Funktiot voivat olla eksplisiittisiä parametrisoimalla funktion
+    allekirjoituksen symboleilla, jotka auttavat tunnistamaan, mitkä
+    parametrit ja paluuarvot jakavat saman elinajan.
+
+
+    Elinaikamäärittäjät alkavat aina merkillä `'` (esim. `'a`, `'b`,
+    `'c`)
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    // the parameter foo and return value share the same lifetime
+    fn do_something<'a>(foo: &'a Foo) -> &'a i32 {
+        return &foo.x;
+    }
+
+    fn main() {
+        let mut foo = Foo { x: 42 };
+        let x = &mut foo.x;
+        *x = 13;
+        // x is dropped here, allowing us to create a non-mutable reference
+        let y = do_something(&foo);
+        println!("{}", y);
+        // y is dropped here
+        // foo is dropped here
+    }
+- title: Useita Elinaikoja
+  content_markdown: >
+    Elinaikamäärittäjät antavat meidän olla eksplisiittisiä tietyissä
+    tilanteissa, joita kääntäjä ei pysty ratkaisemaan itse,
+    erottelemalla kaikkien funktion allekirjoituksen osien elinajat.
+  code: |
+    struct Foo {
+        x: i32,
+    }
+
+    // foo_b and the return value share the same lifetime
+    // foo_a has an unrelated lifetime
+    fn do_something<'a, 'b>(foo_a: &'a Foo, foo_b: &'b Foo) -> &'b i32 {
+        println!("{}", foo_a.x);
+        println!("{}", foo_b.x);
+        return &foo_b.x;
+    }
+
+    fn main() {
+        let foo_a = Foo { x: 42 };
+        let foo_b = Foo { x: 12 };
+        let x = do_something(&foo_a, &foo_b);
+        // foo_a is dropped here because only foo_b's lifetime exist beyond here
+        println!("{}", x);
+        // x is dropped here
+        // foo_b is dropped here
+    }
+- title: Staattiset Elinajat
+  content_markdown: >
+    **Staattinen** muuttuja on käännösaikana luotu muistiresurssi,
+    joka on olemassa ohjelman alusta loppuun asti. Sen tyyppi täytyy
+    määritellä eksplisiittisesti.
+
+
+    **Staattinen elinaika** on muistiresurssi, joka kestää
+    rajattomasti ohjelman loppuun asti. Huomaa, että tämän
+    määritelmän mukaan jotkin staattisen elinajan resurssit voidaan
+    luoda myös ajonaikana.
+
+
+    Staattisen elinajan omaavilla resursseilla on erityinen
+    elinaikamäärittäjä `'static`.
+
+
+    `'static`-resursseja ei koskaan **droppaata**.
+
+
+    Jos staattisen elinajan resurssit sisältävät referenssejä, niiden
+    kaikkien täytyy olla `'static` (mikä tahansa vähempi ei eläisi
+    tarpeeksi kauan).
+
+
+    Muistin yksityiskohta:
+
+
+    * Staattisten muuttujien muokkaaminen on luonnostaan vaarallista,
+    koska ne ovat globaalisti kenen tahansa luettavissa,
+      mikä tuo mukanaan data race -tilanteen mahdollisuuden. Puhumme myöhemmin globaalin datan haasteista.
+    * Rust sallii `unsafe { ... }`-lohkojen käytön suorittaakseen
+    tiettyjä operaatioita, joista kääntäjä ei voi antaa
+    muistitakuita. [<span
+    style="color:red; font-weight:
+    bold;">R̸͉̟͈͔̄͛̾̇͜U̶͓͖͋̅Ṡ̴͉͇̃̉̀T̵̻̻͔̟͉́͆Ơ̷̥̟̳̓͝N̶̨̼̹̲͛Ö̵̝͉̖̏̾̔M̶̡̠̺̠̐͜Î̷̛͓̣̃̐̏C̸̥̤̭̏͛̎͜O̶̧͚͖͔̊͗̇͠N̸͇̰̏̏̽̃</span>](https://doc.rust-lang.org/nomicon/)
+    tulisi mainita harkiten.
+  code: |
+    static PI: f64 = 3.1415;
+
+    fn main() {
+        // static variables can also be scoped to a function
+        static mut SECRET: &'static str = "swordfish";
+
+        // string literals have a 'static lifetime
+        let msg: &'static str = "Hello World!";
+        let p: &'static f64 = &PI;
+        println!("{} {}", msg, p);
+
+        // You can break some rules, but you must be explicit
+        unsafe {
+            // we can set SECRET to a string literal because it is also `static
+            SECRET = "abracadabra";
+            println!("{}", SECRET);
+        }
+    }
+- title: Elinajat Tietotyypeissä
+  content_markdown: >
+    Aivan kuten funktiot, myös tietotyypit voidaan parametrisoida
+    niiden jäsenten elinaikamäärittäjillä.
+
+
+    Rust varmistaa, että referenssejä sisältävä tietorakenne ei
+    koskaan kestä pidempään kuin omistajat, joihin sen referenssit
+    osoittavat.
+
+
+    Meillä ei voi olla structeja, jotka kulkevat ympäriinsä referenssit,
+    jotka osoittavat tyhjyyteen!
+  code: |
+    struct Foo<'a> {
+        i:&'a i32
+    }
+
+    fn main() {
+        let x = 42;
+        let foo = Foo {
+            i: &x
+        };
+        println!("{}",foo.i);
+    }
+- title: Kappale 5 - Päätelmä
+  content_markdown: >
+    Huh, onnittelut, että pääsit tänne asti! Tiedän, että se on paljon
+    sulateltavaa, mutta olet jo hyvällä matkalla kohti Rustaceania.
+    Toivottavasti on selvää, miten Rust ohjelmointikielenä pyrkii
+    ratkaisemaan monia näistä yleisistä systeemiohjelmoinnin
+    haasteista:
+
+
+    * Resurssien tahaton muokkaaminen
+
+    * Resurssien purkamisen unohtaminen
+
+    * Resurssien vahingossa kahdesti purkaminen
+
+    * Resurssien käyttäminen sen jälkeen, kun ne on purettu
+
+    * Data race -tilanteet, jotka johtuvat resursseihin kirjoittamisesta
+    samalla, kun toiset lukevat niitä
+
+    * Selkeä näkyvyys niihin koodin osiin, joissa kääntäjä ei voi
+    antaa takuita
+
+
+    Seuraavassa kappaleessa sovellamme osaa tästä tiedosta, kun
+    tarkastelemme, miten Rust käsittelee tekstiä.
