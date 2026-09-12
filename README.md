@@ -2,16 +2,17 @@
 
 Welcome to the source repo of [Tour of Rust](https://tourofrust.com/).
 
-## このリポジトリについて
+## About this repository
 
-このリポジトリは [tour_of_rust](https://github.com/richardanaya/tour_of_rust)
-(© Richard Anaya, MIT License) の非公式ミラー/翻訳版です。
+This repository is an unofficial mirror/translation of
+[tour_of_rust](https://github.com/richardanaya/tour_of_rust) (© Richard Anaya, MIT License).
 
-本家の更新が止まっており、日本語を含む一部言語の翻訳が未完了のため、
-翻訳を進めた版を公開する目的でフォークしています。
-本家との関係はなく、公式のサポートは受けられません。
+The upstream project's updates have stalled, and translations for several
+languages (including Japanese) remain incomplete, so this repo was forked to
+publish a version with further translation work. It has no affiliation with
+the upstream project and is not officially supported.
 
-本プロジェクトは本家と同じ [MIT License](./LICENSE) の下で公開されています。
+This project is published under the same [MIT License](./LICENSE) as upstream.
 
 # Goals
 
