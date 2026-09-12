@@ -27,6 +27,7 @@ This project is meant to give an experienced programmer a swift introduction to 
 * Chapter 7 - Object Oriented Programming
 * Chapter 8 - Smart Pointers
 * Chapter 9 - Project Organization and Structure
+* Chapter 10 - The End
 
 Content goals:
 * Chapter 1-4 should give you a strong taste of Rust's aesthetic
@@ -94,6 +95,14 @@ After installing the dependencies use `npm run serve` to launch the site. You wi
 to see the changes you've made.
 
 # Releases
+
+## Release 7 - Sept, 2026
+* Completed all remaining chapters (through Chapter 10) for Albanian, Finnish, Indonesian, Dutch, Polish, Italian, Greek, Interlingue and Traditional Chinese
+* Added Persian as a new language, fully translated through Chapter 10
+* Proofreading fixes across nearly every language's lessons (Japanese, English, Chinese, Spanish, French, Russian, Korean, Brazilian Portuguese, Arabic, Vietnamese, Polish, Turkish, Ukrainian, Thai, Romanian, Hungarian, German, Italian, Indonesian, Finnish, Albanian, Dutch, Traditional Chinese, Interlingue and Greek)
+* Migrated legacy Rust Playground gist links in lessons to inline source code so diffs stay readable
+* Cross-language "available in" link list is now generated automatically from the `lessons` directory instead of being maintained by hand
+* Forked into an independent repository with its own license notice and added Claude Code based automation for issue implementation and PR review
 
 ## Releases 6 - Sept, 2024
 * Lots of fixes for Albanian and Italian
