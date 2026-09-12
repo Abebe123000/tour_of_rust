@@ -10,26 +10,7 @@
 
     이 가이드는 다음의 언어로도 보실 수 있습니다:
 
-    * [독일어](00_de.html)
-    * [영어](index.html)
-    * [스페인어](00_es.html)
-    * [프랑스어](00_fr.html)
-    * [인테르링구아](00_ie.html)
-    * [헝가리어](00_hu.html)
-    * [폴란드어](00_pl.html)
-    * [브라질 포르투갈어](00_pt-br.html)
-    * [루마니아어](00_ro.html)
-    * [러시아어](00_ru.html)
-    * [간체중문](00_zh-cn.html)
-    * [번체중문](00_zh-tw.html)
-    * [일본어](00_ja.html)
-    * [한국어](00_ko.html)
-    * [튀르키예어](00_tr.html)
-    * [우크라이나어](00_ua.html)
-    * [태국어](00_th.html)
-    * [베트남어](00_vi.html)
-    * [아랍어](00_ar.html)
-    * [Nederlands](00_nl.html)
+    <!--TOUR_LANGUAGE_LINKS-->
 
     내용에 대한 제안 사항이 있거나 번역에 기여하고 싶으신 경우, Tour of Rust의 [github 저장소](https://github.com/richardanaya/tour_of_rust)를 확인하세요.
 
