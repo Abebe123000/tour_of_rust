@@ -81,6 +81,8 @@ Look for your appropriate language under the `lessons` folder. Each chapter has 
 
 Lastly, there is a file for common words you should fill out your localized translations of for deeper experience of the site.
 
+If you are adding a brand-new language (a new directory under `lessons`), also add its native display name to `LANGUAGE_NAMES` in [scripts/lib/language-links.js](scripts/lib/language-links.js). That's the only place the "available in these languages" link list needs updating — `generate.js` builds the list for every page automatically from the `lessons` directory listing, so you don't need to touch any other language's files.
+
 ## How to run the project locally
 
 To run the site locally you need to install `yq`. There are several projects with the name `yq`, this

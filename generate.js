@@ -2,6 +2,7 @@ const showdown = require('showdown');
 const fs = require('fs');
 const yaml = require('js-yaml');
 const { buildPlaygroundUrl } = require('./scripts/lib/playground');
+const { LANGUAGE_LINKS_PLACEHOLDER, buildLanguageLinksHtml } = require('./scripts/lib/language-links');
 
 const lessonSource = process.argv[2];
 const targetDir = process.argv[3];
@@ -300,6 +301,13 @@ languages.forEach((lang) => {
       }
     }
 
+    if (lessonContent.includes(LANGUAGE_LINKS_PLACEHOLDER)) {
+      lessonContent = lessonContent.replace(
+        LANGUAGE_LINKS_PLACEHOLDER,
+        buildLanguageLinksHtml(languages, lang, (l, li) => getFileName(l, li, false)),
+      );
+    }
+
     fs.writeFileSync(
       `${targetDir}/${fileName}`,
       template(
@@ -344,6 +352,14 @@ languages.forEach((lang) => {
           lesson[targetLang].edition || lesson.en.edition,
         );
       }
+
+      if (lessonContent.includes(LANGUAGE_LINKS_PLACEHOLDER)) {
+        lessonContent = lessonContent.replace(
+          LANGUAGE_LINKS_PLACEHOLDER,
+          buildLanguageLinksHtml(languages, lang, (l, li) => getFileName(l, li, false)),
+        );
+      }
+
       fs.writeFileSync(
         `${targetDir}/beta_${fileName}`,
         template(
