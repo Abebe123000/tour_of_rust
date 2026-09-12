@@ -27,6 +27,7 @@ This project is meant to give an experienced programmer a swift introduction to 
 * Chapter 7 - Object Oriented Programming
 * Chapter 8 - Smart Pointers
 * Chapter 9 - Project Organization and Structure
+* Chapter 10 - The End
 
 Content goals:
 * Chapter 1-4 should give you a strong taste of Rust's aesthetic
@@ -66,7 +67,8 @@ Look for your appropriate language under the `lessons` folder. Each chapter has 
 
 * **title** - this would be your localized page's title
 * **content_markdown** - this would be your localized page's content as markdown using [shodown markdown](https://github.com/showdownjs/showdown/wiki/Showdown's-Markdown-syntax)
-* **code** (optional) - this would be your localized page's code. This is the "embedded link" generated from https://play.rust-lang.org/ when you hit the "Share" button. Be sure your run the "rustfmt" tool! If you don't provide code, a page will fallback onto an english version of code (if it exists).
+* **code** (optional) - this would be your localized page's raw Rust source, formatted with `rustfmt`. `generate.js` builds the Rust Playground "share" link from this at build time, so keep it as plain Rust code rather than a `play.rust-lang.org` URL. If you don't provide code, a page will fallback onto an english version of code (if it exists).
+* **edition** (optional) - overrides the Rust edition used when building the Playground link for this page's code (defaults to 2018).
 
 ```yaml
 - title: Capítulo 3 - Conclusión
@@ -76,7 +78,8 @@ Look for your appropriate language under the `lessons` folder. Each chapter has 
     * A
     * `let`
     * C
-  code: https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=fn%20main()%20%7B%7D%0A
+  code: |
+    fn main() {}
 ```
 
 Lastly, there is a file for common words you should fill out your localized translations of for deeper experience of the site.
@@ -94,6 +97,14 @@ After installing the dependencies use `npm run serve` to launch the site. You wi
 to see the changes you've made.
 
 # Releases
+
+## Release 7 - Sept, 2026
+* Completed all remaining chapters (through Chapter 10) for Albanian, Finnish, Indonesian, Dutch, Polish, Italian, Greek, Interlingue and Traditional Chinese
+* Added Persian as a new language, fully translated through Chapter 10
+* Proofreading fixes across nearly every language's lessons (Japanese, English, Chinese, Spanish, French, Russian, Korean, Brazilian Portuguese, Arabic, Vietnamese, Polish, Turkish, Ukrainian, Thai, Romanian, Hungarian, German, Italian, Indonesian, Finnish, Albanian, Dutch, Traditional Chinese, Interlingue and Greek)
+* Migrated legacy Rust Playground gist links in lessons to inline source code so diffs stay readable
+* Cross-language "available in" link list is now generated automatically from the `lessons` directory instead of being maintained by hand
+* Forked into an independent repository with its own license notice and added Claude Code based automation for issue implementation and PR review
 
 ## Releases 6 - Sept, 2024
 * Lots of fixes for Albanian and Italian
